@@ -5,12 +5,12 @@
   "validityBasis": "aggregate-source-digest",
   "selectedPaths": [],
   "sourceSelection": {
-    "includedCount": 153,
-    "includedBytes": 819765,
+    "includedCount": 149,
+    "includedBytes": 818752,
     "excludedCounts": {
-      "excluded-directory": 27,
+      "excluded-directory": 1,
       "excluded-path": 1,
-      "extension": 25
+      "extension": 23
     }
   },
   "repositoryState": {
@@ -19,14 +19,14 @@
     "repositories": [
       {
         "path": ".",
-        "commit": "0366a5d0c8f111fb0a4296a2acf6c7a7d0b8c34a",
-        "branch": "codex/cuda-compat-publication",
-        "dirty": true,
+        "commit": "17159836a129b17b8b14844a120df3ccb887d8ca",
+        "branch": null,
+        "dirty": false,
         "remote": "https://github.com/zachshallbetter/cuda-compatibility.git"
       }
     ]
   },
-  "aggregateSourceDigest": "1650a1ccb2215723d2dddd7cac6a0bb4acaa9ac3da49a33881a61139eb829277",
+  "aggregateSourceDigest": "91503abc8e8912ed9e9db74ef459ccd6508bf9e7625531e4a764b9632f5ec928",
   "sources": [
     {
       "path": ".agents/rules/ci.md",
@@ -707,26 +707,6 @@
       "path": "site/styles.css",
       "bytes": 30960,
       "sha256": "c4bdcaa365ee79d84e571c8b6bc64d91ce63b00ad9ee9eba129e8b6f596d3eb6"
-    },
-    {
-      "path": "src/cuda_legacy_compat.egg-info/SOURCES.txt",
-      "bytes": 884,
-      "sha256": "8de2b241de9151f0e35c44ef61d7bd489ada1a7ea27a09a99034e86a4eea6df6"
-    },
-    {
-      "path": "src/cuda_legacy_compat.egg-info/dependency_links.txt",
-      "bytes": 1,
-      "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
-    },
-    {
-      "path": "src/cuda_legacy_compat.egg-info/entry_points.txt",
-      "bytes": 109,
-      "sha256": "888bd1255c6a2c780f66fd7bfcad3a5adccad61150e6d7f170a8082a4bc7db62"
-    },
-    {
-      "path": "src/cuda_legacy_compat.egg-info/top_level.txt",
-      "bytes": 19,
-      "sha256": "a7d4696de7a50e9d37c7f1b844b4e592fb4e3d3d488db8019d520d9e11311bba"
     },
     {
       "path": "src/cuda_legacy_compat/__init__.py",
