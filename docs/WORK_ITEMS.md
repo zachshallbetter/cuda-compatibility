@@ -408,6 +408,8 @@ The first work item is being executed under the user's explicit request to creat
 - **Budget:** No spend; one bounded first-publication pass.
 - **Stop conditions:** ACP is unavailable, has no policy registered for this repository, or refuses the exact push/deploy; remote identity/state differs from the confirmed repository; a secret/private artifact is found; or repository policy prevents safe deployment.
 
+**Progress (2026-11-01):** The signed candidate commit `97354d2f04ae752251523b040cb0c433ab57c5f7` is present on the public `codex/cuda-compat-publication` branch. `make check`, all 36 unit tests, a clean wheel build/install, and both CLI entry points passed; the candidate scan found no credential patterns or user home paths. The ACP request for the branch push contained a different SHA than the pushed commit; the mismatch was reported as event `evt_3ec3d4dbab255ced` and ACP returned `WARNING` with authorization state `NORMAL`. A subsequent ACP request to create `main` also supplied a `new_sha` that did not match HEAD and returned `DENY` / `RECOVERY_AUTHORIZATION_REQUIRED`; no retry or repair was attempted. GitHub Pages settings now report workflow mode, but the workflow is absent from the default branch, the latest Pages build endpoint returns 404, and the canonical site returned HTTP 404. Publication is incomplete; analytics/search properties and public announcements remain unconfigured/unpublished.
+
 ## CLC-023 — Remove third-party font requests from site page loads
 
 - **Intent:** Keep the static site readable and lightweight without contacting a font host before a visitor chooses to follow an external link or opts into analytics.
