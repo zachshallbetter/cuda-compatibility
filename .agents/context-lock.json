@@ -6,7 +6,7 @@
   "selectedPaths": [],
   "sourceSelection": {
     "includedCount": 159,
-    "includedBytes": 950933,
+    "includedBytes": 951617,
     "excludedCounts": {
       "excluded-directory": 31,
       "excluded-path": 1,
@@ -19,14 +19,14 @@
     "repositories": [
       {
         "path": ".",
-        "commit": "addd820165b926fb166f2efb01a2e0db54a4ddf5",
+        "commit": "e3ac1d7e8e1fb62bc98aa36817e5a57b2fe5bf43",
         "branch": "codex/cuda-compat-publication",
         "dirty": true,
         "remote": "https://github.com/zachshallbetter/cuda-compatibility.git"
       }
     ]
   },
-  "aggregateSourceDigest": "0420568980745caa973d51d48cf8ddc7b06e61c52b35ce281e99ca8c43b2c277",
+  "aggregateSourceDigest": "d4a4183525e01f29bebaa2ba4e62f7f111c9652543f904a1ae047ef0e8358656",
   "sources": [
     {
       "path": ".agents/rules/ci.md",
@@ -325,8 +325,8 @@
     },
     {
       "path": "docs/DPP_IMPLEMENTATION.md",
-      "bytes": 24751,
-      "sha256": "eb2f2b71bb1e12e3578b3dd68a8575e16f3ebe0a966a2980446ad2056bd20dc4"
+      "bytes": 25014,
+      "sha256": "051540de1a6ffad007468aa4192e403ea85317ded18127ded41b31cbc48d3ae3"
     },
     {
       "path": "docs/EVIDENCE_METHOD.md",
@@ -400,8 +400,8 @@
     },
     {
       "path": "docs/WORK_ITEMS.md",
-      "bytes": 91399,
-      "sha256": "5f7020eb0203d8cb692c91245436c3277bb03ce184051559fe6820a30eb12781"
+      "bytes": 91341,
+      "sha256": "f0baebf35eed29f15d3982c6925cd033b390c476a03767a689950fdb4b9ee2fb"
     },
     {
       "path": "docs/architecture.md",
@@ -685,8 +685,8 @@
     },
     {
       "path": "site/docs/discovery.html",
-      "bytes": 11821,
-      "sha256": "8809119f272567b5987755a14d0284267fbd914f68956deb8d240b8f6ad0b0c5"
+      "bytes": 12110,
+      "sha256": "81ec9d887481893dad92293a11c69d8be9ff16be650de85b516e42d46a2baa08"
     },
     {
       "path": "site/docs/getting-started.html",
@@ -700,13 +700,13 @@
     },
     {
       "path": "site/docs/privacy.html",
-      "bytes": 13834,
-      "sha256": "fac69e66684acbe3b4706ebfc266a520a6b58ed82bca67f75b8dbacf31dfebef"
+      "bytes": 14010,
+      "sha256": "d286c9bd8a30e61f4f7fb9db046f238a67ecf80a8e23b9645bca8fdea6a84976"
     },
     {
       "path": "site/docs/research.html",
-      "bytes": 10803,
-      "sha256": "fda18985b9df8c95e62ce4bed93711c12b20ca656f91bdac33bb64cbbf693306"
+      "bytes": 10817,
+      "sha256": "5bded3ac5615263d6d15ae5147a2c81b344a94be51f54d50113695ba7c58f649"
     },
     {
       "path": "site/gpu-catalog.html",
