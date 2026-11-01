@@ -8,6 +8,7 @@
     "gpu_catalog_click",
     "project_repository_click",
     "evidence_page_click",
+    "discovery_page_click",
     "external_reference_click",
   ]);
 
@@ -125,6 +126,7 @@
     if (path.endsWith("/compatibility.html")) return "support_matrix_click";
     if (path.endsWith("/gpu-catalog.html")) return "gpu_catalog_click";
     if (path.endsWith("/research.html")) return "evidence_page_click";
+    if (path.endsWith("/discovery.html")) return "discovery_page_click";
     if (url.origin !== location.origin && url.protocol.startsWith("http")) return "external_reference_click";
     return null;
   };

@@ -62,7 +62,7 @@ The launcher inherits the parent environment and adds `LD_PRELOAD` and Python st
 
 ## What the current adapter covers
 
-The adapter has bounded native Maxwell paths for selected addition, arange, embedding, layer normalization, matrix multiplication, and ReLU operations. It also has inference-only CPU fallbacks for selected operators and for recognized missing-image or architecture errors. CPU fallback is limited to one CUDA device and 64 MiB of input and output per operation; mutating and alias-returning operations fail closed. CPU fallback preserves selected operation results by moving data through host memory, so performance can be much lower and memory transfers are part of the cost.
+The adapter has bounded native Maxwell paths for selected float32/int32/float16 addition, float32 in-place addition, arange, embedding, layer normalization, strided matrix multiplication, and ReLU operations. It also has CPU fallbacks for selected operators and recognized missing-image, architecture, and missing-kernel errors. CPU fallback is limited to one CUDA device and 64 MiB of input and output per operation. Mutating and alias-returning operations fail closed except the bounded float32 `add_` path. A first-order gradient path and SGD update are verified only for a small float32 linear→ReLU→sum training case; other autograd paths are not established.
 
 Current end-to-end evidence is narrow:
 
@@ -72,7 +72,7 @@ Current end-to-end evidence is narrow:
 | Convolution/pooling classifier | Input `2×3×32×32`; output `(2, 5)` | Broker-selected GPU 2; convolution uses CPU fallback |
 | Synthetic two-layer MLP / operator probes | Bounded float32 cases and explicit edge/unsupported checks | All three cards for the original operator slice; not equivalent to full model validation on each card |
 
-All listed model outputs matched CPU references at the tolerances recorded in the [PyTorch CUDA 13 research log](research/pytorch-cu130-maxwell.md). The model workloads have only been validated on GPU 2. Training, autograd, arbitrary models, broad cuDNN/cuBLAS behavior, large fallback transfers, and performance parity are unverified.
+All listed model outputs matched CPU references at the tolerances recorded in the [PyTorch CUDA 13 research log](research/pytorch-cu130-maxwell.md). The model workloads have only been validated on GPU 2. The training probe used 2×2 float32 linear→ReLU→sum, seven SGD steps with `foreach=False`, and matched CPU gradients and final weights. Other models, optimizers, broad cuDNN/cuBLAS behavior, larger fallback transfers, and performance parity are unverified.
 
 ## Troubleshooting
 
@@ -85,6 +85,6 @@ All listed model outputs matched CPU references at the tolerances recorded in th
 | GPU architecture unsupported | The current adapter accepts only visible `sm_52` devices. | On a mixed-GPU host, set numeric `CUDA_VISIBLE_DEVICES` indices for only the supported cards before both `doctor` and `run`; the tool does not spoof compute capability. |
 | `audit` returns `unknown` | The machine could not supply one or more facts required by the package profile. | Read the JSON `issues` and resolve the missing inventory; do not treat unknown as compatible. |
 | PyTorch reports no kernel image / architecture mismatch | The wheel lacks an image for that operation, and the adapter may not implement a compatible path. | Check whether the operation is covered by the evidence; otherwise it remains unsupported. |
-| CPU fallback exceeds 64 MiB or needs autograd | The fallback safety/behavior boundary was reached. | Reduce the operation's input size or use a supported native path; training/autograd is not implemented. |
+| CPU fallback exceeds 64 MiB | The fallback safety/behavior boundary was reached. | Reduce the operation's input size or use a supported native path. Other than the documented training slice, autograd may remain unsupported. |
 
 Use `cuda-legacy help`, `cuda-legacy help <command>`, or `<command> --help` for command syntax. Report bugs with the command, environment versions, exact failing operation, and a small reproducer; do not include model weights, secrets, or private input data.

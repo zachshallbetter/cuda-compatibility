@@ -42,6 +42,25 @@ def _load_bridge() -> tuple[ctypes.CDLL, bytes]:
         ctypes.c_size_t,
     ]
     bridge.cuda_compat_launch_vector_add_f32.restype = ctypes.c_int
+    bridge.cuda_compat_launch_vector_add_f16.argtypes = [
+        ctypes.c_char_p,
+        ctypes.c_uint64,
+        ctypes.c_uint64,
+        ctypes.c_uint64,
+        ctypes.c_uint64,
+        ctypes.c_size_t,
+    ]
+    bridge.cuda_compat_launch_vector_add_f16.restype = ctypes.c_int
+    bridge.cuda_compat_launch_vector_add_scaled_f32.argtypes = [
+        ctypes.c_char_p,
+        ctypes.c_uint64,
+        ctypes.c_uint64,
+        ctypes.c_uint64,
+        ctypes.c_uint64,
+        ctypes.c_float,
+        ctypes.c_size_t,
+    ]
+    bridge.cuda_compat_launch_vector_add_scaled_f32.restype = ctypes.c_int
     bridge.cuda_compat_launch_arange_i64.argtypes = [
         ctypes.c_char_p,
         ctypes.c_uint64,
@@ -89,6 +108,10 @@ def _load_bridge() -> tuple[ctypes.CDLL, bytes]:
         ctypes.c_uint64,
         ctypes.c_uint64,
         ctypes.c_uint64,
+        ctypes.c_uint64,
+        ctypes.c_uint64,
+        ctypes.c_uint64,
+        ctypes.c_uint64,
         ctypes.c_size_t,
     ]
     bridge.cuda_compat_launch_matrix_multiply_f32.restype = ctypes.c_int
@@ -114,9 +137,50 @@ def _validate_pair(left: torch.Tensor, right: torch.Tensor, operation: str) -> N
         raise NotImplementedError(f"Maxwell {operation} supports only dense strided tensors")
 
 
+def _record_stream(tensors: tuple[torch.Tensor, ...], stream: Any) -> None:
+    for tensor in tensors:
+        tensor.record_stream(stream)
+
+
 def _add(self: torch.Tensor, other: torch.Tensor, *, alpha: int | float = 1) -> torch.Tensor:
     global _bridge
+    if self.requires_grad or other.requires_grad:
+        return _cpu_fallback(torch.ops.aten.add.Tensor, "add")(self, other, alpha=alpha)
     _validate_pair(self, other, "addition")
+
+    if (
+        self.dtype == torch.float16
+        and other.dtype == torch.float16
+        and self.shape == other.shape
+        and self.is_contiguous()
+        and other.is_contiguous()
+        and alpha == 1
+    ):
+        element_count = self.numel()
+        if element_count > 1048576:
+            raise NotImplementedError("float16 Maxwell addition is limited to 1,048,576 elements")
+        output = torch.empty_like(self, memory_format=torch.contiguous_format)
+        if element_count == 0:
+            _dispatch_state.last_path = "llvm-sm52-f16-empty"
+            return output
+        if _bridge is None:
+            _bridge, ptx_path = _load_bridge()
+        else:
+            ptx_path = os.fsencode(os.environ["CUDA_COMPAT_VECTOR_ADD_PTX"])
+        current_stream = torch.cuda.current_stream(self.device)
+        _record_stream((self, other), current_stream)
+        result = _bridge.cuda_compat_launch_vector_add_f16(
+            ptx_path,
+            self.data_ptr(),
+            other.data_ptr(),
+            output.data_ptr(),
+            element_count,
+            current_stream.cuda_stream,
+        )
+        if result != 0:
+            raise RuntimeError(f"CUDA Driver API Maxwell float16 add failed with CUresult={result}")
+        _dispatch_state.last_path = "llvm-sm52-f16-add"
+        return output
 
     if (
         self.dtype == torch.float32
@@ -137,7 +201,9 @@ def _add(self: torch.Tensor, other: torch.Tensor, *, alpha: int | float = 1) -> 
             _bridge, ptx_path = _load_bridge()
         else:
             ptx_path = os.fsencode(os.environ["CUDA_COMPAT_VECTOR_ADD_PTX"])
-        stream = torch.cuda.current_stream(self.device).cuda_stream
+        current_stream = torch.cuda.current_stream(self.device)
+        _record_stream((self, other), current_stream)
+        stream = current_stream.cuda_stream
         result = _bridge.cuda_compat_launch_vector_add_f32(
             ptx_path,
             self.data_ptr(),
@@ -170,7 +236,9 @@ def _add(self: torch.Tensor, other: torch.Tensor, *, alpha: int | float = 1) -> 
         else:
             ptx_path = os.fsencode(os.environ["CUDA_COMPAT_VECTOR_ADD_PTX"])
         output = torch.empty_like(self, memory_format=torch.contiguous_format)
-        stream = torch.cuda.current_stream(self.device).cuda_stream
+        current_stream = torch.cuda.current_stream(self.device)
+        _record_stream((self, other), current_stream)
+        stream = current_stream.cuda_stream
         result = _bridge.cuda_compat_launch_vector_add(
             ptx_path,
             self.data_ptr(),
@@ -196,14 +264,72 @@ def _add(self: torch.Tensor, other: torch.Tensor, *, alpha: int | float = 1) -> 
         result = torch.add(self.cpu(), other.cpu(), alpha=alpha)
         return result.to(self.device)
 
-    if not torch.is_grad_enabled():
-        return _cpu_fallback(torch.ops.aten.add.Tensor, "add")(
-            self, other, alpha=alpha
+    return _cpu_fallback(torch.ops.aten.add.Tensor, "add")(
+        self, other, alpha=alpha
+    )
+
+
+def _add_inplace(
+    self: torch.Tensor, other: torch.Tensor, *, alpha: int | float = 1
+) -> torch.Tensor:
+    if not isinstance(other, torch.Tensor):
+        raise NotImplementedError("Maxwell in-place addition does not support scalar operands")
+    if torch.is_grad_enabled() and (self.requires_grad or other.requires_grad):
+        raise NotImplementedError(
+            "Maxwell in-place addition does not implement autograd; optimizer updates require no_grad"
         )
-    raise NotImplementedError("Maxwell addition fallback requires inference mode")
+    if (
+        not self.is_cuda
+        or not other.is_cuda
+        or self.device != other.device
+        or self.dtype != torch.float32
+        or other.dtype != torch.float32
+        or self.shape != other.shape
+        or not self.is_contiguous()
+        or not other.is_contiguous()
+    ):
+        raise NotImplementedError(
+            "Maxwell in-place addition supports same-shape contiguous float32 CUDA tensors"
+        )
+    if self.numel() > 1048576:
+        raise NotImplementedError("Maxwell in-place addition is limited to 1,048,576 elements")
+    left_start = self.data_ptr()
+    right_start = other.data_ptr()
+    byte_count = self.numel() * self.element_size()
+    if (
+        left_start != right_start
+        and left_start < right_start + byte_count
+        and right_start < left_start + byte_count
+    ):
+        raise NotImplementedError("Maxwell in-place addition rejects partially overlapping tensors")
+    if self.numel() == 0:
+        _dispatch_state.last_path = "llvm-sm52-f32-add-inplace-empty"
+        return self
+    global _bridge
+    if _bridge is None:
+        _bridge, ptx_path = _load_bridge()
+    else:
+        ptx_path = os.fsencode(os.environ["CUDA_COMPAT_VECTOR_ADD_PTX"])
+    current_stream = torch.cuda.current_stream(self.device)
+    _record_stream((self, other), current_stream)
+    result = _bridge.cuda_compat_launch_vector_add_scaled_f32(
+        ptx_path,
+        self.data_ptr(),
+        other.data_ptr(),
+        self.data_ptr(),
+        self.numel(),
+        float(alpha),
+        current_stream.cuda_stream,
+    )
+    if result != 0:
+        raise RuntimeError(f"CUDA Driver API Maxwell in-place float32 add failed with CUresult={result}")
+    _dispatch_state.last_path = "llvm-sm52-f32-add-inplace"
+    return self
 
 
 def _mm(self: torch.Tensor, other: torch.Tensor) -> torch.Tensor:
+    if self.requires_grad or other.requires_grad:
+        return _cpu_fallback(torch.ops.aten.mm.default, "mm")(self, other)
     _validate_pair(self, other, "matrix multiplication")
     if self.dtype != torch.float32 or other.dtype != torch.float32:
         raise NotImplementedError("Maxwell matrix multiplication supports float32 tensors only")
@@ -211,8 +337,10 @@ def _mm(self: torch.Tensor, other: torch.Tensor) -> torch.Tensor:
         raise NotImplementedError("Maxwell matrix multiplication requires two-dimensional tensors")
     if self.shape[1] != other.shape[0]:
         raise RuntimeError("matrix multiplication shapes do not align")
-    if not self.is_contiguous() or not other.is_contiguous():
-        raise NotImplementedError("Maxwell matrix multiplication requires contiguous tensors")
+    left_strides = self.stride()
+    right_strides = other.stride()
+    if any(stride < 0 for stride in (*left_strides, *right_strides)):
+        raise NotImplementedError("Maxwell matrix multiplication does not support negative strides")
 
     rows, inner = self.shape
     columns = other.shape[1]
@@ -234,7 +362,9 @@ def _mm(self: torch.Tensor, other: torch.Tensor) -> torch.Tensor:
         _bridge, ptx_path = _load_bridge()
     else:
         ptx_path = os.fsencode(os.environ["CUDA_COMPAT_VECTOR_ADD_PTX"])
-    stream = torch.cuda.current_stream(self.device).cuda_stream
+    current_stream = torch.cuda.current_stream(self.device)
+    _record_stream((self, other), current_stream)
+    stream = current_stream.cuda_stream
     result = _bridge.cuda_compat_launch_matrix_multiply_f32(
         ptx_path,
         self.data_ptr(),
@@ -243,6 +373,10 @@ def _mm(self: torch.Tensor, other: torch.Tensor) -> torch.Tensor:
         rows,
         columns,
         inner,
+        left_strides[0],
+        left_strides[1],
+        right_strides[0],
+        right_strides[1],
         stream,
     )
     if result != 0:
@@ -296,8 +430,10 @@ def _embedding(
     scale_grad_by_freq: bool = False,
     sparse: bool = False,
 ) -> torch.Tensor:
-    if torch.is_grad_enabled():
-        raise NotImplementedError("Maxwell embedding supports inference without autograd only")
+    if weight.requires_grad:
+        return _cpu_fallback(torch.ops.aten.embedding.default, "embedding")(
+            weight, indices, padding_idx, scale_grad_by_freq, sparse
+        )
     if (
         not weight.is_cuda
         or not indices.is_cuda
@@ -356,6 +492,7 @@ def _embedding(
         raise IndexError("embedding index is out of range")
 
     stream = current_stream.cuda_stream
+    _record_stream((weight, indices), current_stream)
     result = _bridge.cuda_compat_launch_embedding_f32(
         ptx_path,
         weight.data_ptr(),
@@ -384,8 +521,10 @@ def _layer_norm(
     cudnn_enable: bool = True,
 ) -> torch.Tensor:
     del cudnn_enable
-    if torch.is_grad_enabled():
-        raise NotImplementedError("Maxwell layer normalization supports inference without autograd only")
+    if input.requires_grad or (weight is not None and weight.requires_grad) or (bias is not None and bias.requires_grad):
+        return _cpu_fallback(torch.ops.aten.layer_norm.default, "layer_norm")(
+            input, normalized_shape, weight, bias, eps, False
+        )
     if (
         not input.is_cuda
         or input.dtype != torch.float32
@@ -423,7 +562,9 @@ def _layer_norm(
         _bridge, ptx_path = _load_bridge()
     else:
         ptx_path = os.fsencode(os.environ["CUDA_COMPAT_VECTOR_ADD_PTX"])
-    stream = torch.cuda.current_stream(input.device).cuda_stream
+    current_stream = torch.cuda.current_stream(input.device)
+    _record_stream((input, weight, bias), current_stream)
+    stream = current_stream.cuda_stream
     result = _bridge.cuda_compat_launch_layer_norm_f32(
         ptx_path,
         input.data_ptr(),
@@ -445,7 +586,7 @@ def _relu(self: torch.Tensor) -> torch.Tensor:
     if not self.is_cuda:
         raise NotImplementedError("Maxwell ReLU requires a CUDA tensor")
     if self.requires_grad:
-        raise NotImplementedError("autograd is not implemented for Maxwell ReLU")
+        return _cpu_fallback(torch.ops.aten.relu.default, "relu")(self)
     if self.layout != torch.strided or not self.is_contiguous():
         raise NotImplementedError("Maxwell ReLU requires a contiguous dense tensor")
     if self.dtype != torch.float32:
@@ -462,7 +603,9 @@ def _relu(self: torch.Tensor) -> torch.Tensor:
         _bridge, ptx_path = _load_bridge()
     else:
         ptx_path = os.fsencode(os.environ["CUDA_COMPAT_VECTOR_ADD_PTX"])
-    stream = torch.cuda.current_stream(self.device).cuda_stream
+    current_stream = torch.cuda.current_stream(self.device)
+    _record_stream((self,), current_stream)
+    stream = current_stream.cuda_stream
     result = _bridge.cuda_compat_launch_relu_f32(
         ptx_path, self.data_ptr(), output.data_ptr(), self.numel(), stream
     )
@@ -473,6 +616,9 @@ def _relu(self: torch.Tensor) -> torch.Tensor:
 
 
 def _cuda_tensor_to_cpu(tensor: torch.Tensor) -> torch.Tensor:
+    if torch.is_grad_enabled() and tensor.requires_grad:
+        _dispatch_state.last_path = "differentiable-cuda-to-cpu-copy"
+        return tensor.to("cpu")
     if tensor.numel() == 0 or tensor.is_contiguous():
         return tensor.to("cpu")
     strides = tuple(tensor.stride())
@@ -513,19 +659,42 @@ def _contiguous(
     if memory_format != torch.contiguous_format:
         raise NotImplementedError("Maxwell contiguous fallback supports contiguous_format only")
     if input.is_contiguous(memory_format=memory_format):
+        _dispatch_state.last_path = "pytorch-contiguous-alias"
         return input
-    return torch.ops.aten.contiguous.default(
+    result = torch.ops.aten.contiguous.default(
         _cuda_tensor_to_cpu(input), memory_format=memory_format
     ).to(input.device)
+    _dispatch_state.last_path = "cpu-fallback-contiguous"
+    return result
+
+
+def _tensor_inputs(value: Any) -> list[torch.Tensor]:
+    if isinstance(value, torch.Tensor):
+        return [value]
+    if isinstance(value, (tuple, list)):
+        return [tensor for item in value for tensor in _tensor_inputs(item)]
+    if isinstance(value, Mapping):
+        return [tensor for item in value.values() for tensor in _tensor_inputs(item)]
+    return []
 
 
 def _cpu_fallback(operation: Callable[..., Any], name: str) -> Callable[..., Any]:
     def run(*args: Any, **kwargs: Any) -> Any:
-        tensors: list[torch.Tensor] = []
+        tensors = _tensor_inputs((args, kwargs))
+        cuda_tensors = [tensor for tensor in tensors if tensor.is_cuda]
+        devices = {tensor.device for tensor in tensors}
+        if len(devices) != 1 or not cuda_tensors:
+            raise NotImplementedError(
+                f"Maxwell CPU fallback for {name} requires tensors from one CUDA device"
+            )
+        transfer_bytes = sum(_cuda_tensor_transfer_bytes(tensor) for tensor in cuda_tensors)
+        if transfer_bytes > _CPU_FALLBACK_MAX_BYTES:
+            raise NotImplementedError(
+                f"Maxwell CPU fallback for {name} is limited to 64 MiB of CUDA inputs"
+            )
 
         def move_to_cpu(value: Any) -> Any:
             if isinstance(value, torch.Tensor):
-                tensors.append(value)
                 return _cuda_tensor_to_cpu(value) if value.is_cuda else value
             if isinstance(value, tuple):
                 return tuple(move_to_cpu(item) for item in value)
@@ -537,22 +706,17 @@ def _cpu_fallback(operation: Callable[..., Any], name: str) -> Callable[..., Any
 
         cpu_args = move_to_cpu(args)
         cpu_kwargs = move_to_cpu(kwargs)
-        devices = {tensor.device for tensor in tensors if tensor.is_cuda}
-        transfer_bytes = sum(
-            tensor.numel() * tensor.element_size()
-            for tensor in tensors
-            if tensor.is_cuda
-        )
-        if len(devices) != 1 or torch.is_grad_enabled():
-            raise NotImplementedError(
-                f"Maxwell CPU fallback for {name} requires one CUDA device and inference tensors"
-            )
-        if transfer_bytes > _CPU_FALLBACK_MAX_BYTES:
-            raise NotImplementedError(
-                f"Maxwell CPU fallback for {name} is limited to 64 MiB of CUDA inputs"
-            )
         device = next(iter(devices))
-        cpu_result = operation(*cpu_args, **cpu_kwargs)
+        if name == "aten::linear_backward":
+            input_tensor, grad_output, weight, output_mask = cpu_args
+            input_matrix = input_tensor.reshape(-1, input_tensor.shape[-1])
+            grad_matrix = grad_output.reshape(-1, grad_output.shape[-1])
+            grad_input = grad_matrix.matmul(weight).reshape_as(input_tensor) if output_mask[0] else None
+            grad_weight = grad_matrix.transpose(0, 1).matmul(input_matrix) if output_mask[1] else None
+            grad_bias = grad_matrix.sum(dim=0) if output_mask[2] else None
+            cpu_result = (grad_input, grad_weight, grad_bias)
+        else:
+            cpu_result = operation(*cpu_args, **cpu_kwargs)
 
         def result_bytes(value: Any) -> int:
             if isinstance(value, torch.Tensor):
@@ -586,18 +750,30 @@ def _cpu_fallback(operation: Callable[..., Any], name: str) -> Callable[..., Any
     return run
 
 
+def _cuda_tensor_transfer_bytes(tensor: torch.Tensor) -> int:
+    if tensor.layout != torch.strided:
+        raise NotImplementedError("Maxwell CPU fallback supports only dense strided tensors")
+    if tensor.numel() == 0:
+        return 0
+    strides = tuple(tensor.stride())
+    if any(stride < 0 for stride in strides):
+        raise NotImplementedError("Maxwell CPU fallback does not support negative strides")
+    span_count = (
+        tensor.numel()
+        if tensor.is_contiguous()
+        else sum((size - 1) * stride for size, stride in zip(tensor.shape, strides, strict=True)) + 1
+    )
+    return span_count * tensor.element_size()
+
+
 def _cuda_tensors(value: Any) -> list[torch.Tensor]:
-    if isinstance(value, torch.Tensor):
-        return [value] if value.is_cuda else []
-    if isinstance(value, (tuple, list)):
-        return [tensor for item in value for tensor in _cuda_tensors(item)]
-    if isinstance(value, Mapping):
-        return [tensor for item in value.values() for tensor in _cuda_tensors(item)]
-    return []
+    return [tensor for tensor in _tensor_inputs(value) if tensor.is_cuda]
 
 
 def _is_architecture_failure(error: Exception) -> bool:
     message = str(error).lower()
+    if "could not run 'aten::" in message and "arguments from the 'cuda' backend" in message:
+        return True
     return any(
         marker in message
         for marker in (
@@ -628,10 +804,6 @@ class _MaxwellInferenceFallback(TorchDispatchMode):
                 raise NotImplementedError(
                     f"CUDA operator {operation} has no Maxwell image and its aliasing semantics cannot use CPU fallback"
                 ) from exc
-            if torch.is_grad_enabled():
-                raise NotImplementedError(
-                    f"CUDA operator {operation} has no Maxwell image; CPU fallback requires inference mode"
-                ) from exc
             name = schema.name if schema is not None else str(operation)
             return _cpu_fallback(operation, name)(*args, **kwargs)
 
@@ -648,6 +820,7 @@ def install() -> None:
         raise RuntimeError(f"adapter requires only sm_52 devices; observed {capabilities}")
     _library = torch.library.Library("aten", "IMPL", "CUDA")
     _library.impl("add.Tensor", _add)
+    _library.impl("add_.Tensor", _add_inplace)
     _library.impl("arange", _arange)
     _library.impl("embedding", _embedding)
     _library.impl("layer_norm", _layer_norm)

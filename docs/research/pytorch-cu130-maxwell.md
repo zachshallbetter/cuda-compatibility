@@ -75,6 +75,29 @@ One owner-supplied transformer checkpoint was exercised with the official PyTorc
 
 This was a one-off integration experiment, not a product feature or general PyTorch support claim. The model source, checkpoint, tokenizer, configuration, artifact digests, and local-only probe are excluded from the public source snapshot. Per-card validation, training/autograd, and broader workload coverage remain unverified.
 
+## CLC-025: stream, dtype, and training expansion
+
+The updated package was rebuilt and exercised through the packaged launcher on broker-selected GPU 2 and then on physical GPU 1, both GTX TITAN X GM200 (`sm_52`), with the official `torch 2.14.0+cu130` wheel and LLVM 23.1.4. Stock-wheel matrix multiplication still fails at `cublasCreate` with `CUBLAS_STATUS_ARCH_MISMATCH`; stock ReLU still reports no kernel image. These are separate observed library/kernel gaps.
+
+New native cases passed CPU comparisons on GPUs 1 and 2: contiguous float16 addition including NaN, infinities, signed zero, and a rounding tie (exact equality); transposed/strided float32 matrix multiplication; and scaled contiguous float32 in-place addition. Float16 addition is capped at 1,048,576 values. Matrix multiplication remains capped at 256 per dimension and 16,777,216 multiply-accumulate steps. In-place float32 addition is capped at 1,048,576 values. Existing cross-stream allocator-churn probes passed for float16 add, float32/int32 add, float32 matrix multiplication, ReLU, and layer normalization. Layer normalization's larger positive-offset case had maximum absolute error `3.34e-5` and uses `atol=5e-5`; its ordinary case remains `atol=1e-6`.
+
+First-order gradients and an optimizer step passed for a 2×2 float32 `linear → ReLU → sum` model. Seven SGD updates with `foreach=False` matched CPU reference gradients and final parameters. The registered CPU fallback preserves the graph through framework host/device copies, and a custom CPU implementation supplies the missing `aten::linear_backward` behavior; the final scaled parameter update ran through the `sm_52` float32 `add_` kernel. The seven measured end-to-end steps had 2.360 ms median wall latency and 67,180,032 bytes peak allocated on GPU 2; a repeat on GPU 1 measured 7.296 ms median with the same peak allocation. Timing includes fallback transfers, CPU computation, and explicit synchronization; it is a tiny diagnostic workload, not a performance claim. Each fallback remains capped at 64 MiB of inputs and 64 MiB of outputs per operation.
+
+### Runtime and library boundary inventory
+
+| Observed path | Evidence | Current handling / boundary |
+|---|---|---|
+| `cudaRuntimeGetVersion` | Launcher facade probe returns `13000` in the child process | One interposed query; other runtime calls are forwarded, not broadly translated. |
+| `cuCtxGetCurrent`, `cuModuleLoad`, `cuModuleGetFunction`, `cuLaunchKernel` | Native bridge implementation and successful `sm_52` kernel probes | Used to load cached LLVM PTX and launch on PyTorch's current stream. |
+| `cuMemcpyDtoH` | Bounded fallback and embedding-index validation code | Explicit driver copy; some differentiable paths use PyTorch's device transfers instead. |
+| cuBLAS initialization (`cublasCreate`) | Stock official wheel reports `CUBLAS_STATUS_ARCH_MISMATCH` on `mm` | Bypassed for the registered bounded float32 matrix kernel; other cuBLAS operations remain unverified. |
+| cuDNN engine selection | Earlier convolution probe reports no engine for its CNN case | That convolution uses CPU fallback; general cuDNN compatibility is not implemented. |
+| CUDA wheel and driver library files | `experiments/pytorch-cu130/library_path_probe.py` inspected `/proc/self/maps` after bounded matrix and convolution calls | Observed wheel paths under `site-packages/nvidia/cu13/lib/` for `libcudart.so.13`, `libcublas.so.13`, `libcublasLt.so.13`, and `libnvrtc.so.13`; under `site-packages/nvidia/cudnn/lib/` for cuDNN 9 libraries; under `site-packages/nvidia/nccl/lib/` for `libnccl.so.2`; plus `torch/lib/libtorch_cuda.so`. The installed driver mapped as `/usr/lib/x86_64-linux-gnu/libcuda.so.580.178.04`. |
+| Missing CUDA kernel image | Stock ReLU failure and fallback-dispatch probes | Replaced only for registered kernels or eligible bounded CPU fallback cases. |
+| NCCL, Triton, arbitrary runtime APIs | No supporting trace or workload evidence | Not mapped or claimed compatible. |
+
+This is an implementation-boundary and loaded-library inventory, not a complete dynamic API call trace; a mapped library does not prove that every symbol or code path works. Paths above are from the task-scoped Titan Python 3.10 environment and may differ on user machines. CLC-025 float16, strided-matrix, cross-stream lifetime, and small training probes passed on GPUs 1 and 2; the process-map library inventory ran on GPU 2 only. GPU 0 was not tested in this increment because its free memory was below the 700 MiB test floor. Other optimizers, foreach updates, higher-order gradients, AMP, arbitrary autograd graphs, broad model training, and performance parity remain unverified.
+
 ## Convolutional workload probe
 
 A second model family was exercised with the official CUDA 13 wheel on broker-selected GPU 2: a deterministic `Conv2d → ReLU → MaxPool2d → Conv2d → ReLU → AdaptiveAvgPool2d → Flatten → Linear` classifier for input shape `2×3×32×32`. The stock cuDNN path failed with `GET was unable to find an engine to execute this computation`. After adding that exact cuDNN no-engine phrase to the architecture-failure classifier, the packaged launcher retried the operation on CPU; the final `(2, 5)` output matched the CPU reference at `rtol=1e-4, atol=1e-5`. This establishes one bounded inference case, not general cuDNN or convolution support; its convolution operations execute on CPU under the 64 MiB fallback limit.

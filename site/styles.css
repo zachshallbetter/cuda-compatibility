@@ -10,8 +10,8 @@
   --mint:#a5f2c4;
   --green:#65d99a;
   --amber:#ffcc72;
-  --mono:"DM Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
-  --sans:Manrope,Inter,ui-sans-serif,system-ui,sans-serif
+  --mono:ui-monospace,SFMono-Regular,Menlo,monospace;
+  --sans:ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif
 }
 * {
   box-sizing:border-box
@@ -886,14 +886,10 @@ td small {
   max-width:1136px;
   margin:0 auto 25px;
   display:grid;
-  grid-template-columns:1fr 2fr auto;
+  grid-template-columns:minmax(0,1fr) auto;
   align-items:center;
   gap:25px;
   padding:23px 0
-}
-.owner-rule {
-  height:1px;
-  background:#2a353d
 }
 .owner-copy .eyebrow {
   margin-bottom:5px
@@ -1000,10 +996,10 @@ td small {
   font-size:11px
 }
 .footer {
-  display:flex;
+  display:grid;
+  grid-template-columns:auto minmax(0,1fr) auto auto;
   align-items:center;
-  justify-content:space-between;
-  gap:18px;
+  gap:18px 28px;
   padding:20px max(calc((100vw - 1200px)/2),36px);
   border-top:1px solid #27323a;
   color:#78868b;
@@ -1015,6 +1011,15 @@ td small {
 }
 .footer>a:last-child span {
   color:var(--mint)
+}
+@media(max-width:1000px) {
+  .footer {
+    grid-template-columns:auto minmax(0,1fr) auto;
+  }
+  .footer>span {
+    grid-column:1/-1;
+    grid-row:2;
+  }
 }
 :focus-visible {
   outline:2px solid var(--mint);
@@ -1051,7 +1056,7 @@ td small {
 }
 .owner-section {
   margin-inline:24px;
-  grid-template-columns:1fr 2fr auto
+  grid-template-columns:minmax(0,1fr) auto
 }
 .roadmap-grid {
   grid-template-columns:1fr 1fr
@@ -1209,15 +1214,15 @@ td {
   grid-template-columns:1fr auto;
   gap:13px
 }
-.owner-rule {
-  display:none
-}
 .owner-copy {
   grid-column:1/-1
 }
 .owner-links {
-  grid-column:2;
-  grid-row:2
+  grid-column:1/-1;
+  grid-row:auto;
+  display:flex;
+  flex-wrap:wrap;
+  gap:14px
 }
 .sources {
   padding-top:8px;
@@ -1228,7 +1233,7 @@ td {
 }
 .footer {
   align-items:flex-start;
-  flex-wrap:wrap;
+  grid-template-columns:minmax(0,1fr) auto;
   padding:19px 20px
 }
 .footer>span {

@@ -15,6 +15,7 @@ struct CachedKernels {
   CUmodule module;
   CUfunction vector_add_i32;
   CUfunction vector_add_f32;
+  CUfunction vector_add_f16;
   CUfunction arange_i64;
   CUfunction embedding_f32;
   CUfunction matrix_multiply_f32;
@@ -32,13 +33,16 @@ CUresult find_or_load_kernels(CUcontext context, const char* ptx_path,
                               CUfunction* embedding_f32,
                               CUfunction* matrix_multiply_f32,
                               CUfunction* relu_f32,
-                              CUfunction* layer_norm_f32) {
+                              CUfunction* layer_norm_f32,
+                              CUfunction* vector_add_f16 = nullptr) {
   std::lock_guard<std::mutex> guard(cache_mutex);
   auto found = kernels_by_context.find(context);
   if (found != kernels_by_context.end()) {
     if (found->second.ptx_path != ptx_path) return CUDA_ERROR_INVALID_VALUE;
     *vector_add_i32 = found->second.vector_add_i32;
     *vector_add_f32 = found->second.vector_add_f32;
+    if (vector_add_f16 != nullptr)
+      *vector_add_f16 = found->second.vector_add_f16;
     *arange_i64 = found->second.arange_i64;
     *embedding_f32 = found->second.embedding_f32;
     *matrix_multiply_f32 = found->second.matrix_multiply_f32;
@@ -51,13 +55,16 @@ CUresult find_or_load_kernels(CUcontext context, const char* ptx_path,
   CUresult result = cuModuleLoad(&module, ptx_path);
   if (result != CUDA_SUCCESS) return result;
 
-  CachedKernels loaded{std::string(), module, nullptr, nullptr, nullptr,
-                       nullptr, nullptr, nullptr, nullptr};
+  CachedKernels loaded{};
+  loaded.module = module;
   result = cuModuleGetFunction(&loaded.vector_add_i32, module,
                                "compat_vector_add_i32");
   if (result == CUDA_SUCCESS)
     result = cuModuleGetFunction(&loaded.vector_add_f32, module,
                                  "compat_vector_add_f32");
+  if (result == CUDA_SUCCESS)
+    result = cuModuleGetFunction(&loaded.vector_add_f16, module,
+                                 "compat_vector_add_f16");
   if (result == CUDA_SUCCESS)
     result = cuModuleGetFunction(&loaded.arange_i64, module, "compat_arange_i64");
   if (result == CUDA_SUCCESS)
@@ -83,16 +90,19 @@ CUresult find_or_load_kernels(CUcontext context, const char* ptx_path,
         return CUDA_ERROR_INVALID_VALUE;
       *vector_add_i32 = inserted.first->second.vector_add_i32;
       *vector_add_f32 = inserted.first->second.vector_add_f32;
+      if (vector_add_f16 != nullptr)
+        *vector_add_f16 = inserted.first->second.vector_add_f16;
       *arange_i64 = inserted.first->second.arange_i64;
       *embedding_f32 = inserted.first->second.embedding_f32;
       *matrix_multiply_f32 = inserted.first->second.matrix_multiply_f32;
       *relu_f32 = inserted.first->second.relu_f32;
-    *layer_norm_f32 = inserted.first->second.layer_norm_f32;
       *layer_norm_f32 = inserted.first->second.layer_norm_f32;
       return CUDA_SUCCESS;
     }
     *vector_add_i32 = inserted.first->second.vector_add_i32;
     *vector_add_f32 = inserted.first->second.vector_add_f32;
+    if (vector_add_f16 != nullptr)
+      *vector_add_f16 = inserted.first->second.vector_add_f16;
     *arange_i64 = inserted.first->second.arange_i64;
     *embedding_f32 = inserted.first->second.embedding_f32;
     *matrix_multiply_f32 = inserted.first->second.matrix_multiply_f32;
@@ -114,7 +124,8 @@ CUresult current_kernels(const char* ptx_path, CUfunction* vector_add_i32,
                          CUfunction* embedding_f32,
                          CUfunction* matrix_multiply_f32,
                          CUfunction* relu_f32,
-                         CUfunction* layer_norm_f32) {
+                         CUfunction* layer_norm_f32,
+                         CUfunction* vector_add_f16 = nullptr) {
   if (ptx_path == nullptr || vector_add_i32 == nullptr || vector_add_f32 == nullptr ||
       arange_i64 == nullptr ||
       embedding_f32 == nullptr ||
@@ -129,7 +140,8 @@ CUresult current_kernels(const char* ptx_path, CUfunction* vector_add_i32,
     return find_or_load_kernels(context, ptx_path, vector_add_i32, vector_add_f32,
                                 arange_i64,
                                 embedding_f32,
-                                matrix_multiply_f32, relu_f32, layer_norm_f32);
+                                matrix_multiply_f32, relu_f32, layer_norm_f32,
+                                vector_add_f16);
   } catch (const std::bad_alloc&) {
     return CUDA_ERROR_OUT_OF_MEMORY;
   } catch (...) {
@@ -175,6 +187,38 @@ extern "C" int cuda_compat_launch_vector_add(
                         0, stream, arguments, nullptr);
 }
 
+extern "C" int cuda_compat_launch_vector_add_scaled_f32(
+    const char* ptx_path, std::uint64_t left_pointer,
+    std::uint64_t right_pointer, std::uint64_t output_pointer,
+    std::uint64_t count, float alpha, std::uintptr_t stream_pointer) {
+  if (ptx_path == nullptr || count > 1048576ULL)
+    return CUDA_ERROR_INVALID_VALUE;
+  if (count == 0) return CUDA_SUCCESS;
+  if (left_pointer == 0 || right_pointer == 0 || output_pointer == 0)
+    return CUDA_ERROR_INVALID_VALUE;
+  CUfunction vector_add_i32 = nullptr;
+  CUfunction vector_add_f32 = nullptr;
+  CUfunction arange_i64 = nullptr;
+  CUfunction embedding_f32 = nullptr;
+  CUfunction matrix_multiply_f32 = nullptr;
+  CUfunction relu_f32 = nullptr;
+  CUfunction layer_norm_f32 = nullptr;
+  CUresult result = current_kernels(ptx_path, &vector_add_i32, &vector_add_f32,
+                                    &arange_i64, &embedding_f32,
+                                    &matrix_multiply_f32, &relu_f32,
+                                    &layer_norm_f32);
+  if (result != CUDA_SUCCESS) return result;
+  CUdeviceptr left = static_cast<CUdeviceptr>(left_pointer);
+  CUdeviceptr right = static_cast<CUdeviceptr>(right_pointer);
+  CUdeviceptr output = static_cast<CUdeviceptr>(output_pointer);
+  void* arguments[] = {&left, &right, &output, &count, &alpha};
+  constexpr unsigned int threads = 256;
+  const unsigned int blocks = static_cast<unsigned int>((count + threads - 1) / threads);
+  auto stream = reinterpret_cast<CUstream>(stream_pointer);
+  return cuLaunchKernel(vector_add_f32, blocks, 1, 1, threads, 1, 1, 0,
+                        stream, arguments, nullptr);
+}
+
 extern "C" int cuda_compat_launch_vector_add_f32(
     const char* ptx_path, std::uint64_t left_pointer,
     std::uint64_t right_pointer, std::uint64_t output_pointer,
@@ -201,13 +245,50 @@ extern "C" int cuda_compat_launch_vector_add_f32(
   CUdeviceptr right = static_cast<CUdeviceptr>(right_pointer);
   CUdeviceptr output = static_cast<CUdeviceptr>(output_pointer);
   std::uint64_t kernel_count = count;
-  void* arguments[] = {&left, &right, &output, &kernel_count};
+  float alpha = 1.0f;
+  void* arguments[] = {&left, &right, &output, &kernel_count, &alpha};
   constexpr unsigned int threads = 256;
   const unsigned int blocks =
       static_cast<unsigned int>((count + threads - 1) / threads);
   auto stream = reinterpret_cast<CUstream>(stream_pointer);
   return cuLaunchKernel(vector_add_f32, blocks, 1, 1, threads, 1, 1, 0, stream,
                         arguments, nullptr);
+}
+
+extern "C" int cuda_compat_launch_vector_add_f16(
+    const char* ptx_path, std::uint64_t left_pointer,
+    std::uint64_t right_pointer, std::uint64_t output_pointer,
+    std::uint64_t count, std::uintptr_t stream_pointer) {
+  if (ptx_path == nullptr || count > 1048576ULL)
+    return CUDA_ERROR_INVALID_VALUE;
+  if (count == 0) return CUDA_SUCCESS;
+  if (left_pointer == 0 || right_pointer == 0 || output_pointer == 0)
+    return CUDA_ERROR_INVALID_VALUE;
+
+  CUfunction vector_add_i32 = nullptr;
+  CUfunction vector_add_f32 = nullptr;
+  CUfunction arange_i64 = nullptr;
+  CUfunction embedding_f32 = nullptr;
+  CUfunction matrix_multiply_f32 = nullptr;
+  CUfunction relu_f32 = nullptr;
+  CUfunction layer_norm_f32 = nullptr;
+  CUfunction vector_add_f16 = nullptr;
+  CUresult result = current_kernels(
+      ptx_path, &vector_add_i32, &vector_add_f32, &arange_i64, &embedding_f32,
+      &matrix_multiply_f32, &relu_f32, &layer_norm_f32, &vector_add_f16);
+  if (result != CUDA_SUCCESS) return result;
+
+  CUdeviceptr left = static_cast<CUdeviceptr>(left_pointer);
+  CUdeviceptr right = static_cast<CUdeviceptr>(right_pointer);
+  CUdeviceptr output = static_cast<CUdeviceptr>(output_pointer);
+  std::uint64_t kernel_count = count;
+  void* arguments[] = {&left, &right, &output, &kernel_count};
+  constexpr unsigned int threads = 256;
+  const unsigned int blocks =
+      static_cast<unsigned int>((count + threads - 1) / threads);
+  auto stream = reinterpret_cast<CUstream>(stream_pointer);
+  return cuLaunchKernel(vector_add_f16, blocks, 1, 1, threads, 1, 1,
+                        0, stream, arguments, nullptr);
 }
 
 extern "C" int cuda_compat_launch_arange_i64(
@@ -308,6 +389,8 @@ extern "C" int cuda_compat_launch_matrix_multiply_f32(
     const char* ptx_path, std::uint64_t left_pointer,
     std::uint64_t right_pointer, std::uint64_t output_pointer,
     std::uint64_t rows, std::uint64_t columns, std::uint64_t inner,
+    std::uint64_t left_stride0, std::uint64_t left_stride1,
+    std::uint64_t right_stride0, std::uint64_t right_stride1,
     std::uintptr_t stream_pointer) {
   if (ptx_path == nullptr || rows > 256 || columns > 256 || inner > 256 ||
       rows * columns * inner > 16777216ULL)
@@ -335,8 +418,14 @@ extern "C" int cuda_compat_launch_matrix_multiply_f32(
   int kernel_rows = static_cast<int>(rows);
   int kernel_columns = static_cast<int>(columns);
   int kernel_inner = static_cast<int>(inner);
+  std::uint64_t kernel_left_stride0 = left_stride0;
+  std::uint64_t kernel_left_stride1 = left_stride1;
+  std::uint64_t kernel_right_stride0 = right_stride0;
+  std::uint64_t kernel_right_stride1 = right_stride1;
   void* arguments[] = {&left, &right, &output, &kernel_rows, &kernel_columns,
-                       &kernel_inner};
+                       &kernel_inner, &kernel_left_stride0,
+                       &kernel_left_stride1, &kernel_right_stride0,
+                       &kernel_right_stride1};
   constexpr unsigned int threads = 256;
   const unsigned int blocks = static_cast<unsigned int>(
       (rows * columns + threads - 1) / threads);

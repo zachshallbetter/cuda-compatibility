@@ -1,4 +1,5 @@
 #include <cuda_runtime.h>
+#include <cuda_fp16.h>
 
 #include <stdint.h>
 
@@ -13,9 +14,21 @@ extern "C" __global__ void compat_vector_add_i32(const int32_t* left,
 extern "C" __global__ void compat_vector_add_f32(const float* left,
                                                    const float* right,
                                                    float* output,
+                                                   uint64_t count,
+                                                   float alpha) {
+  const uint64_t index = static_cast<uint64_t>(blockIdx.x) * blockDim.x + threadIdx.x;
+  if (index < count) output[index] = left[index] + alpha * right[index];
+}
+
+extern "C" __global__ void compat_vector_add_f16(const __half* left,
+                                                   const __half* right,
+                                                   __half* output,
                                                    uint64_t count) {
   const uint64_t index = static_cast<uint64_t>(blockIdx.x) * blockDim.x + threadIdx.x;
-  if (index < count) output[index] = left[index] + right[index];
+  if (index < count) {
+    const float sum = __half2float(left[index]) + __half2float(right[index]);
+    output[index] = __float2half_rn(sum);
+  }
 }
 
 extern "C" __global__ void compat_arange_i64(int64_t* output,
@@ -75,7 +88,11 @@ extern "C" __global__ void compat_layer_norm_f32(
 extern "C" __global__ void compat_matrix_multiply_f32(const float* left,
                                                        const float* right,
                                                        float* output, int rows,
-                                                       int columns, int inner) {
+                                                       int columns, int inner,
+                                                       uint64_t left_stride0,
+                                                       uint64_t left_stride1,
+                                                       uint64_t right_stride0,
+                                                       uint64_t right_stride1) {
   const int index = static_cast<int>(blockIdx.x * blockDim.x + threadIdx.x);
   const int count = rows * columns;
   if (index >= count) return;
@@ -84,8 +101,11 @@ extern "C" __global__ void compat_matrix_multiply_f32(const float* left,
   const int column = index - row * columns;
   float value = 0.0f;
   for (int position = 0; position < inner; ++position) {
-    value = __fmaf_rn(left[row * inner + position],
-                      right[position * columns + column], value);
+    value = __fmaf_rn(left[static_cast<uint64_t>(row) * left_stride0 +
+                           static_cast<uint64_t>(position) * left_stride1],
+                      right[static_cast<uint64_t>(position) * right_stride0 +
+                            static_cast<uint64_t>(column) * right_stride1],
+                      value);
   }
   output[index] = value;
 }

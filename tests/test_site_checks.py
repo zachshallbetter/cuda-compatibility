@@ -1,0 +1,77 @@
+from __future__ import annotations
+
+from pathlib import Path
+import shutil
+import tempfile
+import unittest
+
+from scripts.site_checks import audit_site
+
+
+PROJECT_ROOT = Path(__file__).resolve().parents[1]
+SITE_ROOT = PROJECT_ROOT / "site"
+
+
+class SiteDiscoveryChecksTests(unittest.TestCase):
+    def copy_site(self, directory: str) -> Path:
+        target = Path(directory) / "site"
+        shutil.copytree(SITE_ROOT, target)
+        return target
+
+    def test_current_site_passes_discovery_checks(self) -> None:
+        self.assertEqual(audit_site(SITE_ROOT), [])
+
+    def test_rejects_a_broken_local_link(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            site = self.copy_site(directory)
+            page = site / "index.html"
+            page.write_text(page.read_text(encoding="utf-8").replace('href="docs/index.html"', 'href="missing.html"', 1), encoding="utf-8")
+            self.assertTrue(any("broken local link" in error for error in audit_site(site)))
+
+    def test_rejects_directory_links_that_show_file_indexes(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            site = self.copy_site(directory)
+            page = site / "index.html"
+            source = page.read_text(encoding="utf-8").replace('href="docs/index.html"', 'href="docs/"', 1)
+            page.write_text(source, encoding="utf-8")
+            self.assertTrue(any("explicit index page" in error for error in audit_site(site)))
+
+    def test_rejects_sitemap_that_omits_a_canonical_page(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            site = self.copy_site(directory)
+            sitemap = site / "sitemap.xml"
+            sitemap.write_text(sitemap.read_text(encoding="utf-8").replace("  <url><loc>https://zachshallbetter.github.io/cuda-compatibility/docs/privacy.html</loc></url>\n", ""), encoding="utf-8")
+            self.assertTrue(any("sitemap URLs" in error for error in audit_site(site)))
+
+    def test_rejects_duplicate_meta_descriptions(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            site = self.copy_site(directory)
+            home = site / "index.html"
+            guide = site / "docs" / "getting-started.html"
+            home_source = home.read_text(encoding="utf-8")
+            description = home_source.split('<meta name="description" content="', 1)[1].split('">', 1)[0]
+            guide_source = guide.read_text(encoding="utf-8")
+            start = guide_source.index('<meta name="description" content="')
+            end = guide_source.index('">', start) + 2
+            guide.write_text(guide_source[:start] + f'<meta name="description" content="{description}">' + guide_source[end:], encoding="utf-8")
+            self.assertTrue(any("duplicate meta description" in error for error in audit_site(site)))
+
+    def test_rejects_external_page_load_resources(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            site = self.copy_site(directory)
+            page = site / "index.html"
+            source = page.read_text(encoding="utf-8")
+            page.write_text(source.replace("</head>", '<link rel="preconnect" href="https://fonts.example.net">\n</head>', 1), encoding="utf-8")
+            self.assertTrue(any("page-load resource uses an external host" in error for error in audit_site(site)))
+
+    def test_rejects_article_schema_without_stable_identity_links(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            site = self.copy_site(directory)
+            page = site / "docs" / "discovery.html"
+            source = page.read_text(encoding="utf-8").replace("/#author\"", "/#different-author\"", 1)
+            page.write_text(source, encoding="utf-8")
+            self.assertTrue(any("canonical #author id" in error for error in audit_site(site)))
+
+
+if __name__ == "__main__":
+    unittest.main()

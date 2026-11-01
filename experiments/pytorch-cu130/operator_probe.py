@@ -8,6 +8,7 @@ import os
 import torch
 
 from cuda_legacy_compat import torch_adapter as aten_compat
+from registered_operator_probe import run_registered_operator_probe
 
 
 def _check_close(
@@ -210,6 +211,27 @@ def main() -> int:
                 raise AssertionError(f"unexpected float32 add path: {aten_compat.last_path()}")
             print(f"PASS device={device_index} dtype=float32 add=llvm-sm52 elements=1024", flush=True)
 
+            half_left_cpu = torch.tensor(
+                [float("nan"), float("-inf"), -1.0, -0.0, 0.0, 0.5, float("inf"), 1.0],
+                dtype=torch.float16,
+            )
+            half_right_cpu = torch.tensor(
+                [1.0, 1.0, 1.0, 0.0, -0.0, 0.25, float("-inf"), 0.00048828125],
+                dtype=torch.float16,
+            )
+            with torch.inference_mode():
+                half_result = torch.add(
+                    half_left_cpu.to(f"cuda:{device_index}"),
+                    half_right_cpu.to(f"cuda:{device_index}"),
+                ).cpu()
+            half_reference = torch.add(half_left_cpu, half_right_cpu)
+            torch.testing.assert_close(
+                half_result, half_reference, rtol=0, atol=0, equal_nan=True
+            )
+            if aten_compat.last_path() != "llvm-sm52-f16-add":
+                raise AssertionError(f"unexpected float16 add path: {aten_compat.last_path()}")
+            print(f"PASS device={device_index} dtype=float16 add=llvm-sm52 edge-values", flush=True)
+
             broadcast_left_cpu = torch.arange(8, dtype=torch.float32).reshape(2, 1, 4)
             broadcast_right_cpu = torch.arange(12, dtype=torch.float32).reshape(1, 3, 4)
             with torch.inference_mode():
@@ -245,7 +267,19 @@ def main() -> int:
                 except NotImplementedError:
                     print(f"PASS device={device_index} inplace-add=fail-closed", flush=True)
                 else:
-                    raise AssertionError("in-place add unexpectedly used an alias-breaking fallback")
+                    raise AssertionError("scalar in-place add unexpectedly became supported")
+                overlap_base = torch.ones(5, dtype=torch.float32).to(f"cuda:{device_index}")
+                try:
+                    overlap_base[:4].add_(overlap_base[1:])
+                except NotImplementedError:
+                    if not torch.equal(overlap_base.cpu(), torch.ones(5)):
+                        raise AssertionError("rejected overlapping in-place add changed its input")
+                else:
+                    raise AssertionError("partially overlapping in-place add was accepted")
+                exact_alias = torch.ones(4, dtype=torch.float32).to(f"cuda:{device_index}")
+                exact_alias.add_(exact_alias, alpha=2)
+                if not torch.equal(exact_alias.cpu(), torch.full((4,), 3.0)):
+                    raise AssertionError("exact-alias in-place add has incorrect semantics")
 
             with torch.inference_mode():
                 oversized_left = torch.empty(
@@ -320,21 +354,21 @@ def main() -> int:
 
             noncontiguous_left = torch.arange(15, dtype=torch.float32).reshape(3, 5).to("cuda").T
             noncontiguous_right = torch.ones((3, 2), dtype=torch.float32).to("cuda")
-            try:
-                _ = torch.mm(noncontiguous_left, noncontiguous_right)
-            except NotImplementedError:
-                print(f"PASS device={device_index} mm=noncontiguous-unsupported", flush=True)
-            else:
-                raise AssertionError("non-contiguous mm input did not fail explicitly")
+            noncontiguous_output = torch.mm(noncontiguous_left, noncontiguous_right).cpu()
+            noncontiguous_reference = torch.mm(
+                torch.arange(15, dtype=torch.float32).reshape(3, 5).T,
+                torch.ones((3, 2), dtype=torch.float32),
+            )
+            _check_close(
+                noncontiguous_output,
+                noncontiguous_reference,
+                label="strided matrix multiplication",
+            )
+            if aten_compat.last_path() != "llvm-sm52-mm-f32":
+                raise AssertionError(f"strided mm used unexpected path {aten_compat.last_path()}")
+            print(f"PASS device={device_index} mm=transposed-input-native", flush=True)
 
-            grad_input = torch.ones((2, 2), dtype=torch.float32).to("cuda").requires_grad_()
-            grad_weight = torch.ones((2, 2), dtype=torch.float32).to("cuda")
-            try:
-                _ = torch.mm(grad_input, grad_weight)
-            except NotImplementedError:
-                print(f"PASS device={device_index} mm=autograd-unsupported", flush=True)
-            else:
-                raise AssertionError("autograd mm did not fail explicitly")
+            run_registered_operator_probe(device_index)
 
     return 0
 
