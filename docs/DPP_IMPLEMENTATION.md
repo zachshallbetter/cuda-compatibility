@@ -99,7 +99,7 @@ The project does not currently have field performance data, search-index coverag
 | Activity | Classification | Authority and receipt |
 |---|---|---|
 | Local website and source changes | Owned, pre-publication | Local work items and `records/evidence.jsonl`; reversible in source control. |
-| GitHub repository publication | Partially published | The public `codex/cuda-compat-publication` branch is at `51ae143e47675c45ea8e7005bd3258c965298743`; there is no `main` ref. The initial ACP SHA mismatch and refused `main` updates are recorded under CLC-022. |
+| GitHub repository publication | Partially published | The public `codex/cuda-compat-publication` candidate branch exists; there is no `main` ref. The initial ACP SHA mismatch, authorized forward updates, and refused `main` updates are recorded under CLC-022 and `records/evidence.jsonl`. |
 | GitHub Pages site | Not live | Pages settings report workflow deployment, but GitHub cannot find the workflow on the default branch; the canonical URL returned HTTP 404 on 2026-11-01. |
 | Social posts, newsletter pitches, community replies, paid promotion | None published | The owner has requested announcements after repository/site publication. No post has been made; destination, method, audience, source asset, and publication receipt remain to be registered per the distribution rule below. |
 | Crawl, Search Console, analytics, AI-answer sampling | Not observed or not configured | See `site/docs/privacy.html`; robots and sitemap do not confer access or prove indexing. |
