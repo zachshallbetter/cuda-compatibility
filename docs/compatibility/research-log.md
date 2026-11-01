@@ -36,3 +36,16 @@ Compare **CUDA Toolkit 12.9 GA** against **CUDA Toolkit 13.0 GA**. Record exact 
 - Evidence ledger (#41) and architectural decision records (#36).
 
 See [investigation toolchain](../architecture/investigation-toolchain.md) and issue #32 research note.
+
+## 2026-11-01 reconciliation with existing implementation evidence
+
+**Important correction:** the preceding initial status table was a planning baseline, not a current-state inventory. The repository already contains substantial physical GM200 and official PyTorch 2.14.0+cu130 evidence. See `README.md`, `docs/research/maxwell-baseline.md`, `docs/research/pytorch-cu130-maxwell.md`, and `docs/architecture.md` as authoritative implementation evidence.
+
+- Three GM200 cards and driver 580.178.04: native CUDA **12.4**, not 12.9, vector-add correctness was verified per GPU. CUDA 12.9 artifact acquisition remains pending.
+- Official PyTorch 2.14.0+cu130 imports, enumerates genuine CC 5.2 cards, allocates and copies tensors. Stock tensor add fails with `no kernel image`; stock matrix multiplication fails at `cublasCreate` with `CUBLAS_STATUS_ARCH_MISMATCH`.
+- Existing `cuda-legacy run` launches a child process with an opt-in dispatcher adapter, LLVM 23.1.4-generated `sm_52` PTX, a CUDA Driver API bridge, and a scoped runtime-version facade. It has selected GPU-native operations and capped CPU fallbacks. It is not a general-purpose ABI interposer or universal CUDA 13 execution path.
+- The project reports a bounded transformer-checkpoint comparison, a small MLP, selected float16/strided kernels and tiny first-order autograd + SGD test, with stated precision and workload limitations. Read the experiment log before making broader claims.
+- `cuda-legacy inspect`, `doctor`, `audit`, `profiles` and `run` already exist. Product ticket #42 must enhance and test these, not replace them with a parallel `cuda-compat` implementation.
+- Physical P2P is **not established**: observed topology reports PHB, and older prose describing SLI/P2P should not be promoted to a verified capability.
+
+**Next action:** merge the primary-source CUDA diff and tooling proposals with the existing research ledger; avoid duplicate probes and clearly distinguish tests already run from new work.
