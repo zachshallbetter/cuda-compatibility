@@ -8,7 +8,7 @@
     "includedCount": 159,
     "includedBytes": 943743,
     "excludedCounts": {
-      "excluded-directory": 30,
+      "excluded-directory": 31,
       "excluded-path": 1,
       "extension": 25
     }
@@ -19,9 +19,9 @@
     "repositories": [
       {
         "path": ".",
-        "commit": "986ef68cf979e9ffa45944086845f3e5409fa1b6",
+        "commit": "754dd06f4b34af3d20543391f74c1bb14d43bf60",
         "branch": "codex/cuda-compat-publication",
-        "dirty": false,
+        "dirty": true,
         "remote": "https://github.com/zachshallbetter/cuda-compatibility.git"
       }
     ]
