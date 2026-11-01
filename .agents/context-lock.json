@@ -5,8 +5,8 @@
   "validityBasis": "aggregate-source-digest",
   "selectedPaths": [],
   "sourceSelection": {
-    "includedCount": 162,
-    "includedBytes": 968045,
+    "includedCount": 168,
+    "includedBytes": 1006035,
     "excludedCounts": {
       "excluded-directory": 31,
       "excluded-path": 1,
@@ -19,14 +19,14 @@
     "repositories": [
       {
         "path": ".",
-        "commit": "53da246181443d0086f73c8ab8e21238f3115781",
+        "commit": "5eb7d391adda2d8aadf3bf445b80dce0bbbae1f7",
         "branch": "codex/cuda-compat-publication",
         "dirty": true,
         "remote": "https://github.com/zachshallbetter/cuda-compatibility.git"
       }
     ]
   },
-  "aggregateSourceDigest": "8127339d2a30cf147d2c26aa305d8e147e63351fcc4b0ef3fc13abe13e38e0a8",
+  "aggregateSourceDigest": "1ee835639c17cb297aa8cea345725147e5a62aa70d55602b9b9dcd3e15acc4d3",
   "sources": [
     {
       "path": ".agents/rules/ci.md",
@@ -325,8 +325,8 @@
     },
     {
       "path": "docs/DPP_IMPLEMENTATION.md",
-      "bytes": 25834,
-      "sha256": "6566bca32714ea76fdcb86246db3973be34b74aca50e512f74e0f26115408e04"
+      "bytes": 25823,
+      "sha256": "fb6c296ac54d6a178743fcd6c4c22e48204a6c0a37a6dbca34a2cb389fefdf3f"
     },
     {
       "path": "docs/EVIDENCE_METHOD.md",
@@ -374,6 +374,11 @@
       "sha256": "01ef93bc7c5b75ce991d6ed0cd78faba1d8e6cdc8f1b43b10231025a0975a91e"
     },
     {
+      "path": "docs/PROJECT_MILESTONES.md",
+      "bytes": 3763,
+      "sha256": "8e7bd3a84e57cfe4e71172c2eaf5fb58b33b6fdd09de582bde102148cc6c7a95"
+    },
+    {
       "path": "docs/PROTOCOL_ADAPTERS.md",
       "bytes": 2229,
       "sha256": "1b546812abd66d29217fb8b11370201760ad43769f5e9c1f5e685625a7bb40aa"
@@ -400,8 +405,8 @@
     },
     {
       "path": "docs/WORK_ITEMS.md",
-      "bytes": 92735,
-      "sha256": "f3f5bef12d15f78e7f3d0929999a53d24060b1f8e17a5b5840547b8556ed68b8"
+      "bytes": 92894,
+      "sha256": "4b4f219978ccc4d78b5be0fecbaa46a931a06158cf9907ea2819284b98d485a5"
     },
     {
       "path": "docs/architecture.md",
@@ -420,18 +425,38 @@
     },
     {
       "path": "docs/compatibility/cuda-12.9-to-13.0-primary-source-diff.md",
-      "bytes": 6276,
-      "sha256": "97691e611b081683057f681634933ded3d2fdb6f89e9241ad55651ccb928cffd"
+      "bytes": 7142,
+      "sha256": "a91612d2ab8818071a9cefeb4aeea060c5e96e678258824660fee017f2d5f5e2"
     },
     {
       "path": "docs/compatibility/research-log.md",
-      "bytes": 2804,
-      "sha256": "02017b6b38a46d7183b809b9dd5b916dc7c5c0273e3cf277812799f8bc819022"
+      "bytes": 4789,
+      "sha256": "a2817d30a20495db2b2e8932a3947be6cdc134f6a2c37c00d0efdb3033f054e6"
     },
     {
       "path": "docs/decisions/0001-language-and-first-scope.md",
       "bytes": 1560,
       "sha256": "f266e1017d80f5f718ba78b521f7abb0a69fb880cd5a9c504943949a9409cec9"
+    },
+    {
+      "path": "docs/product/product-contract.md",
+      "bytes": 5353,
+      "sha256": "798008a038b63af0e4c57e6af14c8b68d121ec0c7cf291eadb07b5675adc3de5"
+    },
+    {
+      "path": "docs/product/product-vision-and-experience.md",
+      "bytes": 7175,
+      "sha256": "300fe65e7d4e46039cafdbc10b89557d185839d221cd309df9edfb767c5f6400"
+    },
+    {
+      "path": "docs/research/RESEARCH_PROGRAM.md",
+      "bytes": 5521,
+      "sha256": "388e97eb44a9029312add30f63ba1452d78038b915b32631b4a2fa386b3c18a0"
+    },
+    {
+      "path": "docs/research/implementation-gap-audit-2026-11-01.md",
+      "bytes": 8444,
+      "sha256": "8dd439ed8bfd0d92468999789122684bac0d2a577417b35016d656ddc1726d88"
     },
     {
       "path": "docs/research/llvm-nvptx.md",
@@ -457,6 +482,11 @@
       "path": "docs/roadmap.md",
       "bytes": 5181,
       "sha256": "306b76b7152641f0beabc25446338b4f0c5cee1d4a7faa8d5d85d3317a63ef8d"
+    },
+    {
+      "path": "docs/strategy/upstream-contributions.md",
+      "bytes": 4735,
+      "sha256": "00e4c68237a0447cf2ce161b36261eecda435e673dc1faf22876afd16de943a8"
     },
     {
       "path": "docs/user-guide.md",
