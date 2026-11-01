@@ -6,7 +6,7 @@
   "selectedPaths": [],
   "sourceSelection": {
     "includedCount": 159,
-    "includedBytes": 918362,
+    "includedBytes": 918647,
     "excludedCounts": {
       "excluded-directory": 30,
       "excluded-path": 1,
@@ -19,14 +19,14 @@
     "repositories": [
       {
         "path": ".",
-        "commit": "03928a86cda12515cfbeef4f29127e4fa20a5325",
+        "commit": "51ae143e47675c45ea8e7005bd3258c965298743",
         "branch": "codex/cuda-compat-publication",
         "dirty": true,
         "remote": "https://github.com/zachshallbetter/cuda-compatibility.git"
       }
     ]
   },
-  "aggregateSourceDigest": "3ec5aadc7539ec025d345e20d39ce4469c6002407f4bb334910012969caaa644",
+  "aggregateSourceDigest": "3e2166eda413e94f3e38fdac7c10068ad7b2c584028cace19398199f726b8e2e",
   "sources": [
     {
       "path": ".agents/rules/ci.md",
@@ -325,8 +325,8 @@
     },
     {
       "path": "docs/DPP_IMPLEMENTATION.md",
-      "bytes": 19099,
-      "sha256": "7690e22bee42653a44b56948ce9342ebe25f3e97d690829f242899d20fc98d8a"
+      "bytes": 19102,
+      "sha256": "177131d86d6b8f3df3cc2259c5c15de734aaeb1b74099c9c10a84266c6ee2b11"
     },
     {
       "path": "docs/EVIDENCE_METHOD.md",
@@ -400,8 +400,8 @@
     },
     {
       "path": "docs/WORK_ITEMS.md",
-      "bytes": 78417,
-      "sha256": "30ae3a03eb845d3fabf7b9b3df2902eaa2f539d826df17e90f4d8e1712bec97e"
+      "bytes": 78699,
+      "sha256": "ae5e751a18e8dc15ba1472bb4698f7ebefdb022ae0c39c810e05db17d9d85d16"
     },
     {
       "path": "docs/architecture.md",
