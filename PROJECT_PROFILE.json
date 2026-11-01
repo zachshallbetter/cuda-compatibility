@@ -11,7 +11,7 @@
   "executionProvider": {
     "name": "local-project-tooling",
     "workGraph": "docs/WORK_ITEMS.md (provisional local frontier)",
-    "repository": "local git repository; no remote configured",
+    "repository": "https://github.com/zachshallbetter/cuda-compatibility.git",
     "dispatch": "Codex local workspace",
     "verification": "Makefile and project validators",
     "protection": "acp-gateway",
@@ -19,7 +19,7 @@
   },
   "authorizationProvider": {
     "name": "acp-gateway",
-    "status": "declared",
+    "status": "bound",
     "integrationRef": "docs/ACP_INTEGRATION.md",
     "decisionSchema": "schemas/acp-decision.schema.json",
     "actionMap": "contracts/acp-protected-effects.yaml",
@@ -27,8 +27,8 @@
     "gatewayTokenEnv": "ACP_GATEWAY_TOKEN",
     "boardEnvFile": ".agents/board.env",
     "board": {
-      "owner": null,
-      "number": null
+      "owner": "zachshallbetter",
+      "number": 44
     },
     "authorizedEffectClassesMinimum": "E2",
     "failClosed": true,

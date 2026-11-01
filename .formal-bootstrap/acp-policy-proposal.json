@@ -1,0 +1,138 @@
+{
+  "artifact_manifest": {
+    "artifact_manifest_version": 1,
+    "artifacts": [
+      {
+        "change_policy": "authorize_and_report",
+        "expected_sha256": "182e41c8930f44191e83577b7cae3aaa0924a63939b9eea51984b832b86f4b18",
+        "id": "agents.md",
+        "kind": "control_instruction",
+        "path": "AGENTS.md",
+        "required": true
+      },
+      {
+        "change_policy": "authorize_and_report",
+        "expected_sha256": "7fd2a102cb560b4e792ccf05a61aaf4fbf0d5139a708f03010d5d1577503bd2f",
+        "id": "new_agent_prompt.md",
+        "kind": "control_instruction",
+        "path": "NEW_AGENT_PROMPT.md",
+        "required": false
+      },
+      {
+        "change_policy": "authorize_and_report",
+        "expected_sha256": "68fec4ddaae686b9739e64de5a308106c4a08fe9c7ce0f416e9a8cd88cf968ab",
+        "id": "project_profile.json",
+        "kind": "bootstrap",
+        "path": "PROJECT_PROFILE.json",
+        "required": true
+      },
+      {
+        "change_policy": "authorize_and_report",
+        "expected_sha256": "e1aa8ad458895ef9a0ac663958226c645889a093ab0270a7c689190705c7c8d5",
+        "id": "project_intent.md",
+        "kind": "bootstrap",
+        "path": "PROJECT_INTENT.md",
+        "required": true
+      },
+      {
+        "change_policy": "authorize_and_report",
+        "expected_sha256": "c9ffea61ee8832c791490d21f88d5ced78f770fb9d79a4dc911927f0a0bc3d59",
+        "id": "bindings-project_bindings.yaml",
+        "kind": "bootstrap",
+        "path": "bindings/PROJECT_BINDINGS.yaml",
+        "required": true
+      },
+      {
+        "change_policy": "authorize_and_report",
+        "expected_sha256": "6fd132dc67c4213fecb65461f0ee70987cfe41b765a55ab89c11d3f1a8a1a7dd",
+        "id": "contracts-acp-protected-effects.yaml",
+        "kind": "policy_manifest",
+        "path": "contracts/acp-protected-effects.yaml",
+        "required": true
+      },
+      {
+        "change_policy": "authorize_and_report",
+        "expected_sha256": "5c350c25b21339e8c8f82c2e950156061e4d9d9670d5b1d1dc99e29b92ff8d92",
+        "id": "docs-acp_integration.md",
+        "kind": "control_instruction",
+        "path": "docs/ACP_INTEGRATION.md",
+        "required": true
+      },
+      {
+        "change_policy": "authorize_and_report",
+        "expected_sha256": "542ad108ea904e3304e3fcee9acb28e2df58e8ef131bbc1fd4419a590e5d927c",
+        "id": ".agents-board.env",
+        "kind": "repository_identity",
+        "path": ".agents/board.env",
+        "required": false
+      },
+      {
+        "change_policy": "authorize_and_report",
+        "expected_sha256": "6fca8c5738deb7864a77838d95214cf388a6b80dcfac97fe9446eb0aa83176dd",
+        "id": "scripts-acp.py",
+        "kind": "client_control",
+        "path": "scripts/acp.py",
+        "required": true
+      },
+      {
+        "change_policy": "authorize_and_report",
+        "expected_sha256": "ef1863692a470634adae144c0b6f3aadfc375543915c7b9c428b6b99f4c9225a",
+        "id": "scripts-acp-check.py",
+        "kind": "client_control",
+        "path": "scripts/acp-check.py",
+        "required": true
+      },
+      {
+        "change_policy": "authorize_and_report",
+        "expected_sha256": "e0ac6478ec44fee27f8ead869ebaae80952a817203d253e1556701b6d522e346",
+        "id": "scripts-upgrade-project.py",
+        "kind": "client_control",
+        "path": "scripts/upgrade-project.py",
+        "required": true
+      },
+      {
+        "change_policy": "authorize_and_report",
+        "expected_sha256": "a9d4002736f1fef51ba2c124f4abb2414e67fd131016b42604bd57c633facedd",
+        "id": "scripts-reconcile-project.py",
+        "kind": "client_control",
+        "path": "scripts/reconcile-project.py",
+        "required": true
+      }
+    ],
+    "patterns": [
+      {
+        "change_policy": "authorize_and_report",
+        "id": ".agents-skills",
+        "kind": "client_control_tree",
+        "pattern": ".agents/skills/**"
+      },
+      {
+        "change_policy": "report_only",
+        "id": "records-deviations.jsonl",
+        "kind": "control_tree",
+        "pattern": "records/deviations.jsonl"
+      }
+    ],
+    "refs": [
+      {
+        "kind": "protected_ref",
+        "ref": "refs/heads/main",
+        "verification": "provider_required"
+      }
+    ]
+  },
+  "boards": [
+    {
+      "number": 44,
+      "owner": "zachshallbetter"
+    }
+  ],
+  "policy_id": "zachshallbetter-cuda-compatibility",
+  "repository": {
+    "canonical_remote": "https://github.com/zachshallbetter/cuda-compatibility.git",
+    "name": "cuda-compatibility",
+    "owner": "zachshallbetter"
+  },
+  "status": "active",
+  "version": 1
+}
