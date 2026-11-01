@@ -6,7 +6,7 @@
   "selectedPaths": [],
   "sourceSelection": {
     "includedCount": 159,
-    "includedBytes": 931121,
+    "includedBytes": 932133,
     "excludedCounts": {
       "excluded-directory": 30,
       "excluded-path": 1,
@@ -19,14 +19,14 @@
     "repositories": [
       {
         "path": ".",
-        "commit": "3f7701a042dd828b8cf8e11542b619ae054a4587",
+        "commit": "18a075c2943745ac30b285a24d0ca07380cbdb58",
         "branch": "codex/cuda-compat-publication",
         "dirty": true,
         "remote": "https://github.com/zachshallbetter/cuda-compatibility.git"
       }
     ]
   },
-  "aggregateSourceDigest": "18dff27d6c2e50e0094d5dca894bee6c5d42c94647e2f1b27f489aa30f0de63d",
+  "aggregateSourceDigest": "09e88ee77897d60f95fb60529dac72e160c4d0b8f7d1306a4a8dafbdd69e4def",
   "sources": [
     {
       "path": ".agents/rules/ci.md",
@@ -325,8 +325,8 @@
     },
     {
       "path": "docs/DPP_IMPLEMENTATION.md",
-      "bytes": 21523,
-      "sha256": "4d826779f067211080e4db256b705dbefa93cd7debd2e168766800a9d0decd66"
+      "bytes": 22458,
+      "sha256": "c1aaa753d259b66f21d0077aa0bb3e820ad2483659cd08e33e8666e1ca1a2c85"
     },
     {
       "path": "docs/EVIDENCE_METHOD.md",
@@ -400,8 +400,8 @@
     },
     {
       "path": "docs/WORK_ITEMS.md",
-      "bytes": 81903,
-      "sha256": "c2e683a3dffdcad7ac129802d0194bfbf90bce148cbed10c546d1793a6d21816"
+      "bytes": 82123,
+      "sha256": "7d5e0e5bbc95d157e8f954f7525ec254a57ec33c09fd0e0dad4297a9f2d0852c"
     },
     {
       "path": "docs/architecture.md",
@@ -685,8 +685,8 @@
     },
     {
       "path": "site/docs/discovery.html",
-      "bytes": 11374,
-      "sha256": "cb2bf7cf9fb5f17f932f664d1e2eb47fc0739562e1c688aa69981275cc3c5abe"
+      "bytes": 11205,
+      "sha256": "a075d425f3471940a2083fee5e0de12c25051674699957861ce414a54d49a990"
     },
     {
       "path": "site/docs/getting-started.html",
@@ -700,8 +700,8 @@
     },
     {
       "path": "site/docs/privacy.html",
-      "bytes": 13465,
-      "sha256": "7e6f3cc4dd1b82be8294e416d9ff4a76e8f09f9ce96ad756f2e451c265cde025"
+      "bytes": 13491,
+      "sha256": "e8cfee7a355aed1075724afbcab8c77ce69890f35a6c7616492964418bcd0ab2"
     },
     {
       "path": "site/docs/research.html",
