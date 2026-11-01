@@ -68,3 +68,9 @@ Primary sources:
 5. Feed each observed gap to capability registry and adapter/kernel backlog (#24–#35).
 
 No claim of complete CUDA 13 compatibility is warranted by this register.
+
+## Implementation cross-check (added 2026-11-01)
+
+The status at the top of this document refers **only to this 12.9-versus-13.0 artifact diff**. It must not be read as claiming the repository has no GPU experiments. The existing project has tested a native CUDA 12.4 `sm_52` baseline and an opt-in official PyTorch 2.14.0+cu130 compatibility adapter on three GM200 GPUs (driver 580.178.04). See `docs/research/maxwell-baseline.md`, `docs/research/pytorch-cu130-maxwell.md` and `README.md`. Those tests do not replace the missing 12.9/13.0 header, ABI, symbol and library-binary extraction.
+
+**Driver distinction:** the 13.x minor-version compatibility floor (R580) is not identical to the CUDA 13.0 GA toolkit's bundled/development driver version. Compare these as distinct policies, and do not assume driver-version equality proves a GPU's library-kernel support.
