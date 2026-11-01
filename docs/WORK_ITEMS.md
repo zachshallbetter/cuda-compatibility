@@ -486,7 +486,7 @@ The first work item is being executed under the user's explicit request to creat
 
 - **Intent:** Make public page descriptions specific and useful to engineers evaluating legacy NVIDIA GPU compatibility, while preserving evidence-qualified claims.
 - **Parent:** CLC-024 DPP discovery controls; CLC-027 verified webmaster properties and sitemap submissions.
-- **Status:** In progress
+- **Status:** Done
 - **Objective:** Address Bing Webmaster Tools’ observed recommendation that many page meta descriptions are too short and prevent future descriptions from becoming empty, duplicate, or excessively short/long.
 - **Scope:** `site/index.html`; `site/gpu-catalog.html`; `site/docs/*.html`; `scripts/site_checks.py`; `tests/test_site_checks.py`; `docs/DPP_IMPLEMENTATION.md`; `docs/WORK_ITEMS.md`; `records/evidence.jsonl`; generated context.
 - **Exclusions:** Claiming improved rankings, clicks, indexing, or traffic; keyword stuffing; changing verified hardware/support claims; paid SEO or external outreach.
@@ -498,6 +498,8 @@ The first work item is being executed under the user's explicit request to creat
 - **Target:** `https://zachshallbetter.github.io/cuda-compatibility/` and its 10 canonical HTML pages.
 - **Budget:** No spend; one bounded copy and validation pass.
 - **Stop conditions:** A description would require unverified support claims, a page cannot fit the bound without losing accuracy, a project gate fails, or ACP refuses the exact external effect.
+- **Progress (2026-11-01):** Rewrote all 10 canonical page descriptions to be page-specific and 140–180 characters; added static checks for length and uniqueness. `make check` passed and `make test` passed 44/44. Commit `958388599dcad117b63470c31f3f584e1aa03c3f` was pushed to `codex/cuda-compat-publication` after exact ACP ALLOWs and deployed successfully in Pages run `41312924116`. The live audit fetched all 10 sitemap pages and six discovery assets/endpoints (16/16 HTTP 200); all 10 descriptions were unique and within range. Evidence: `CLC-028-bing-short-descriptions-recommendation`, `CLC-028-pages-release`, and `CLC-028-live-route-audit`. No ranking, traffic, or indexing effect is claimed.
+- **Disposition (2026-11-01):** Bing feedback has been addressed in the published site. Checks enforce the description bounds and uniqueness; the exact deployed revision returned HTTP 200 for all 16 audited routes/assets, with all 10 page descriptions between 140 and 180 characters. Search performance effects remain unobserved.
 
 ## CLC-025 — Extend PyTorch CUDA 13 behavior on Maxwell with qualified operator and training coverage
 
