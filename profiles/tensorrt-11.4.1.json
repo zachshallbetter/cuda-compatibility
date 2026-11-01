@@ -1,0 +1,16 @@
+{
+  "schema_version": 1,
+  "id": "tensorrt-11.4.1",
+  "name": "NVIDIA TensorRT 11.4.1",
+  "source": "https://docs.nvidia.com/deeplearning/tensorrt/11.4.1/getting-started/support-matrix.html",
+  "build": {
+    "cuda_version": "13.4",
+    "host_toolkit_minimum": null,
+    "artifact": "CUDA 13.4 Update 1 package; matching CUDA 12.x pip wheels also documented"
+  },
+  "gpu": {
+    "minimum_compute_capability": [7, 5],
+    "architectures": ["7.5", "8.0", "8.6", "8.9", "9.0", "10.0", "10.3", "10.7", "12.0"]
+  },
+  "notes": "Current TensorRT release has an explicit hardware minimum above Maxwell; included as a negative/control profile, not an initial target."
+}

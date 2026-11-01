@@ -1,0 +1,16 @@
+{
+  "schema_version": 1,
+  "id": "pytorch-2.14-cu130",
+  "name": "PyTorch 2.14.0 CUDA 13.0.3 binary build",
+  "source": "https://github.com/pytorch/pytorch/blob/v2.14.0/RELEASE.md",
+  "build": {
+    "cuda_version": "13.0.3",
+    "host_toolkit_minimum": null,
+    "artifact": "prebuilt binary distribution"
+  },
+  "gpu": {
+    "minimum_compute_capability": [7, 5],
+    "architectures": ["7.5", "8.0", "8.6", "9.0", "10.0", "12.0+PTX"]
+  },
+  "notes": "Published CUDA 13 architecture matrix begins at Turing; use pytorch-2.14-cu126 as the Maxwell-supported comparison. This profile describes package support, not what can be achieved by rebuilding selected operators."
+}

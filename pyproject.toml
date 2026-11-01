@@ -1,0 +1,29 @@
+[build-system]
+requires = ["setuptools>=64"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "cuda-legacy-compat"
+version = "0.1.0"
+description = "Inspect and adapt newer CUDA workloads for older NVIDIA GPUs"
+readme = "README.md"
+requires-python = ">=3.10"
+license = "MIT OR Apache-2.0"
+license-files = ["LICENSE-MIT", "LICENSE-APACHE"]
+dependencies = []
+
+[project.scripts]
+cuda-legacy-compat = "cuda_legacy_compat.cli:main"
+cuda-legacy = "cuda_legacy_compat.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.data-files]
+"share/cuda-legacy-compat/profiles" = ["profiles/*.json"]
+
+[tool.ruff]
+line-length = 100
+
+[tool.setuptools.package-data]
+cuda_legacy_compat = ["compat/*.cpp", "compat/*.cu", "compat/*.py"]

@@ -1,0 +1,11 @@
+{
+  "format": "2",
+  "bootstrap": "formal-project-bootstrap",
+  "bootstrapVersion": "0.6.0",
+  "projectId": "cuda-legacy-compat",
+  "projectName": "CUDA Compatibility",
+  "mode": "new",
+  "profiles": [],
+  "createdAt": "2026-11-01T02:03:36.800424+00:00",
+  "unresolvedBootstrapCollisions": []
+}

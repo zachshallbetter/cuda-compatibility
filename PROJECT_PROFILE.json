@@ -1,0 +1,65 @@
+{
+  "projectId": "cuda-legacy-compat",
+  "projectName": "CUDA Compatibility",
+  "profileVersion": "0.6.0",
+  "profileStatus": "provisional",
+  "intentRef": "PROJECT_INTENT.md",
+  "authorityRef": "docs/AUTHORITY_MODEL.md",
+  "bindingsRef": "bindings/PROJECT_BINDINGS.yaml",
+  "contextSourcesRef": "CONTEXT_SOURCES.json",
+  "operatingMode": "new",
+  "executionProvider": {
+    "name": "local-project-tooling",
+    "workGraph": "docs/WORK_ITEMS.md (provisional local frontier)",
+    "repository": "local git repository; no remote configured",
+    "dispatch": "Codex local workspace",
+    "verification": "Makefile and project validators",
+    "protection": "acp-gateway",
+    "observability": "acp-gateway:/internal/report"
+  },
+  "authorizationProvider": {
+    "name": "acp-gateway",
+    "status": "declared",
+    "integrationRef": "docs/ACP_INTEGRATION.md",
+    "decisionSchema": "schemas/acp-decision.schema.json",
+    "actionMap": "contracts/acp-protected-effects.yaml",
+    "gatewayUrlEnv": "ACP_GATEWAY_URL",
+    "gatewayTokenEnv": "ACP_GATEWAY_TOKEN",
+    "boardEnvFile": ".agents/board.env",
+    "board": {
+      "owner": null,
+      "number": null
+    },
+    "authorizedEffectClassesMinimum": "E2",
+    "failClosed": true,
+    "reportOnSessionStart": true,
+    "reportBeforeProtectedEffect": true,
+    "checkScript": "scripts/acp-check.py",
+    "clientScript": "scripts/acp.py"
+  },
+  "serviceOperations": [],
+  "authorityBindings": {
+    "projectMutation": "user-directed local E1 scope",
+    "qualification": "project owner review with recorded evidence",
+    "promotion": "acp-gateway:decision when bound; no remote promotion configured",
+    "productionOperation": "not configured",
+    "deviation": "project owner, recorded in records/deviations.jsonl",
+    "recovery": "acp-gateway:recovery-authorization when bound"
+  },
+  "autonomy": {
+    "frontierReselection": true,
+    "continueOnLocalizedBlocker": true,
+    "maxConcurrentMutationClaims": 2,
+    "humanEscalation": "decision-boundaries-only",
+    "protectedEffectsRequireAcpDecision": true
+  },
+  "contextPolicy": {
+    "compiledContextRequired": true,
+    "generatedContextNormative": false,
+    "requireContextLock": true,
+    "refreshOnMaterialSourceChange": true
+  },
+  "protocolAdapters": [],
+  "profiles": [],
+  "formalResourceManifest": "FORMAL_RESOURCE_MANIFEST.json"
+}

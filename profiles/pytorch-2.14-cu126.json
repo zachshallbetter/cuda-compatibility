@@ -1,0 +1,16 @@
+{
+  "schema_version": 1,
+  "id": "pytorch-2.14-cu126",
+  "name": "PyTorch 2.14.0 CUDA 12.6.3 binary build",
+  "source": "https://github.com/pytorch/pytorch/blob/v2.14.0/RELEASE.md",
+  "build": {
+    "cuda_version": "12.6.3",
+    "host_toolkit_minimum": null,
+    "artifact": "prebuilt binary distribution"
+  },
+  "gpu": {
+    "minimum_compute_capability": [5, 0],
+    "architectures": ["5.0", "6.0", "7.0", "7.5", "8.0", "8.6", "9.0"]
+  },
+  "notes": "The published PyTorch 2.14 matrix lists Maxwell for CUDA 12.6.3. This is the reference package target for comparison with the CUDA 13.0.3 build; it does not prove every PyTorch operator or dependency works on a specific Maxwell system."
+}

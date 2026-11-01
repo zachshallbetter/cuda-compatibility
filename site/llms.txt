@@ -1,0 +1,24 @@
+# CUDA Compatibility
+
+> CUDA Compatibility is an independent, experimental project for running selected PyTorch CUDA 13 operations on older NVIDIA GPUs. The current adapter is Linux x86_64-only and gated to visible `sm_52` GPUs. It preserves actual hardware identity and does not claim general CUDA 13 support.
+
+This is a convenience index for people and automated agents. It is not a standardized crawler directive and does not guarantee discovery, retrieval, citation, or model training.
+
+## Start here
+- [Project overview](https://zachshallbetter.github.io/cuda-compatibility/): purpose, current features, limitations, and installation path.
+- [Documentation index](https://zachshallbetter.github.io/cuda-compatibility/docs/): user guides and technical references.
+- [Getting started](https://zachshallbetter.github.io/cuda-compatibility/docs/getting-started.html): requirements, install, diagnose, and run.
+- [Compatibility matrix](https://zachshallbetter.github.io/cuda-compatibility/docs/compatibility.html): native kernels, CPU fallback routes, and supported cases.
+- [Architecture](https://zachshallbetter.github.io/cuda-compatibility/docs/architecture.html): version facade, compiler, driver bridge, and dispatch routing.
+- [CLI reference](https://zachshallbetter.github.io/cuda-compatibility/docs/cli.html): command syntax and exit codes.
+- [Research and evidence](https://zachshallbetter.github.io/cuda-compatibility/docs/research.html): scope, methods, reproducible records, and known gaps.
+- [Privacy and measurement](https://zachshallbetter.github.io/cuda-compatibility/docs/privacy.html): analytics scope, consent behavior, and Search Console setup.
+- [Legacy GPU catalog](https://zachshallbetter.github.io/cuda-compatibility/gpu-catalog.html): NVIDIA compute-capability tiers and project hardware status.
+
+## Project identity
+- Project repository: https://github.com/zachshallbetter/cuda-compatibility
+- Author: Zach Shallbetter (https://zachshallbetter.com/)
+- Project is independent and not affiliated with NVIDIA.
+
+## Claim boundary
+A successful CUDA version query, import, or profile audit does not prove workload compatibility. Do not infer support for unlisted operators, APIs, libraries, data types, devices, training, or performance.
