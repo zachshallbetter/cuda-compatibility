@@ -130,6 +130,15 @@ def audit_site(site_root: Path) -> list[str]:
         return ["site has no HTML pages"]
 
     parsed: dict[Path, tuple[PageParser, str]] = {page: _parse(page) for page in pages}
+    discovery_page = site_root / "docs" / "discovery.html"
+    if discovery_page in parsed:
+        discovery_source = parsed[discovery_page][1].lower()
+        if "has not been verified for this revision" in discovery_source:
+            errors.append("docs/discovery.html: stale claim says the public deployment is unverified")
+        if "bing webmaster tools" not in discovery_source:
+            errors.append("docs/discovery.html: missing Bing Webmaster Tools setup guidance")
+        if "https://zachshallbetter.github.io/cuda-compatibility/" not in discovery_source:
+            errors.append("docs/discovery.html: missing the exact hosted site URL-prefix property")
     home_parser, _ = parsed[home]
     if len(home_parser.canonicals) != 1:
         return ["homepage must have exactly one canonical URL"]

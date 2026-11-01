@@ -16,7 +16,7 @@
 cd cuda-compatibility
 python3 -m venv .venv
 . .venv/bin/activate</code></pre><p>If you already have a dedicated environment containing the target PyTorch wheel, activate it instead. The command must use that same interpreter.</p></section>
-<section class="doc-section"><h2>2. Install the package</h2><pre><code>python -m pip install .</code></pre><p>For development, use <code>python -m pip install -e .</code>. In a virtual or Conda environment, the command is installed into that environment’s <code>bin/</code> directory. Avoid system-wide <code>sudo pip</code> installs.</p></section>
+<section class="doc-section"><h2>2. Install the package</h2><pre><code>python -m pip install .</code></pre><p>For development, use <code>python -m pip install -e .</code>. In a virtual or Conda environment, the command is installed into that environment’s <code>bin/</code> directory. Avoid system-wide <code>sudo pip</code> installs.</p><p><strong>Distribution status:</strong> no CUDA Compatibility package is currently published on PyPI. Install from the GitHub checkout using the steps above; <code>pip install cuda-legacy-compat</code> is not a supported installation command.</p></section>
 <section class="doc-section"><h2>3. Check the machine</h2><pre><code>cuda-legacy inspect
 cuda-legacy profiles show pytorch-2.14-cu130
 cuda-legacy doctor --llvm-root /path/to/LLVM-23.1.4</code></pre><p><code>doctor</code> checks prerequisites; “ready” is not a workload certification. Pass <code>--cuda-root</code> when development headers are not under <code>/usr/local/cuda-12.4</code>.</p></section>

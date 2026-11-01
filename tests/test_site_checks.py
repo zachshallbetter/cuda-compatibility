@@ -21,6 +21,26 @@ class SiteDiscoveryChecksTests(unittest.TestCase):
     def test_current_site_passes_discovery_checks(self) -> None:
         self.assertEqual(audit_site(SITE_ROOT), [])
 
+    def test_rejects_stale_publication_status(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            site = self.copy_site(directory)
+            page = site / "docs" / "discovery.html"
+            source = page.read_text(encoding="utf-8").replace(
+                "The public GitHub Pages site is live.",
+                "The public GitHub Pages deployment has not been verified for this revision.",
+                1,
+            )
+            page.write_text(source, encoding="utf-8")
+            self.assertTrue(any("stale claim" in error for error in audit_site(site)))
+
+    def test_rejects_missing_bing_discovery_guidance(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            site = self.copy_site(directory)
+            page = site / "docs" / "discovery.html"
+            source = page.read_text(encoding="utf-8").replace("Bing Webmaster Tools", "Search tools")
+            page.write_text(source, encoding="utf-8")
+            self.assertTrue(any("missing Bing Webmaster Tools" in error for error in audit_site(site)))
+
     def test_rejects_a_broken_local_link(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             site = self.copy_site(directory)

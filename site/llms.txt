@@ -12,7 +12,7 @@ This is a convenience index for people and automated agents. It is not a standar
 - [Architecture](https://zachshallbetter.github.io/cuda-compatibility/docs/architecture.html): version facade, compiler, driver bridge, and dispatch routing.
 - [CLI reference](https://zachshallbetter.github.io/cuda-compatibility/docs/cli.html): command syntax and exit codes.
 - [Research and evidence](https://zachshallbetter.github.io/cuda-compatibility/docs/research.html): scope, methods, reproducible records, and known gaps.
-- [Privacy and measurement](https://zachshallbetter.github.io/cuda-compatibility/docs/privacy.html): analytics scope, consent behavior, and Search Console setup.
+- [Privacy and measurement](https://zachshallbetter.github.io/cuda-compatibility/docs/privacy.html): analytics scope, consent behavior, Google Search Console, and Bing Webmaster setup.
 - [Search and AI discovery](https://zachshallbetter.github.io/cuda-compatibility/docs/discovery.html): crawler access, sitemap and agent index, and the limits of current visibility evidence.
 - [Legacy GPU catalog](https://zachshallbetter.github.io/cuda-compatibility/gpu-catalog.html): NVIDIA compute-capability tiers and project hardware status.
 
