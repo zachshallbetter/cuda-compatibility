@@ -122,6 +122,19 @@ class SiteDiscoveryChecksTests(unittest.TestCase):
             guide.write_text(guide_source[:start] + f'<meta name="description" content="{description}">' + guide_source[end:], encoding="utf-8")
             self.assertTrue(any("duplicate meta description" in error for error in audit_site(site)))
 
+    def test_rejects_short_meta_descriptions(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            site = self.copy_site(directory)
+            homepage = site / "index.html"
+            source = homepage.read_text(encoding="utf-8")
+            source = source.replace(
+                'Open-source CUDA compatibility for older NVIDIA GPUs: use selected CUDA 13 PyTorch operations on Maxwell sm_52 with native kernels, CPU fallbacks, and explicit limits.',
+                "Too short.",
+                1,
+            )
+            homepage.write_text(source, encoding="utf-8")
+            self.assertTrue(any("meta description should be 140–180 characters" in error for error in audit_site(site)))
+
     def test_rejects_external_page_load_resources(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             site = self.copy_site(directory)

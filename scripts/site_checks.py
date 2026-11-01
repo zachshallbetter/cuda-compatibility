@@ -206,10 +206,14 @@ def audit_site(site_root: Path) -> list[str]:
             errors.append(f"{label}: expected one h1, found {parser.h1_count}")
         if len(parser.meta.get("description", [])) != 1 or not parser.meta["description"][0].strip():
             errors.append(f"{label}: expected one non-empty meta description")
-        elif parser.meta["description"][0].strip() in descriptions:
-            errors.append(f"{label}: duplicate meta description")
         else:
-            descriptions.add(parser.meta["description"][0].strip())
+            description = parser.meta["description"][0].strip()
+            if not 140 <= len(description) <= 180:
+                errors.append(f"{label}: meta description should be 140–180 characters")
+            if description in descriptions:
+                errors.append(f"{label}: duplicate meta description")
+            else:
+                descriptions.add(description)
         if not " ".join(parser.h1_text.split()):
             errors.append(f"{label}: h1 must contain visible text")
         for key in ("og:title", "og:description", "og:url", "og:image", "twitter:card", "twitter:title", "twitter:description", "twitter:image"):

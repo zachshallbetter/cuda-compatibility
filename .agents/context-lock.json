@@ -6,7 +6,7 @@
   "selectedPaths": [],
   "sourceSelection": {
     "includedCount": 159,
-    "includedBytes": 943743,
+    "includedBytes": 945980,
     "excludedCounts": {
       "excluded-directory": 31,
       "excluded-path": 1,
@@ -19,14 +19,14 @@
     "repositories": [
       {
         "path": ".",
-        "commit": "754dd06f4b34af3d20543391f74c1bb14d43bf60",
+        "commit": "d6794f1ea3085d92c0068c982f9b4ec3ffbf0a9d",
         "branch": "codex/cuda-compat-publication",
         "dirty": true,
         "remote": "https://github.com/zachshallbetter/cuda-compatibility.git"
       }
     ]
   },
-  "aggregateSourceDigest": "26790f5371a0158fe3ab7f9efbb5c325162c44f4594e4dc0e01b7d5f85d8e6df",
+  "aggregateSourceDigest": "f04bf5361568c67b83da4b027dfa904c8d449cb54c61868a4df89302e5c0dce4",
   "sources": [
     {
       "path": ".agents/rules/ci.md",
@@ -325,8 +325,8 @@
     },
     {
       "path": "docs/DPP_IMPLEMENTATION.md",
-      "bytes": 23746,
-      "sha256": "e057f00907928d5eaa98d0461de9e1ee5d082f2009d742b118ee95ce0dafe928"
+      "bytes": 24028,
+      "sha256": "5d5aef61fc49ae9729ca5cb01c6cc50c1257a2d4bd2f58ea2b05619f3ab8c3c3"
     },
     {
       "path": "docs/EVIDENCE_METHOD.md",
@@ -400,8 +400,8 @@
     },
     {
       "path": "docs/WORK_ITEMS.md",
-      "bytes": 86906,
-      "sha256": "9b1192d27459e52815f3ea6fd85580af9ea1e984441e03a6741ad75034b1b2a2"
+      "bytes": 87169,
+      "sha256": "176d25bdc6812b4e87cba7aae604fa978d0d4a19b6f6c4eebf40dafd3c767e3e"
     },
     {
       "path": "docs/architecture.md",
@@ -630,8 +630,8 @@
     },
     {
       "path": "scripts/site_checks.py",
-      "bytes": 17048,
-      "sha256": "f65e416d4e1d12e58a306152d95e9bfd20a2b4a41e390dd010531237eb3273f8"
+      "bytes": 17230,
+      "sha256": "5c7df862643cb7560d0690912d8b4acd2538efb9ba3ca549d583f30ee83886b1"
     },
     {
       "path": "scripts/upgrade-project.py",
@@ -670,53 +670,53 @@
     },
     {
       "path": "site/docs/architecture.html",
-      "bytes": 10270,
-      "sha256": "f0a1f2f79b0a138d0e010ab27c86055542b1a3f61ab21980095e1334872124b2"
+      "bytes": 10310,
+      "sha256": "4620de141facc5b6195bece38c65f9afad9964c745e44a82674f5fe84a8ce464"
     },
     {
       "path": "site/docs/cli.html",
-      "bytes": 8864,
-      "sha256": "e38daaf8a1a241febb74dc07e58364524d8b662bb363f20781e99f6791de6a26"
+      "bytes": 8937,
+      "sha256": "65e03dc4a0e53d60a81cee738b2c07b0cc620c1a583fd33c2d235081b9887d01"
     },
     {
       "path": "site/docs/compatibility.html",
-      "bytes": 11143,
-      "sha256": "5234c869766dd8a849b26ee10ffe261e532dc7a3f5ed6994f1c1d06546761c0e"
+      "bytes": 11188,
+      "sha256": "4e4d2b283235d9a367809501beb84e030634cf83a9ead42b8372691309d2b23b"
     },
     {
       "path": "site/docs/discovery.html",
-      "bytes": 11616,
-      "sha256": "c47db89e5c9527ca967e37c449e5e573d6551866e692c44dcf99e502b789f3aa"
+      "bytes": 11821,
+      "sha256": "8809119f272567b5987755a14d0284267fbd914f68956deb8d240b8f6ad0b0c5"
     },
     {
       "path": "site/docs/getting-started.html",
-      "bytes": 8973,
-      "sha256": "4c82892bd6b3e9a884370a1a4b9e179333317590a192069166138ca7cc5aedb5"
+      "bytes": 8999,
+      "sha256": "b6a9cafc8d969850b15b877c78d7f83dea48926370829b6b1a908c8ed7578944"
     },
     {
       "path": "site/docs/index.html",
-      "bytes": 9331,
-      "sha256": "1f40b72f5f728a864030f0d5f27925255919ce3c430a1871661193a82e937b75"
+      "bytes": 9374,
+      "sha256": "df228d5809a876a1e3f83c4c54dc5b71e6c21d9d488c59a1045545d66ec375ee"
     },
     {
       "path": "site/docs/privacy.html",
-      "bytes": 13712,
-      "sha256": "f887df65794bf89d1f5b627defb0534d358e1eb8ddce150d651b9dd8e56aaf57"
+      "bytes": 13834,
+      "sha256": "fac69e66684acbe3b4706ebfc266a520a6b58ed82bca67f75b8dbacf31dfebef"
     },
     {
       "path": "site/docs/research.html",
-      "bytes": 10632,
-      "sha256": "90ef2edbcd4dd2a82f62838a26c2b697cf62baeb4a65bca840f8f63e4084d107"
+      "bytes": 10803,
+      "sha256": "fda18985b9df8c95e62ce4bed93711c12b20ca656f91bdac33bb64cbbf693306"
     },
     {
       "path": "site/gpu-catalog.html",
-      "bytes": 16733,
-      "sha256": "297a1c6c728503652f234e21def14d7931b851836d557ce7e717ea643b82889a"
+      "bytes": 16763,
+      "sha256": "33711f6ff970e9167b32471fcb2f147b509e2474d033b2c36e3c081effc33668"
     },
     {
       "path": "site/index.html",
-      "bytes": 27136,
-      "sha256": "573823e83a61f2b04b968dfd203e57da312aa9822bfa5b6b036768dd3d56471a"
+      "bytes": 27159,
+      "sha256": "8e6e3e8c518b6071939ee3e5f3605666c52c105b41646fb0fc71e55ae3f4da4f"
     },
     {
       "path": "site/llms.txt",
@@ -820,8 +820,8 @@
     },
     {
       "path": "tests/test_site_checks.py",
-      "bytes": 8227,
-      "sha256": "707a7b18ce03260d61b4a9295256d6fb04e4a00f245b819e1ca328dfab8439b6"
+      "bytes": 8959,
+      "sha256": "c0b162b9f870f3fe9fd9c2acc45aa1a20d70c9fb13ce6855a2411a1046f6b36c"
     }
   ]
 }
