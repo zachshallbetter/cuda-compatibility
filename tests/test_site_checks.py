@@ -64,6 +64,20 @@ class SiteDiscoveryChecksTests(unittest.TestCase):
             page.write_text(source.replace("</head>", '<link rel="preconnect" href="https://fonts.example.net">\n</head>', 1), encoding="utf-8")
             self.assertTrue(any("page-load resource uses an external host" in error for error in audit_site(site)))
 
+    def test_rejects_project_source_link_to_missing_branch(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            site = self.copy_site(directory)
+            page = site / "docs" / "architecture.html"
+            source = page.read_text(encoding="utf-8").replace(
+                "/blob/codex/cuda-compat-publication/",
+                "/blob/main/",
+                1,
+            )
+            page.write_text(source, encoding="utf-8")
+            self.assertTrue(
+                any("project source link must use the published ref" in error for error in audit_site(site))
+            )
+
     def test_rejects_article_schema_without_stable_identity_links(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             site = self.copy_site(directory)

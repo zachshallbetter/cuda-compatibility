@@ -6,7 +6,7 @@
   "selectedPaths": [],
   "sourceSelection": {
     "includedCount": 159,
-    "includedBytes": 918673,
+    "includedBytes": 923066,
     "excludedCounts": {
       "excluded-directory": 30,
       "excluded-path": 1,
@@ -19,14 +19,14 @@
     "repositories": [
       {
         "path": ".",
-        "commit": "8726adaea7867126658fefb4c0060040a8373815",
+        "commit": "22667016a0473178f8eea37fcaa8bb876f3c3a67",
         "branch": "codex/cuda-compat-publication",
         "dirty": true,
         "remote": "https://github.com/zachshallbetter/cuda-compatibility.git"
       }
     ]
   },
-  "aggregateSourceDigest": "44a42f1951e2933c00fb5f8b025e935ba82dcee94deeecf6f563fcb3b9057c12",
+  "aggregateSourceDigest": "50e8f437ac8aedc7d90e2616ff352202f4ad2259fbe12edb2c2f449a5330b2d4",
   "sources": [
     {
       "path": ".agents/rules/ci.md",
@@ -325,8 +325,8 @@
     },
     {
       "path": "docs/DPP_IMPLEMENTATION.md",
-      "bytes": 19128,
-      "sha256": "af02c3f6c16533e34698ed0c85941245f73a5c0c873189b441d69cf3c02fe99e"
+      "bytes": 20934,
+      "sha256": "986c17610d6ec91881a9e3dcb996b509bcc093be604d6a2f7ac8ebcdf7bdcec8"
     },
     {
       "path": "docs/EVIDENCE_METHOD.md",
@@ -400,8 +400,8 @@
     },
     {
       "path": "docs/WORK_ITEMS.md",
-      "bytes": 78699,
-      "sha256": "ae5e751a18e8dc15ba1472bb4698f7ebefdb022ae0c39c810e05db17d9d85d16"
+      "bytes": 79422,
+      "sha256": "0902b1f5092074f26ba577ec0f5bd658bebf0a13c3e0f3111e976d99a85fe735"
     },
     {
       "path": "docs/architecture.md",
@@ -430,8 +430,8 @@
     },
     {
       "path": "docs/research/pytorch-cu130-maxwell.md",
-      "bytes": 15100,
-      "sha256": "98af23c032615ba47a8a6307f3834f907739e75e159bc83253cebb396aceacd5"
+      "bytes": 15299,
+      "sha256": "719bb8416cad4bafe90271a57dbb9d3ddf82f0c5e112f8a4d12cd2475c940861"
     },
     {
       "path": "docs/research/runtime-version-facade.md",
@@ -440,8 +440,8 @@
     },
     {
       "path": "docs/roadmap.md",
-      "bytes": 5167,
-      "sha256": "b402fea4ef3d6c82904e16eb71969a4d6a3b57d41533deada09fadac2bac478e"
+      "bytes": 5181,
+      "sha256": "306b76b7152641f0beabc25446338b4f0c5cee1d4a7faa8d5d85d3317a63ef8d"
     },
     {
       "path": "docs/user-guide.md",
@@ -630,8 +630,8 @@
     },
     {
       "path": "scripts/site_checks.py",
-      "bytes": 13835,
-      "sha256": "91c78b489e4fc41a9c9eb4b0554b8f4fcdc7af0d01dcb73b2992bfb8d6526ea6"
+      "bytes": 14586,
+      "sha256": "d36c0e4c1bde7f946422b60442206dec3aa04e87317fb63a0f49649deb29a1bf"
     },
     {
       "path": "scripts/upgrade-project.py",
@@ -670,8 +670,8 @@
     },
     {
       "path": "site/docs/architecture.html",
-      "bytes": 10213,
-      "sha256": "cff619ae7801769ea2954ab8590640a84504b59fa56fdc85e9d56693baaddc96"
+      "bytes": 10270,
+      "sha256": "f0a1f2f79b0a138d0e010ab27c86055542b1a3f61ab21980095e1334872124b2"
     },
     {
       "path": "site/docs/cli.html",
@@ -680,8 +680,8 @@
     },
     {
       "path": "site/docs/compatibility.html",
-      "bytes": 11115,
-      "sha256": "a307afd216033bb27d464ee79cb9757299e7dac612d45ab84f19dc497d86acf4"
+      "bytes": 11143,
+      "sha256": "5234c869766dd8a849b26ee10ffe261e532dc7a3f5ed6994f1c1d06546761c0e"
     },
     {
       "path": "site/docs/discovery.html",
@@ -705,8 +705,8 @@
     },
     {
       "path": "site/docs/research.html",
-      "bytes": 10110,
-      "sha256": "1c68a275fbf7181e8d9730ea166ac94d3c556200b3fedfd3e02438bef835c212"
+      "bytes": 10304,
+      "sha256": "cb2c8d68bb338197568d5bce813c7d7752ea26e813d0ce55815976d3a6c47d2b"
     },
     {
       "path": "site/gpu-catalog.html",
@@ -820,8 +820,8 @@
     },
     {
       "path": "tests/test_site_checks.py",
-      "bytes": 3902,
-      "sha256": "63745270f5dd2a19b2fa45faa04e0289b268c442a3ff70a5e92d774278cfbf84"
+      "bytes": 4523,
+      "sha256": "9d069c21818b224a1e2acba2eff0fd84fe1e4c81033d14bd01eb97e2291af318"
     }
   ]
 }

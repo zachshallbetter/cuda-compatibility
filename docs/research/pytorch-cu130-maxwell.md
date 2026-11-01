@@ -73,7 +73,7 @@ This is a synthetic small MLP slice, not a packaged pretrained model or general 
 
 One owner-supplied transformer checkpoint was exercised with the official PyTorch 2.14.0 CUDA 13.0 wheel through the packaged launcher on broker-selected GPU 2 (`sm_52`). Eleven returned tensors matched the CPU reference at `rtol=1e-4, atol=1e-5` across six bounded batch/sequence configurations. The largest case measured 114.881 ms median latency, 8,914 tokens/s, and 142,024,704 bytes peak allocated GPU memory. Selected operations used native Maxwell kernels; other covered operations used the documented 64 MiB-capped, inference-only CPU fallback.
 
-This was a one-off integration experiment, not a product feature or general PyTorch support claim. The model source, checkpoint, tokenizer, configuration, artifact digests, and local-only probe are excluded from the public source snapshot. Per-card validation, training/autograd, and broader workload coverage remain unverified.
+This was a one-off integration experiment, not a product feature or general PyTorch support claim. The model source, checkpoint, tokenizer, configuration, artifact digests, and local-only probe are excluded from the public source snapshot. That checkpoint was tested only on GPU 2; per-card checkpoint validation and broader workload coverage remain unverified. A separate, much smaller first-order training slice is documented under CLC-025 below.
 
 ## CLC-025: stream, dtype, and training expansion
 
@@ -102,7 +102,7 @@ This is an implementation-boundary and loaded-library inventory, not a complete 
 
 A second model family was exercised with the official CUDA 13 wheel on broker-selected GPU 2: a deterministic `Conv2d → ReLU → MaxPool2d → Conv2d → ReLU → AdaptiveAvgPool2d → Flatten → Linear` classifier for input shape `2×3×32×32`. The stock cuDNN path failed with `GET was unable to find an engine to execute this computation`. After adding that exact cuDNN no-engine phrase to the architecture-failure classifier, the packaged launcher retried the operation on CPU; the final `(2, 5)` output matched the CPU reference at `rtol=1e-4, atol=1e-5`. This establishes one bounded inference case, not general cuDNN or convolution support; its convolution operations execute on CPU under the 64 MiB fallback limit.
 
-Evidence is currently limited to GPU 2, two small inference model families, batch sizes up to 8, sequence lengths up to 128, and inference without autograd. The CNN test has one input shape and uses CPU fallback for convolution. Training, gradient behavior, broader architectures, larger fallbacks, other GPU cards, and independent API/library coverage remain unverified. CLC-011 remains in progress; CLC-012's bounded CNN probe is verified.
+Inference evidence is limited to GPU 2, two small model families, batch sizes up to 8, sequence lengths up to 128, and inference without autograd. The CNN test has one input shape and uses CPU fallback for convolution. Separately, the 2×2 first-order training slice in CLC-025 passed on GPUs 1 and 2; other training graphs, optimizers, broader architectures, larger fallbacks, other GPU cards, and independent API/library coverage remain unverified. CLC-011 remains in progress; CLC-012's bounded CNN probe is verified.
 
 
 ## CLC-010 packaged launcher

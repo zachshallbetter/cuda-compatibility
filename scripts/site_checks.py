@@ -10,6 +10,10 @@ from urllib.parse import unquote, urlsplit
 from xml.etree import ElementTree
 
 
+# Update with the repository's default branch whenever its published ref changes.
+PROJECT_SOURCE_REF = "codex/cuda-compat-publication"
+
+
 class PageParser(HTMLParser):
     def __init__(self) -> None:
         super().__init__(convert_charrefs=True)
@@ -231,6 +235,16 @@ def audit_site(site_root: Path) -> list[str]:
                 errors.append(f"{label}: page-load resource uses an external host: {resource}")
         for href in parser.links:
             parts = urlsplit(href)
+            if parts.netloc.lower() == "github.com" and parts.path.startswith(
+                "/zachshallbetter/cuda-compatibility/blob/"
+            ):
+                source_path = parts.path.split("/blob/", 1)[1]
+                uses_published_ref = source_path.startswith(PROJECT_SOURCE_REF + "/")
+                uses_commit = bool(re.match(r"^[0-9a-f]{40}/", source_path))
+                if not uses_published_ref and not uses_commit:
+                    errors.append(
+                        f"{label}: project source link must use the published ref or an immutable commit: {href}"
+                    )
             if parts.scheme or parts.netloc or href.startswith("//"):
                 continue
             target = (page.parent / unquote(parts.path)).resolve() if parts.path else page

@@ -27,11 +27,11 @@ Each public HTML page is a surface identified by its canonical URL. Its article 
 | `CLC-CLAIM-001` | The project is independent research, not affiliated with NVIDIA. | Project identity and licensing; `PROJECT_INTENT.md`, `LICENSE-MIT`, `LICENSE-APACHE`. | Homepage attribution and documentation. |
 | `CLC-CLAIM-002` | The current launcher targets Linux x86_64 and visible `sm_52` devices. | Implementation contract; launcher and profile code plus `docs/architecture.md`. | Homepage, install guide, compatibility guide. |
 | `CLC-CLAIM-003` | The process-local facade reports CUDA Runtime 13.0 for one query while retaining the actual GPU identity. | Reproduction record; `docs/research/runtime-version-facade.md`. This is not general CUDA 13 runtime support. | Homepage architecture and feature sections. |
-| `CLC-CLAIM-004` | Six selected PyTorch operations have native Maxwell paths. | Operation registration and test receipts in `docs/research/pytorch-cu130-maxwell.md`; each listed dtype/shape limit remains part of the claim. | Homepage and support matrix. |
-| `CLC-CLAIM-005` | A selected inference-only operator set can use bounded CPU fallback. | Registration, error-classification, and limits in `src/cuda_legacy_compat/torch_adapter.py` and the PyTorch research record. This is not GPU convolution or training support. | Homepage and support matrix. |
+| `CLC-CLAIM-004` | Selected PyTorch operation cases have native Maxwell paths. | Operation registration and test receipts in `docs/research/pytorch-cu130-maxwell.md`; each listed dtype/shape limit and per-card result remains part of the claim. | Homepage and support matrix. |
+| `CLC-CLAIM-005` | Selected PyTorch operations can use bounded CPU fallback; one small first-order training slice exercises selected differentiable fallback routes. | Registration, error classification, gradient evidence, and limits in `src/cuda_legacy_compat/torch_adapter.py` and the PyTorch research record. This does not establish GPU convolution or general training support. | Homepage and support matrix. |
 | `CLC-CLAIM-006` | GM200 `sm_52` reference devices have run selected checks; other catalog cards are unverified. | Hardware run evidence in `docs/WORK_ITEMS.md` and research records; NVIDIA’s legacy table supports model-to-capability mapping only. | Homepage hardware table and GPU catalog. |
 | `CLC-CLAIM-007` | Current PyTorch CUDA 13 builds and older GPU support have separate package and hardware constraints. | Version-pinned PyTorch release matrix and NVIDIA CUDA 13 release notes linked from `docs/compatibility-targets.md`. | Compatibility guide and homepage. |
-| `CLC-CLAIM-008` | Broad CUDA API/library coverage, training, autograd, performance parity, and general machine-wide interposition are not established. | Bounded by source registrations and current test scope; absence of a registered path is not evidence that an operation is impossible. | Homepage, compatibility guide, and research page. |
+| `CLC-CLAIM-008` | Broad CUDA API/library coverage, general training/autograd, performance parity, and machine-wide interposition are not established. | Bounded by source registrations and current test scope; one tiny first-order training path does not establish arbitrary autograd or optimizer support. Absence of a registered path is not evidence that an operation is impossible. | Homepage, compatibility guide, and research page. |
 
 All claims are project-authored and are not independent corroboration. CUDA/package requirements cite primary vendor or framework sources. Test claims point to named local procedures and results; a repeated site statement does not upgrade its evidence.
 
@@ -43,16 +43,20 @@ The state dimensions are evaluated independently. `SATISFIED` below means the na
 
 | Surface ID | Representation | Represented | Accessible | Discoverable | Observed | Engaged | Outcome |
 |---|---|---|---|---|---|---|
-| `site-home` | Homepage, canonical `/` | `SATISFIED` locally | Local HTTP `SATISFIED`; public `GRAY` | `SATISFIED` locally through links/sitemap/robots | Local source/route checks `SATISFIED`; public fetch `GRAY` | `GRAY` | `GRAY` |
-| `site-docs` | User guides under `/docs/` | `SATISFIED` locally | Local HTTP `SATISFIED`; public `GRAY` | `SATISFIED` locally through shared nav/sitemap/agent index | Local source/route checks `SATISFIED`; public fetch `GRAY` | `GRAY` | `GRAY` |
-| `site-gpu-catalog` | Explained NVIDIA legacy compute-capability catalog | `SATISFIED` locally | Local HTTP `SATISFIED`; public `GRAY` | `SATISFIED` locally through internal links/sitemap | Local page checked; external search state `GRAY` | `GRAY` | `GRAY` |
-| `site-robots` | `/robots.txt` crawler policy | `SATISFIED` in source | Local file `SATISFIED`; public fetch `GRAY` | `SATISFIED` as a published-intent route; actual crawler use `GRAY` | Local policy parsed; crawler compliance `GRAY` | `NOT_APPLICABLE` | `NOT_APPLICABLE` |
-| `site-sitemap` | `/sitemap.xml` | `SATISFIED` in source | Local file `SATISFIED`; public fetch `GRAY` | `SATISFIED` as a valid local index; search discovery `GRAY` | Local canonical set checked; external processing `GRAY` | `NOT_APPLICABLE` | `NOT_APPLICABLE` |
-| `site-agent-index` | `/llms.txt` | `SATISFIED` in source | Local file `SATISFIED`; public fetch `GRAY` | `SATISFIED` as an informal local index; tool adoption `GRAY` | Local URLs checked; agent retrieval `GRAY` | `GRAY` | `GRAY` |
-| `source-repository` | GitHub repository URL | `SATISFIED` as a local source candidate | Public source content `GRAY`; no branch refs returned 2026-11-01 | GitHub surface exists; repository content discoverability `GRAY` | ACP setup checked; governance pending | `GRAY` | `GRAY` |
+| `site-home` | Homepage, canonical `/` | `SATISFIED` locally | Public HTTP `SATISFIED` (200; 2026-11-01) | `SATISFIED` as linked, sitemap-listed, crawl-allowed content; indexing `GRAY` | Public fetch `SATISFIED` (200); crawler/search observation `GRAY` | `GRAY` | `GRAY` |
+| `site-docs` | User guides under `/docs/` | `SATISFIED` locally | Public HTTP `SATISFIED` (8 canonical routes; 200; 2026-11-01) | `SATISFIED` as linked, sitemap-listed, crawl-allowed content; indexing `GRAY` | Public fetch `SATISFIED` (all 8 routes returned 200); crawler/search observation `GRAY` | `GRAY` | `GRAY` |
+| `site-gpu-catalog` | Explained NVIDIA legacy compute-capability catalog | `SATISFIED` locally | Public HTTP `SATISFIED` (200; 2026-11-01) | `SATISFIED` as internally linked and sitemap-listed; indexing `GRAY` | Public fetch `SATISFIED` (200); search state `GRAY` | `GRAY` | `GRAY` |
+| `site-robots` | `/robots.txt` crawler policy | `SATISFIED` in source | Public fetch `SATISFIED` (200; 2026-11-01) | `SATISFIED` as a published route; crawler compliance `GRAY` | Public bytes fetched; no crawler receipt | `NOT_APPLICABLE` | `NOT_APPLICABLE` |
+| `site-sitemap` | `/sitemap.xml` | `SATISFIED` in source | Public fetch `SATISFIED` (200; 2026-11-01) | `SATISFIED` as a published canonical URL list; search discovery/indexing `GRAY` | Public sitemap fetched and its 10 listed pages returned 200; search-engine processing `GRAY` | `NOT_APPLICABLE` | `NOT_APPLICABLE` |
+| `site-agent-index` | `/llms.txt` | `SATISFIED` in source | Public fetch `SATISFIED` (200; 2026-11-01) | `SATISFIED` as an informal published index; tool adoption `GRAY` | Public bytes fetched; no agent retrieval trace | `GRAY` | `GRAY` |
+| `source-repository` | GitHub repository URL | `SATISFIED` as a public source repository | Public repository and candidate branch resolve; branch tip `22667016a0473178f8eea37fcaa8bb876f3c3a67` (2026-11-01) | GitHub surface exists; repository discovery `GRAY` | GitHub API confirms public repository and branch tip; ACP notice reports governed/normal | `GRAY` | `GRAY` |
 | `author-site`, `author-github` | Author homepage and profile links | `SATISFIED` as site references | `GRAY` | `GRAY` | No independent check in this review | `GRAY` | `GRAY` |
 
 Local representations are versioned in Git and their selected source hashes are recorded by `.agents/context-lock.json`. There is no deployed response snapshot or per-platform rendered hash for this candidate.
+
+### Public deployment observation — 2026-11-01
+
+GitHub Actions run [41308393941](https://github.com/zachshallbetter/cuda-compatibility/actions/runs/41308393941) completed successfully from `codex/cuda-compat-publication` at `22667016a0473178f8eea37fcaa8bb876f3c3a67`. The canonical site returned HTTP 200 after the run. A direct audit fetched all 10 sitemap HTML URLs and the `robots.txt`, `llms.txt`, PNG social card, and SVG social card; all 14 responses returned HTTP 200. The live homepage included canonical, Open Graph, Twitter, and structured-data metadata. These observations establish availability and served metadata only; they do not establish indexing, crawler use, search visibility, social-card rendering by third parties, agent retrieval, or audience outcomes. No response body snapshot was retained.
 
 The local preview origin is a development surface, not a public or production surface. Do not cite its HTTP responses as evidence of public accessibility.
 
@@ -79,7 +83,7 @@ Each dimension is evaluated separately. Empty or unavailable data is `GRAY`, nev
 
 | Metric ID | Dimension | Definition and denominator | Source / window | Current state |
 |---|---|---|---|---|
-| `DPP-AV-01` | Availability | Successful authorized URL fetches / attempted eligible canonical URLs; report response class per URL. | Local HTTP/static checker now; public HTTP check after deployment. | Local checks tested; public state `GRAY`. |
+| `DPP-AV-01` | Availability | Successful authorized URL fetches / attempted eligible canonical URLs; report response class per URL. | Local HTTP/static checker and public fetch on 2026-11-01. | 14/14 public routes/assets returned HTTP 200; this is a point-in-time availability check, not a guarantee of uptime. |
 | `DPP-ER-01` | Entity recognition | Correct project/author resolution / scored entity opportunities, including ambiguous cases. | Labeled manual query/agent sample, versioned per run. | No observations; `GRAY`. |
 | `DPP-RT-01` | Retrieval | Directly traced source retrievals / instrumented retrieval opportunities. A cited or mentioned URL without a trace is an answer mention, not verified retrieval. | Instrumented retrieval logs; provider/model/time required. | No trace access; `GRAY`. |
 | `DPP-SF-01` | Semantic fidelity | Supported expected facts preserved / evaluable expected facts in sampled answers. | Human rubric against claim register and versioned query corpus. | No answer sample; `GRAY`. |
@@ -99,10 +103,10 @@ The project does not currently have field performance data, search-index coverag
 | Activity | Classification | Authority and receipt |
 |---|---|---|
 | Local website and source changes | Owned, pre-publication | Local work items and `records/evidence.jsonl`; reversible in source control. |
-| GitHub repository publication | Partially published | The public `codex/cuda-compat-publication` candidate branch exists; there is no `main` ref. The initial ACP SHA mismatch, authorized forward updates, and refused `main` updates are recorded under CLC-022 and `records/evidence.jsonl`. |
-| GitHub Pages site | Not live | Pages settings report workflow deployment, but GitHub cannot find the workflow on the default branch; the canonical URL returned HTTP 404 on 2026-11-01. |
+| GitHub repository publication | Published | Public repository `zachshallbetter/cuda-compatibility`; default branch `codex/cuda-compat-publication`; published tip `22667016a0473178f8eea37fcaa8bb876f3c3a67`. Initial ACP mismatch and denied `main` ref requests remain in the history; no `main` ref was created. |
+| GitHub Pages site | Live | Workflow run `41308393941` deployed the default branch at `22667016a0473178f8eea37fcaa8bb876f3c3a67`; canonical URL and 13 supporting routes/assets returned HTTP 200 in the 2026-11-01 audit. |
 | Social posts, newsletter pitches, community replies, paid promotion | None published | The owner has requested announcements after repository/site publication. No post has been made; destination, method, audience, source asset, and publication receipt remain to be registered per the distribution rule below. |
-| Crawl, Search Console, analytics, AI-answer sampling | Not observed or not configured | See `site/docs/privacy.html`; robots and sitemap do not confer access or prove indexing. |
+| Crawl, Search Console, analytics, AI-answer sampling | Not observed or not configured | No Search Console/Bing Webmaster property receipt, GA4 measurement ID, crawler receipt, retrieval trace, or AI-answer sample is recorded. The site has no GA4 requests while the ID is unset; robots and sitemap do not prove processing or indexing. |
 
 Every future distribution action must identify the versioned source asset, destination, method, audience, rights/permission basis, owner, publication receipt, and resulting observations. No automated or mass outreach is part of this project.
 
@@ -111,14 +115,14 @@ Every future distribution action must identify the versioned source asset, desti
 | DPP module | Implementation level | Evidence and unresolved work |
 |---|---|---|
 | PRP — representation | Partial, locally implemented | Stable project/site/author IDs, page canonicals, authorship, visible claim/source map, and correction triggers are recorded. Cross-platform identity reconciliation is `GRAY`. |
-| DAP — discovery/access | Local controls implemented and tested; public discovery `GRAY` | HTML, internal links, sitemap, robots, and agent index are checked locally. Public response, render parity, indexation, and retrieval remain unobserved. |
+| DAP — discovery/access | Local controls implemented and public availability observed; search/agent discovery `GRAY` | HTML, internal links, sitemap, robots, and agent index pass local checks; 14 public routes/assets returned 200. Indexation, social rendering, crawler use, and agent retrieval remain unobserved. |
 | DIS — distribution | Documented; no campaign | No social, partner, earned, paid, or automated distribution events are recorded. |
 | AEP — evidence | Partial, locally implemented | Material technical claims map to primary documentation, implementation records, or named tests. No independent expert review or external corroboration is claimed. |
 | OIP — observation | Metrics defined; observations unavailable | Metric definitions, sources, denominators, and blind spots are recorded; no platform baseline is available. |
 | OEP — experimentation | Not implemented for presence outcomes | No live SEO, crawler, content, or AI-citation experiment is registered. Site edits and local regression checks are not audience-effect experiments. |
 | MPF — measurement/provenance | Partial documentation; not conformant | Seed query corpus and metric dictionary exist; raw external observations, retrieval traces, adjudications, uncertainty estimates, and preregistration receipts do not. |
 | ASI — AI surfaces | Not implemented | The site publishes direct HTML and an informal `llms.txt`, and declares selected crawler preferences. It has no instrumented retrieval pipeline or verified answer/citation sample. |
-| Release gates | Local gates implemented; publication gates pending | `scripts/site_checks.py`, `make check`, and the documented test suite cover local structure. Public HTTP, crawler, social-card, Search Console, and performance field checks require publication and authorized access. |
+| Release gates | Source and Pages publication verified; external reach and measurement gates pending | `scripts/site_checks.py`, `make check`, and `make test` pass; the exact source commit has a successful Pages run and live routes pass HTTP checks. Search Console/Bing properties, analytics activation, crawler receipts, social-card rendering, audience outcomes, and performance field evidence remain pending or `GRAY`. |
 
 No DPP module is declared conformant. A validator pass, sitemap entry, crawler allowance, answer mention, citation, or local preview cannot be upgraded into an indexing, reach, or causal-outcome claim.
 
