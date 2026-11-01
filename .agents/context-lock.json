@@ -5,8 +5,8 @@
   "validityBasis": "aggregate-source-digest",
   "selectedPaths": [],
   "sourceSelection": {
-    "includedCount": 159,
-    "includedBytes": 952570,
+    "includedCount": 162,
+    "includedBytes": 967638,
     "excludedCounts": {
       "excluded-directory": 31,
       "excluded-path": 1,
@@ -19,14 +19,14 @@
     "repositories": [
       {
         "path": ".",
-        "commit": "bbcb5f74b55f183f9e5dd702352341f26a7b65b4",
+        "commit": "07e00fb7f63c610565a2fb096070b00337a9ed31",
         "branch": "codex/cuda-compat-publication",
         "dirty": true,
         "remote": "https://github.com/zachshallbetter/cuda-compatibility.git"
       }
     ]
   },
-  "aggregateSourceDigest": "8dcedc2e9e242753b400ac5d3851e067032091a5f71e484d534cd1fbc4fb09d8",
+  "aggregateSourceDigest": "f4353c3bdab47aba9fc36246752b53785625844bbd7e564191f650aeee792551",
   "sources": [
     {
       "path": ".agents/rules/ci.md",
@@ -325,8 +325,8 @@
     },
     {
       "path": "docs/DPP_IMPLEMENTATION.md",
-      "bytes": 25031,
-      "sha256": "49e5dc72354fd771a13b0d93b7b0eab84353b17505835f1f3545c8064592f226"
+      "bytes": 25518,
+      "sha256": "2068b8e835bf38c40c51f418d814acc5da70b447c6577ac379aa1a4e2f6252f1"
     },
     {
       "path": "docs/EVIDENCE_METHOD.md",
@@ -400,8 +400,8 @@
     },
     {
       "path": "docs/WORK_ITEMS.md",
-      "bytes": 92277,
-      "sha256": "180b28bebf35b1d37ef002b34d26b6a0ced1620318df132dabe09bcf372b24ea"
+      "bytes": 92644,
+      "sha256": "5f5f889f2c1a8c1643f6d8f07f1ddd84153a78f51501c538f81801c134fce8dd"
     },
     {
       "path": "docs/architecture.md",
@@ -409,9 +409,24 @@
       "sha256": "8a56658aece85f42b731a85398166c07cbc5753a7e50123cdad0b19a6d84109c"
     },
     {
+      "path": "docs/architecture/investigation-toolchain.md",
+      "bytes": 5134,
+      "sha256": "335172544d2c38726d6d8e03c27e6638af633b81ea57bb2d79ff1729da2947af"
+    },
+    {
       "path": "docs/compatibility-targets.md",
       "bytes": 3109,
       "sha256": "d41a1f4701dc791082e6072a619cbff1a644b2d05fc63289f14600e3c22933ca"
+    },
+    {
+      "path": "docs/compatibility/cuda-12.9-to-13.0-primary-source-diff.md",
+      "bytes": 6276,
+      "sha256": "97691e611b081683057f681634933ded3d2fdb6f89e9241ad55651ccb928cffd"
+    },
+    {
+      "path": "docs/compatibility/research-log.md",
+      "bytes": 2804,
+      "sha256": "02017b6b38a46d7183b809b9dd5b916dc7c5c0273e3cf277812799f8bc819022"
     },
     {
       "path": "docs/decisions/0001-language-and-first-scope.md",
