@@ -43,6 +43,30 @@ class SiteDiscoveryChecksTests(unittest.TestCase):
             analytics.write_text(source, encoding="utf-8")
             self.assertTrue(any("link events must require affirmative consent" in error for error in audit_site(site)))
 
+    def test_rejects_missing_webmaster_verification_tags(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            site = self.copy_site(directory)
+            homepage = site / "index.html"
+            source = homepage.read_text(encoding="utf-8")
+            source = source.replace('<meta name="google-site-verification" content="2DE5E0VRt_DWCUmeZbGK35YDdealoZyJDKURNXr04ZM">', "")
+            source = source.replace('<meta name="msvalidate.01" content="CDE813454E6BD389334E94C9B9C70981">', "")
+            homepage.write_text(source, encoding="utf-8")
+            errors = audit_site(site)
+            self.assertTrue(any("google-site-verification" in error for error in errors))
+            self.assertTrue(any("msvalidate.01" in error for error in errors))
+
+    def test_rejects_stale_analytics_configuration_copy(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            site = self.copy_site(directory)
+            privacy = site / "docs" / "privacy.html"
+            source = privacy.read_text(encoding="utf-8").replace(
+                "The configured tag is deployed; requests to Google measurement services begin only after opt-in.",
+                "The live deployment has not yet been updated.",
+                1,
+            )
+            privacy.write_text(source, encoding="utf-8")
+            self.assertTrue(any("stale claim says configured analytics is inactive" in error for error in audit_site(site)))
+
     def test_rejects_stale_publication_status(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             site = self.copy_site(directory)

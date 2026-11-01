@@ -145,6 +145,18 @@ def audit_site(site_root: Path) -> list[str]:
     if 'else if (choice !== "rejected") showBanner();' not in analytics_source:
         errors.append("analytics.js: visitors without a saved choice must receive a consent prompt")
 
+    homepage_meta = parsed[home][0].meta
+    for name in ("google-site-verification", "msvalidate.01"):
+        values = homepage_meta.get(name, [])
+        if len(values) != 1 or not values[0].strip():
+            errors.append(f"site/index.html: expected one non-empty {name} verification tag")
+
+    privacy_page = site_root / "docs" / "privacy.html"
+    if privacy_page in parsed:
+        privacy_source = parsed[privacy_page][1].lower()
+        if "live deployment has not yet been updated" in privacy_source or "no measurement id" in privacy_source:
+            errors.append("docs/privacy.html: stale claim says configured analytics is inactive")
+
     discovery_page = site_root / "docs" / "discovery.html"
     if discovery_page in parsed:
         discovery_source = parsed[discovery_page][1].lower()
@@ -154,6 +166,8 @@ def audit_site(site_root: Path) -> list[str]:
             errors.append("docs/discovery.html: missing Bing Webmaster Tools setup guidance")
         if "https://zachshallbetter.github.io/cuda-compatibility/" not in discovery_source:
             errors.append("docs/discovery.html: missing the exact hosted site URL-prefix property")
+        if "site has no ga4 measurement id" in discovery_source or "ga4 remains inactive" in discovery_source:
+            errors.append("docs/discovery.html: stale claim says GA4 is unconfigured")
     home_parser, _ = parsed[home]
     if len(home_parser.canonicals) != 1:
         return ["homepage must have exactly one canonical URL"]
