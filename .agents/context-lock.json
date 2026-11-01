@@ -6,7 +6,7 @@
   "selectedPaths": [],
   "sourceSelection": {
     "includedCount": 159,
-    "includedBytes": 932660,
+    "includedBytes": 938835,
     "excludedCounts": {
       "excluded-directory": 30,
       "excluded-path": 1,
@@ -19,14 +19,14 @@
     "repositories": [
       {
         "path": ".",
-        "commit": "755c6d6cbcea32f886b24fe91f4a48f28fe0bb11",
+        "commit": "2191a1cf2a313b78de00cefe1364e4fb26087a94",
         "branch": "codex/cuda-compat-publication",
         "dirty": true,
         "remote": "https://github.com/zachshallbetter/cuda-compatibility.git"
       }
     ]
   },
-  "aggregateSourceDigest": "89368a4451a50e740056ee0918511e13986d5a8736b475857debac7df5170883",
+  "aggregateSourceDigest": "dce37cb09c0e4583b2022a9a48b0a03c46a499c42991e660451045aba1596391",
   "sources": [
     {
       "path": ".agents/rules/ci.md",
@@ -325,8 +325,8 @@
     },
     {
       "path": "docs/DPP_IMPLEMENTATION.md",
-      "bytes": 22266,
-      "sha256": "a9d5bb9bdf53a926ac860cfaac880ccf199c181c82e0d881840219787db32b49"
+      "bytes": 22630,
+      "sha256": "63a566d3d30ea3c7bbaa00cabc0fdb79426003f9f189a638fe55d76e0f9cff08"
     },
     {
       "path": "docs/EVIDENCE_METHOD.md",
@@ -400,8 +400,8 @@
     },
     {
       "path": "docs/WORK_ITEMS.md",
-      "bytes": 82842,
-      "sha256": "301473a84f70f58397beb19154d16f98aee9118c6238a45e0f0f3ecea1faf54e"
+      "bytes": 86516,
+      "sha256": "7868f791d439649a8f76c8652cfbd49de06a147410ba66bcbb7e256900fdc3fe"
     },
     {
       "path": "docs/architecture.md",
@@ -630,8 +630,8 @@
     },
     {
       "path": "scripts/site_checks.py",
-      "bytes": 15261,
-      "sha256": "635ebe6174c9fedc6682d673cafcbdb53e9ff3782c0b829d9d2bc29ba5de995a"
+      "bytes": 16196,
+      "sha256": "5a96feda1dcd3b3c8231f3616955dc4e20311ebbb716c41efc356314c38bd525"
     },
     {
       "path": "scripts/upgrade-project.py",
@@ -665,8 +665,8 @@
     },
     {
       "path": "site/analytics.js",
-      "bytes": 6278,
-      "sha256": "2cfb64c0c41e260dfbc8b66db9346b0d5c96e3593f6b727b7d0603ab6855b94c"
+      "bytes": 6290,
+      "sha256": "61b89f0534921e8bd1419e115b61737a5a50e1cb65e7af4bbdd49dc1d64dc3f6"
     },
     {
       "path": "site/docs/architecture.html",
@@ -700,8 +700,8 @@
     },
     {
       "path": "site/docs/privacy.html",
-      "bytes": 13491,
-      "sha256": "e8cfee7a355aed1075724afbcab8c77ce69890f35a6c7616492964418bcd0ab2"
+      "bytes": 13545,
+      "sha256": "7f0cbb9d2d4450549a4b90975da1acbfceabc1d77b102a6eabeedbec0b0401e9"
     },
     {
       "path": "site/docs/research.html",
@@ -820,8 +820,8 @@
     },
     {
       "path": "tests/test_site_checks.py",
-      "bytes": 5611,
-      "sha256": "dd09bec068dba19908c94649d1aff7b3328f81ab9d522ded427c712019adaf8f"
+      "bytes": 6747,
+      "sha256": "c1bd58fb81e45bca81c1fd9f3429658831267ba6a893fdca98d5da2a0297f14a"
     }
   ]
 }

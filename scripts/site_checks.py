@@ -130,6 +130,21 @@ def audit_site(site_root: Path) -> list[str]:
         return ["site has no HTML pages"]
 
     parsed: dict[Path, tuple[PageParser, str]] = {page: _parse(page) for page in pages}
+    analytics_path = site_root / "analytics.js"
+    try:
+        analytics_source = analytics_path.read_text(encoding="utf-8")
+    except OSError as exc:
+        analytics_source = ""
+        errors.append(f"analytics.js is missing or unreadable: {exc}")
+    if not re.search(r'const measurementId = "G-[A-Z0-9]+";', analytics_source):
+        errors.append("analytics.js: expected a configured GA4 measurement ID")
+    if 'if (choice === "accepted") loadAnalytics();' not in analytics_source:
+        errors.append("analytics.js: existing analytics consent must be required before loading")
+    if 'if (!hasConsent() || !initialized) return;' not in analytics_source:
+        errors.append("analytics.js: link events must require affirmative consent")
+    if 'else if (choice !== "rejected") showBanner();' not in analytics_source:
+        errors.append("analytics.js: visitors without a saved choice must receive a consent prompt")
+
     discovery_page = site_root / "docs" / "discovery.html"
     if discovery_page in parsed:
         discovery_source = parsed[discovery_page][1].lower()

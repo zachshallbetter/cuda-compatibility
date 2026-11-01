@@ -21,6 +21,28 @@ class SiteDiscoveryChecksTests(unittest.TestCase):
     def test_current_site_passes_discovery_checks(self) -> None:
         self.assertEqual(audit_site(SITE_ROOT), [])
 
+    def test_rejects_missing_ga4_measurement_id(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            site = self.copy_site(directory)
+            analytics = site / "analytics.js"
+            analytics.write_text(
+                analytics.read_text(encoding="utf-8").replace('const measurementId = "G-1SX2S8FHMC";', 'const measurementId = "";'),
+                encoding="utf-8",
+            )
+            self.assertTrue(any("configured GA4 measurement ID" in error for error in audit_site(site)))
+
+    def test_rejects_analytics_without_consent_gates(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            site = self.copy_site(directory)
+            analytics = site / "analytics.js"
+            source = analytics.read_text(encoding="utf-8").replace(
+                'if (!hasConsent() || !initialized) return;',
+                'if (!initialized) return;',
+                1,
+            )
+            analytics.write_text(source, encoding="utf-8")
+            self.assertTrue(any("link events must require affirmative consent" in error for error in audit_site(site)))
+
     def test_rejects_stale_publication_status(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             site = self.copy_site(directory)
