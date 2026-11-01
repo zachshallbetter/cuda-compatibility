@@ -49,7 +49,7 @@ authority_bindings:
 
 provider_bindings:
   work_graph: "docs/WORK_ITEMS.md (provisional local frontier)"
-  repository: "local git repository; no remote configured"
+  repository: "zachshallbetter/cuda-compatibility (origin); public GitHub repository"
   dispatch: "Codex local workspace"
   verification: "Makefile and project validators"
   protection: "acp-gateway"
