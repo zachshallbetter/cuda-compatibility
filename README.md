@@ -2,7 +2,7 @@
 
 **Run supported newer CUDA workloads on older NVIDIA GPUs.**
 
-**Project site:** [CUDA Compatibility](site/index.html) · [Zach Shallbetter](https://zachshallbetter.com/) · [GitHub profile](https://github.com/zachshallbetter)
+**Project site:** [CUDA Compatibility](https://zachshallbetter.github.io/cuda-compatibility/) · [Zach Shallbetter](https://zachshallbetter.com/) · [GitHub profile](https://github.com/zachshallbetter)
 
 The responsive project site is in `site/`. To enable it, open **Settings → Pages → Build and deployment → Source** and select **GitHub Actions**; branch publishing cannot select the `/site` folder. Pull requests run the project checks and test suite. A repository maintainer publishes the default branch through **Actions → Publish GitHub Pages → Run workflow**; production deployment remains manual, and the workflow uploads only `site/`.
 
