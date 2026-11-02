@@ -26,6 +26,17 @@ DEVIATES_FROM
 
 A contradiction is a representable state, not a reason to create another document.
 
+```mermaid
+flowchart TD
+    Sources[Overlapping sources] --> Relation[Classify relation]
+    Relation -->|Defines or imports| Bind[Keep canonical source and explicit binding]
+    Relation -->|Specializes or constrains| Compose[Compose without duplicating authority]
+    Relation -->|Contradicts| Preserve[Preserve both claims and evidence]
+    Relation -->|Unmapped| Work[Create bounded reconciliation work]
+    Preserve --> Precedence[Apply existing authority precedence]
+    Work --> Precedence
+```
+
 ## Compatibility dimensions
 
 Version compatibility is multidimensional:

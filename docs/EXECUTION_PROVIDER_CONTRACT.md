@@ -45,6 +45,18 @@ authorized scope
 rollback/recovery
 ```
 
+```mermaid
+flowchart TD
+    Need[Requested operation] --> Interface[Select declared official interface]
+    Interface --> Bind[Resolve provider, account, project, and environment]
+    Bind --> State[Read exact target state and revision]
+    State --> Scope[Match requested effect to authorized scope]
+    Scope --> Gate{Permission and recovery valid?}
+    Gate -->|No| Stop[Do not mutate; record blocker]
+    Gate -->|Yes| Execute[Perform bounded operation]
+    Execute --> Receipt[Capture result and reconcile live state]
+```
+
 ## Credential posture
 
 Prefer:

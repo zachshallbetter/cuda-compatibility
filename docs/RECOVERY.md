@@ -18,17 +18,20 @@ provider state changed beneath a claim
 
 ## Procedure
 
-```text
-stop unsafe mutation
-→ preserve WIP/candidate/evidence
-→ identify repository + branch + revision + dirty state
-→ verify context/source identity
-→ reread live work/claims/provider state
-→ classify stale or conflicting ownership
-→ regenerate context when required
-→ release/reacquire/transfer claims lawfully
-→ rerun relevant checks
-→ resume from a known state
+```mermaid
+flowchart TD
+    Trigger[Recovery trigger] --> Stop[Stop unsafe mutation]
+    Stop --> Preserve[Preserve WIP, candidate, and evidence]
+    Preserve --> Identify[Identify repository, branch, revision, and dirty state]
+    Identify --> Verify[Verify context and source identity]
+    Verify --> Refresh[Reread live work, claims, and provider state]
+    Refresh --> Classify[Classify stale state or ownership conflict]
+    Classify --> Context{Context regeneration required?}
+    Context -->|Yes| Regenerate[Regenerate context]
+    Context -->|No| Claims[Release, reacquire, or transfer claims lawfully]
+    Regenerate --> Claims
+    Claims --> Checks[Rerun relevant checks]
+    Checks --> Resume[Resume from known state]
 ```
 
 Never erase another worker's unknown state as a shortcut to recovery.

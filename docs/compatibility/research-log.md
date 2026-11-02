@@ -39,7 +39,7 @@ See [investigation toolchain](../architecture/investigation-toolchain.md) and is
 
 ## 2026-11-01 reconciliation with existing implementation evidence
 
-**Important correction:** the preceding initial status table was a planning baseline, not a current-state inventory. The repository already contains substantial physical GM200 and official PyTorch 2.14.0+cu130 evidence. See `README.md`, `docs/research/maxwell-baseline.md`, `docs/research/pytorch-cu130-maxwell.md`, and `docs/architecture.md` as authoritative implementation evidence.
+**Important correction:** the preceding initial status table was a planning baseline, not a current-state inventory. The repository already contains substantial physical GM200 and official PyTorch 2.14.0+cu130 evidence. See the [README](../../README.md), [Maxwell baseline](../research/maxwell-baseline.md), [PyTorch CUDA 13 research record](../research/pytorch-cu130-maxwell.md), and [architecture](../architecture.md) as authoritative implementation evidence.
 
 - Three GM200 cards and driver 580.178.04: native CUDA **12.4**, not 12.9, vector-add correctness was verified per GPU. CUDA 12.9 artifact acquisition remains pending.
 - Official PyTorch 2.14.0+cu130 imports, enumerates genuine CC 5.2 cards, allocates and copies tensors. Stock tensor add fails with `no kernel image`; stock matrix multiplication fails at `cublasCreate` with `CUBLAS_STATUS_ARCH_MISMATCH`.

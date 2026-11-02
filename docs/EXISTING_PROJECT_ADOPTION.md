@@ -12,17 +12,19 @@ existing project truth
 
 The adoption sequence is:
 
-```text
-observe
-→ classify
-→ preserve
-→ bind
-→ fill only missing operating gaps
-→ compile
-→ run `python3 scripts/reconcile-project.py --project /path/to/project --pretty`, then reconcile
-→ qualify
-→ operate
+```mermaid
+flowchart TD
+    Observe[Observe existing state] --> Classify[Classify authority and overlaps]
+    Classify --> Preserve[Preserve existing truth and history]
+    Preserve --> Bind[Bind existing project authority]
+    Bind --> Gaps[Fill only missing operating gaps]
+    Gaps --> Compile[Compile context]
+    Compile --> Reconcile[Run read-only project reconciliation]
+    Reconcile --> Operate[Operate through Ready work]
+    Operate --> Qualify[Qualify adoption]
 ```
+
+The read-only reconciliation command is [`reconcile-project.py`](../scripts/reconcile-project.py).
 
 ## Phase A — Read-only discovery
 

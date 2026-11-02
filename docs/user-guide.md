@@ -24,6 +24,15 @@ For development, use `python -m pip install -e .`. The package has no Python run
 
 The inventory and profile commands work without an NVIDIA GPU. The adapter has been tested only on Linux x86_64 with Python 3.10.12, official `torch 2.14.0+cu130`, CUDA Runtime 13.0.96, LLVM/Clang 23.1.4, CUDA 12.4 development headers, the NVIDIA 580.178.04 driver, and GTX TITAN X GM200 cards at `sm_52`. Other combinations are not yet qualified.
 
+```mermaid
+flowchart LR
+    Install[Install in PyTorch environment] --> Inspect[Inspect hardware and compiler]
+    Inspect --> Doctor[Check launcher prerequisites]
+    Doctor --> Audit[Compare machine with pinned profile]
+    Audit --> Run[Run a Python script through the adapter]
+    Run --> Result[Review output and fallback limits]
+```
+
 ## 2. Check the machine and available targets
 
 ```sh
@@ -88,3 +97,11 @@ All listed model outputs matched CPU references at the tolerances recorded in th
 | CPU fallback exceeds 64 MiB | The fallback safety/behavior boundary was reached. | Reduce the operation's input size or use a supported native path. Other than the documented training slice, autograd may remain unsupported. |
 
 Use `cuda-legacy help`, `cuda-legacy help <command>`, or `<command> --help` for command syntax. Report bugs with the command, environment versions, exact failing operation, and a small reproducer; do not include model weights, secrets, or private input data.
+
+## Implementation references
+
+- Command parsing and help text: [`cli.py`](../src/cuda_legacy_compat/cli.py).
+- Host inventory and device selection: [`inventory.py`](../src/cuda_legacy_compat/inventory.py).
+- Profile validation and audit results: [`profiles.py`](../src/cuda_legacy_compat/profiles.py).
+- Build and launch behavior: [`launch.py`](../src/cuda_legacy_compat/launch.py).
+- PyTorch operator routes and fallback limits: [`torch_adapter.py`](../src/cuda_legacy_compat/torch_adapter.py).

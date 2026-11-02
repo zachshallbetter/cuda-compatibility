@@ -13,6 +13,17 @@ Verified
 
 Provider labels may differ; meanings must not.
 
+```mermaid
+flowchart LR
+    Backlog --> Ready
+    Ready --> InProgress[In progress]
+    InProgress --> InReview[In review]
+    InReview --> Done
+    Done --> Verified
+```
+
+This shows the normal progression; blocker handling is described separately below.
+
 ## Ready predicate
 
 ```text

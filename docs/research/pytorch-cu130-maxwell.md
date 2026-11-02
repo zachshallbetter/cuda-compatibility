@@ -32,7 +32,7 @@ The same result occurred on physical devices 0, 1, and 2. Running with `CUDA_COM
 
 ## First compatibility adapter
 
-`experiments/pytorch-cu130/run_operator_adapter.sh` generates PTX from the existing CUDA vector-add kernel with LLVM 23.1.4, builds a small CUDA Driver API bridge, and installs an explicit process-local Python dispatcher override for `aten::add.Tensor`. The adapter requires the visible devices to be `sm_52` and does not modify the PyTorch wheel.
+[`run_operator_adapter.sh`](../../experiments/pytorch-cu130/run_operator_adapter.sh) generates PTX from the existing CUDA vector-add kernel with LLVM 23.1.4, builds a small CUDA Driver API bridge, and installs an explicit process-local Python dispatcher override for `aten::add.Tensor`. The adapter requires the visible devices to be `sm_52` and does not modify the PyTorch wheel.
 
 Reproduce inside the disposable PyTorch environment after placing the verified LLVM release under `/tmp`:
 
@@ -92,7 +92,7 @@ First-order gradients and an optimizer step passed for a 2Ã—2 float32 `linear â†
 | `cuMemcpyDtoH` | Bounded fallback and embedding-index validation code | Explicit driver copy; some differentiable paths use PyTorch's device transfers instead. |
 | cuBLAS initialization (`cublasCreate`) | Stock official wheel reports `CUBLAS_STATUS_ARCH_MISMATCH` on `mm` | Bypassed for the registered bounded float32 matrix kernel; other cuBLAS operations remain unverified. |
 | cuDNN engine selection | Earlier convolution probe reports no engine for its CNN case | That convolution uses CPU fallback; general cuDNN compatibility is not implemented. |
-| CUDA wheel and driver library files | `experiments/pytorch-cu130/library_path_probe.py` inspected `/proc/self/maps` after bounded matrix and convolution calls | Observed wheel paths under `site-packages/nvidia/cu13/lib/` for `libcudart.so.13`, `libcublas.so.13`, `libcublasLt.so.13`, and `libnvrtc.so.13`; under `site-packages/nvidia/cudnn/lib/` for cuDNN 9 libraries; under `site-packages/nvidia/nccl/lib/` for `libnccl.so.2`; plus `torch/lib/libtorch_cuda.so`. The installed driver mapped as `/usr/lib/x86_64-linux-gnu/libcuda.so.580.178.04`. |
+| CUDA wheel and driver library files | [`library_path_probe.py`](../../experiments/pytorch-cu130/library_path_probe.py) inspected `/proc/self/maps` after bounded matrix and convolution calls | Observed wheel paths under `site-packages/nvidia/cu13/lib/` for `libcudart.so.13`, `libcublas.so.13`, `libcublasLt.so.13`, and `libnvrtc.so.13`; under `site-packages/nvidia/cudnn/lib/` for cuDNN 9 libraries; under `site-packages/nvidia/nccl/lib/` for `libnccl.so.2`; plus `torch/lib/libtorch_cuda.so`. The installed driver mapped as `/usr/lib/x86_64-linux-gnu/libcuda.so.580.178.04`. |
 | Missing CUDA kernel image | Stock ReLU failure and fallback-dispatch probes | Replaced only for registered kernels or eligible bounded CPU fallback cases. |
 | NCCL, Triton, arbitrary runtime APIs | No supporting trace or workload evidence | Not mapped or claimed compatible. |
 

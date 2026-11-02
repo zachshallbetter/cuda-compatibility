@@ -84,6 +84,19 @@ claim release/acquisition order
 
 The receiving worker does not mutate until the old claim is released or the coordinator has transferred it.
 
+```mermaid
+sequenceDiagram
+    participant Old as Current worker
+    participant Coord as Coordinator/provider
+    participant New as Receiving worker
+    Old->>Coord: Preserve candidate and report handoff state
+    Coord->>Coord: Verify and transfer/release claim
+    Coord-->>New: Assign work item, scope, revision, and context digest
+    New->>Coord: Re-read live claim and source state
+    Coord-->>New: Confirm current ownership
+    New->>New: Resume only after confirmation
+```
+
 ## Shared-state writes
 
 Coordinator or provider-native atomic mechanisms serialize:

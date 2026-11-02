@@ -84,3 +84,5 @@ Related: #26, #32, #36–#41.
 ## Existing CLI reconciliation (added 2026-11-01)
 
 The repository already implements a Python package exposing `cuda-legacy inspect`, `doctor`, `profiles`, `audit`, and an experimental `run`. Consult `README.md` and `docs/user-guide.md` before planning new commands. The illustrative `cuda-compat` syntax above is a **future naming/UX proposal**, not the current executable. The existing launcher is per-process, builds kernels in temporary directories, and uses a bounded PyTorch dispatcher adapter; it is not a general CUDA runtime or machine-wide installer. Work in #42 should converge on existing commands and preserve backward-compatible aliases unless a migration plan is approved.
+
+Implementation entry points: [`cli.py`](../../src/cuda_legacy_compat/cli.py), [`launch.py`](../../src/cuda_legacy_compat/launch.py), and [`torch_adapter.py`](../../src/cuda_legacy_compat/torch_adapter.py).
