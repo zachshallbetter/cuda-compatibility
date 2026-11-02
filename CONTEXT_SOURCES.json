@@ -50,6 +50,7 @@
   ],
   "excludePatterns": [
     ".env.*",
+    "*.egg-info/*",
     "*.pem",
     "*.key",
     "*.p12",

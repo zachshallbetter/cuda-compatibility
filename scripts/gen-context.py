@@ -177,7 +177,17 @@ def source_files(
     skipped: dict[str, int] = {}
     total_bytes = 0
 
-    for path in ROOT.rglob("*"):
+    try:
+        tracked_paths = subprocess.check_output(
+            ["git", "-C", str(ROOT), "ls-files", "--cached", "--others", "--exclude-standard", "-z"],
+            stderr=subprocess.DEVNULL,
+            timeout=GIT_TIMEOUT_SECONDS,
+        ).decode("utf-8").split("\0")
+        candidates = (ROOT / relative for relative in tracked_paths if relative)
+    except (OSError, subprocess.SubprocessError, UnicodeDecodeError):
+        candidates = ROOT.rglob("*")
+
+    for path in candidates:
         if path.is_symlink():
             skipped["symlink"] = skipped.get("symlink", 0) + 1
             continue

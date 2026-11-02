@@ -5,12 +5,12 @@
   "validityBasis": "aggregate-source-digest",
   "selectedPaths": [],
   "sourceSelection": {
-    "includedCount": 168,
-    "includedBytes": 1018805,
+    "includedCount": 165,
+    "includedBytes": 1020536,
     "excludedCounts": {
-      "excluded-directory": 31,
+      "excluded-directory": 1,
       "excluded-path": 1,
-      "extension": 25
+      "extension": 23
     }
   },
   "repositoryState": {
@@ -19,14 +19,14 @@
     "repositories": [
       {
         "path": ".",
-        "commit": "50bb41d32a7c71d2d50d6615deafc68dac765de4",
-        "branch": "codex/cuda-compat-publication",
+        "commit": "e52485f6860614044dc7782aa5ca43603dbda20f",
+        "branch": "codex/site-docs-pages-hardening",
         "dirty": true,
         "remote": "https://github.com/zachshallbetter/cuda-compatibility.git"
       }
     ]
   },
-  "aggregateSourceDigest": "df906ebcd3002a236cc2c4f0b1843c14ed9ff2ed1feb52d7710adecaff243017",
+  "aggregateSourceDigest": "7ef6476c42cd3d92ef467f6fef6635c8e9fa12b8d2d56e04b2cdf16f41559cca",
   "sources": [
     {
       "path": ".agents/rules/ci.md",
@@ -240,8 +240,8 @@
     },
     {
       "path": "CONTEXT_SOURCES.json",
-      "bytes": 1213,
-      "sha256": "111b1b77d9c3aba3b78fe973b002d9356ce313d60d2cbc69c902a678a949e9b7"
+      "bytes": 1233,
+      "sha256": "81b3395d7d79202ba9eb3b523514a523003a9152469ef5c04505dd269ba6da42"
     },
     {
       "path": "FORMAL_RESOURCE_MANIFEST.json",
@@ -405,8 +405,8 @@
     },
     {
       "path": "docs/WORK_ITEMS.md",
-      "bytes": 93507,
-      "sha256": "d5a4679a82a60f6cdb9d0c1a5ed02f21a03ebfe69389e913f8548c5f10186b17"
+      "bytes": 94177,
+      "sha256": "8384efaf7bef06de0005695360509cf590485d68ada891babaa97923825a406b"
     },
     {
       "path": "docs/architecture.md",
@@ -655,8 +655,8 @@
     },
     {
       "path": "scripts/gen-context.py",
-      "bytes": 13025,
-      "sha256": "eee7f301274b03d452987e5f3eb82891c828a951900454cf983cca3a97b25c87"
+      "bytes": 13487,
+      "sha256": "8da4ad95cfbd28cacd59ebed1727638f40181ed09e219ef9c2352d0a1e1ccc78"
     },
     {
       "path": "scripts/iepe-adopt.py",
@@ -779,26 +779,6 @@
       "sha256": "949c8a1fea65157d0f203da8981aa47ad990731caf5fbb7a0795bb20f506eb13"
     },
     {
-      "path": "src/cuda_legacy_compat.egg-info/SOURCES.txt",
-      "bytes": 910,
-      "sha256": "6d00548778c80c3a9244c84a3c4bb50b463f00b97d5320f94991056c5bf1a4ac"
-    },
-    {
-      "path": "src/cuda_legacy_compat.egg-info/dependency_links.txt",
-      "bytes": 1,
-      "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
-    },
-    {
-      "path": "src/cuda_legacy_compat.egg-info/entry_points.txt",
-      "bytes": 109,
-      "sha256": "888bd1255c6a2c780f66fd7bfcad3a5adccad61150e6d7f170a8082a4bc7db62"
-    },
-    {
-      "path": "src/cuda_legacy_compat.egg-info/top_level.txt",
-      "bytes": 19,
-      "sha256": "a7d4696de7a50e9d37c7f1b844b4e592fb4e3d3d488db8019d520d9e11311bba"
-    },
-    {
       "path": "src/cuda_legacy_compat/__init__.py",
       "bytes": 91,
       "sha256": "d766bd3c7f66a4b06c34255a075f0ab47a0da3f86d3f3411f10b5bbcc4dcfccc"
@@ -847,6 +827,11 @@
       "path": "tests/test_cli.py",
       "bytes": 9732,
       "sha256": "f3eae9fc7d998cc93672f013c6307fad36ecb61a8b05b40efcf7b3a9d3047891"
+    },
+    {
+      "path": "tests/test_context_generation.py",
+      "bytes": 1618,
+      "sha256": "9ac6a625f2df1b59b0651e160dc45a6408cb7e406a891db402cba809139aec63"
     },
     {
       "path": "tests/test_inventory.py",
