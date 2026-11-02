@@ -126,13 +126,30 @@ Pass when the cycle demonstrates bounded mutation, current source/context identi
 
 ---
 
-# Conditional operational gates
+## Conditional operational gates
 
 B5–B8 are capability observations, not prerequisites that normal project initialization should manufacture.
 
 **Do not create fake blockers, artificial stale state, unnecessary landings, or synthetic peer communication merely to obtain a PASS.**
 
 If a condition has not occurred, record `NOT OBSERVED` or `NOT EXECUTED` and continue lawful work.
+
+```mermaid
+flowchart TD
+    Identity[Project identity] --> Resources[Pin formal resources]
+    Resources --> Context[Compile project context]
+    Context --> Reconcile[Read-only reconciliation]
+    Reconcile --> Graph[Initialize smallest useful work graph]
+    Graph --> Cycle[Prove one reversible cycle]
+    Cycle --> Profiles[Add only intent-required profiles]
+    Profiles --> Evidence[Increase autonomy from evidence]
+    Cycle -. conditional observation .-> B5[Frontier reselection]
+    Cycle -. conditional observation .-> B6[Candidate and landing separation]
+    Cycle -. conditional observation .-> B7[Multi-agent coordination]
+    Cycle -. conditional observation .-> B8[Recovery]
+```
+
+The B5–B8 observations are conditional branches; ordinary initialization must not manufacture them.
 
 An explicit qualification experiment may arrange a safe scenario for one of these gates, but that evaluator instruction is outside the project's ordinary operating authority and must not be confused with spontaneous behavioral evidence.
 

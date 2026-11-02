@@ -36,14 +36,23 @@ Code, generated artifacts, or model outputs never silently alter theory or forma
 ## 6. Agent-First Publishing Architecture
 
 - Maintain programmatically generated `llms.txt` manifests and `llms-full.txt` single-file context corpora for zero-search agent context resolution.
-- Downstream Invariant: Generated `llms.txt` and `llms-full.txt` files are downstream projections: never edit them manually. Refresh via `scripts/gen-context.py`.
+- Downstream Invariant: Generated `llms.txt` and `llms-full.txt` files are downstream projections: never edit them manually. Refresh via [`scripts/gen-context.py`](../../scripts/gen-context.py).
 
 ## 7. Engineering Voice and Attribution
 
 - Clean, human engineering prose.
 - Zero `Co-Authored-By` trailers, no generated-by-AI footers, and no agent session identifiers in tracked code, documentation, or commits.
 
-## 8. Research Paper & Monograph Directory Standard (RPDS)
+## 8. Markdown Documentation
+
+- Use one descriptive H1, then a semantic heading hierarchy; do not skip heading levels to style text.
+- Use Mermaid for architecture, data-flow, lifecycle, and decision diagrams when a diagram clarifies relationships more quickly than prose. Keep diagrams consistent with implemented behavior and label proposals as proposals.
+- Link implementation claims to the relevant source file and symbol or CLI command when readers may need to verify behavior. Prefer repository-relative file links that work on GitHub.
+- Use fenced code blocks with a language tag for commands, configuration, and source excerpts. Keep examples runnable or label them as illustrative.
+- Link external technical claims to primary sources near the claim. Do not add decorative diagrams or links that imply unverified behavior.
+- Preserve record-oriented formats such as work ledgers, changelogs, and evidence logs when their existing structure serves their purpose; apply hierarchy and references where they improve navigation.
+
+## 9. Research Paper & Monograph Directory Standard (RPDS)
 
 Where a program or project produces a formal research paper, monograph, or scholarly deposit:
 

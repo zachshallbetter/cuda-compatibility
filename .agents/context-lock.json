@@ -6,7 +6,7 @@
   "selectedPaths": [],
   "sourceSelection": {
     "includedCount": 168,
-    "includedBytes": 1005674,
+    "includedBytes": 1018805,
     "excludedCounts": {
       "excluded-directory": 31,
       "excluded-path": 1,
@@ -19,14 +19,14 @@
     "repositories": [
       {
         "path": ".",
-        "commit": "5f54600c54f1a131101e1232e069ad7943c9f117",
+        "commit": "50bb41d32a7c71d2d50d6615deafc68dac765de4",
         "branch": "codex/cuda-compat-publication",
         "dirty": true,
         "remote": "https://github.com/zachshallbetter/cuda-compatibility.git"
       }
     ]
   },
-  "aggregateSourceDigest": "4f8bbd21f51b2cda1861a6d5cea6cf08f3fb9b035be1a7ce7f1e1f5ea6f5a13d",
+  "aggregateSourceDigest": "df906ebcd3002a236cc2c4f0b1843c14ed9ff2ed1feb52d7710adecaff243017",
   "sources": [
     {
       "path": ".agents/rules/ci.md",
@@ -50,8 +50,8 @@
     },
     {
       "path": ".agents/rules/standards.md",
-      "bytes": 4636,
-      "sha256": "450057afb1b594e0b01a6b44c8e74470f57708a36316411bc53df0dd22b662c9"
+      "bytes": 5701,
+      "sha256": "3dac44c036180f6f38555993759d0f3aad58e5d929214fa12aca8dad2534e927"
     },
     {
       "path": ".agents/rules/types.md",
@@ -85,18 +85,18 @@
     },
     {
       "path": ".agents/skills/github-projects/assets/roles/resolver.md",
-      "bytes": 1524,
-      "sha256": "5997cbcc50c7825f46e686b0f60c3d0d91ef38076c348132d33d9ebadda0c21f"
+      "bytes": 1541,
+      "sha256": "af7e1a9ba777f826877875a11f5368336bc649abdeb518151045298547c433c8"
     },
     {
       "path": ".agents/skills/github-projects/assets/roles/triager.md",
-      "bytes": 813,
-      "sha256": "436a8fc2ddcf90131d846e186fd7567f1d84e03592682cfd8297ad9d244051c4"
+      "bytes": 829,
+      "sha256": "bbf09b468cf94bd4f13b147dfd61fe3c161be4477b939fb49bbdd750520efb96"
     },
     {
       "path": ".agents/skills/github-projects/assets/roles/verifier.md",
-      "bytes": 710,
-      "sha256": "7a4e1145f353d8e6707070db23b19e4f5e695eaa4e1d92d38d4f43e7c99fce6a"
+      "bytes": 727,
+      "sha256": "9c71eb5fed6a634ae54ed351e183649fa7a9d9a3d74d8c1845875819af5dcb0c"
     },
     {
       "path": ".agents/skills/github-projects/references/cli.md",
@@ -230,8 +230,8 @@
     },
     {
       "path": ".github/workflows/pages.yml",
-      "bytes": 677,
-      "sha256": "3916b133597d30036092a93f95d4c7ae073f2873c94dfeacd3e34e3ae3785e21"
+      "bytes": 1501,
+      "sha256": "fc715ea0f08df5c8b9ed4518622d953963127fd8fe7b687e4b7dbcd322de9df1"
     },
     {
       "path": "AGENTS.md",
@@ -265,8 +265,8 @@
     },
     {
       "path": "README.md",
-      "bytes": 8480,
-      "sha256": "f7eb3587064628dad9017c2d7c123c647f2d34df461b53b12bd6fb4bf779cb9a"
+      "bytes": 9113,
+      "sha256": "200b40ba99c143b0ba9edea2ee3b102d835b7bf7243d3a0ad59eb4746d07a35c"
     },
     {
       "path": "VERSION",
@@ -290,8 +290,8 @@
     },
     {
       "path": "docs/ACP_INTEGRATION.md",
-      "bytes": 15968,
-      "sha256": "5c350c25b21339e8c8f82c2e950156061e4d9d9670d5b1d1dc99e29b92ff8d92"
+      "bytes": 16085,
+      "sha256": "142fd1c3cb513c9538a9acd2dca25de142b744c5de83bc972dde5da58e80e2f2"
     },
     {
       "path": "docs/AGENT_CAPABILITIES.md",
@@ -300,18 +300,18 @@
     },
     {
       "path": "docs/ALIGNMENT.md",
-      "bytes": 1588,
-      "sha256": "9e241f47e102b9feeb3b8e6bff3c95a146d69384f196eefc2327b363a96bf7a0"
+      "bytes": 2090,
+      "sha256": "e485179ee598797d788b4cc29fbd3860506960d80f069d52a09c7f8f660c15ce"
     },
     {
       "path": "docs/AUTHORITY_MODEL.md",
-      "bytes": 2912,
-      "sha256": "1d371d913fee51b89da6b2b39a587c9e143ff4146a484edd79eb3210bd938e62"
+      "bytes": 3482,
+      "sha256": "dfbb167a2891143b3f13d9554c70345eba53c890bfdc343dbdafe8bfaba6c67c"
     },
     {
       "path": "docs/BOOTSTRAP_SEQUENCE.md",
-      "bytes": 6140,
-      "sha256": "82d04fa96aa477837c64b61a7c5f9e7617d0e325ef3e205dbd037f6ff1e91d51"
+      "bytes": 6939,
+      "sha256": "1aa5af6ce769280bcb0ed96a366acea466670709d32c9a9fd813b7bdff40c88b"
     },
     {
       "path": "docs/CONFORMANCE.md",
@@ -320,13 +320,13 @@
     },
     {
       "path": "docs/CONTEXT_COMPILATION.md",
-      "bytes": 2568,
-      "sha256": "cedad34d38ef2363ab29c40d29f38a5a93168e95ed647b6f729757648d748117"
+      "bytes": 2958,
+      "sha256": "b5a1eca8547aa50c2247807c3f5ef019f682e67d2edd740b7a0084f6bf6e14a2"
     },
     {
       "path": "docs/DPP_IMPLEMENTATION.md",
-      "bytes": 25612,
-      "sha256": "034bf3a4c483444484d9c24681c92091bdc1e06c599eb272b88dceed5f7e5f0d"
+      "bytes": 25850,
+      "sha256": "9dc9d711b93ddcf06cd2441028d1216847f704522fd1728d3e28fbe08c6275c5"
     },
     {
       "path": "docs/EVIDENCE_METHOD.md",
@@ -335,18 +335,18 @@
     },
     {
       "path": "docs/EXECUTION_PIPELINE.md",
-      "bytes": 1861,
-      "sha256": "529c01ec25ac7d0552a19d591514244ec7bbe3f1966f1dd38d2c2f69494ba2db"
+      "bytes": 2339,
+      "sha256": "9ed67f8df7153f857dcdf6ce21a2e727d6fc0f5e795cb08885d629e1ba0833d9"
     },
     {
       "path": "docs/EXECUTION_PROVIDER_CONTRACT.md",
-      "bytes": 2134,
-      "sha256": "f8884fe13ab6503ddc5fdb53264001b24a6bf846b00473e3f8deca5d018d5ee5"
+      "bytes": 2662,
+      "sha256": "3d6cd9a5113bb876abe2542e847dcebb35f03fdad0967c9ed9811b200c849569"
     },
     {
       "path": "docs/EXISTING_PROJECT_ADOPTION.md",
-      "bytes": 4615,
-      "sha256": "549abfc3926076d522d677ba6dcaec5e6a4e1d9e3043aba70880632ffcdcbbe5"
+      "bytes": 4966,
+      "sha256": "769e9a61fb80e44d4a91e6701190dffb504a55fcec01bf69321c4c078600c19f"
     },
     {
       "path": "docs/FORMAL_RESOURCES.md",
@@ -365,8 +365,8 @@
     },
     {
       "path": "docs/MULTI_AGENT_COORDINATION.md",
-      "bytes": 2078,
-      "sha256": "c27fc5594ef31ff4574582b4c6f2e69dc684bb897b9f9455fce1b50ca44f968a"
+      "bytes": 2563,
+      "sha256": "ca13be96e86072a2093a694620ec20610f1737ba5d0d4662363dd6740a9c9768"
     },
     {
       "path": "docs/NEGATIVE_KNOWLEDGE.md",
@@ -380,13 +380,13 @@
     },
     {
       "path": "docs/PROTOCOL_ADAPTERS.md",
-      "bytes": 2229,
-      "sha256": "1b546812abd66d29217fb8b11370201760ad43769f5e9c1f5e685625a7bb40aa"
+      "bytes": 2542,
+      "sha256": "1753c67c6b4b2678d8d9c288c2667b86452eae8548de9d195a14d81cdc191f4e"
     },
     {
       "path": "docs/RECOVERY.md",
-      "bytes": 1115,
-      "sha256": "b084f0a4bbad4012bd9d2525a07239e38ff4f563bbdefbd8491518fec14882e9"
+      "bytes": 1459,
+      "sha256": "e7f5050305195cb1b95a89dfd13402e229f6ecd76c2f9977dcf6406ab7bfd5d1"
     },
     {
       "path": "docs/SKILLS_INDEX.md",
@@ -400,23 +400,23 @@
     },
     {
       "path": "docs/WORK_GRAPH.md",
-      "bytes": 1790,
-      "sha256": "427012a108e0b551cf656690da51c74675d0aa99cb138b8d4cf61bfa32691a22"
+      "bytes": 2046,
+      "sha256": "be594387227c82f81f6ff2675368468b0a7eb2ff13d596ea518c3cfacabc3f4b"
     },
     {
       "path": "docs/WORK_ITEMS.md",
-      "bytes": 92744,
-      "sha256": "e53b8d3cb186e7592c45d7cdbeb9855c9e54cdd8d373ed2b4fab86e8e57a26bf"
+      "bytes": 93507,
+      "sha256": "d5a4679a82a60f6cdb9d0c1a5ed02f21a03ebfe69389e913f8548c5f10186b17"
     },
     {
       "path": "docs/architecture.md",
-      "bytes": 5163,
-      "sha256": "8a56658aece85f42b731a85398166c07cbc5753a7e50123cdad0b19a6d84109c"
+      "bytes": 6166,
+      "sha256": "290c451fac47d5048f588cce75bdb9b2563143c0f29f9078e84529e26bcfe994"
     },
     {
       "path": "docs/architecture/investigation-toolchain.md",
-      "bytes": 5134,
-      "sha256": "335172544d2c38726d6d8e03c27e6638af633b81ea57bb2d79ff1729da2947af"
+      "bytes": 5670,
+      "sha256": "5bef905b43f4dbffedda3efe6ab0fb949fa7d266bc5a41425e8edaf88b49bfa1"
     },
     {
       "path": "docs/compatibility-targets.md",
@@ -430,8 +430,8 @@
     },
     {
       "path": "docs/compatibility/research-log.md",
-      "bytes": 4789,
-      "sha256": "a2817d30a20495db2b2e8932a3947be6cdc134f6a2c37c00d0efdb3033f054e6"
+      "bytes": 4866,
+      "sha256": "3be0881fdb569a974fb1c6c9ec348309dfb3542faf82215e85c7c565cd847f25"
     },
     {
       "path": "docs/decisions/0001-language-and-first-scope.md",
@@ -440,8 +440,8 @@
     },
     {
       "path": "docs/product/product-contract.md",
-      "bytes": 5353,
-      "sha256": "798008a038b63af0e4c57e6af14c8b68d121ec0c7cf291eadb07b5675adc3de5"
+      "bytes": 5560,
+      "sha256": "ee1b1f149888ac4f8ea6c60a202bd00ab1384a96656e9f6b2cfbf56d970b0f99"
     },
     {
       "path": "docs/product/product-vision-and-experience.md",
@@ -450,38 +450,38 @@
     },
     {
       "path": "docs/research/RESEARCH_PROGRAM.md",
-      "bytes": 5521,
-      "sha256": "388e97eb44a9029312add30f63ba1452d78038b915b32631b4a2fa386b3c18a0"
+      "bytes": 6067,
+      "sha256": "4fa31e959da4115081e64bad92622d8bedc9ac69d86bc0202a93eebfa96e97cb"
     },
     {
       "path": "docs/research/implementation-gap-audit-2026-11-01.md",
-      "bytes": 8444,
-      "sha256": "8dd439ed8bfd0d92468999789122684bac0d2a577417b35016d656ddc1726d88"
+      "bytes": 9356,
+      "sha256": "14dbe04001a6c5149c82313f25ac7e5ae970d9af7e8347f6db74a5d40fe9fe38"
     },
     {
       "path": "docs/research/llvm-nvptx.md",
-      "bytes": 2683,
-      "sha256": "3f04fde16f7b1fe3fda3fcb428bda10bb5c6b47f0771c3ac68694454a07f4c33"
+      "bytes": 2761,
+      "sha256": "0c0e65266e070415192f5d170691d294d9d732c77319ecf64aa662458f5dcd36"
     },
     {
       "path": "docs/research/maxwell-baseline.md",
-      "bytes": 3450,
-      "sha256": "2c975d6bf1cddd4a2fc29fe9493b0aeab00c61b1e9c3e9254157f1816e82b986"
+      "bytes": 3505,
+      "sha256": "0aef6b89c37f8aacc0be9123a24711ea1a813181ebfcd27ab9a6662d9954b5db"
     },
     {
       "path": "docs/research/pytorch-cu130-maxwell.md",
-      "bytes": 15299,
-      "sha256": "719bb8416cad4bafe90271a57dbb9d3ddf82f0c5e112f8a4d12cd2475c940861"
+      "bytes": 15363,
+      "sha256": "0f69e789577cc2e71fe6505500d4657c0c2648e0fec23f9cf732c9df4b8d8d09"
     },
     {
       "path": "docs/research/runtime-version-facade.md",
-      "bytes": 2900,
-      "sha256": "5ced032a67afee96ab511b3354c33dc5b0a65eda63462311a66e890dd54e6473"
+      "bytes": 2941,
+      "sha256": "9128f84f797c996d908f7f1853214fe169e92345edb2d9dd110666556c7e64c8"
     },
     {
       "path": "docs/roadmap.md",
-      "bytes": 5181,
-      "sha256": "306b76b7152641f0beabc25446338b4f0c5cee1d4a7faa8d5d85d3317a63ef8d"
+      "bytes": 5250,
+      "sha256": "acf9bdc96eec0f6d9af5f855047f15772a7d9fa45678b1094874e135a6ce95bb"
     },
     {
       "path": "docs/strategy/upstream-contributions.md",
@@ -490,8 +490,8 @@
     },
     {
       "path": "docs/user-guide.md",
-      "bytes": 9420,
-      "sha256": "ca2465de43b7e6f0bea0ac61d4a23180a412ff2d0c4a0f799765af5e34300ebd"
+      "bytes": 10257,
+      "sha256": "f54f88521c900ccb608cd147ccaf5bc89a4907eecd988da5760d84cca59b2853"
     },
     {
       "path": "experiments/llvm-nvptx/run_vector_add.sh",

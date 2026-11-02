@@ -2,6 +2,18 @@
 
 Status: initial research design (2026-11-01). No hardware validation implied.
 
+```mermaid
+flowchart TD
+    Target[Version-pinned CUDA component] --> Static[Static headers, ABI, symbols, and binaries]
+    Target --> Dynamic[Runtime, driver, library, and kernel traces]
+    Static --> Inventory[Artifact and architecture inventory]
+    Dynamic --> Failure[Classified failures and execution evidence]
+    Inventory --> Contracts[Operation and library contracts]
+    Failure --> Contracts
+    Contracts --> Correctness[Numerical and semantic tests]
+    Correctness --> Report[Evidence-linked compatibility report]
+```
+
 ## Principles
 - Treat CUDA as separate host API/ABI, compiler/PTX/binary, runtime/driver, library, kernel execution and framework contracts.
 - Never equate decompilation with disassembly, or a kernel launch with proof of correct GPU execution.

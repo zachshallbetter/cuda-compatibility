@@ -13,7 +13,7 @@
 
 ## Reproduction
 
-The experiment uses the native baseline kernel in `experiments/maxwell/vector_add.cu` and the driver API runner in this directory. On the reference host:
+The experiment uses the native baseline kernel in [`vector_add.cu`](../../experiments/maxwell/vector_add.cu) and the driver API runner in [`run_vector_add.sh`](../../experiments/llvm-nvptx/run_vector_add.sh). On the reference host:
 
 ```sh
 LLVM_ROOT=/path/to/LLVM-23.1.4-Linux-X64 \

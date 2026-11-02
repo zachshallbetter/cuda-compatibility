@@ -35,6 +35,20 @@ To what extent can modern CUDA-era computational semantics be preserved on GPUs 
 6. **Evidence integrity:** preserve logs/hashes, link exact commands, redact host secrets, never redistribute NVIDIA binaries in violation of licenses.
 7. **Claim scope:** no universal CUDA 13 compatibility, native BF16/tensor cores, contiguous pooled VRAM, or NVIDIA affiliation.
 
+```mermaid
+flowchart LR
+    Question[Research question] --> Source[Versioned source facts]
+    Source --> Artifact[Hashed headers, binaries, or runtime inputs]
+    Artifact --> Probe[Reproducible probe]
+    Probe --> Result{Outcome}
+    Result -->|Correctness passes| Supported[Bounded supported result]
+    Result -->|Failure reproduces| Gap[Classified blocker]
+    Result -->|Insufficient evidence| Unknown[Untested or inconclusive]
+    Supported --> Report[Publish scope, provenance, and limits]
+    Gap --> Report
+    Unknown --> Report
+```
+
 ## Workstreams
 
 | Workstream | Questions | Tickets |

@@ -4,7 +4,7 @@
 
 **Project site:** [CUDA Compatibility](site/index.html) · [Zach Shallbetter](https://zachshallbetter.com/) · [GitHub profile](https://github.com/zachshallbetter)
 
-The responsive project site is in `site/`. After the project is hosted on GitHub and Pages is configured to use GitHub Actions, a repository maintainer can publish it from **Actions → Publish GitHub Pages → Run workflow**. The workflow uploads only `site/` and runs only when manually dispatched.
+The responsive project site is in `site/`. To enable it, open **Settings → Pages → Build and deployment → Source** and select **GitHub Actions**; branch publishing cannot select the `/site` folder. Pull requests run the project checks and test suite. A repository maintainer publishes the default branch through **Actions → Publish GitHub Pages → Run workflow**; production deployment remains manual, and the workflow uploads only `site/`.
 
 This independent research and implementation project targets software whose toolkit, compiler, or library requirements have moved beyond older cards. The end goal is to install a compatibility toolset on a host and run CUDA 13+ applications on its older GPUs with correct results. PyTorch CUDA 13 is the first target. The current prototype is an opt-in, per-process Python launcher; it is not yet a machine-wide installer and does not make arbitrary CUDA 13 applications compatible.
 
@@ -82,14 +82,16 @@ Project code is dual-licensed under **MIT OR Apache-2.0**. NVIDIA drivers, heade
 
 ## Project map
 
-- `src/cuda_legacy_compat/` — host inspection and compatibility-profile CLI.
-- `src/cuda_legacy_compat/compat/` — packaged adapter kernels, driver bridge, runtime facade, and opt-in startup hook.
-- `profiles/` — versioned, source-backed framework/tool requirements.
-- `experiments/maxwell/` — native kernel baseline and reproducible runner.
-- `experiments/pytorch-cu130/` — stock-wheel baseline and end-to-end launcher probes.
-- `docs/research/` — sourced technical findings and experiment records.
-- `docs/decisions/` — architecture and language decisions.
-- `docs/WORK_ITEMS.md` — bounded local work frontier until a remote provider is bound.
+- [`src/cuda_legacy_compat/cli.py`](src/cuda_legacy_compat/cli.py) — host inspection, profile auditing, diagnostics, and CLI entry point.
+- [`src/cuda_legacy_compat/launch.py`](src/cuda_legacy_compat/launch.py) — temporary build and process-scoped launcher.
+- [`src/cuda_legacy_compat/torch_adapter.py`](src/cuda_legacy_compat/torch_adapter.py) — registered PyTorch operator routes and bounded fallbacks.
+- [`src/cuda_legacy_compat/compat/`](src/cuda_legacy_compat/compat/) — packaged kernels, driver bridge, runtime facade, and opt-in startup hook.
+- [`profiles/`](profiles/) — versioned, source-backed framework/tool requirements.
+- [`experiments/maxwell/`](experiments/maxwell/) — native kernel baseline and reproducible runner.
+- [`experiments/pytorch-cu130/`](experiments/pytorch-cu130/) — stock-wheel baseline and end-to-end launcher probes.
+- [`docs/research/`](docs/research/) — sourced technical findings and experiment records.
+- [`docs/decisions/`](docs/decisions/) — architecture and language decisions.
+- [`docs/WORK_ITEMS.md`](docs/WORK_ITEMS.md) — bounded local work frontier until a remote provider is bound.
 
 ## Development
 

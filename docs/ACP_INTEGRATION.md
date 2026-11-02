@@ -24,7 +24,7 @@ liveness            GET  /health                                      unauthenti
 
 ACP is pull-only and never writes the work graph. Claims, field updates and item creation use the worker's own scoped credentials through the project's `workGraph` adapter.
 
-`scripts/acp.py` is the project's client for every call above (standard library only). Agents use it rather than hand-built requests, because it applies the rules in this document that a script can apply without judgement: fail-closed synthesis, `NOT_GOVERNED` refusal, exact-action checking, and evidence recording without secrets.
+[`scripts/acp.py`](../scripts/acp.py) is the project's client for every call above (standard library only). Agents use it rather than hand-built requests, because it applies the rules in this document that a script can apply without judgement: fail-closed synthesis, `NOT_GOVERNED` refusal, exact-action checking, and evidence recording without secrets.
 
 ```bash
 python3 scripts/acp.py authorize --action git.protected_ref.update \
@@ -71,7 +71,7 @@ ACP_GATEWAY_TOKEN    secret; .env.local (git-ignored) or the environment; never 
 .agents/board.env    committed; owner and board number for this repository
 ```
 
-`CONTEXT_SOURCES.json` excludes `.env.local`. `scripts/acp-check.py` verifies the wiring without printing the token.
+[`CONTEXT_SOURCES.json`](../CONTEXT_SOURCES.json) excludes `.env.local`. [`scripts/acp-check.py`](../scripts/acp-check.py) verifies the wiring without printing the token.
 
 Optional identity for audit (never authority): `ACP_AGENT_ID`, `ACP_ACTOR_ID`, `ACP_SESSION_ID`. `ACP_REPOSITORY_OWNER`/`ACP_REPOSITORY_NAME`/`ACP_REMOTE_URL` override what is read from `origin`.
 
@@ -79,13 +79,13 @@ Optional identity for audit (never authority): `ACP_AGENT_ID`, `ACP_ACTOR_ID`, `
 
 Binding the provider in the profile does not make ACP govern the repository. ACP governs a repository only when a policy registered **in the gateway** names it. Until then:
 
-| Where the repository is | What ACP answers for a protected action | What `scripts/acp.py` returns |
+| Where the repository is | What ACP answers for a protected action | What [the client](../scripts/acp.py) returns |
 |---|---|---|
 | inside the gateway's `ACP_POLICY_SCOPE`, no policy | `DENY` / `POLICY_NOT_FOUND` | the same |
 | outside that scope, no policy | `ALLOW` / `OUT_OF_POLICY_SCOPE`, `policy_effect: NOT_GOVERNED` | `DENY` / `ACP_NOT_GOVERNING` (synthetic) while `failClosed` |
 | a policy names it | a real decision | the same |
 
-An `ALLOW` with `policy_effect: NOT_GOVERNED` is ACP declining jurisdiction, not granting authority; it carries no `authorized_action` and no capability. A fail-closed project treats it as a setup blocker. `scripts/acp-check.py` and `acp.py notice` exit `5` for the same reason, distinct from a refusal (`--allow-ungoverned` downgrades it to a warning during onboarding).
+An `ALLOW` with `policy_effect: NOT_GOVERNED` is ACP declining jurisdiction, not granting authority; it carries no `authorized_action` and no capability. A fail-closed project treats it as a setup blocker. [`scripts/acp-check.py`](../scripts/acp-check.py) and `acp.py notice` exit `5` for the same reason, distinct from a refusal (`--allow-ungoverned` downgrades it to a warning during onboarding).
 
 ## Effect classes and ACP actions
 

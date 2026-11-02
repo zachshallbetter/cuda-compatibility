@@ -18,7 +18,7 @@ The Python 3.10.12 reference host successfully ran the project inspector from te
 
 ## Kernel and command
 
-`experiments/maxwell/vector_add.cu` initializes two one-million-element integer vectors, launches a bounds-checked addition kernel, copies results back, and compares every element. `experiments/maxwell/run_native_baseline.sh` compiles with CUDA 12.4 and `-arch=sm_52`, then runs a separate process selecting each device with `CUDA_VISIBLE_DEVICES`. It deletes the temporary executable at exit.
+[`vector_add.cu`](../../experiments/maxwell/vector_add.cu) initializes two one-million-element integer vectors, launches a bounds-checked addition kernel, copies results back, and compares every element. [`run_native_baseline.sh`](../../experiments/maxwell/run_native_baseline.sh) compiles with CUDA 12.4 and `-arch=sm_52`, then runs a separate process selecting each device with `CUDA_VISIBLE_DEVICES`. It deletes the temporary executable at exit.
 
 Reproduced on the target by copying the source and runner into `/tmp` and running:
 

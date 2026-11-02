@@ -5,7 +5,7 @@
 
 ## Behavior
 
-`src/cuda_legacy_compat/compat/cuda_runtime_version_facade.cpp` interposes `cudaRuntimeGetVersion` for a process using `LD_PRELOAD`. With `CUDA_COMPAT_RUNTIME_VERSION=13000`, that call returns the CUDA 13.0.0 version integer. Only the exact supported value is accepted. With the variable unset, the shim calls the real function through `RTLD_NEXT`. No other CUDA API is interposed.
+[`cuda_runtime_version_facade.cpp`](../../src/cuda_legacy_compat/compat/cuda_runtime_version_facade.cpp) interposes `cudaRuntimeGetVersion` for a process using `LD_PRELOAD`. With `CUDA_COMPAT_RUNTIME_VERSION=13000`, that call returns the CUDA 13.0.0 version integer. Only the exact supported value is accepted. With the variable unset, the shim calls the real function through `RTLD_NEXT`. No other CUDA API is interposed.
 
 The probe confirms that CUDA Driver API version reporting, device name, and physical compute capability remain from the installed NVIDIA stack. The tested device reports `NVIDIA GeForce GTX TITAN X`, compute capability 5.2; `driver=13000` is the CUDA Driver API compatibility integer (13.0), not the NVIDIA driver release number. The installed NVIDIA driver release is R580 / 580.178.04.
 

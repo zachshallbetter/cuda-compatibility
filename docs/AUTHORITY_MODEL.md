@@ -60,6 +60,19 @@ operation exists
 
 Technical possibility is irrelevant.
 
+```mermaid
+flowchart TD
+    Request[Requested effect] --> Exists{Operation exists?}
+    Exists -->|No| Unsupported[Reject as unsupported; no mutation]
+    Exists -->|Yes| State{Current state and dependencies permit it?}
+    State -->|No| Blocked[Record blocker; no mutation]
+    State -->|Yes| Scope{Actor, budget, evidence, and recovery are valid?}
+    Scope -->|No| Deny[AUTHORITY_MISSING; no mutation]
+    Scope -->|Yes| Authorize{Bound provider allows exact effect?}
+    Authorize -->|No| Deny
+    Authorize -->|Yes| Perform[Perform only the authorized effect]
+```
+
 ## Human deviation
 
 A human may intentionally change the governing state. The safe form is a recorded deviation:
