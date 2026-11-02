@@ -6,7 +6,7 @@
   "selectedPaths": [],
   "sourceSelection": {
     "includedCount": 165,
-    "includedBytes": 1020536,
+    "includedBytes": 1020624,
     "excludedCounts": {
       "excluded-directory": 1,
       "excluded-path": 1,
@@ -19,14 +19,14 @@
     "repositories": [
       {
         "path": ".",
-        "commit": "e52485f6860614044dc7782aa5ca43603dbda20f",
+        "commit": "d5271855173cba09be9f55412595871676aaaf9c",
         "branch": "codex/site-docs-pages-hardening",
         "dirty": true,
         "remote": "https://github.com/zachshallbetter/cuda-compatibility.git"
       }
     ]
   },
-  "aggregateSourceDigest": "7ef6476c42cd3d92ef467f6fef6635c8e9fa12b8d2d56e04b2cdf16f41559cca",
+  "aggregateSourceDigest": "5ba92905bb8d5125325e7ddf8503bdd4b571e6f3da19c287d5e23b7f5347bfc5",
   "sources": [
     {
       "path": ".agents/rules/ci.md",
@@ -230,8 +230,8 @@
     },
     {
       "path": ".github/workflows/pages.yml",
-      "bytes": 1501,
-      "sha256": "fc715ea0f08df5c8b9ed4518622d953963127fd8fe7b687e4b7dbcd322de9df1"
+      "bytes": 1566,
+      "sha256": "f96fc7ac7a9bf9b91715d9bfa533544e867d51118f11eeb7ca4f28832e91c859"
     },
     {
       "path": "AGENTS.md",
@@ -405,8 +405,8 @@
     },
     {
       "path": "docs/WORK_ITEMS.md",
-      "bytes": 94177,
-      "sha256": "8384efaf7bef06de0005695360509cf590485d68ada891babaa97923825a406b"
+      "bytes": 94200,
+      "sha256": "229636103cf06e2421f7f11966eedfd776f648afa6f873b81da8bc86c5dc9133"
     },
     {
       "path": "docs/architecture.md",
