@@ -122,17 +122,23 @@ The project does not currently have field performance data, search-index coverag
 
 ## Distribution and intervention ledger
 
-| Activity | Classification | Authority and receipt |
-|---|---|---|
-| Local website and source changes | Owned, pre-publication | Local work items and `.agents/records/evidence.jsonl`; reversible in source control. |
-| GitHub repository publication | Published | Public repository `zachshallbetter/cuda-compatibility`; branch `codex/cuda-compat-publication` contains the CUDA 12.9-to-13.0 research additions and release evidence. The source branch and the deployed site revision are tracked separately in `.agents/records/evidence.jsonl`. Initial ACP mismatch and denied `main` ref requests remain in the history; no `main` ref was created. |
-| GitHub Pages site | Retired by intent | Former host; still serves the old design until the owner disables Pages. |
-| Vercel site | Live | Production deploys from `main` after exact ACP `ALLOW`; current revision `28cd261dab8ab0832db42864fd6f2d426eb5bcf8`. |
-| Homebrew formula and release | Published | GitHub release `v0.1.0` (tag `3c2cf3d64ce6a0adc82baf789a9b31e7c8b19a3b` on commit `de5925497c215f1382321f3a57cc7097f6e30f8c`) after exact ACP `ALLOW` `7871607dcb298b4c`; the formula pins its archive by SHA-256. |
-| Social posts, newsletter pitches, community replies, paid promotion | None published | The owner has requested announcements after repository/site publication. No post has been made; destination, method, audience, source asset, and publication receipt remain to be registered per the distribution rule below. |
-| Crawl, Search Console, analytics, AI-answer sampling | Partially observed | One consented GA4 test session produced `page_view`, `first_visit`, and `session_start`; test consent was withdrawn. Search Console/Bing ownership and sitemap submission receipts are observed; Google still cannot read the sitemap and has no index record for the homepage, while Bing reports sitemap Success with 10 URLs discovered. Crawl receipts, retrieval traces, and AI-answer samples remain unobserved. Robots and sitemap do not prove indexing. |
+Classes: **owned** (project-controlled surfaces), **earned** (third-party destinations that choose whether to carry it), **partner** (an agreed placement with another party), **paid**, and **algorithmic** (reach decided by a platform's ranking, such as a social feed or search). One placement can be owned in source and algorithmic in reach; both are listed. Drafts and their states live in [`docs/publishing/`](publishing/README.md). This table records placements only.
 
-Every future distribution action must identify the versioned source asset, destination, method, audience, rights/permission basis, owner, publication receipt, and resulting observations. No automated or mass outreach is part of this project.
+| Activity | Class | State | Authority and receipt |
+|---|---|---|---|
+| Local website and source changes | Owned | Pre-publication | Local work items and `.agents/records/evidence.jsonl`; reversible in source control. |
+| GitHub repository | Owned | Published | Public repository `zachshallbetter/cuda-compatibility`; each `main` update follows an exact ACP `ALLOW` recorded in `.agents/records/evidence.jsonl`. |
+| GitHub Pages site | Owned | Retired | Disabled by the owner on 2026-11-03; the former address returns 404. |
+| https://cudacompat.com/ | Owned | Live | Vercel production deploys from `main` after exact ACP `ALLOW`; deployed revisions are in `.agents/records/evidence.jsonl`. |
+| Homebrew formula and release | Owned | Published | GitHub release `v0.1.0` (tag `3c2cf3d64ce6a0adc82baf789a9b31e7c8b19a3b` on commit `de5925497c215f1382321f3a57cc7097f6e30f8c`) after exact ACP `ALLOW` `7871607dcb298b4c`; the formula pins its archive by SHA-256. |
+| Public example and reproduction-report form | Owned | Published | `examples/sm52-mlp/` and the issue form, merged after ACP `ALLOW` `a48f0bbbd8a62a1f`; evidence `GH-50-public-example-sm52-mlp`. |
+| Search engines (Google, Bing, IndexNow) | Algorithmic | Submitted | Sitemaps report Success (Google 10 pages, Bing 10 URLs); the homepage is indexed in Google; IndexNow accepted 10 URLs (HTTP 202). Submission and indexing do not show ranking or reach. Evidence: `DPP-SEARCH-01`. |
+| Article, short videos, LinkedIn, X | Owned profiles, algorithmic reach | Drafted, not posted | [`docs/publishing/`](publishing/README.md); every draft is in the Draft state. |
+| Hacker News, Lobsters, PyTorch Forums, Reddit, publications | Earned | Not posted | Shortlist and eligibility in [`docs/publishing/channels.md`](publishing/channels.md). Show HN is on hold until outside reproduction. |
+| Partner placements | Partner | None | No agreements. |
+| Paid promotion | Paid | None | Not budgeted; out of scope without separate authority. |
+
+Every future placement must record the versioned source asset, destination, method, audience, rights and permission basis, owner, publication receipt (URL, timestamp and exact text), and resulting observations. No automated or mass outreach is part of this project.
 
 ## Module coverage and release gates
 
@@ -140,7 +146,7 @@ Every future distribution action must identify the versioned source asset, desti
 |---|---|---|
 | PRP — representation | Partial, locally implemented | Stable project/site/author IDs, page canonicals, authorship, visible claim/source map, and correction triggers are recorded. Cross-platform identity reconciliation is `GRAY`. |
 | DAP — discovery/access | Local controls implemented and public availability observed; search/agent discovery `GRAY` | HTML, breadcrumbs, internal links, sitemap with `lastmod`, robots, `llms.txt`, `llms-full.txt`, `noindex` 404, security headers and an IndexNow key pass local checks; 26/26 public routes returned 200 before this revision. Accessibility measured locally (see above). Indexation, social rendering, crawler use, and agent retrieval remain `GRAY`. |
-| DIS — distribution | Documented; no campaign | No social, partner, earned, paid, or automated distribution events are recorded. |
+| DIS — distribution | Drafts prepared; no campaign | Owned, earned, partner, paid and algorithmic placements are classified in the ledger; drafts are in `docs/publishing/`; no social, earned, partner or paid placement is recorded. |
 | AEP — evidence | Partial, locally implemented | Material technical claims map to primary documentation, implementation records, or named tests. No independent expert review or external corroboration is claimed. |
 | OIP — observation | Metrics defined; observations unavailable | Metric definitions, sources, denominators, and blind spots are recorded; no platform baseline is available. |
 | OEP — experimentation | Not implemented for presence outcomes | No live SEO, crawler, content, or AI-citation experiment is registered. Site edits and local regression checks are not audience-effect experiments. |

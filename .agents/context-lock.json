@@ -5,8 +5,8 @@
   "validityBasis": "aggregate-source-digest",
   "selectedPaths": [],
   "sourceSelection": {
-    "includedCount": 220,
-    "includedBytes": 1882424,
+    "includedCount": 224,
+    "includedBytes": 1902784,
     "excludedCounts": {
       "extension": 47,
       "generated-or-transient-file": 2
@@ -18,14 +18,14 @@
     "repositories": [
       {
         "path": ".",
-        "commit": "9d17c8973b89c48cf6d1853279b41e113bb39a20",
-        "branch": "release-public-example",
+        "commit": "c6474ef6cbff1c1e9121a15820e521e067a8668c",
+        "branch": "publishing-workflow",
         "dirty": true,
         "remote": "https://github.com/zachshallbetter/cuda-compatibility.git"
       }
     ]
   },
-  "aggregateSourceDigest": "86f243d2ef238ea64369e07bd14487914094e5ac71a1c80c97df9990e81d713d",
+  "aggregateSourceDigest": "01a3988344730c93644e35900b6f0cf5bbe73299fa6c018710c540b7e6781a9b",
   "sources": [
     {
       "path": ".agents/acp/README.md",
@@ -699,8 +699,8 @@
     },
     {
       "path": "docs/DPP_IMPLEMENTATION.md",
-      "bytes": 29682,
-      "sha256": "592cd828f5aab0dc2babb7b4e5eeecf86d034b1b61624d503b672186487753cb"
+      "bytes": 30265,
+      "sha256": "7d7d1ba208e38630cfda8aacf85d007c1003a0f10a3d023ca0bbfa0d9e1536a7"
     },
     {
       "path": "docs/PROJECT_MILESTONES.md",
@@ -709,8 +709,8 @@
     },
     {
       "path": "docs/WORK_ITEMS.md",
-      "bytes": 108090,
-      "sha256": "af4a2acddae5327e394adf840890a6a823daba4fb69d6e17739b9e5c26ce2a89"
+      "bytes": 109752,
+      "sha256": "26ee47544f21297fa61458410308eee2dc340b6e5ba6a5c4a365ea96ef85d8fe"
     },
     {
       "path": "docs/architecture.md",
@@ -761,6 +761,26 @@
       "path": "docs/product/product-vision-and-experience.md",
       "bytes": 7175,
       "sha256": "300fe65e7d4e46039cafdbc10b89557d185839d221cd309df9edfb767c5f6400"
+    },
+    {
+      "path": "docs/publishing/README.md",
+      "bytes": 4641,
+      "sha256": "b6babea3622c8c4bf331956bf903f55c4cfd7f6e5953b82efdba713ca3ff64b6"
+    },
+    {
+      "path": "docs/publishing/article.md",
+      "bytes": 4910,
+      "sha256": "a81db659c8b0b9ed25dba22f07ce358622a4256bd64bf2653a11077a63479c52"
+    },
+    {
+      "path": "docs/publishing/channels.md",
+      "bytes": 4099,
+      "sha256": "c762ea23909d6e001aa81be46a8734e0569d698968e99cc2dcf714087521b01f"
+    },
+    {
+      "path": "docs/publishing/social.md",
+      "bytes": 4465,
+      "sha256": "ad2a9872e5c6c1ca67ae05bea70b700cf854ec4c66e0fb801ec9c229e6ac801d"
     },
     {
       "path": "docs/research/RESEARCH_PROGRAM.md",

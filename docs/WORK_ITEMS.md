@@ -507,6 +507,23 @@ The first work item is being executed under the user's explicit request to creat
 - **Progress (2026-11-01):** Rewrote all 10 canonical page descriptions to be page-specific and 140–180 characters; added static checks for length and uniqueness. `make check` passed and `make test` passed 44/44. Commit `958388599dcad117b63470c31f3f584e1aa03c3f` was pushed to `codex/cuda-compat-publication` after exact ACP ALLOWs and deployed successfully in Pages run `41312924116`. The live audit fetched all 10 sitemap pages and six discovery assets/endpoints (16/16 HTTP 200); all 10 descriptions were unique and within range. Evidence: `CLC-028-bing-short-descriptions-recommendation`, `CLC-028-pages-release`, and `CLC-028-live-route-audit`. No ranking, traffic, or indexing effect is claimed.
 - **Disposition (2026-11-01):** Bing feedback has been addressed in the published site. Checks enforce the description bounds and uniqueness; the exact deployed revision returned HTTP 200 for all 16 audited routes/assets, with all 10 page descriptions between 140 and 180 characters. Search performance effects remain unobserved.
 
+## CLC-034 — Prepare the evidence-led launch and distribution workflow
+
+- **Intent:** GitHub issue #53; publish around one reproducible result without inflating it.
+- **Parent:** CLC-033 public example; DPP distribution ledger.
+- **Status:** In review
+- **Objective:** Draft the implementation article, two short-video scripts, LinkedIn copy and an X thread from existing evidence; shortlist destinations with their current rules; classify placements in the existing ledger; define post-launch reviews.
+- **Scope:** `docs/publishing/**`; `docs/DPP_IMPLEMENTATION.md` ledger and module rows; `docs/WORK_ITEMS.md`; `.agents/records/evidence.jsonl`; generated context.
+- **Exclusions:** Posting, outreach, account changes, recording, and any spending; Hacker News text (the owner writes it); reach or sponsorship estimates; upstream engineering contributions (#44).
+- **Acceptance:** The issue #53 acceptance list.
+- **Evidence required:** Destination rule checks with dates; evidence IDs on every draft claim; check and test output; ACP decisions.
+- **Evaluator:** Project owner.
+- **Permissions:** E1 local docs; E2 push and E3 deploy only after exact ACP `ALLOW`. Each placement needs separate owner approval.
+- **Target:** Project checkout.
+- **Budget:** No spend.
+- **Stop conditions:** A draft would need a claim the evidence doesn't support; a destination's rules forbid the planned format.
+- **Progress (2026-11-03):** Drafts, shortlist, ledger classes and review plan written. Reddit rules couldn't be read automatically and are marked not observed. Show HN is held until at least one outside reproduction report. Evidence: `GH-53-publishing-workflow`.
+
 ## CLC-033 — Connect release claims to a reproducible public example
 
 - **Intent:** GitHub issue #50; let readers move from a stated capability to the exact software, environment, command and result behind it.
