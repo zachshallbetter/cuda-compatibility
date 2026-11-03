@@ -147,8 +147,22 @@
           ctx.fillText(L.t, tx, ey);
         }
       }
-      if (!reduce) raf = requestAnimationFrame(frame);
+      // Stop once the build and labels have settled; pause while the hero is off-screen.
+      finished = reduce || el > buildMs + 1200;
+      raf = !finished && visible ? requestAnimationFrame(frame) : 0;
     };
+
+    let visible = true;
+    let finished = false;
+    if ("IntersectionObserver" in window) {
+      new IntersectionObserver(([entry]) => {
+        visible = entry.isIntersecting;
+        if (visible && !raf && !finished) raf = requestAnimationFrame(frame);
+      }).observe(canvas);
+    }
+    window.addEventListener("resize", () => {
+      if (finished && !raf) raf = requestAnimationFrame(frame);
+    });
 
     if (!reduce) setBuilt(false);
     raf = requestAnimationFrame(frame);
@@ -158,6 +172,7 @@
         cancelAnimationFrame(raf);
         start = null;
         built = false;
+        finished = false;
         setBuilt(false);
         raf = requestAnimationFrame(frame);
       });

@@ -5,8 +5,8 @@
   "validityBasis": "aggregate-source-digest",
   "selectedPaths": [],
   "sourceSelection": {
-    "includedCount": 169,
-    "includedBytes": 1448624,
+    "includedCount": 171,
+    "includedBytes": 1457145,
     "excludedCounts": {
       "excluded-directory": 1,
       "excluded-path": 1,
@@ -19,14 +19,14 @@
     "repositories": [
       {
         "path": ".",
-        "commit": "8101f0950d091e131d1a7bf9d89ffba7df5ad704",
-        "branch": "design-vercel-setup-19d77a",
+        "commit": "9528b22a736595129dad70b87645afc91d4d5254",
+        "branch": "site-vercel-live-audit",
         "dirty": true,
         "remote": "https://github.com/zachshallbetter/cuda-compatibility.git"
       }
     ]
   },
-  "aggregateSourceDigest": "f4afb7fe624932647df399178f0aa2c3a232697884d0b445719fa89accce11c3",
+  "aggregateSourceDigest": "3cee55ce1d3c4106984a68aa209e678fffe340610ec4ab7044dd2647a800d019",
   "sources": [
     {
       "path": ".agents/rules/ci.md",
@@ -714,6 +714,16 @@
       "sha256": "61b89f0534921e8bd1419e115b61737a5a50e1cb65e7af4bbdd49dc1d64dc3f6"
     },
     {
+      "path": "site/assets/fonts/OFL-Archivo.txt",
+      "bytes": 4388,
+      "sha256": "108b4e57c9c796d3d38d0428ca7ee39de47ad93187302718d9b2d8864b9b716b"
+    },
+    {
+      "path": "site/assets/fonts/OFL-MartianMono.txt",
+      "bytes": 4390,
+      "sha256": "ddafd2c3f37ef1d83ef284ca63e159befd3820850c5e9eded14ca52eee92c256"
+    },
+    {
       "path": "site/assets/gm200-wireframe.json",
       "bytes": 324372,
       "sha256": "2f21eaaf293929c93ae9045ad21f7adc11937c32b32e0786240b151b4222e2e3"
@@ -725,48 +735,48 @@
     },
     {
       "path": "site/docs/architecture.html",
-      "bytes": 19177,
-      "sha256": "3c05a9e538bbe10e9f5f4cde93a83f7bc46d407fe332868a1536af2909d6819e"
+      "bytes": 19078,
+      "sha256": "163ca2ddb061c6d1b4a7fd3a99fef688ae779866f9e4c472dd12df2141531f5a"
     },
     {
       "path": "site/docs/cli.html",
-      "bytes": 15428,
-      "sha256": "e08073dad8fa164abaa7cf21c8191847658511b5727041b61617c281b2c3da51"
+      "bytes": 15329,
+      "sha256": "6478c42d23e32bad13d70d709e0a472b1b197e3ef7ae04c7948b26f2f1533a7e"
     },
     {
       "path": "site/docs/compatibility.html",
-      "bytes": 20869,
-      "sha256": "913fb0bdaff769b4f21af4060130f6decb04333fca81878addb605ad7c8ceac3"
+      "bytes": 20770,
+      "sha256": "b927292ea45d30b7cf42cdcde2b2883d9128aea3b31465e36004d7bc0a502d6b"
     },
     {
       "path": "site/docs/discovery.html",
-      "bytes": 19656,
-      "sha256": "a52e82789baffb7a5c10441b61af4696227d2a533527606746c02d880b73dc1a"
+      "bytes": 19557,
+      "sha256": "675a759d91ccbebc2e15a1b2001d33c5137aa18891d36286ce4a88db5de30f2f"
     },
     {
       "path": "site/docs/getting-started.html",
-      "bytes": 15518,
-      "sha256": "5331acd0d77ee02e64404850f3287621dd191557f10284094d7d3611a048e511"
+      "bytes": 15419,
+      "sha256": "f928b670341be4c3f47139c6bc65f8c1e37fa35887039bcb67bc28dcac93ffe9"
     },
     {
       "path": "site/docs/index.html",
-      "bytes": 16562,
-      "sha256": "2950b0e48ce48fde7c2356b53ad5e460c187bc1ade89db8bb3368af884b50cf7"
+      "bytes": 16463,
+      "sha256": "c2ea968317d6cdb84a5e499ad95d87291f222d0d25ed676ba3ba9ea43e747e73"
     },
     {
       "path": "site/docs/privacy.html",
-      "bytes": 21641,
-      "sha256": "083d2727d9341930e5abb636c46fa4e1e59bfdb00d0e4b4f96476b9701da988e"
+      "bytes": 21572,
+      "sha256": "ee5a132e2aa5a1603caae061e9b9ea5c4fe46307f214b7499976041f8aa813f7"
     },
     {
       "path": "site/docs/research.html",
-      "bytes": 29125,
-      "sha256": "0ddc09beb8d981823e907d189c7c68963f853905aee6b81d0576bbaf98cdaae9"
+      "bytes": 29107,
+      "sha256": "0d055aeb596755a70abeab86297340ed40c2562c240ec4bfb85c6fb564689300"
     },
     {
       "path": "site/gpu-catalog.html",
-      "bytes": 22948,
-      "sha256": "4059a9a337cbb37c78d060babd67041ebee4f180df23617be678d07721f280b1"
+      "bytes": 22849,
+      "sha256": "c31b8470a4e2e738afa76015f8ba14e08a32ca06e29eb016c3c71feffaa40303"
     },
     {
       "path": "site/home.css",
@@ -775,8 +785,8 @@
     },
     {
       "path": "site/index.html",
-      "bytes": 49053,
-      "sha256": "75881a6e9105d7b79be05f8754ed5106347909fb86b9e0dcb61a1198c573dbed"
+      "bytes": 48954,
+      "sha256": "77d912f9bd3876d588cf2b76a1d5c01f07a02855ad20fee9315cb2af24e06a6f"
     },
     {
       "path": "site/llms.txt",
@@ -790,13 +800,13 @@
     },
     {
       "path": "site/site.js",
-      "bytes": 7349,
-      "sha256": "0f1b13000c8d60678666fea3b376d03b848c0a3bedb5c261fee59611a712ef4b"
+      "bytes": 7936,
+      "sha256": "24f9f6f07f24af0101c290336ba5d6416a56839b1b40a6559ab578f356965b3f"
     },
     {
       "path": "site/styles.css",
-      "bytes": 2016,
-      "sha256": "5e501a4f3cc6057002af9261afc7241cc20c7979d5c6c8d041055637a7c995c5"
+      "bytes": 2051,
+      "sha256": "aff3549d2d75392b4c34eaf5152ee4be2256d1829d9dc229b8f958593f2e73d3"
     },
     {
       "path": "src/cuda_legacy_compat/__init__.py",
