@@ -1,0 +1,17 @@
+{
+  "protocol": "Digital Presence Protocol",
+  "version": "0.3.0 Working Draft",
+  "canonical_source": "https://github.com/zachshallbetter/protocols",
+  "revision": "38eb016986731bed3eaa7aecfc6ba14f3fbc8ccd",
+  "files": {
+    "measurement-experiment.schema.json": {
+      "upstream_path": "digital-presence-protocol/schemas/measurement-experiment.schema.json",
+      "sha256": "3cc697b5bcb44092ee7c31d0164a10640d18adf4aa5f87228a15d06383a014f3"
+    },
+    "measurement-observation.schema.json": {
+      "upstream_path": "digital-presence-protocol/schemas/measurement-observation.schema.json",
+      "sha256": "247d2661c9cb258f0e9a5dc76ba6be7aab39e1f52f0cbc6123bb73605af14eda"
+    }
+  },
+  "rule": "Byte-for-byte copies of the pinned upstream schemas. Do not edit; project rules live in scripts/dpp_measurement.py and the binding envelope it defines."
+}

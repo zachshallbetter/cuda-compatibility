@@ -1,0 +1,100 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "DPP Measurement Experiment",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "experiment_id",
+    "version",
+    "status",
+    "hypothesis",
+    "primary_endpoint",
+    "treatment",
+    "control",
+    "assignment",
+    "observation_window",
+    "stopping_rule",
+    "analysis_plan",
+    "causal_claim",
+    "limitations"
+  ],
+  "properties": {
+    "experiment_id": {
+      "type": "string"
+    },
+    "version": {
+      "type": "string"
+    },
+    "status": {
+      "enum": [
+        "proposed",
+        "preregistered",
+        "running",
+        "completed",
+        "aborted"
+      ]
+    },
+    "hypothesis": {
+      "type": "string"
+    },
+    "primary_endpoint": {
+      "type": "string"
+    },
+    "treatment": {
+      "type": "string"
+    },
+    "control": {
+      "type": "string"
+    },
+    "assignment": {
+      "type": "string"
+    },
+    "observation_window": {
+      "type": "string"
+    },
+    "stopping_rule": {
+      "type": "string"
+    },
+    "analysis_plan": {
+      "type": "string"
+    },
+    "precision_target": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "causal_claim": {
+      "enum": [
+        "none",
+        "descriptive",
+        "diagnostic",
+        "causal"
+      ]
+    },
+    "assumptions": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "confounders": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "results": {
+      "type": [
+        "object",
+        "null"
+      ]
+    },
+    "limitations": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  }
+}

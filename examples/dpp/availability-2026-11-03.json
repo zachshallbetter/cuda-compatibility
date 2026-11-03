@@ -1,0 +1,49 @@
+{
+  "observation": {
+    "observation_id": "OBS-AV-2026-11-03",
+    "entity_id": "cuda-compatibility-site",
+    "claim_id": "CLC-CLAIM-001",
+    "representation_id": "site-sitemap",
+    "surface_id": "public-http",
+    "observed_at": "2026-11-03T13:06:19Z",
+    "mode": "observation",
+    "query_id": null,
+    "corpus_version": null,
+    "model_provider": null,
+    "model_id": null,
+    "model_version": null,
+    "retrieval_path": "instrumented",
+    "finding_level": "descriptive",
+    "verdict": "SATISFIED",
+    "metric": {
+      "metric_id": "DPP-AV-01",
+      "numerator": 10,
+      "denominator": 10,
+      "unit": "canonical URLs returning HTTP 200",
+      "sampling_frame": "every <loc> in https://cudacompat.com/sitemap.xml",
+      "uncertainty_method": "none; census of the sitemap at one instant"
+    },
+    "evidence": [
+      {
+        "artifact_ref": "site/sitemap.xml",
+        "sha256": "4b06dd36cd1eaef5662652859e584918ef5d8ca6d446f026ac727f44667338dd",
+        "evidence_grade": "E1"
+      }
+    ],
+    "rubric_version": null,
+    "collector": "curl with a Googlebot user agent",
+    "limitations": [
+      "Point-in-time availability; says nothing about indexing or reach.",
+      "The upstream schema requires a claim_id even for representation-level observations; this record anchors to the project identity claim CLC-CLAIM-001, which availability does not test."
+    ]
+  },
+  "binding": {
+    "time_window": {
+      "start": "2026-11-03T13:06:19Z",
+      "end": "2026-11-03T13:06:40Z"
+    },
+    "criteria": "HTTP 200 with a self-referencing canonical for each sitemap URL",
+    "missingness": "none",
+    "experiment_ref": null
+  }
+}

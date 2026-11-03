@@ -5,8 +5,8 @@
   "validityBasis": "aggregate-source-digest",
   "selectedPaths": [],
   "sourceSelection": {
-    "includedCount": 209,
-    "includedBytes": 1835409,
+    "includedCount": 216,
+    "includedBytes": 1863181,
     "excludedCounts": {
       "extension": 47,
       "generated-or-transient-file": 2
@@ -18,14 +18,14 @@
     "repositories": [
       {
         "path": ".",
-        "commit": "e099bef89064782437dfd73118caff1716156dd1",
-        "branch": "discovery-baseline",
+        "commit": "adfcd25b745637db6faba1bd8c886ac280f66bef",
+        "branch": "dpp-observation-semantics",
         "dirty": true,
         "remote": "https://github.com/zachshallbetter/cuda-compatibility.git"
       }
     ]
   },
-  "aggregateSourceDigest": "7e801c07d2d665524989ab89cc0add473db52c972d49d8240af39c4eb33b9d3f",
+  "aggregateSourceDigest": "ab5e06766020319edb4c5cff30fa284bcf082447d2765903dedc6cc8dfd1cd91",
   "sources": [
     {
       "path": ".agents/acp/README.md",
@@ -694,8 +694,8 @@
     },
     {
       "path": "docs/DPP_IMPLEMENTATION.md",
-      "bytes": 28873,
-      "sha256": "d46761338269524685c9088d0b655c72c3433574ae0610baeca32f60fc7212e9"
+      "bytes": 29136,
+      "sha256": "7bbd8e357ff39d9540e535cd854bb93640b9d6552c2142bae12aaec3e7630afe"
     },
     {
       "path": "docs/PROJECT_MILESTONES.md",
@@ -741,6 +741,11 @@
       "path": "docs/decisions/0001-language-and-first-scope.md",
       "bytes": 1560,
       "sha256": "f266e1017d80f5f718ba78b521f7abb0a69fb880cd5a9c504943949a9409cec9"
+    },
+    {
+      "path": "docs/dpp/measurement-validation.md",
+      "bytes": 4749,
+      "sha256": "518b4413964bdae0df9a8955e2bfe3e18b9a5415c17334d0c0a810ecbc8c38a4"
     },
     {
       "path": "docs/product/product-contract.md",
@@ -796,6 +801,11 @@
       "path": "docs/user-guide.md",
       "bytes": 10328,
       "sha256": "ea86f68dffc7bab8a1f10c18a7f01fa0ca302944550d366b270a2b831baf7771"
+    },
+    {
+      "path": "examples/dpp/availability-2026-11-03.json",
+      "bytes": 1660,
+      "sha256": "0cdde59a8d8299a82fa07245c729879dab4a5dc144a08fb3b9382aec1c9b62eb"
     },
     {
       "path": "experiments/llvm-nvptx/run_vector_add.sh",
@@ -873,9 +883,29 @@
       "sha256": "1d17eb0fa09884edc315d85f72de74490b616e3069407fd8430cc9e00d196fba"
     },
     {
+      "path": "schemas/vendor/dpp-0.3.0/SOURCE.json",
+      "bytes": 852,
+      "sha256": "d9fab380aaa40800e55cec3fc09a50fb3358cc23916c1f1ee107524813286e01"
+    },
+    {
+      "path": "schemas/vendor/dpp-0.3.0/measurement-experiment.schema.json",
+      "bytes": 1720,
+      "sha256": "3cc697b5bcb44092ee7c31d0164a10640d18adf4aa5f87228a15d06383a014f3"
+    },
+    {
+      "path": "schemas/vendor/dpp-0.3.0/measurement-observation.schema.json",
+      "bytes": 3388,
+      "sha256": "247d2661c9cb258f0e9a5dc76ba6be7aab39e1f52f0cbc6123bb73605af14eda"
+    },
+    {
       "path": "scripts/build_llms_full.py",
       "bytes": 6254,
       "sha256": "e4ff2d59a94507c2e3b104621e12c5fe791c99344bb4f29fca3b0334a0c4bbe4"
+    },
+    {
+      "path": "scripts/dpp_measurement.py",
+      "bytes": 8187,
+      "sha256": "233072b558e2962e14520d25c1e6c846af0497214cf5761e9bedf2345fd38aff"
     },
     {
       "path": "scripts/indexnow.py",
@@ -1051,6 +1081,11 @@
       "path": "tests/test_context_generation.py",
       "bytes": 1644,
       "sha256": "8c15710e5dc925647eede4137d67ed45772887db5db9102543c79f712e5340a8"
+    },
+    {
+      "path": "tests/test_dpp_measurement.py",
+      "bytes": 6953,
+      "sha256": "797d259f20b6f46c70a117a38ad3fb3231d7251213b946f51792ce0da6c42bec"
     },
     {
       "path": "tests/test_inventory.py",
