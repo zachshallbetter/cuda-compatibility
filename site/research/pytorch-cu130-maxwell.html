@@ -1,0 +1,180 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="only light"><meta name="theme-color" content="#F2F2EE"><meta name="description" content="PyTorch&#x27;s official CUDA 13 wheel imports and allocates on GM200 but ships no sm_52 kernels. Which operations now run natively, which fall back, and why.">
+<link rel="icon" href="../favicon.ico" sizes="32x32">
+<link rel="icon" type="image/svg+xml" href="../favicon.svg">
+<link rel="apple-touch-icon" href="../apple-touch-icon.png">
+<link rel="mask-icon" href="../mask-icon.svg" color="#000000">
+<link rel="manifest" href="../manifest.webmanifest">
+<link rel="alternate" type="application/atom+xml" title="CUDA Compatibility sheets" href="../feed.xml">
+<link rel="prev" href="runtime-version-facade.html">
+<link rel="next" href="implementation-gap-audit-2026-11.html">
+<link rel="author" href="../humans.txt">
+<link rel="license" href="https://github.com/zachshallbetter/cuda-compatibility/blob/main/LICENSE-MIT">
+<meta name="application-name" content="CUDA Compatibility">
+<meta name="apple-mobile-web-app-title" content="CUDA Compat">
+<meta name="format-detection" content="telephone=no">
+<title>PyTorch 2.14 CUDA 13 wheel on Maxwell GPUs | CUDA Compatibility</title>
+<link rel="canonical" href="https://cudacompat.com/research/pytorch-cu130-maxwell.html">
+<meta name="author" content="Zach Shallbetter">
+<meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1">
+<meta name="citation_title" content="PyTorch 2.14 CUDA 13 wheel on Maxwell">
+<meta name="citation_author" content="Shallbetter, Zach">
+<meta name="citation_publication_date" content="2026/11/01">
+<meta name="citation_online_date" content="2026/11/01">
+<meta name="citation_publisher" content="CUDA Compatibility">
+<meta name="citation_public_url" content="https://cudacompat.com/research/pytorch-cu130-maxwell.html">
+<meta property="og:type" content="article">
+<meta property="article:published_time" content="2026-11-01T01:04:31-08:00">
+<meta property="article:modified_time" content="2026-11-01T17:09:08-08:00">
+<meta property="article:author" content="https://zachshallbetter.com/">
+<meta property="article:section" content="Research">
+<meta property="og:site_name" content="CUDA Compatibility">
+<meta property="og:url" content="https://cudacompat.com/research/pytorch-cu130-maxwell.html">
+<meta property="og:locale" content="en_US">
+<meta property="og:title" content="PyTorch 2.14 CUDA 13 wheel on Maxwell GPUs">
+<meta property="og:description" content="PyTorch&#x27;s official CUDA 13 wheel imports and allocates on GM200 but ships no sm_52 kernels. Which operations now run natively, which fall back, and why.">
+<meta property="og:image" content="https://cudacompat.com/assets/social/pytorch-cu130-maxwell.png">
+<meta property="og:image:type" content="image/png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Share card: PyTorch 2.14 CUDA 13 wheel on Maxwell GPUs. Research paper, Paper 05 of 08, CUDA Compatibility, cudacompat.com, beside a wireframe of a GM200 graphics card">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="PyTorch 2.14 CUDA 13 wheel on Maxwell GPUs">
+<meta name="twitter:description" content="PyTorch&#x27;s official CUDA 13 wheel imports and allocates on GM200 but ships no sm_52 kernels. Which operations now run natively, which fall back, and why.">
+<meta name="twitter:image" content="https://cudacompat.com/assets/social/pytorch-cu130-maxwell.png">
+<meta name="twitter:image:alt" content="Share card: PyTorch 2.14 CUDA 13 wheel on Maxwell GPUs. Research paper, Paper 05 of 08, CUDA Compatibility, cudacompat.com, beside a wireframe of a GM200 graphics card">
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"WebSite","@id":"https://cudacompat.com/#website","url":"https://cudacompat.com/","name":"CUDA Compatibility","alternateName":"cudacompat.com","inLanguage":"en","publisher":{"@id":"https://cudacompat.com/#author"},"copyrightHolder":{"@id":"https://cudacompat.com/#author"},"license":"https://github.com/zachshallbetter/cuda-compatibility/blob/main/LICENSE-MIT"},{"@type":"Person","@id":"https://cudacompat.com/#author","name":"Zach Shallbetter","url":"https://zachshallbetter.com/","sameAs":["https://github.com/zachshallbetter"],"jobTitle":"Systems engineer and independent researcher","description":"Zach Shallbetter is a systems engineer and independent researcher based in Spokane, Washington. His work spans applied AI, computer vision, embedded systems, and developer tooling. Through Snack Studio, he builds software that connects modern workflows with existing hardware, with an emphasis on compatibility, performance, and keeping useful systems operational.","homeLocation":{"@type":"Place","name":"Spokane, Washington"},"worksFor":{"@id":"https://cudacompat.com/#org"}},{"@type":"Organization","@id":"https://cudacompat.com/#org","name":"Snack Studio","url":"https://snackstud.io/","founder":{"@id":"https://cudacompat.com/#author"}},{"@type":"SoftwareApplication","@id":"https://cudacompat.com/#software","name":"CUDA Compatibility","url":"https://cudacompat.com/"},{"@type":"WebPage","@id":"https://cudacompat.com/research/pytorch-cu130-maxwell.html","url":"https://cudacompat.com/research/pytorch-cu130-maxwell.html","name":"PyTorch 2.14 CUDA 13 wheel on Maxwell GPUs","description":"PyTorch's official CUDA 13 wheel imports and allocates on GM200 but ships no sm_52 kernels. Which operations now run natively, which fall back, and why.","inLanguage":"en","isPartOf":{"@id":"https://cudacompat.com/#website"},"breadcrumb":{"@id":"https://cudacompat.com/research/pytorch-cu130-maxwell.html#breadcrumb"},"primaryImageOfPage":{"@id":"https://cudacompat.com/assets/social/pytorch-cu130-maxwell.png"},"mainEntity":{"@id":"https://cudacompat.com/research/pytorch-cu130-maxwell.html#article"},"datePublished":"2026-11-01T01:04:31-08:00","dateModified":"2026-11-01T17:09:08-08:00"},{"@type":"ImageObject","@id":"https://cudacompat.com/assets/social/pytorch-cu130-maxwell.png","url":"https://cudacompat.com/assets/social/pytorch-cu130-maxwell.png","contentUrl":"https://cudacompat.com/assets/social/pytorch-cu130-maxwell.png","width":1200,"height":630,"caption":"Share card: PyTorch 2.14 CUDA 13 wheel on Maxwell GPUs. Research paper, Paper 05 of 08, CUDA Compatibility, cudacompat.com, beside a wireframe of a GM200 graphics card","encodingFormat":"image/png"},{"@type":"ScholarlyArticle","@id":"https://cudacompat.com/research/pytorch-cu130-maxwell.html#article","headline":"PyTorch 2.14 CUDA 13 wheel on Maxwell","name":"PyTorch 2.14 CUDA 13 wheel on Maxwell GPUs","abstract":"PyTorch's official CUDA 13 wheel imports and allocates on GM200 but ships no sm_52 kernels. Which operations now run natively, which fall back, and why.","description":"PyTorch's official CUDA 13 wheel imports and allocates on GM200 but ships no sm_52 kernels. Which operations now run natively, which fall back, and why.","url":"https://cudacompat.com/research/pytorch-cu130-maxwell.html","mainEntityOfPage":{"@id":"https://cudacompat.com/research/pytorch-cu130-maxwell.html"},"image":{"@id":"https://cudacompat.com/assets/social/pytorch-cu130-maxwell.png"},"inLanguage":"en","datePublished":"2026-11-01T01:04:31-08:00","dateModified":"2026-11-01T17:09:08-08:00","author":{"@id":"https://cudacompat.com/#author"},"publisher":{"@id":"https://cudacompat.com/#author"},"copyrightHolder":{"@id":"https://cudacompat.com/#author"},"copyrightYear":2026,"license":"https://github.com/zachshallbetter/cuda-compatibility/blob/main/LICENSE-MIT","isAccessibleForFree":true,"isPartOf":{"@id":"https://cudacompat.com/#website"},"about":{"@id":"https://cudacompat.com/#software"},"isBasedOn":"https://github.com/zachshallbetter/cuda-compatibility/blob/main/docs/research/pytorch-cu130-maxwell.md","articleSection":"Research","position":5,"creativeWorkStatus":"Published","genre":"Research record"},{"@type":"BreadcrumbList","@id":"https://cudacompat.com/research/pytorch-cu130-maxwell.html#breadcrumb","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://cudacompat.com/"},{"@type":"ListItem","position":2,"name":"Research and evidence","item":"https://cudacompat.com/docs/research.html"},{"@type":"ListItem","position":3,"name":"PyTorch 2.14 CUDA 13 wheel on Maxwell GPUs","item":"https://cudacompat.com/research/pytorch-cu130-maxwell.html"}]}]}</script>
+<link rel="stylesheet" href="../styles.css">
+<link rel="stylesheet" href="../docs.css">
+</head>
+<body>
+<div style="display:flex;flex-direction:column;min-height:100%">
+<a class="skip-link" href="#main">Skip to content</a>
+<header style="border-bottom:1px solid currentColor">
+<svg class="reg l" aria-hidden="true" viewBox="0 0 16 16"><circle cx="8" cy="8" r="5" fill="none" stroke="currentColor" stroke-width="1.2"/><path d="M8 0v16M0 8h16" stroke="currentColor" stroke-width="1.2"/></svg><svg class="reg r" aria-hidden="true" viewBox="0 0 16 16"><circle cx="8" cy="8" r="5" fill="none" stroke="currentColor" stroke-width="1.2"/><path d="M8 0v16M0 8h16" stroke="currentColor" stroke-width="1.2"/></svg>
+<div class="wrap" style="padding-top:18px;padding-bottom:18px;display:flex;justify-content:space-between;align-items:center;gap:24px;flex-wrap:wrap">
+<a href="../index.html" style="text-decoration:none;color:inherit;font-stretch:110%;font-weight:800;font-size:17px;letter-spacing:-0.02em;display:inline-flex;align-items:center;gap:12px"><svg aria-hidden="true" width="26" height="26" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="3"><rect x="5" y="5" width="22" height="22"></rect><rect x="12" y="12" width="8" height="8" fill="currentColor" stroke="none"></rect></svg>CUDA Compatibility</a>
+<div style="display:flex;align-items:center;gap:32px;flex-wrap:wrap">
+<nav class="nav" aria-label="Main navigation">
+<a href="../index.html#works">What works</a>
+<a href="../index.html#stack">How it works</a>
+<a href="../index.html#hardware">Hardware</a>
+<a href="../index.html#install">Install</a>
+<a href="../docs/index.html" aria-current="true" style="color:var(--link)">Docs</a>
+<a href="https://github.com/zachshallbetter/cuda-compatibility/releases">Releases</a>
+</nav>
+<a class="repo" href="https://github.com/zachshallbetter/cuda-compatibility">Repository<svg aria-hidden="true" width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 10 10 2M4 2h6v6"></path></svg></a>
+</div>
+</div>
+</header>
+
+<main id="main">
+<article id="article" aria-labelledby="title">
+<header class="band">
+<div class="wrap" style="padding-top:56px;padding-bottom:56px;display:flex;flex-direction:column;gap:18px">
+<nav aria-label="Breadcrumb" class="crumbs"><ol><li><a href="../index.html">Home</a></li><li><a href="../docs/research.html">Research and evidence</a></li><li aria-current="page">Paper 05 / 08</li></ol></nav>
+<p class="sheet" style="margin:0">Research paper</p>
+<h1 id="title" class="disp" style="font-size:clamp(36px,4.2vw,58px);max-width:22ch">PyTorch 2.14 CUDA 13 wheel on Maxwell</h1>
+<p class="excerpt" style="margin:0;font-size:20px;line-height:1.45;max-width:60ch;font-weight:500">PyTorch&#x27;s official CUDA 13 wheel imports and allocates on GM200 but ships no sm_52 kernels. Which operations now run natively, which fall back, and why.</p>
+<p class="byline">By <a rel="author" href="https://zachshallbetter.com/">Zach Shallbetter</a> · Paper 05 of 08 · First recorded <time datetime="2026-11-01">1 November 2026</time> · Updated <time datetime="2026-11-01">1 November 2026</time></p>
+</div>
+</header>
+<div class="wrap body" style="padding-top:56px;padding-bottom:96px">
+<nav aria-label="Documentation" style="display:flex;flex-direction:column;gap:12px">
+<p class="sheet" style="margin:0">Sheets</p>
+<ul class="side">
+<li><a href="../docs/index.html"><i>02</i>Documentation home</a></li>
+<li><a href="../docs/getting-started.html"><i>03</i>Install and run</a></li>
+<li><a href="../docs/compatibility.html"><i>04</i>Support matrix</a></li>
+<li><a href="../docs/architecture.html"><i>05</i>How it works</a></li>
+<li><a href="../docs/cli.html"><i>06</i>Command line</a></li>
+<li><a class="current" aria-current="true" href="../docs/research.html"><i>07</i>Research and evidence</a></li>
+<li><a href="../gpu-catalog.html"><i>08</i>Legacy GPU catalog</a></li>
+<li><a href="../docs/discovery.html"><i>09</i>Search and AI discovery</a></li>
+<li><a href="../docs/privacy.html"><i>10</i>Privacy and measurement</a></li>
+</ul>
+<p class="sheet" style="margin:12px 0 0">Papers</p>
+<ul class="side" style="border-top-width:1px"><li><a href="research-program.html"><i>01</i>Research program: CUDA-era semantics on legacy GPUs</a></li><li><a href="maxwell-baseline.html"><i>02</i>Maxwell native baseline: CUDA 12.4 on three GM200 cards</a></li><li><a href="llvm-nvptx.html"><i>03</i>LLVM NVPTX on Maxwell: sm_52 kernels from LLVM 23</a></li><li><a href="runtime-version-facade.html"><i>04</i>Runtime version facade: CUDA 13 answers on a CUDA 12.4 stack</a></li><li><a class="current" aria-current="page" href="pytorch-cu130-maxwell.html"><i>05</i>PyTorch 2.14 CUDA 13 wheel on Maxwell GPUs</a></li><li><a href="implementation-gap-audit-2026-11.html"><i>06</i>Implementation gap audit: prototype versus platform goal</a></li><li><a href="attribution-pilot.html"><i>07</i>AI answer attribution pilot: baseline results</a></li><li><a href="cuda-12-9-to-13-0-changes.html"><i>08</i>CUDA 12.9 to 13.0: what changed for older GPUs</a></li></ul>
+<p class="sheet" style="margin:12px 0 0">On this paper</p>
+<ul class="side" style="border-top-width:1px"><li><a href="#installation"><i>A</i>Installation</a></li><li><a href="#results"><i>B</i>Results</a></li><li><a href="#first-compatibility-adapter"><i>C</i>First compatibility adapter</a></li><li><a href="#bridge-hardening"><i>D</i>Bridge hardening</a></li><li><a href="#float32-inference-slice"><i>E</i>Float32 inference slice</a></li><li><a href="#owner-supplied-checkpoint-integration-probe"><i>F</i>Owner-supplied checkpoint integration probe</a></li><li><a href="#clc-025-stream-dtype-and-training-expansion"><i>G</i>CLC-025: stream, dtype, and training expansion</a></li><li><a href="#convolutional-workload-probe"><i>H</i>Convolutional workload probe</a></li><li><a href="#clc-010-packaged-launcher"><i>I</i>CLC-010 packaged launcher</a></li></ul>
+</nav>
+<div class="prose" style="display:flex;flex-direction:column;gap:20px;min-width:0">
+<p><strong>Initial package/stock-wheel evidence:</strong> Reproduced on the reference host, 2026-10-31.<br> <strong>Latest workload evidence:</strong> Updated 2026-11-01; CLC-011 remains in progress and CLC-012 is verified.<br> <strong>Scope:</strong> Official PyTorch 2.14.0 CUDA 13.0 wheel; Python 3.10.12; three GM200 GPUs; ordinary wheel behavior with and without the CLC-005 runtime-version facade.</p>
+<h2 id="installation">Installation</h2>
+<p>Installed in a disposable virtual environment under <code>/tmp</code> on <code>reference GPU host</code> using PyTorch's published command pattern:</p>
+<pre aria-label="Shell commands"><code>python3.10 -m venv /tmp/cuda-compat-pytorch-cu130-venv
+/tmp/cuda-compat-pytorch-cu130-venv/bin/python -m pip install \
+  torch==2.14.0 --index-url https://download.pytorch.org/whl/cu130</code></pre>
+<p>The installed wheel reports <code>torch=2.14.0+cu130</code> and <code>torch.version.cuda=13.0</code>. Its CUDA dependencies include CUDA Runtime 13.0.96, cuDNN 9.24.0.43, and NCCL 2.30.7. See the <a href="https://pytorch.org/get-started/previous-versions/">official PyTorch 2.14 install commands</a> and <a href="https://github.com/pytorch/pytorch/blob/v2.14.0/RELEASE.md">published architecture matrix</a>.</p>
+<h2 id="results">Results</h2>
+<p>With each physical GPU selected separately by <code>CUDA_VISIBLE_DEVICES</code>, PyTorch imported, reported CUDA available, enumerated the actual GTX TITAN X at compute capability 5.2, allocated CUDA tensors, and copied host data to the device. The built-in tensor addition then failed with:</p>
+<pre aria-label="Output"><code>torch=2.14.0+cu130 built_cuda=13.0
+cuda_available=True device_count=1
+device=0 name=NVIDIA GeForce GTX TITAN X compute=5.2
+PASS device=0 host_to_device elements=1024
+FAIL stage=CUDA tensor addition: AcceleratorError: CUDA error: no kernel image is available for execution on the device</code></pre>
+<p>The same result occurred on physical devices 0, 1, and 2. Running with <code>CUDA_COMPAT_RUNTIME_VERSION=13000</code> and the CLC-005 <code>LD_PRELOAD</code> facade produced the same failure. The runtime-version response is therefore not the blocking layer; the wheel has no executable kernel image for <code>sm_52</code> for this operation. PyTorch's own warning lists supported architectures beginning at <code>sm_75</code>, consistent with its <a href="https://github.com/pytorch/pytorch/blob/v2.14.0/RELEASE.md">published matrix</a>.</p>
+<h2 id="first-compatibility-adapter">First compatibility adapter</h2>
+<p>[<code>run_operator_adapter.sh</code>](../../experiments/pytorch-cu130/run_operator_adapter.sh) generates PTX from the existing CUDA vector-add kernel with LLVM 23.1.4, builds a small CUDA Driver API bridge, and installs an explicit process-local Python dispatcher override for <code>aten::add.Tensor</code>. The adapter requires the visible devices to be <code>sm_52</code> and does not modify the PyTorch wheel.</p>
+<p>Reproduce inside the disposable PyTorch environment after placing the verified LLVM release under <code>/tmp</code>:</p>
+<pre aria-label="Shell commands"><code>PYTHON_BIN=/tmp/cuda-compat-pytorch-cu130-venv/bin/python \
+LLVM_ROOT=/tmp/cuda-compat-llvm-23.1.4/LLVM-23.1.4-Linux-X64 \
+bash experiments/pytorch-cu130/run_operator_adapter.sh</code></pre>
+<p>For each of the three cards, in both the unmodified runtime mode and with the CLC-005 runtime-version facade enabled:</p>
+<ul class="list"><li>Contiguous <code>int32</code> <code>torch.add</code> used the LLVM-generated <code>sm_52</code> kernel; all outputs matched a CPU PyTorch reference.</li><li>Integer overflow (<code>INT32_MAX + 1</code>) wrapped as expected.</li><li>Contiguous <code>int64</code> <code>torch.add</code> used CPU PyTorch and copied the result back into a CUDA tensor; outputs matched the CPU reference.</li><li><code>float32</code> tensor addition failed explicitly as unsupported.</li></ul>
+<p>The PTX target was <code>.version 8.4</code> / <code>.target sm_52</code>. The stock PyTorch wheel still emits its warning that its packaged kernels start at <code>sm_75</code>; the adapter supplies only the tested <code>aten::add.Tensor</code> paths. It does not establish compatibility for scalar addition, <code>out=</code>, autograd, other operators, cuDNN, NCCL, Triton, or general PyTorch workloads, and no performance measurements were taken.</p>
+<h2 id="bridge-hardening">Bridge hardening</h2>
+<p>CLC-008 removes the per-call module load/unload and <code>cuStreamSynchronize</code> from the int32 path. The bridge now retains one PTX module/function for each CUDA context for the process lifetime, rejects a different PTX path after that context is initialized, bounds the signed 32-bit kernel count, and launches on the stream PyTorch reports as current. Python dispatch diagnostics are thread-local. Empty int32 tensors return an empty result without launching a zero-sized grid.</p>
+<p>The updated runner passed on physical GPUs 0, 1, and 2 in both the ordinary CUDA 13 runtime mode and the process-local runtime-version facade mode. It checked repeated module-cache use, rejection of a second valid PTX path in the same context, rejection of an oversized count, empty tensors, non-default-stream ordering, int32 overflow behavior, int64 CPU fallback equality, and explicit float32 rejection. Each probe process returned success and retained the true GTX TITAN X / CC 5.2 identity. LLVM emitted PTX 8.4 targeting <code>sm_52</code>; the downloaded LLVM archive matched the checksum of the attestation-verified CLC-004 artifact. Temporary source, wheel environment, LLVM extraction, and archive were removed using the host resource path.</p>
+<p>This hardening does not broaden the supported operator set. The module cache is bounded to one PTX path per CUDA context and remains resident until process/context teardown; performance was not benchmarked. Clang emitted a non-fatal warning about selecting between installed GCC C++ include layouts.</p>
+<h2 id="float32-inference-slice">Float32 inference slice</h2>
+<p>CLC-009 adds <code>compat_kernels.cu</code> to the cached PTX module with float32 matrix multiplication and ReLU kernels, registered as opt-in CUDA implementations of <code>aten::mm</code> and <code>aten::relu</code>. Matrix multiplication accepts contiguous 2D float32 inputs with each dimension at most 256 and at most 16,777,216 multiply-accumulate steps. ReLU accepts contiguous float32 inputs up to 1,048,576 elements. Both run asynchronously on PyTorch's current stream. Empty output dimensions return empty tensors; a zero inner matrix dimension produces zeros. Other dtypes, non-contiguous inputs, oversized matrices, and autograd fail explicitly.</p>
+<p>The stock CUDA 13 wheel was probed separately on each card. Built-in <code>mm</code> failed at <code>cublasCreate</code> with <code>CUBLAS_STATUS_ARCH_MISMATCH</code>; built-in <code>relu</code> failed with <code>no kernel image is available for execution on the device</code>. The adapter bypassed those built-in paths. CPU-reference checks covered matrix shapes <code>(3,5)@(5,4)</code>, <code>(1,7)@(7,1)</code>, <code>(2,0)@(0,3)</code>, and <code>(0,5)@(5,2)</code>; ReLU edge values including NaN, infinities, and signed zero; and a deterministic two-layer MLP with shapes <code>8x16 → 8x32 → ReLU → 8x8</code>. The MLP ran on a non-default stream and matched CPU PyTorch at <code>rtol=1e-5, atol=1e-6</code>.</p>
+<p>The combined runner passed all assertions on physical GPUs 0, 1, and 2 in both ordinary CUDA 13 runtime and version-facade modes. LLVM emitted <code>.version 8.4</code> / <code>.target sm_52</code>; physical identity remained GTX TITAN X / CC 5.2. The earlier int32 addition checks, module caching, alternate-path rejection, count bounds, empty addition, stream ordering, and int64 CPU fallback also continued to pass. Temporary PyTorch, LLVM, source-transfer, and build files were removed through the host resource broker.</p>
+<p>This is a synthetic small MLP slice, not a packaged pretrained model or general inference stack. Matrix multiplication uses a simple scalar-output kernel and no performance benchmark was taken. CUDA tensor constructors that invoke unsupported built-in fill kernels are not intercepted; test inputs use CPU tensors copied to the device. cuDNN, NCCL, Triton, autograd, bias operations, convolution, attention, and larger matrices remain outside this evidence.</p>
+<h2 id="owner-supplied-checkpoint-integration-probe">Owner-supplied checkpoint integration probe</h2>
+<p>One owner-supplied transformer checkpoint was exercised with the official PyTorch 2.14.0 CUDA 13.0 wheel through the packaged launcher on broker-selected GPU 2 (<code>sm_52</code>). Eleven returned tensors matched the CPU reference at <code>rtol=1e-4, atol=1e-5</code> across six bounded batch/sequence configurations. The largest case measured 114.881 ms median latency, 8,914 tokens/s, and 142,024,704 bytes peak allocated GPU memory. Selected operations used native Maxwell kernels; other covered operations used the documented 64 MiB-capped, inference-only CPU fallback.</p>
+<p>This was a one-off integration experiment, not a product feature or general PyTorch support claim. The model source, checkpoint, tokenizer, configuration, artifact digests, and local-only probe are excluded from the public source snapshot. That checkpoint was tested only on GPU 2; per-card checkpoint validation and broader workload coverage remain unverified. A separate, much smaller first-order training slice is documented under CLC-025 below.</p>
+<h2 id="clc-025-stream-dtype-and-training-expansion">CLC-025: stream, dtype, and training expansion</h2>
+<p>The updated package was rebuilt and exercised through the packaged launcher on broker-selected GPU 2 and then on physical GPU 1, both GTX TITAN X GM200 (<code>sm_52</code>), with the official <code>torch 2.14.0+cu130</code> wheel and LLVM 23.1.4. Stock-wheel matrix multiplication still fails at <code>cublasCreate</code> with <code>CUBLAS_STATUS_ARCH_MISMATCH</code>; stock ReLU still reports no kernel image. These are separate observed library/kernel gaps.</p>
+<p>New native cases passed CPU comparisons on GPUs 1 and 2: contiguous float16 addition including NaN, infinities, signed zero, and a rounding tie (exact equality); transposed/strided float32 matrix multiplication; and scaled contiguous float32 in-place addition. Float16 addition is capped at 1,048,576 values. Matrix multiplication remains capped at 256 per dimension and 16,777,216 multiply-accumulate steps. In-place float32 addition is capped at 1,048,576 values. Existing cross-stream allocator-churn probes passed for float16 add, float32/int32 add, float32 matrix multiplication, ReLU, and layer normalization. Layer normalization's larger positive-offset case had maximum absolute error <code>3.34e-5</code> and uses <code>atol=5e-5</code>; its ordinary case remains <code>atol=1e-6</code>.</p>
+<p>First-order gradients and an optimizer step passed for a 2×2 float32 <code>linear → ReLU → sum</code> model. Seven SGD updates with <code>foreach=False</code> matched CPU reference gradients and final parameters. The registered CPU fallback preserves the graph through framework host/device copies, and a custom CPU implementation supplies the missing <code>aten::linear_backward</code> behavior; the final scaled parameter update ran through the <code>sm_52</code> float32 <code>add_</code> kernel. The seven measured end-to-end steps had 2.360 ms median wall latency and 67,180,032 bytes peak allocated on GPU 2; a repeat on GPU 1 measured 7.296 ms median with the same peak allocation. Timing includes fallback transfers, CPU computation, and explicit synchronization; it is a tiny diagnostic workload, not a performance claim. Each fallback remains capped at 64 MiB of inputs and 64 MiB of outputs per operation.</p>
+<h3 id="runtime-and-library-boundary-inventory">Runtime and library boundary inventory</h3>
+<div class="scroll" role="region" aria-label="Runtime and library boundary inventory (scrolls sideways)" tabindex="0" style="overflow-x:auto"><table aria-label="Runtime and library boundary inventory"><thead><tr><th scope="col">Observed path</th><th scope="col">Evidence</th><th scope="col">Current handling / boundary</th></tr></thead><tbody><tr><td><code>cudaRuntimeGetVersion</code></td><td>Launcher facade probe returns <code>13000</code> in the child process</td><td>One interposed query; other runtime calls are forwarded, not broadly translated.</td></tr><tr><td><code>cuCtxGetCurrent</code>, <code>cuModuleLoad</code>, <code>cuModuleGetFunction</code>, <code>cuLaunchKernel</code></td><td>Native bridge implementation and successful <code>sm_52</code> kernel probes</td><td>Used to load cached LLVM PTX and launch on PyTorch's current stream.</td></tr><tr><td><code>cuMemcpyDtoH</code></td><td>Bounded fallback and embedding-index validation code</td><td>Explicit driver copy; some differentiable paths use PyTorch's device transfers instead.</td></tr><tr><td>cuBLAS initialization (<code>cublasCreate</code>)</td><td>Stock official wheel reports <code>CUBLAS_STATUS_ARCH_MISMATCH</code> on <code>mm</code></td><td>Bypassed for the registered bounded float32 matrix kernel; other cuBLAS operations remain unverified.</td></tr><tr><td>cuDNN engine selection</td><td>Earlier convolution probe reports no engine for its CNN case</td><td>That convolution uses CPU fallback; general cuDNN compatibility is not implemented.</td></tr><tr><td>CUDA wheel and driver library files</td><td>[<code>library_path_probe.py</code>](../../experiments/pytorch-cu130/library_path_probe.py) inspected <code>/proc/self/maps</code> after bounded matrix and convolution calls</td><td>Observed wheel paths under <code>site-packages/nvidia/cu13/lib/</code> for <code>libcudart.so.13</code>, <code>libcublas.so.13</code>, <code>libcublasLt.so.13</code>, and <code>libnvrtc.so.13</code>; under <code>site-packages/nvidia/cudnn/lib/</code> for cuDNN 9 libraries; under <code>site-packages/nvidia/nccl/lib/</code> for <code>libnccl.so.2</code>; plus <code>torch/lib/libtorch_cuda.so</code>. The installed driver mapped as <code>/usr/lib/x86_64-linux-gnu/libcuda.so.580.178.04</code>.</td></tr><tr><td>Missing CUDA kernel image</td><td>Stock ReLU failure and fallback-dispatch probes</td><td>Replaced only for registered kernels or eligible bounded CPU fallback cases.</td></tr><tr><td>NCCL, Triton, arbitrary runtime APIs</td><td>No supporting trace or workload evidence</td><td>Not mapped or claimed compatible.</td></tr></tbody></table></div>
+<p>This is an implementation-boundary and loaded-library inventory, not a complete dynamic API call trace; a mapped library does not prove that every symbol or code path works. Paths above are from the task-scoped Titan Python 3.10 environment and may differ on user machines. CLC-025 float16, strided-matrix, cross-stream lifetime, and small training probes passed on GPUs 1 and 2; the process-map library inventory ran on GPU 2 only. GPU 0 was not tested in this increment because its free memory was below the 700 MiB test floor. Other optimizers, foreach updates, higher-order gradients, AMP, arbitrary autograd graphs, broad model training, and performance parity remain unverified.</p>
+<h2 id="convolutional-workload-probe">Convolutional workload probe</h2>
+<p>A second model family was exercised with the official CUDA 13 wheel on broker-selected GPU 2: a deterministic <code>Conv2d → ReLU → MaxPool2d → Conv2d → ReLU → AdaptiveAvgPool2d → Flatten → Linear</code> classifier for input shape <code>2×3×32×32</code>. The stock cuDNN path failed with <code>GET was unable to find an engine to execute this computation</code>. After adding that exact cuDNN no-engine phrase to the architecture-failure classifier, the packaged launcher retried the operation on CPU; the final <code>(2, 5)</code> output matched the CPU reference at <code>rtol=1e-4, atol=1e-5</code>. This establishes one bounded inference case, not general cuDNN or convolution support; its convolution operations execute on CPU under the 64 MiB fallback limit.</p>
+<p>Inference evidence is limited to GPU 2, two small model families, batch sizes up to 8, sequence lengths up to 128, and inference without autograd. The CNN test has one input shape and uses CPU fallback for convolution. Separately, the 2×2 first-order training slice in CLC-025 passed on GPUs 1 and 2; other training graphs, optimizers, broader architectures, larger fallbacks, other GPU cards, and independent API/library coverage remain unverified. CLC-011 remains in progress; CLC-012's bounded CNN probe is verified.</p>
+<h2 id="clc-010-packaged-launcher">CLC-010 packaged launcher</h2>
+<p>CLC-010 packaged the adapter and its CUDA/driver source in the Python wheel. On Linux x86_64, <code>cuda-legacy-compat run --llvm-root &lt;LLVM-23.1.4&gt; --cuda-root &lt;CUDA-12.4&gt; -- &lt;script.py&gt; [args...]</code> compiles PTX, the driver bridge, and the runtime-version facade into a temporary directory, then starts the caller's Python interpreter with an opt-in <code>sitecustomize</code> hook. The hook confirms all visible devices are <code>sm_52</code>, registers the compatibility implementations described above, and sets the runtime version facade to 13.0 while keeping hardware capability truthful. Child arguments, stdio, and exit status pass through; temporary build output is removed after exit. This packaging/launch path does not claim arbitrary PyTorch CUDA 13 model support.</p>
+<aside class="note" aria-label="Source and citation"><p style="margin:0;font-size:15px">Source record: <a href="https://github.com/zachshallbetter/cuda-compatibility/blob/main/docs/research/pytorch-cu130-maxwell.md">docs/research/pytorch-cu130-maxwell.md</a>. Cite as: Shallbetter, Z. (2026). PyTorch 2.14 CUDA 13 wheel on Maxwell. CUDA Compatibility. https://cudacompat.com/research/pytorch-cu130-maxwell.html. Project-maintained research, not peer reviewed or endorsed by NVIDIA.</p></aside>
+<nav class="pager" aria-label="Papers, previous and next"><a rel="previous" href="runtime-version-facade.html"><span class="sheet">Previous · paper 04</span><span class="pager-title">Runtime version facade: CUDA 13 answers on a CUDA 12.4 stack</span></a><a rel="next" href="implementation-gap-audit-2026-11.html"><span class="sheet">Next · paper 06</span><span class="pager-title">Implementation gap audit: prototype versus platform goal</span></a></nav>
+</div>
+</div>
+</article>
+</main>
+
+<footer class="foot">
+<div class="wrap" style="padding-top:40px;padding-bottom:40px;display:flex;flex-direction:column;gap:20px;font-size:15px">
+<div class="tb" role="group" aria-label="Title block">
+<div><span>Project</span><span>CUDA Compatibility</span></div>
+<div><span>Drawn by</span><span><a href="https://zachshallbetter.com/">Zach Shallbetter</a></span></div>
+<div><span>Project version</span><span>0.1.0</span></div>
+<div><span>License</span><span>MIT or Apache-2.0</span></div>
+<div><span>Status</span><span>Active research</span></div>
+<div><span>Paper</span><span>05 / 08, PyTorch 2.14 CUDA 13 wheel on Maxwell GPUs</span></div>
+<div><span>Correct this paper</span><span><a href="https://github.com/zachshallbetter/cuda-compatibility/issues/new?title=Correction%3A%20paper%2005%20pytorch-cu130-maxwell">Open an issue naming the record</a></span></div>
+</div>
+<table class="rev" aria-label="Revision table"><thead><tr><th scope="col">Rev</th><th scope="col">Date</th><th scope="col">Change</th><th scope="col">By</th></tr></thead><tbody><tr><td>A</td><td>2026-11-01</td><td>First recorded</td><td>ZS</td></tr></tbody></table>
+<div style="display:flex;justify-content:space-between;gap:24px;flex-wrap:wrap"><span>Independent research, not affiliated with NVIDIA. Hardware identity stays real.</span><div style="display:flex;gap:20px;flex-wrap:wrap"><a href="https://github.com/zachshallbetter">GitHub</a><a href="https://linkedin.com/in/zachshallbetter">LinkedIn</a><a href="../docs/privacy.html">Privacy and analytics</a></div></div>
+</div>
+</footer>
+
+</div>
+<script src="../site.js" defer></script>
+<script src="../analytics.js" defer></script>
+</body>
+</html>

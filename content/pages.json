@@ -1,0 +1,209 @@
+{
+  "modified": "2026-11-03T15:15:00-08:00",
+  "pages": [
+    {
+      "path": "",
+      "file": "index.html",
+      "kind": "home",
+      "eyebrow": "Independent compatibility research",
+      "chip": "SHEET 01 / 10",
+      "title": "CUDA Compatibility: CUDA 13 on Older NVIDIA GPUs",
+      "share_title": "CUDA Compatibility: CUDA 13 PyTorch on older NVIDIA GPUs",
+      "excerpt": "Run selected PyTorch CUDA 13 operations on older NVIDIA GPUs. An independent, evidence-first project starting with Maxwell sm_52 cards like the GTX TITAN X."
+    },
+    {
+      "path": "docs/",
+      "file": "docs/index.html",
+      "kind": "sheet",
+      "eyebrow": "Documentation",
+      "chip": "SHEET 02 / 10",
+      "title": "CUDA Compatibility documentation",
+      "share_title": "CUDA Compatibility documentation",
+      "excerpt": "Start here: install the launcher, check what runs on your GPU, see how the layer works, and find every command, test record and known limit in one place."
+    },
+    {
+      "path": "docs/getting-started.html",
+      "file": "docs/getting-started.html",
+      "kind": "sheet",
+      "eyebrow": "Documentation",
+      "chip": "SHEET 03 / 10",
+      "title": "Install CUDA Compatibility for an older NVIDIA GPU",
+      "share_title": "Install CUDA Compatibility for an older NVIDIA GPU",
+      "excerpt": "Install the launcher on Linux x86_64 beside a CUDA 13 PyTorch wheel, check prerequisites with cuda-legacy doctor, then run one trusted script on Maxwell."
+    },
+    {
+      "path": "docs/compatibility.html",
+      "file": "docs/compatibility.html",
+      "kind": "sheet",
+      "eyebrow": "Documentation",
+      "chip": "SHEET 04 / 10",
+      "title": "CUDA Compatibility support matrix",
+      "share_title": "Support matrix: what runs on Maxwell today",
+      "excerpt": "Which PyTorch CUDA 13 operations run on Maxwell sm_52 today: native GPU kernels, bounded CPU fallbacks, supported dtypes, and what is not supported yet."
+    },
+    {
+      "path": "docs/architecture.html",
+      "file": "docs/architecture.html",
+      "kind": "sheet",
+      "eyebrow": "Documentation",
+      "chip": "SHEET 05 / 10",
+      "title": "How the CUDA compatibility layer works",
+      "share_title": "How the CUDA compatibility layer works",
+      "excerpt": "How the layer works: a process-local CUDA runtime version facade, LLVM-built Maxwell kernels, PyTorch operator routing, and a bounded CPU fallback path."
+    },
+    {
+      "path": "docs/cli.html",
+      "file": "docs/cli.html",
+      "kind": "sheet",
+      "eyebrow": "Documentation",
+      "chip": "SHEET 06 / 10",
+      "title": "cuda-legacy command reference",
+      "share_title": "cuda-legacy command reference",
+      "excerpt": "Every cuda-legacy command and launch option, with what each one prints, its exit codes, and fixes for the setup errors people run into most often."
+    },
+    {
+      "path": "docs/research.html",
+      "file": "docs/research.html",
+      "kind": "sheet",
+      "eyebrow": "Documentation",
+      "chip": "SHEET 07 / 10",
+      "title": "CUDA Compatibility research and evidence",
+      "share_title": "Research and evidence: CUDA 13 on Maxwell",
+      "excerpt": "Reproduced tests of PyTorch's CUDA 13 wheel on Maxwell GPUs: reference hardware, methods, negative results, open questions, and the status of every claim."
+    },
+    {
+      "path": "gpu-catalog.html",
+      "file": "gpu-catalog.html",
+      "kind": "sheet",
+      "eyebrow": "Hardware reference",
+      "chip": "SHEET 08 / 10",
+      "title": "Legacy NVIDIA GPU Compute Capability Guide",
+      "share_title": "Legacy NVIDIA GPU compute capability guide",
+      "excerpt": "NVIDIA's legacy compute-capability tiers explained: which GPUs sit in each, what newer CUDA releases still build for, and which cards this project tested."
+    },
+    {
+      "path": "docs/discovery.html",
+      "file": "docs/discovery.html",
+      "kind": "sheet",
+      "eyebrow": "Documentation",
+      "chip": "SHEET 09 / 10",
+      "title": "Search and AI discovery",
+      "share_title": "Search and AI discovery for cudacompat.com",
+      "excerpt": "How cudacompat.com is found by search engines and AI tools: crawler policy, sitemap, agent index, and what Google and Bing data can and cannot confirm."
+    },
+    {
+      "path": "docs/privacy.html",
+      "file": "docs/privacy.html",
+      "kind": "sheet",
+      "eyebrow": "Documentation",
+      "chip": "SHEET 10 / 10",
+      "title": "Privacy, analytics, and search setup",
+      "share_title": "Privacy, analytics, and search setup",
+      "excerpt": "What cudacompat.com measures and why, how to opt out in one click or with Global Privacy Control, and how its Search Console and Bing setup works."
+    },
+    {
+      "path": "research/research-program.html",
+      "file": "research/research-program.html",
+      "kind": "paper",
+      "eyebrow": "Research paper",
+      "chip": "PAPER 01 / 08",
+      "title": "Research program for CUDA Compatibility",
+      "share_title": "Research program: CUDA-era semantics on legacy GPUs",
+      "excerpt": "The charter for this research: one question, six falsifiable hypotheses, the evidence gathered so far, and the method each new result must follow to count.",
+      "source": "docs/research/RESEARCH_PROGRAM.md",
+      "published": "2026-11-01T10:41:01-08:00",
+      "source_modified": "2026-11-03T03:57:44-08:00"
+    },
+    {
+      "path": "research/maxwell-baseline.html",
+      "file": "research/maxwell-baseline.html",
+      "kind": "paper",
+      "eyebrow": "Research paper",
+      "chip": "PAPER 02 / 08",
+      "title": "Maxwell native CUDA 12.4 baseline on GM200",
+      "share_title": "Maxwell native baseline: CUDA 12.4 on three GM200 cards",
+      "excerpt": "A native CUDA 12.4 sm_52 vector-add on three GTX TITAN X (GM200) cards: the hardware, driver, exact commands, and the pass result later work builds on.",
+      "source": "docs/research/maxwell-baseline.md",
+      "published": "2026-11-01T01:04:31-08:00",
+      "source_modified": "2026-11-01T17:09:08-08:00"
+    },
+    {
+      "path": "research/llvm-nvptx.html",
+      "file": "research/llvm-nvptx.html",
+      "kind": "paper",
+      "eyebrow": "Research paper",
+      "chip": "PAPER 03 / 08",
+      "title": "LLVM NVPTX kernels for Maxwell sm_52",
+      "share_title": "LLVM NVPTX on Maxwell: sm_52 kernels from LLVM 23",
+      "excerpt": "LLVM 23.1.4 compiled a CUDA kernel to PTX 8.4 for sm_52, and CUDA 12.4 ptxas and the R580 driver ran it correctly on all three GM200 cards in six of six runs.",
+      "source": "docs/research/llvm-nvptx.md",
+      "published": "2026-11-01T01:04:31-08:00",
+      "source_modified": "2026-11-01T17:09:08-08:00"
+    },
+    {
+      "path": "research/runtime-version-facade.html",
+      "file": "research/runtime-version-facade.html",
+      "kind": "paper",
+      "eyebrow": "Research paper",
+      "chip": "PAPER 04 / 08",
+      "title": "CUDA runtime version facade experiment",
+      "share_title": "Runtime version facade: CUDA 13 answers on a CUDA 12.4 stack",
+      "excerpt": "One interposed call lets a process see CUDA runtime 13.0 while the driver, device name and compute capability 5.2 stay real. What that proves, and what not.",
+      "source": "docs/research/runtime-version-facade.md",
+      "published": "2026-11-01T01:04:31-08:00",
+      "source_modified": "2026-11-01T17:09:08-08:00"
+    },
+    {
+      "path": "research/pytorch-cu130-maxwell.html",
+      "file": "research/pytorch-cu130-maxwell.html",
+      "kind": "paper",
+      "eyebrow": "Research paper",
+      "chip": "PAPER 05 / 08",
+      "title": "PyTorch 2.14 CUDA 13 wheel on Maxwell GPUs",
+      "share_title": "PyTorch 2.14 CUDA 13 wheel on Maxwell GPUs",
+      "excerpt": "PyTorch's official CUDA 13 wheel imports and allocates on GM200 but ships no sm_52 kernels. Which operations now run natively, which fall back, and why.",
+      "source": "docs/research/pytorch-cu130-maxwell.md",
+      "published": "2026-11-01T01:04:31-08:00",
+      "source_modified": "2026-11-01T17:09:08-08:00"
+    },
+    {
+      "path": "research/implementation-gap-audit-2026-11.html",
+      "file": "research/implementation-gap-audit-2026-11.html",
+      "kind": "paper",
+      "eyebrow": "Research paper",
+      "chip": "PAPER 06 / 08",
+      "title": "Implementation gap audit, November 2026",
+      "share_title": "Implementation gap audit: prototype versus platform goal",
+      "excerpt": "A source-level review of the prototype against the platform goal: what each component does today, its evidence, where it stops, and the next step to take.",
+      "source": "docs/research/implementation-gap-audit-2026-11-01.md",
+      "published": "2026-11-01T06:17:48-08:00",
+      "source_modified": "2026-11-01T17:09:08-08:00"
+    },
+    {
+      "path": "research/attribution-pilot.html",
+      "file": "research/attribution-pilot.html",
+      "kind": "paper",
+      "eyebrow": "Research paper",
+      "chip": "PAPER 07 / 08",
+      "title": "AI answer attribution pilot: baseline results",
+      "share_title": "AI answer attribution pilot: baseline results",
+      "excerpt": "108 signed-out answers from Perplexity, Google and Bing on 3 November 2026: none named the author, several credited NVIDIA, and the site missed page one.",
+      "source": "docs/research/attribution-pilot/RESULTS.md",
+      "published": "2026-11-03T13:41:43-08:00",
+      "source_modified": "2026-11-03T13:41:43-08:00"
+    },
+    {
+      "path": "research/cuda-12-9-to-13-0-changes.html",
+      "file": "research/cuda-12-9-to-13-0-changes.html",
+      "kind": "paper",
+      "eyebrow": "Research paper",
+      "chip": "PAPER 08 / 08",
+      "title": "CUDA 12.9 to 13.0 change register",
+      "share_title": "CUDA 12.9 to 13.0: what changed for older GPUs",
+      "excerpt": "The CUDA 12.9 to 13.0 toolkit changes that matter for older GPUs, taken from NVIDIA's release notes, with component versions and what still needs checking.",
+      "source": "docs/compatibility/cuda-12.9-to-13.0-primary-source-diff.md",
+      "published": "2026-11-01T06:01:17-08:00",
+      "source_modified": "2026-11-01T06:13:35-08:00"
+    }
+  ]
+}

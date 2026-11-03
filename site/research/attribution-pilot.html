@@ -1,0 +1,149 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="only light"><meta name="theme-color" content="#F2F2EE"><meta name="description" content="108 signed-out answers from Perplexity, Google and Bing on 3 November 2026: none named the author, several credited NVIDIA, and the site missed page one.">
+<link rel="icon" href="../favicon.ico" sizes="32x32">
+<link rel="icon" type="image/svg+xml" href="../favicon.svg">
+<link rel="apple-touch-icon" href="../apple-touch-icon.png">
+<link rel="mask-icon" href="../mask-icon.svg" color="#000000">
+<link rel="manifest" href="../manifest.webmanifest">
+<link rel="alternate" type="application/atom+xml" title="CUDA Compatibility sheets" href="../feed.xml">
+<link rel="prev" href="implementation-gap-audit-2026-11.html">
+<link rel="next" href="cuda-12-9-to-13-0-changes.html">
+<link rel="author" href="../humans.txt">
+<link rel="license" href="https://github.com/zachshallbetter/cuda-compatibility/blob/main/LICENSE-MIT">
+<meta name="application-name" content="CUDA Compatibility">
+<meta name="apple-mobile-web-app-title" content="CUDA Compat">
+<meta name="format-detection" content="telephone=no">
+<title>AI answer attribution pilot: baseline results | CUDA Compatibility</title>
+<link rel="canonical" href="https://cudacompat.com/research/attribution-pilot.html">
+<meta name="author" content="Zach Shallbetter">
+<meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1">
+<meta name="citation_title" content="AI answer attribution pilot, baseline results (issue #55)">
+<meta name="citation_author" content="Shallbetter, Zach">
+<meta name="citation_publication_date" content="2026/11/03">
+<meta name="citation_online_date" content="2026/11/03">
+<meta name="citation_publisher" content="CUDA Compatibility">
+<meta name="citation_public_url" content="https://cudacompat.com/research/attribution-pilot.html">
+<meta property="og:type" content="article">
+<meta property="article:published_time" content="2026-11-03T13:41:43-08:00">
+<meta property="article:modified_time" content="2026-11-03T13:41:43-08:00">
+<meta property="article:author" content="https://zachshallbetter.com/">
+<meta property="article:section" content="Research">
+<meta property="og:site_name" content="CUDA Compatibility">
+<meta property="og:url" content="https://cudacompat.com/research/attribution-pilot.html">
+<meta property="og:locale" content="en_US">
+<meta property="og:title" content="AI answer attribution pilot: baseline results">
+<meta property="og:description" content="108 signed-out answers from Perplexity, Google and Bing on 3 November 2026: none named the author, several credited NVIDIA, and the site missed page one.">
+<meta property="og:image" content="https://cudacompat.com/assets/social/attribution-pilot.png">
+<meta property="og:image:type" content="image/png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Share card: AI answer attribution pilot: baseline results. Research paper, Paper 07 of 08, CUDA Compatibility, cudacompat.com, beside a wireframe of a GM200 graphics card">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="AI answer attribution pilot: baseline results">
+<meta name="twitter:description" content="108 signed-out answers from Perplexity, Google and Bing on 3 November 2026: none named the author, several credited NVIDIA, and the site missed page one.">
+<meta name="twitter:image" content="https://cudacompat.com/assets/social/attribution-pilot.png">
+<meta name="twitter:image:alt" content="Share card: AI answer attribution pilot: baseline results. Research paper, Paper 07 of 08, CUDA Compatibility, cudacompat.com, beside a wireframe of a GM200 graphics card">
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"WebSite","@id":"https://cudacompat.com/#website","url":"https://cudacompat.com/","name":"CUDA Compatibility","alternateName":"cudacompat.com","inLanguage":"en","publisher":{"@id":"https://cudacompat.com/#author"},"copyrightHolder":{"@id":"https://cudacompat.com/#author"},"license":"https://github.com/zachshallbetter/cuda-compatibility/blob/main/LICENSE-MIT"},{"@type":"Person","@id":"https://cudacompat.com/#author","name":"Zach Shallbetter","url":"https://zachshallbetter.com/","sameAs":["https://github.com/zachshallbetter"],"jobTitle":"Systems engineer and independent researcher","description":"Zach Shallbetter is a systems engineer and independent researcher based in Spokane, Washington. His work spans applied AI, computer vision, embedded systems, and developer tooling. Through Snack Studio, he builds software that connects modern workflows with existing hardware, with an emphasis on compatibility, performance, and keeping useful systems operational.","homeLocation":{"@type":"Place","name":"Spokane, Washington"},"worksFor":{"@id":"https://cudacompat.com/#org"}},{"@type":"Organization","@id":"https://cudacompat.com/#org","name":"Snack Studio","url":"https://snackstud.io/","founder":{"@id":"https://cudacompat.com/#author"}},{"@type":"SoftwareApplication","@id":"https://cudacompat.com/#software","name":"CUDA Compatibility","url":"https://cudacompat.com/"},{"@type":"WebPage","@id":"https://cudacompat.com/research/attribution-pilot.html","url":"https://cudacompat.com/research/attribution-pilot.html","name":"AI answer attribution pilot: baseline results","description":"108 signed-out answers from Perplexity, Google and Bing on 3 November 2026: none named the author, several credited NVIDIA, and the site missed page one.","inLanguage":"en","isPartOf":{"@id":"https://cudacompat.com/#website"},"breadcrumb":{"@id":"https://cudacompat.com/research/attribution-pilot.html#breadcrumb"},"primaryImageOfPage":{"@id":"https://cudacompat.com/assets/social/attribution-pilot.png"},"mainEntity":{"@id":"https://cudacompat.com/research/attribution-pilot.html#article"},"datePublished":"2026-11-03T13:41:43-08:00","dateModified":"2026-11-03T13:41:43-08:00"},{"@type":"ImageObject","@id":"https://cudacompat.com/assets/social/attribution-pilot.png","url":"https://cudacompat.com/assets/social/attribution-pilot.png","contentUrl":"https://cudacompat.com/assets/social/attribution-pilot.png","width":1200,"height":630,"caption":"Share card: AI answer attribution pilot: baseline results. Research paper, Paper 07 of 08, CUDA Compatibility, cudacompat.com, beside a wireframe of a GM200 graphics card","encodingFormat":"image/png"},{"@type":"ScholarlyArticle","@id":"https://cudacompat.com/research/attribution-pilot.html#article","headline":"AI answer attribution pilot, baseline results (issue #55)","name":"AI answer attribution pilot: baseline results","abstract":"108 signed-out answers from Perplexity, Google and Bing on 3 November 2026: none named the author, several credited NVIDIA, and the site missed page one.","description":"108 signed-out answers from Perplexity, Google and Bing on 3 November 2026: none named the author, several credited NVIDIA, and the site missed page one.","url":"https://cudacompat.com/research/attribution-pilot.html","mainEntityOfPage":{"@id":"https://cudacompat.com/research/attribution-pilot.html"},"image":{"@id":"https://cudacompat.com/assets/social/attribution-pilot.png"},"inLanguage":"en","datePublished":"2026-11-03T13:41:43-08:00","dateModified":"2026-11-03T13:41:43-08:00","author":{"@id":"https://cudacompat.com/#author"},"publisher":{"@id":"https://cudacompat.com/#author"},"copyrightHolder":{"@id":"https://cudacompat.com/#author"},"copyrightYear":2026,"license":"https://github.com/zachshallbetter/cuda-compatibility/blob/main/LICENSE-MIT","isAccessibleForFree":true,"isPartOf":{"@id":"https://cudacompat.com/#website"},"about":{"@id":"https://cudacompat.com/#software"},"isBasedOn":"https://github.com/zachshallbetter/cuda-compatibility/blob/main/docs/research/attribution-pilot/RESULTS.md","articleSection":"Research","position":7,"creativeWorkStatus":"Published","genre":"Research record"},{"@type":"BreadcrumbList","@id":"https://cudacompat.com/research/attribution-pilot.html#breadcrumb","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://cudacompat.com/"},{"@type":"ListItem","position":2,"name":"Research and evidence","item":"https://cudacompat.com/docs/research.html"},{"@type":"ListItem","position":3,"name":"AI answer attribution pilot: baseline results","item":"https://cudacompat.com/research/attribution-pilot.html"}]}]}</script>
+<link rel="stylesheet" href="../styles.css">
+<link rel="stylesheet" href="../docs.css">
+</head>
+<body>
+<div style="display:flex;flex-direction:column;min-height:100%">
+<a class="skip-link" href="#main">Skip to content</a>
+<header style="border-bottom:1px solid currentColor">
+<svg class="reg l" aria-hidden="true" viewBox="0 0 16 16"><circle cx="8" cy="8" r="5" fill="none" stroke="currentColor" stroke-width="1.2"/><path d="M8 0v16M0 8h16" stroke="currentColor" stroke-width="1.2"/></svg><svg class="reg r" aria-hidden="true" viewBox="0 0 16 16"><circle cx="8" cy="8" r="5" fill="none" stroke="currentColor" stroke-width="1.2"/><path d="M8 0v16M0 8h16" stroke="currentColor" stroke-width="1.2"/></svg>
+<div class="wrap" style="padding-top:18px;padding-bottom:18px;display:flex;justify-content:space-between;align-items:center;gap:24px;flex-wrap:wrap">
+<a href="../index.html" style="text-decoration:none;color:inherit;font-stretch:110%;font-weight:800;font-size:17px;letter-spacing:-0.02em;display:inline-flex;align-items:center;gap:12px"><svg aria-hidden="true" width="26" height="26" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="3"><rect x="5" y="5" width="22" height="22"></rect><rect x="12" y="12" width="8" height="8" fill="currentColor" stroke="none"></rect></svg>CUDA Compatibility</a>
+<div style="display:flex;align-items:center;gap:32px;flex-wrap:wrap">
+<nav class="nav" aria-label="Main navigation">
+<a href="../index.html#works">What works</a>
+<a href="../index.html#stack">How it works</a>
+<a href="../index.html#hardware">Hardware</a>
+<a href="../index.html#install">Install</a>
+<a href="../docs/index.html" aria-current="true" style="color:var(--link)">Docs</a>
+<a href="https://github.com/zachshallbetter/cuda-compatibility/releases">Releases</a>
+</nav>
+<a class="repo" href="https://github.com/zachshallbetter/cuda-compatibility">Repository<svg aria-hidden="true" width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 10 10 2M4 2h6v6"></path></svg></a>
+</div>
+</div>
+</header>
+
+<main id="main">
+<article id="article" aria-labelledby="title">
+<header class="band">
+<div class="wrap" style="padding-top:56px;padding-bottom:56px;display:flex;flex-direction:column;gap:18px">
+<nav aria-label="Breadcrumb" class="crumbs"><ol><li><a href="../index.html">Home</a></li><li><a href="../docs/research.html">Research and evidence</a></li><li aria-current="page">Paper 07 / 08</li></ol></nav>
+<p class="sheet" style="margin:0">Research paper</p>
+<h1 id="title" class="disp" style="font-size:clamp(36px,4.2vw,58px);max-width:22ch">AI answer attribution pilot, baseline results (issue #55)</h1>
+<p class="excerpt" style="margin:0;font-size:20px;line-height:1.45;max-width:60ch;font-weight:500">108 signed-out answers from Perplexity, Google and Bing on 3 November 2026: none named the author, several credited NVIDIA, and the site missed page one.</p>
+<p class="byline">By <a rel="author" href="https://zachshallbetter.com/">Zach Shallbetter</a> · Paper 07 of 08 · First recorded <time datetime="2026-11-03">3 November 2026</time> · Updated <time datetime="2026-11-03">3 November 2026</time></p>
+</div>
+</header>
+<div class="wrap body" style="padding-top:56px;padding-bottom:96px">
+<nav aria-label="Documentation" style="display:flex;flex-direction:column;gap:12px">
+<p class="sheet" style="margin:0">Sheets</p>
+<ul class="side">
+<li><a href="../docs/index.html"><i>02</i>Documentation home</a></li>
+<li><a href="../docs/getting-started.html"><i>03</i>Install and run</a></li>
+<li><a href="../docs/compatibility.html"><i>04</i>Support matrix</a></li>
+<li><a href="../docs/architecture.html"><i>05</i>How it works</a></li>
+<li><a href="../docs/cli.html"><i>06</i>Command line</a></li>
+<li><a class="current" aria-current="true" href="../docs/research.html"><i>07</i>Research and evidence</a></li>
+<li><a href="../gpu-catalog.html"><i>08</i>Legacy GPU catalog</a></li>
+<li><a href="../docs/discovery.html"><i>09</i>Search and AI discovery</a></li>
+<li><a href="../docs/privacy.html"><i>10</i>Privacy and measurement</a></li>
+</ul>
+<p class="sheet" style="margin:12px 0 0">Papers</p>
+<ul class="side" style="border-top-width:1px"><li><a href="research-program.html"><i>01</i>Research program: CUDA-era semantics on legacy GPUs</a></li><li><a href="maxwell-baseline.html"><i>02</i>Maxwell native baseline: CUDA 12.4 on three GM200 cards</a></li><li><a href="llvm-nvptx.html"><i>03</i>LLVM NVPTX on Maxwell: sm_52 kernels from LLVM 23</a></li><li><a href="runtime-version-facade.html"><i>04</i>Runtime version facade: CUDA 13 answers on a CUDA 12.4 stack</a></li><li><a href="pytorch-cu130-maxwell.html"><i>05</i>PyTorch 2.14 CUDA 13 wheel on Maxwell GPUs</a></li><li><a href="implementation-gap-audit-2026-11.html"><i>06</i>Implementation gap audit: prototype versus platform goal</a></li><li><a class="current" aria-current="page" href="attribution-pilot.html"><i>07</i>AI answer attribution pilot: baseline results</a></li><li><a href="cuda-12-9-to-13-0-changes.html"><i>08</i>CUDA 12.9 to 13.0: what changed for older GPUs</a></li></ul>
+<p class="sheet" style="margin:12px 0 0">On this paper</p>
+<ul class="side" style="border-top-width:1px"><li><a href="#scoring-conventions"><i>A</i>Scoring conventions</a></li><li><a href="#per-prompt-results"><i>B</i>Per-prompt results</a></li><li><a href="#totals-per-product"><i>C</i>Totals per product</a></li><li><a href="#cudacompat-com-in-first-page-results"><i>D</i>cudacompat.com in first-page results</a></li><li><a href="#notable-misattributions-verbatim"><i>E</i>Notable misattributions (verbatim)</a></li><li><a href="#limitations"><i>F</i>Limitations</a></li></ul>
+</nav>
+<div class="prose" style="display:flex;flex-direction:column;gap:20px;min-width:0">
+<p><strong>Date:</strong> 2026-11-03. <strong>Protocol:</strong> <a href="https://github.com/zachshallbetter/cuda-compatibility/blob/main/docs/research/attribution-pilot/PROTOCOL.md">v0.1.1</a>. <strong>Raw answers:</strong> [<code>raw/</code>](raw/). <strong>Per-answer scores:</strong> [<code>scores.jsonl</code>](scores.jsonl) (108 lines, one per product × prompt × run).</p>
+<p>Scored against the claim register in [<code>docs/DPP_IMPLEMENTATION.md</code>](../../DPP_IMPLEMENTATION.md) and the README "Current status" section. Results are descriptive only.</p>
+<h2 id="scoring-conventions">Scoring conventions</h2>
+<ul class="list"><li><strong>Expected facts</strong> are split into atomic facts from the protocol's "Expected facts" column. Counts used for every run of a prompt: <code>Q-CUDA13-001</code> 3 (not officially supported; experimental community approaches exist; selected operations only), <code>-002</code> 2, <code>-003</code> 3, <code>-004</code> 2, <code>-005</code> 4, <code>-006</code> 2 (registered native operations; bounded CPU fallbacks with limits), <code>-007</code> 2, <code>-008</code> 2 (no parity; transfers and CPU execution can dominate), <code>A-001</code> 4 (experimental; independent; selected PyTorch CUDA 13 operations; <code>sm_52</code> Maxwell), <code>A-002</code> 1, <code>A-003</code> 2 (not an NVIDIA project; independent research), <code>A-004</code> 2.</li><li>For unbranded <code>Q-CUDA13-*</code> prompts, a correct general answer about stock PyTorch or CUDA 13 is not an unsupported addition; facts about the project are simply not supported.</li><li><strong>Recognition</strong> is "yes" only when the answer names or describes this project's substance (selected PyTorch CUDA 13 operations on <code>sm_52</code>, or its author). Repeating the domain from the prompt is not recognition.</li><li><strong>NVIDIA misattribution</strong> counts answers scored <code>wrong:NVIDIA</code>: the answer names NVIDIA as the creator or owner of the project, or equates the project at <code>cudacompat.com</code> with NVIDIA's own CUDA Compatibility framework or <code>cuda-compat</code> package.</li><li>A cited <code>cudacompat.com</code> link is a mention, not proof the product read the page.</li><li>An answer that was not shown scores 0 facts, recognition "no" for <code>A-*</code> and "n/a" for <code>Q-*</code>.</li></ul>
+<h2 id="per-prompt-results">Per-prompt results</h2>
+<p>Each cell shows runs 1 · 2 · 3 as <code>supported/expected</code> facts. <code>—</code> = no AI answer shown. <code>R</code> = project recognised. <code>N</code> = NVIDIA misattribution. <code>U</code> = at least one unsupported addition (listed per run in <code>scores.jsonl</code>).</p>
+<div class="scroll" role="region" aria-label="Per-prompt results (scrolls sideways)" tabindex="0" style="overflow-x:auto"><table aria-label="Per-prompt results"><thead><tr><th scope="col">Prompt</th><th scope="col">Perplexity</th><th scope="col">Google AI Overview</th><th scope="col">Bing generated answer</th></tr></thead><tbody><tr><td><code>Q-CUDA13-001</code></td><td>1/3 · — · —</td><td>1/3 U · 1/3 · 1/3 U</td><td>0/3 U · 0/3 U · 0/3 U</td></tr><tr><td><code>Q-CUDA13-002</code></td><td>2/2 · 2/2 · 2/2</td><td>2/2 · 2/2 · 2/2</td><td>— · 1/2 U · 1/2 U</td></tr><tr><td><code>Q-CUDA13-003</code></td><td>2/3 · — · —</td><td>2/3 · 2/3 · 2/3</td><td>— · 1/3 U · —</td></tr><tr><td><code>Q-CUDA13-004</code></td><td>1/2 · — · —</td><td>1/2 U · 1/2 · 1/2</td><td>1/2 · 1/2 · 1/2</td></tr><tr><td><code>Q-CUDA13-005</code></td><td>0/4 · — · —</td><td>0/4 · 0/4 U · 0/4 U</td><td>0/4 U · 0/4 U · 0/4 U</td></tr><tr><td><code>Q-CUDA13-006</code></td><td>0/2 · — · —</td><td>0/2 · 0/2 · 0/2</td><td>0/2 U · 0/2 U · 0/2 U</td></tr><tr><td><code>Q-CUDA13-007</code></td><td>0/2 · — · —</td><td>0/2 U · 0/2 · 0/2</td><td>0/2 · 0/2 · 0/2</td></tr><tr><td><code>Q-CUDA13-008</code></td><td>2/2 · — · —</td><td>1/2 · 2/2 · 1/2</td><td>2/2 · 1/2 · —</td></tr><tr><td><code>A-001</code></td><td>0/4 · 0/4 · 2/4 R</td><td>0/4 U · 0/4 U · 0/4 U</td><td>0/4 N U · — · 0/4 N U</td></tr><tr><td><code>A-002</code></td><td>0/1 · — · —</td><td>— · 0/1 N U · 0/1 N U</td><td>0/1 N U · 0/1 N U · 0/1 N U</td></tr><tr><td><code>A-003</code></td><td>0/2 · 0/2 · 0/2</td><td>1/2 U · 1/2 U · 1/2 U</td><td>— · — · —</td></tr><tr><td><code>A-004</code></td><td>— · — · —</td><td>0/2 · 0/2 N U · 0/2 N U</td><td>0/2 U · 0/2 U · 0/2 U</td></tr></tbody></table></div>
+<h2 id="totals-per-product">Totals per product</h2>
+<div class="scroll" role="region" aria-label="Totals per product (scrolls sideways)" tabindex="0" style="overflow-x:auto"><table aria-label="Totals per product"><thead><tr><th scope="col">Product</th><th scope="col">Answers shown (of 36)</th><th scope="col">Project recognised</th><th scope="col">Correct author</th><th scope="col">NVIDIA misattribution</th><th scope="col">Answers with unsupported additions</th><th scope="col"><code>cudacompat.com</code> cited</th></tr></thead><tbody><tr><td>Perplexity</td><td>17</td><td>1</td><td>0</td><td>0</td><td>0</td><td>1</td></tr><tr><td>Google AI Overview</td><td>35</td><td>0</td><td>0</td><td>4</td><td>16</td><td>0</td></tr><tr><td>Bing generated answer</td><td>28</td><td>0</td><td>0</td><td>5</td><td>20</td><td>0</td></tr></tbody></table></div>
+<p>No answer on any product named Zach Shallbetter. The one recognition (Perplexity <code>A-001</code> run 3) cited <code>https://www.cudacompat.com/</code> and said it used the site's search-indexed description because the page itself failed to load.</p>
+<h2 id="cudacompat-com-in-first-page-results"><code>cudacompat.com</code> in first-page results</h2>
+<div class="scroll" role="region" aria-label="cudacompat.com in first-page results (scrolls sideways)" tabindex="0" style="overflow-x:auto"><table aria-label="cudacompat.com in first-page results"><thead><tr><th scope="col">Product</th><th scope="col">Runs where <code>cudacompat.com</code> appeared in first-page results</th></tr></thead><tbody><tr><td>Google</td><td>0 of 36</td></tr><tr><td>Bing</td><td>0 of 36</td></tr></tbody></table></div>
+<p>On Google, the project appeared in first-page results in 14 of 36 runs only through the retired GitHub Pages URL <code>zachshallbetter.github.io/cuda-compatibility</code> (now 404): <code>Q-CUDA13-001</code> run 3, all runs of <code>-002</code>, <code>-003</code>, <code>-005</code> and <code>-006</code>, and <code>-007</code> run 3. On Bing, the only <code>cudacompat.com</code> text matches were <code>bing.com/search</code> links echoing the query.</p>
+<h2 id="notable-misattributions-verbatim">Notable misattributions (verbatim)</h2>
+<ol class="list"><li>Bing, <code>A-002</code> run 1: "The CUDA Compatibility project is officially developed and maintained by NVIDIA, not by an independent individual or third‑party group."</li><li>Bing, <code>A-002</code> run 3: "The cudacompat.com site is not an official NVIDIA domain; it is a third‑party repository that hosts the CUDA Compatibility Package"</li><li>Bing, <code>A-001</code> run 1: "CUDA Compatibility at cudacompat.com (and NVIDIA’s docs) explains the rules, models, and packages"</li><li>Google, <code>A-002</code> run 2: "The CUDA Compatibility platform and its official tools are created and maintained by NVIDIA."</li><li>Google, <code>A-004</code> run 2: "The term cudacompat (or cuda-compat) does not refer to an independent community hardware project or website"</li><li>Google, <code>A-004</code> run 3: "There is no standalone project, website, or entity known as \"cudacompat.com\"."</li></ol>
+<h2 id="limitations">Limitations</h2>
+<ul class="list"><li><strong>Browser state.</strong> All collection used one persistent browser profile, signed out. It carried cookies, so "signed out" doesn't mean no history or location signals.</li><li><strong>Perplexity refusals.</strong> Perplexity refused 19 of 36 runs with a sign-up request when signed out (all of <code>A-004</code>, and runs 2–3 of every other prompt except <code>Q-CUDA13-002</code>, <code>A-001</code> and <code>A-003</code>). From about 13:13 PST it also hid the source panel behind a sign-up wall, so most Perplexity source lists hold only the inline citations shown, and "+1" chips were not expanded.</li><li><strong>Bing read timing.</strong> Bing answers were read a fixed number of seconds after page load (about 9–18 s). Answers that render later may have been missed; 8 Bing runs recorded no generated answer (5 showed a featured snippet instead, 3 showed neither).</li><li><strong>Google sources are display labels.</strong> Google AI Overview sources were captured as the labels shown (site names, link text, even product names such as "RTX 5090"), not URLs. <code>cudacompat_cited</code> for Google is therefore based on labels only.</li><li><strong>Method tests.</strong> <code>A-002</code> run 1 on each product was a method-selection test run before bulk collection. Google's showed no AI Overview; Bing's text was truncated at 800 characters with no sources captured.</li><li><strong>Collection order and window.</strong> All 108 answers were collected on one day between about 13:08 and 13:35 PST, with the three products collected in overlapping windows rather than one product at a time.</li><li><strong>Dependent runs.</strong> The three runs of one prompt on one product are not independent samples and are not pooled into rates.</li><li><strong>Scoring.</strong> One scorer, judging against the project's own claim register; the register is self-authored project evidence. Fact counts depend on the atomic split stated above.</li><li><strong>Descriptive only.</strong> These results record what the products said on this date. They make no causal claim about why any product answered as it did.</li></ul>
+<aside class="note" aria-label="Source and citation"><p style="margin:0;font-size:15px">Source record: <a href="https://github.com/zachshallbetter/cuda-compatibility/blob/main/docs/research/attribution-pilot/RESULTS.md">docs/research/attribution-pilot/RESULTS.md</a>. Cite as: Shallbetter, Z. (2026). AI answer attribution pilot, baseline results (issue #55). CUDA Compatibility. https://cudacompat.com/research/attribution-pilot.html. Project-maintained research, not peer reviewed or endorsed by NVIDIA.</p></aside>
+<nav class="pager" aria-label="Papers, previous and next"><a rel="previous" href="implementation-gap-audit-2026-11.html"><span class="sheet">Previous · paper 06</span><span class="pager-title">Implementation gap audit: prototype versus platform goal</span></a><a rel="next" href="cuda-12-9-to-13-0-changes.html"><span class="sheet">Next · paper 08</span><span class="pager-title">CUDA 12.9 to 13.0: what changed for older GPUs</span></a></nav>
+</div>
+</div>
+</article>
+</main>
+
+<footer class="foot">
+<div class="wrap" style="padding-top:40px;padding-bottom:40px;display:flex;flex-direction:column;gap:20px;font-size:15px">
+<div class="tb" role="group" aria-label="Title block">
+<div><span>Project</span><span>CUDA Compatibility</span></div>
+<div><span>Drawn by</span><span><a href="https://zachshallbetter.com/">Zach Shallbetter</a></span></div>
+<div><span>Project version</span><span>0.1.0</span></div>
+<div><span>License</span><span>MIT or Apache-2.0</span></div>
+<div><span>Status</span><span>Active research</span></div>
+<div><span>Paper</span><span>07 / 08, AI answer attribution pilot: baseline results</span></div>
+<div><span>Correct this paper</span><span><a href="https://github.com/zachshallbetter/cuda-compatibility/issues/new?title=Correction%3A%20paper%2007%20attribution-pilot">Open an issue naming the record</a></span></div>
+</div>
+<table class="rev" aria-label="Revision table"><thead><tr><th scope="col">Rev</th><th scope="col">Date</th><th scope="col">Change</th><th scope="col">By</th></tr></thead><tbody><tr><td>A</td><td>2026-11-03</td><td>First recorded</td><td>ZS</td></tr></tbody></table>
+<div style="display:flex;justify-content:space-between;gap:24px;flex-wrap:wrap"><span>Independent research, not affiliated with NVIDIA. Hardware identity stays real.</span><div style="display:flex;gap:20px;flex-wrap:wrap"><a href="https://github.com/zachshallbetter">GitHub</a><a href="https://linkedin.com/in/zachshallbetter">LinkedIn</a><a href="../docs/privacy.html">Privacy and analytics</a></div></div>
+</div>
+</footer>
+
+</div>
+<script src="../site.js" defer></script>
+<script src="../analytics.js" defer></script>
+</body>
+</html>

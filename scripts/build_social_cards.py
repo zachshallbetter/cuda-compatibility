@@ -8,11 +8,12 @@ home page animates (site/assets/gm200-wireframe.json), settled and unlabelled.
 from __future__ import annotations
 
 import argparse
-from html import escape, unescape
+from html import escape
 import json
 from pathlib import Path
 import re
 import shutil
+import sys
 import subprocess
 import tempfile
 
@@ -20,19 +21,8 @@ ROOT = Path(__file__).resolve().parents[1]
 SITE = ROOT / "site"
 CHROME = "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
 
-# (page, card file, eyebrow); the title, summary and sheet number come from the page itself.
-CARDS = [
-    ("index.html", "assets/social-card.png", "Independent compatibility research"),
-    ("docs/index.html", "assets/social/docs.png", "Documentation"),
-    ("docs/getting-started.html", "assets/social/getting-started.png", "Documentation"),
-    ("docs/compatibility.html", "assets/social/compatibility.png", "Documentation"),
-    ("docs/architecture.html", "assets/social/architecture.png", "Documentation"),
-    ("docs/cli.html", "assets/social/cli.png", "Documentation"),
-    ("docs/research.html", "assets/social/research.png", "Documentation"),
-    ("gpu-catalog.html", "assets/social/gpu-catalog.png", "Hardware reference"),
-    ("docs/discovery.html", "assets/social/discovery.png", "Documentation"),
-    ("docs/privacy.html", "assets/social/privacy.png", "Documentation"),
-]
+# Every card comes from content/pages.json: share title, excerpt, eyebrow and chip, so a card says what its page says.
+REGISTRY = ROOT / "content" / "pages.json"
 
 # The settled wireframe, drawn like site.js: same projection, depth-banded ink, no fan spin, no labels.
 WIREFRAME_JS = """
@@ -104,7 +94,12 @@ const t = document.getElementById("t");
 document.fonts.ready.then(async () => {
   let size = 84;
   t.style.fontSize = size + "px";
-  while (t.getBoundingClientRect().height > 250 && size > 44) { size -= 2; t.style.fontSize = size + "px"; }
+  // Shrink the title until the whole text block clears the footer rule (top at 575 - 18 px padding).
+  const body = document.querySelector(".body"), sum = document.querySelector(".sum");
+  const fits = () => t.getBoundingClientRect().height <= 250 && body.getBoundingClientRect().bottom <= 500;
+  while (!fits() && size > 44) { size -= 2; t.style.fontSize = size + "px"; }
+  let small = 25;
+  while (!fits() && small > 20) { small -= 1; sum.style.fontSize = small + "px"; }
   await wireframe(document.getElementById("c"), 0.87, 0.56, 1450, 0.55);
   document.title = "ready";
 });
@@ -118,30 +113,25 @@ wireframe(document.getElementById("c"), 0.5, 0.5, 4200, 1).then(() => document.t
 </script></body></html>"""
 
 
-def page_facts(rel: str) -> dict:
-    s = (SITE / rel).read_text(encoding="utf-8")
-    h1 = re.search(r"<h1[^>]*>(.*?)</h1>", s, re.S)[1]
-    title = unescape(re.sub(r"<[^>]+>", "", h1)).replace("­", "").strip()
-    canonical = re.search(r'<link rel="canonical" href="([^"]+)"', s)[1]
-    sheet = re.search(r"<span>Sheet</span><span>(\d\d) / (\d\d)", s)
-    summary = unescape(re.search(r'<meta property="og:description" content="([^"]*)"', s)[1])
-    return {"title": title, "url": canonical.removeprefix("https://"), "summary": summary,
-            "sheet": f"SHEET {sheet[1]} / {sheet[2]}"}
+def cards() -> list[dict]:
+    sys.path.insert(0, str(ROOT / "scripts"))
+    import build_site_meta  # the registry loader owns card paths and URLs
+
+    return build_site_meta.load()["pages"]
 
 
-def card_html(rel: str, eyebrow: str) -> str:
-    facts = page_facts(rel)
-    title = escape(facts["title"])
-    if rel == "index.html":
+def card_html(page: dict) -> str:
+    title = escape(page["share_title"])
+    if page["kind"] == "home":
         title = 'Newer <span class="ink">CUDA.</span><br>Older <span class="ink">GPUs.</span>'
     marks = "".join(MARK.format(pos=p) for p in ("top:16px;left:16px", "top:16px;right:16px",
                                                  "bottom:16px;left:16px", "bottom:16px;right:16px"))
     # WIREURL goes first: the later "URL" placeholder is a substring of it.
     out = CARD.replace("WIREURL", (SITE / "assets/gm200-wireframe.json").as_uri())
     for key, value in (("FONTS", FONTS.replace("SITE/", SITE.as_uri() + "/")), ("MARKS", marks),
-                       ("WIREFRAME_JS", WIREFRAME_JS), ("SHEET", facts["sheet"]), ("EYEBROW", escape(eyebrow)),
-                       ("TITLE", title), ("SUMMARY", escape(facts["summary"])), ("URL", escape(facts["url"])),
-                       ("TAG", "Independent. Not affiliated with NVIDIA." if rel == "index.html" else "Newer CUDA. Older GPUs.")):
+                       ("WIREFRAME_JS", WIREFRAME_JS), ("SHEET", page["chip"]), ("EYEBROW", escape(page["eyebrow"])),
+                       ("TITLE", title), ("SUMMARY", escape(page["excerpt"])), ("URL", escape(page["url"].removeprefix("https://"))),
+                       ("TAG", "Independent. Not affiliated with NVIDIA." if page["kind"] == "home" else "Newer CUDA. Older GPUs.")):
         out = out.replace(key, value)
     return out
 
@@ -170,8 +160,9 @@ def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     parser.add_argument("--chrome", default=CHROME)
     args = parser.parse_args()
-    for rel, card, eyebrow in CARDS:
-        shoot(args.chrome, card_html(rel, eyebrow), SITE / card, (1200, 630))
+    for page in cards():
+        card = page["image"].removeprefix("https://cudacompat.com/")
+        shoot(args.chrome, card_html(page), SITE / card, (1200, 630))
         print(f"wrote site/{card}")
     hero = HERO.replace("WIREFRAME_JS", WIREFRAME_JS).replace("WIREURL", (SITE / "assets/gm200-wireframe.json").as_uri())
     out = SITE / "assets/gm200-wireframe.png"

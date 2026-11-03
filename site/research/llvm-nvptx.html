@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="only light"><meta name="theme-color" content="#F2F2EE"><meta name="description" content="LLVM 23.1.4 compiled a CUDA kernel to PTX 8.4 for sm_52, and CUDA 12.4 ptxas and the R580 driver ran it correctly on all three GM200 cards in six of six runs.">
+<link rel="icon" href="../favicon.ico" sizes="32x32">
+<link rel="icon" type="image/svg+xml" href="../favicon.svg">
+<link rel="apple-touch-icon" href="../apple-touch-icon.png">
+<link rel="mask-icon" href="../mask-icon.svg" color="#000000">
+<link rel="manifest" href="../manifest.webmanifest">
+<link rel="alternate" type="application/atom+xml" title="CUDA Compatibility sheets" href="../feed.xml">
+<link rel="prev" href="maxwell-baseline.html">
+<link rel="next" href="runtime-version-facade.html">
+<link rel="author" href="../humans.txt">
+<link rel="license" href="https://github.com/zachshallbetter/cuda-compatibility/blob/main/LICENSE-MIT">
+<meta name="application-name" content="CUDA Compatibility">
+<meta name="apple-mobile-web-app-title" content="CUDA Compat">
+<meta name="format-detection" content="telephone=no">
+<title>LLVM NVPTX kernels for Maxwell sm_52 | CUDA Compatibility</title>
+<link rel="canonical" href="https://cudacompat.com/research/llvm-nvptx.html">
+<meta name="author" content="Zach Shallbetter">
+<meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1">
+<meta name="citation_title" content="LLVM NVPTX Maxwell experiment">
+<meta name="citation_author" content="Shallbetter, Zach">
+<meta name="citation_publication_date" content="2026/11/01">
+<meta name="citation_online_date" content="2026/11/01">
+<meta name="citation_publisher" content="CUDA Compatibility">
+<meta name="citation_public_url" content="https://cudacompat.com/research/llvm-nvptx.html">
+<meta property="og:type" content="article">
+<meta property="article:published_time" content="2026-11-01T01:04:31-08:00">
+<meta property="article:modified_time" content="2026-11-01T17:09:08-08:00">
+<meta property="article:author" content="https://zachshallbetter.com/">
+<meta property="article:section" content="Research">
+<meta property="og:site_name" content="CUDA Compatibility">
+<meta property="og:url" content="https://cudacompat.com/research/llvm-nvptx.html">
+<meta property="og:locale" content="en_US">
+<meta property="og:title" content="LLVM NVPTX on Maxwell: sm_52 kernels from LLVM 23">
+<meta property="og:description" content="LLVM 23.1.4 compiled a CUDA kernel to PTX 8.4 for sm_52, and CUDA 12.4 ptxas and the R580 driver ran it correctly on all three GM200 cards in six of six runs.">
+<meta property="og:image" content="https://cudacompat.com/assets/social/llvm-nvptx.png">
+<meta property="og:image:type" content="image/png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Share card: LLVM NVPTX on Maxwell: sm_52 kernels from LLVM 23. Research paper, Paper 03 of 08, CUDA Compatibility, cudacompat.com, beside a wireframe of a GM200 graphics card">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="LLVM NVPTX on Maxwell: sm_52 kernels from LLVM 23">
+<meta name="twitter:description" content="LLVM 23.1.4 compiled a CUDA kernel to PTX 8.4 for sm_52, and CUDA 12.4 ptxas and the R580 driver ran it correctly on all three GM200 cards in six of six runs.">
+<meta name="twitter:image" content="https://cudacompat.com/assets/social/llvm-nvptx.png">
+<meta name="twitter:image:alt" content="Share card: LLVM NVPTX on Maxwell: sm_52 kernels from LLVM 23. Research paper, Paper 03 of 08, CUDA Compatibility, cudacompat.com, beside a wireframe of a GM200 graphics card">
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"WebSite","@id":"https://cudacompat.com/#website","url":"https://cudacompat.com/","name":"CUDA Compatibility","alternateName":"cudacompat.com","inLanguage":"en","publisher":{"@id":"https://cudacompat.com/#author"},"copyrightHolder":{"@id":"https://cudacompat.com/#author"},"license":"https://github.com/zachshallbetter/cuda-compatibility/blob/main/LICENSE-MIT"},{"@type":"Person","@id":"https://cudacompat.com/#author","name":"Zach Shallbetter","url":"https://zachshallbetter.com/","sameAs":["https://github.com/zachshallbetter"],"jobTitle":"Systems engineer and independent researcher","description":"Zach Shallbetter is a systems engineer and independent researcher based in Spokane, Washington. His work spans applied AI, computer vision, embedded systems, and developer tooling. Through Snack Studio, he builds software that connects modern workflows with existing hardware, with an emphasis on compatibility, performance, and keeping useful systems operational.","homeLocation":{"@type":"Place","name":"Spokane, Washington"},"worksFor":{"@id":"https://cudacompat.com/#org"}},{"@type":"Organization","@id":"https://cudacompat.com/#org","name":"Snack Studio","url":"https://snackstud.io/","founder":{"@id":"https://cudacompat.com/#author"}},{"@type":"SoftwareApplication","@id":"https://cudacompat.com/#software","name":"CUDA Compatibility","url":"https://cudacompat.com/"},{"@type":"WebPage","@id":"https://cudacompat.com/research/llvm-nvptx.html","url":"https://cudacompat.com/research/llvm-nvptx.html","name":"LLVM NVPTX on Maxwell: sm_52 kernels from LLVM 23","description":"LLVM 23.1.4 compiled a CUDA kernel to PTX 8.4 for sm_52, and CUDA 12.4 ptxas and the R580 driver ran it correctly on all three GM200 cards in six of six runs.","inLanguage":"en","isPartOf":{"@id":"https://cudacompat.com/#website"},"breadcrumb":{"@id":"https://cudacompat.com/research/llvm-nvptx.html#breadcrumb"},"primaryImageOfPage":{"@id":"https://cudacompat.com/assets/social/llvm-nvptx.png"},"mainEntity":{"@id":"https://cudacompat.com/research/llvm-nvptx.html#article"},"datePublished":"2026-11-01T01:04:31-08:00","dateModified":"2026-11-01T17:09:08-08:00"},{"@type":"ImageObject","@id":"https://cudacompat.com/assets/social/llvm-nvptx.png","url":"https://cudacompat.com/assets/social/llvm-nvptx.png","contentUrl":"https://cudacompat.com/assets/social/llvm-nvptx.png","width":1200,"height":630,"caption":"Share card: LLVM NVPTX on Maxwell: sm_52 kernels from LLVM 23. Research paper, Paper 03 of 08, CUDA Compatibility, cudacompat.com, beside a wireframe of a GM200 graphics card","encodingFormat":"image/png"},{"@type":"ScholarlyArticle","@id":"https://cudacompat.com/research/llvm-nvptx.html#article","headline":"LLVM NVPTX Maxwell experiment","name":"LLVM NVPTX on Maxwell: sm_52 kernels from LLVM 23","abstract":"LLVM 23.1.4 compiled a CUDA kernel to PTX 8.4 for sm_52, and CUDA 12.4 ptxas and the R580 driver ran it correctly on all three GM200 cards in six of six runs.","description":"LLVM 23.1.4 compiled a CUDA kernel to PTX 8.4 for sm_52, and CUDA 12.4 ptxas and the R580 driver ran it correctly on all three GM200 cards in six of six runs.","url":"https://cudacompat.com/research/llvm-nvptx.html","mainEntityOfPage":{"@id":"https://cudacompat.com/research/llvm-nvptx.html"},"image":{"@id":"https://cudacompat.com/assets/social/llvm-nvptx.png"},"inLanguage":"en","datePublished":"2026-11-01T01:04:31-08:00","dateModified":"2026-11-01T17:09:08-08:00","author":{"@id":"https://cudacompat.com/#author"},"publisher":{"@id":"https://cudacompat.com/#author"},"copyrightHolder":{"@id":"https://cudacompat.com/#author"},"copyrightYear":2026,"license":"https://github.com/zachshallbetter/cuda-compatibility/blob/main/LICENSE-MIT","isAccessibleForFree":true,"isPartOf":{"@id":"https://cudacompat.com/#website"},"about":{"@id":"https://cudacompat.com/#software"},"isBasedOn":"https://github.com/zachshallbetter/cuda-compatibility/blob/main/docs/research/llvm-nvptx.md","articleSection":"Research","position":3,"creativeWorkStatus":"Published","genre":"Research record"},{"@type":"BreadcrumbList","@id":"https://cudacompat.com/research/llvm-nvptx.html#breadcrumb","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://cudacompat.com/"},{"@type":"ListItem","position":2,"name":"Research and evidence","item":"https://cudacompat.com/docs/research.html"},{"@type":"ListItem","position":3,"name":"LLVM NVPTX on Maxwell: sm_52 kernels from LLVM 23","item":"https://cudacompat.com/research/llvm-nvptx.html"}]}]}</script>
+<link rel="stylesheet" href="../styles.css">
+<link rel="stylesheet" href="../docs.css">
+</head>
+<body>
+<div style="display:flex;flex-direction:column;min-height:100%">
+<a class="skip-link" href="#main">Skip to content</a>
+<header style="border-bottom:1px solid currentColor">
+<svg class="reg l" aria-hidden="true" viewBox="0 0 16 16"><circle cx="8" cy="8" r="5" fill="none" stroke="currentColor" stroke-width="1.2"/><path d="M8 0v16M0 8h16" stroke="currentColor" stroke-width="1.2"/></svg><svg class="reg r" aria-hidden="true" viewBox="0 0 16 16"><circle cx="8" cy="8" r="5" fill="none" stroke="currentColor" stroke-width="1.2"/><path d="M8 0v16M0 8h16" stroke="currentColor" stroke-width="1.2"/></svg>
+<div class="wrap" style="padding-top:18px;padding-bottom:18px;display:flex;justify-content:space-between;align-items:center;gap:24px;flex-wrap:wrap">
+<a href="../index.html" style="text-decoration:none;color:inherit;font-stretch:110%;font-weight:800;font-size:17px;letter-spacing:-0.02em;display:inline-flex;align-items:center;gap:12px"><svg aria-hidden="true" width="26" height="26" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="3"><rect x="5" y="5" width="22" height="22"></rect><rect x="12" y="12" width="8" height="8" fill="currentColor" stroke="none"></rect></svg>CUDA Compatibility</a>
+<div style="display:flex;align-items:center;gap:32px;flex-wrap:wrap">
+<nav class="nav" aria-label="Main navigation">
+<a href="../index.html#works">What works</a>
+<a href="../index.html#stack">How it works</a>
+<a href="../index.html#hardware">Hardware</a>
+<a href="../index.html#install">Install</a>
+<a href="../docs/index.html" aria-current="true" style="color:var(--link)">Docs</a>
+<a href="https://github.com/zachshallbetter/cuda-compatibility/releases">Releases</a>
+</nav>
+<a class="repo" href="https://github.com/zachshallbetter/cuda-compatibility">Repository<svg aria-hidden="true" width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 10 10 2M4 2h6v6"></path></svg></a>
+</div>
+</div>
+</header>
+
+<main id="main">
+<article id="article" aria-labelledby="title">
+<header class="band">
+<div class="wrap" style="padding-top:56px;padding-bottom:56px;display:flex;flex-direction:column;gap:18px">
+<nav aria-label="Breadcrumb" class="crumbs"><ol><li><a href="../index.html">Home</a></li><li><a href="../docs/research.html">Research and evidence</a></li><li aria-current="page">Paper 03 / 08</li></ol></nav>
+<p class="sheet" style="margin:0">Research paper</p>
+<h1 id="title" class="disp" style="font-size:clamp(36px,4.2vw,58px);max-width:22ch">LLVM NVPTX Maxwell experiment</h1>
+<p class="excerpt" style="margin:0;font-size:20px;line-height:1.45;max-width:60ch;font-weight:500">LLVM 23.1.4 compiled a CUDA kernel to PTX 8.4 for sm_52, and CUDA 12.4 ptxas and the R580 driver ran it correctly on all three GM200 cards in six of six runs.</p>
+<p class="byline">By <a rel="author" href="https://zachshallbetter.com/">Zach Shallbetter</a> · Paper 03 of 08 · First recorded <time datetime="2026-11-01">1 November 2026</time> · Updated <time datetime="2026-11-01">1 November 2026</time></p>
+</div>
+</header>
+<div class="wrap body" style="padding-top:56px;padding-bottom:96px">
+<nav aria-label="Documentation" style="display:flex;flex-direction:column;gap:12px">
+<p class="sheet" style="margin:0">Sheets</p>
+<ul class="side">
+<li><a href="../docs/index.html"><i>02</i>Documentation home</a></li>
+<li><a href="../docs/getting-started.html"><i>03</i>Install and run</a></li>
+<li><a href="../docs/compatibility.html"><i>04</i>Support matrix</a></li>
+<li><a href="../docs/architecture.html"><i>05</i>How it works</a></li>
+<li><a href="../docs/cli.html"><i>06</i>Command line</a></li>
+<li><a class="current" aria-current="true" href="../docs/research.html"><i>07</i>Research and evidence</a></li>
+<li><a href="../gpu-catalog.html"><i>08</i>Legacy GPU catalog</a></li>
+<li><a href="../docs/discovery.html"><i>09</i>Search and AI discovery</a></li>
+<li><a href="../docs/privacy.html"><i>10</i>Privacy and measurement</a></li>
+</ul>
+<p class="sheet" style="margin:12px 0 0">Papers</p>
+<ul class="side" style="border-top-width:1px"><li><a href="research-program.html"><i>01</i>Research program: CUDA-era semantics on legacy GPUs</a></li><li><a href="maxwell-baseline.html"><i>02</i>Maxwell native baseline: CUDA 12.4 on three GM200 cards</a></li><li><a class="current" aria-current="page" href="llvm-nvptx.html"><i>03</i>LLVM NVPTX on Maxwell: sm_52 kernels from LLVM 23</a></li><li><a href="runtime-version-facade.html"><i>04</i>Runtime version facade: CUDA 13 answers on a CUDA 12.4 stack</a></li><li><a href="pytorch-cu130-maxwell.html"><i>05</i>PyTorch 2.14 CUDA 13 wheel on Maxwell GPUs</a></li><li><a href="implementation-gap-audit-2026-11.html"><i>06</i>Implementation gap audit: prototype versus platform goal</a></li><li><a href="attribution-pilot.html"><i>07</i>AI answer attribution pilot: baseline results</a></li><li><a href="cuda-12-9-to-13-0-changes.html"><i>08</i>CUDA 12.9 to 13.0: what changed for older GPUs</a></li></ul>
+<p class="sheet" style="margin:12px 0 0">On this paper</p>
+<ul class="side" style="border-top-width:1px"><li><a href="#environment"><i>A</i>Environment</a></li><li><a href="#reproduction"><i>B</i>Reproduction</a></li><li><a href="#observed-result"><i>C</i>Observed result</a></li><li><a href="#limits"><i>D</i>Limits</a></li></ul>
+</nav>
+<div class="prose" style="display:flex;flex-direction:column;gap:20px;min-width:0">
+<p><strong>Evidence status:</strong> Reproduced on the reference host, 2026-10-31.<br> <strong>Scope:</strong> LLVM 23.1.4 CUDA frontend → PTX 8.4 (<code>sm_52</code>) → CUDA 12.4.131 <code>ptxas</code> and R580 driver; vector addition only.</p>
+<h2 id="environment">Environment</h2>
+<ul class="list"><li>Linux <code>reference GPU host</code>, x86_64, Ubuntu 22.04 userspace, glibc 2.35.</li><li>Three GTX TITAN X GM200 devices, compute capability 5.2.</li><li>NVIDIA driver 580.178.04 and CUDA Toolkit 12.4.131.</li><li>Official LLVM 23.1.4 Linux x86_64 release archive, unpacked under <code>/tmp</code>; it registers both <code>nvptx</code> and <code>nvptx64</code> targets.</li><li>The LLVM <code>.tar.zst</code> artifact passed offline GitHub attestation verification against <code>llvm/llvm-project</code>; local and remote SHA-256 matched: <code>efdd1dbd089b99bfcfcde7b8eb1236163f2e88df5a981cca4f783ec9cb5e0378</code>.</li></ul>
+<h2 id="reproduction">Reproduction</h2>
+<p>The experiment uses the native baseline kernel in [<code>vector_add.cu</code>](../../experiments/maxwell/vector_add.cu) and the driver API runner in [<code>run_vector_add.sh</code>](../../experiments/llvm-nvptx/run_vector_add.sh). On the reference host:</p>
+<pre aria-label="Shell commands"><code>LLVM_ROOT=/path/to/LLVM-23.1.4-Linux-X64 \
+CUDA_ROOT=/usr/local/cuda-12.4 \
+bash experiments/llvm-nvptx/run_vector_add.sh</code></pre>
+<p>The runner compiles device code with Clang for <code>sm_52</code>, prints the generated PTX version and target, assembles it with the existing CUDA 12.4 <code>ptxas</code>, then loads both the PTX and cubin through the CUDA Driver API. It runs each artifact in a separate process on each physical GPU and removes its temporary files on exit.</p>
+<p>On this Ubuntu host, Clang's CUDA device compilation did not discover the host <code>libstdc++</code> headers automatically and initially failed to find <code>&lt;climits&gt;</code>. The runner supplies the installed GCC major-version C++ include directories explicitly. This is an environment-specific toolchain setup detail, not a source change or a CUDA limitation.</p>
+<h2 id="observed-result">Observed result</h2>
+<p>Clang emitted <code>.version 8.4</code> and <code>.target sm_52</code>. CUDA 12.4 <code>ptxas</code> accepted the PTX. The R580 driver loaded both the PTX module and the assembled cubin. Each run compared all 1,048,576 integer outputs; all six runs passed: three PTX-JIT runs and three cubin runs, one on each physical GPU.</p>
+<p><code>CUDA_VISIBLE_DEVICES</code> mapped each selected physical card to logical device 0 inside its own process.</p>
+<h2 id="limits">Limits</h2>
+<p>This proves one simple CUDA kernel can be compiled by this LLVM build for Maxwell, assembled by CUDA 12.4, and executed correctly through the R580 driver. It does not prove arbitrary CUDA C++ coverage, compatibility with all PTX 8.4 features, CUDA 13 runtime/API compatibility, PyTorch operator coverage, library compatibility, concurrent multi-GPU execution, peer access, or performance parity. The NVIDIA driver and CUDA 12.4 assembler remain user-installed dependencies; no NVIDIA files were redistributed or modified.</p>
+<aside class="note" aria-label="Source and citation"><p style="margin:0;font-size:15px">Source record: <a href="https://github.com/zachshallbetter/cuda-compatibility/blob/main/docs/research/llvm-nvptx.md">docs/research/llvm-nvptx.md</a>. Cite as: Shallbetter, Z. (2026). LLVM NVPTX Maxwell experiment. CUDA Compatibility. https://cudacompat.com/research/llvm-nvptx.html. Project-maintained research, not peer reviewed or endorsed by NVIDIA.</p></aside>
+<nav class="pager" aria-label="Papers, previous and next"><a rel="previous" href="maxwell-baseline.html"><span class="sheet">Previous · paper 02</span><span class="pager-title">Maxwell native baseline: CUDA 12.4 on three GM200 cards</span></a><a rel="next" href="runtime-version-facade.html"><span class="sheet">Next · paper 04</span><span class="pager-title">Runtime version facade: CUDA 13 answers on a CUDA 12.4 stack</span></a></nav>
+</div>
+</div>
+</article>
+</main>
+
+<footer class="foot">
+<div class="wrap" style="padding-top:40px;padding-bottom:40px;display:flex;flex-direction:column;gap:20px;font-size:15px">
+<div class="tb" role="group" aria-label="Title block">
+<div><span>Project</span><span>CUDA Compatibility</span></div>
+<div><span>Drawn by</span><span><a href="https://zachshallbetter.com/">Zach Shallbetter</a></span></div>
+<div><span>Project version</span><span>0.1.0</span></div>
+<div><span>License</span><span>MIT or Apache-2.0</span></div>
+<div><span>Status</span><span>Active research</span></div>
+<div><span>Paper</span><span>03 / 08, LLVM NVPTX on Maxwell: sm_52 kernels from LLVM 23</span></div>
+<div><span>Correct this paper</span><span><a href="https://github.com/zachshallbetter/cuda-compatibility/issues/new?title=Correction%3A%20paper%2003%20llvm-nvptx">Open an issue naming the record</a></span></div>
+</div>
+<table class="rev" aria-label="Revision table"><thead><tr><th scope="col">Rev</th><th scope="col">Date</th><th scope="col">Change</th><th scope="col">By</th></tr></thead><tbody><tr><td>A</td><td>2026-11-01</td><td>First recorded</td><td>ZS</td></tr></tbody></table>
+<div style="display:flex;justify-content:space-between;gap:24px;flex-wrap:wrap"><span>Independent research, not affiliated with NVIDIA. Hardware identity stays real.</span><div style="display:flex;gap:20px;flex-wrap:wrap"><a href="https://github.com/zachshallbetter">GitHub</a><a href="https://linkedin.com/in/zachshallbetter">LinkedIn</a><a href="../docs/privacy.html">Privacy and analytics</a></div></div>
+</div>
+</footer>
+
+</div>
+<script src="../site.js" defer></script>
+<script src="../analytics.js" defer></script>
+</body>
+</html>

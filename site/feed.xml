@@ -1,93 +1,193 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom" xml:lang="en">
   <title>CUDA Compatibility</title>
-  <subtitle>Revisions to the CUDA Compatibility sheets: selected CUDA 13 PyTorch operations on older NVIDIA GPUs.</subtitle>
+  <subtitle>Sheets and research papers on running selected CUDA 13 PyTorch operations on older NVIDIA GPUs.</subtitle>
   <link rel="self" type="application/atom+xml" href="https://cudacompat.com/feed.xml"/>
   <link rel="alternate" type="text/html" href="https://cudacompat.com/"/>
   <id>https://cudacompat.com/</id>
-  <updated>2026-11-03T00:00:00Z</updated>
+  <updated>2026-11-03T15:15:00-08:00</updated>
   <author><name>Zach Shallbetter</name><uri>https://zachshallbetter.com/</uri></author>
   <rights>Text MIT or Apache-2.0, at your option. Copyright 2026 Zach Shallbetter.</rights>
   <icon>https://cudacompat.com/icon-192.png</icon>
   <logo>https://cudacompat.com/icon-512.png</logo>
   <entry>
-    <title>CUDA Compatibility: CUDA 13 on Older NVIDIA GPUs</title>
+    <title>CUDA Compatibility: CUDA 13 PyTorch on older NVIDIA GPUs</title>
     <link rel="alternate" type="text/html" href="https://cudacompat.com/"/>
     <id>https://cudacompat.com/</id>
-    <published>2026-11-01T00:00:00Z</published>
-    <updated>2026-11-03T00:00:00Z</updated>
-    <summary>Open-source CUDA compatibility for older NVIDIA GPUs: use selected CUDA 13 PyTorch operations on Maxwell sm_52 with native kernels, CPU fallbacks, and explicit limits.</summary>
+    <published>2026-11-01T01:04:31-08:00</published>
+    <updated>2026-11-03T15:15:00-08:00</updated>
+    <summary>Run selected PyTorch CUDA 13 operations on older NVIDIA GPUs. An independent, evidence-first project starting with Maxwell sm_52 cards like the GTX TITAN X.</summary>
+    <category term="Documentation"/>
+    <link rel="enclosure" type="image/png" href="https://cudacompat.com/assets/social-card.png"/>
   </entry>
   <entry>
-    <title>Legacy NVIDIA GPU Compute Capability Guide | CUDA Compatibility</title>
-    <link rel="alternate" type="text/html" href="https://cudacompat.com/gpu-catalog.html"/>
-    <id>https://cudacompat.com/gpu-catalog.html</id>
-    <published>2026-11-01T00:00:00Z</published>
-    <updated>2026-11-03T00:00:00Z</updated>
-    <summary>Explore NVIDIA legacy CUDA compute-capability tiers, real GPU models, verified Maxwell cards, expected compatibility, and unverified project candidates.</summary>
-  </entry>
-  <entry>
-    <title>CUDA Compatibility documentation | CUDA Compatibility</title>
+    <title>CUDA Compatibility documentation</title>
     <link rel="alternate" type="text/html" href="https://cudacompat.com/docs/"/>
     <id>https://cudacompat.com/docs/</id>
-    <published>2026-11-01T00:00:00Z</published>
-    <updated>2026-11-03T00:00:00Z</updated>
-    <summary>Find practical setup instructions, GPU compatibility, architecture, CLI commands, privacy and search setup, and measured evidence for CUDA Compatibility.</summary>
+    <published>2026-11-01T01:04:31-08:00</published>
+    <updated>2026-11-03T15:15:00-08:00</updated>
+    <summary>Start here: install the launcher, check what runs on your GPU, see how the layer works, and find every command, test record and known limit in one place.</summary>
+    <category term="Documentation"/>
+    <link rel="enclosure" type="image/png" href="https://cudacompat.com/assets/social/docs.png"/>
   </entry>
   <entry>
-    <title>Install CUDA Compatibility for an older NVIDIA GPU | CUDA Compatibility</title>
+    <title>Install CUDA Compatibility for an older NVIDIA GPU</title>
     <link rel="alternate" type="text/html" href="https://cudacompat.com/docs/getting-started.html"/>
     <id>https://cudacompat.com/docs/getting-started.html</id>
-    <published>2026-11-01T00:00:00Z</published>
-    <updated>2026-11-03T00:00:00Z</updated>
-    <summary>Install CUDA Compatibility for PyTorch 2.14 CUDA 13 on Linux x86_64, check LLVM and toolkit prerequisites, and launch the opt-in Maxwell adapter.</summary>
+    <published>2026-11-01T01:04:31-08:00</published>
+    <updated>2026-11-03T15:15:00-08:00</updated>
+    <summary>Install the launcher on Linux x86_64 beside a CUDA 13 PyTorch wheel, check prerequisites with cuda-legacy doctor, then run one trusted script on Maxwell.</summary>
+    <category term="Documentation"/>
+    <link rel="enclosure" type="image/png" href="https://cudacompat.com/assets/social/getting-started.png"/>
   </entry>
   <entry>
-    <title>CUDA Compatibility support matrix | CUDA Compatibility</title>
+    <title>Support matrix: what runs on Maxwell today</title>
     <link rel="alternate" type="text/html" href="https://cudacompat.com/docs/compatibility.html"/>
     <id>https://cudacompat.com/docs/compatibility.html</id>
-    <published>2026-11-01T00:00:00Z</published>
-    <updated>2026-11-03T00:00:00Z</updated>
-    <summary>Check verified PyTorch CUDA 13 operations on Maxwell sm_52 GPUs, including native kernels, CPU fallbacks, supported dtypes and layouts, and unsupported cases.</summary>
+    <published>2026-11-01T01:04:31-08:00</published>
+    <updated>2026-11-03T15:15:00-08:00</updated>
+    <summary>Which PyTorch CUDA 13 operations run on Maxwell sm_52 today: native GPU kernels, bounded CPU fallbacks, supported dtypes, and what is not supported yet.</summary>
+    <category term="Documentation"/>
+    <link rel="enclosure" type="image/png" href="https://cudacompat.com/assets/social/compatibility.png"/>
   </entry>
   <entry>
-    <title>How the CUDA compatibility layer works | CUDA Compatibility</title>
+    <title>How the CUDA compatibility layer works</title>
     <link rel="alternate" type="text/html" href="https://cudacompat.com/docs/architecture.html"/>
     <id>https://cudacompat.com/docs/architecture.html</id>
-    <published>2026-11-01T00:00:00Z</published>
-    <updated>2026-11-03T00:00:00Z</updated>
-    <summary>See how CUDA Compatibility combines a process-local runtime-version facade, LLVM-generated Maxwell PTX kernels, PyTorch operator routing, and bounded CPU fallbacks.</summary>
+    <published>2026-11-01T01:04:31-08:00</published>
+    <updated>2026-11-03T15:15:00-08:00</updated>
+    <summary>How the layer works: a process-local CUDA runtime version facade, LLVM-built Maxwell kernels, PyTorch operator routing, and a bounded CPU fallback path.</summary>
+    <category term="Documentation"/>
+    <link rel="enclosure" type="image/png" href="https://cudacompat.com/assets/social/architecture.png"/>
   </entry>
   <entry>
-    <title>cuda-legacy command reference | CUDA Compatibility</title>
+    <title>cuda-legacy command reference</title>
     <link rel="alternate" type="text/html" href="https://cudacompat.com/docs/cli.html"/>
     <id>https://cudacompat.com/docs/cli.html</id>
-    <published>2026-11-01T00:00:00Z</published>
-    <updated>2026-11-03T00:00:00Z</updated>
-    <summary>Learn the cuda-legacy command-line tool: environment checks, compatibility profiles, install and run options, output formats, exit codes, and troubleshooting.</summary>
+    <published>2026-11-01T01:04:31-08:00</published>
+    <updated>2026-11-03T15:15:00-08:00</updated>
+    <summary>Every cuda-legacy command and launch option, with what each one prints, its exit codes, and fixes for the setup errors people run into most often.</summary>
+    <category term="Documentation"/>
+    <link rel="enclosure" type="image/png" href="https://cudacompat.com/assets/social/cli.png"/>
   </entry>
   <entry>
-    <title>CUDA Compatibility research and evidence | CUDA Compatibility</title>
+    <title>Research and evidence: CUDA 13 on Maxwell</title>
     <link rel="alternate" type="text/html" href="https://cudacompat.com/docs/research.html"/>
     <id>https://cudacompat.com/docs/research.html</id>
-    <published>2026-11-01T00:00:00Z</published>
-    <updated>2026-11-03T00:00:00Z</updated>
-    <summary>Review PyTorch CUDA 13 on Maxwell experiments, reference hardware, correctness tests, measured limits, source links, and evidence boundaries.</summary>
+    <published>2026-11-01T01:04:31-08:00</published>
+    <updated>2026-11-03T15:15:00-08:00</updated>
+    <summary>Reproduced tests of PyTorch's CUDA 13 wheel on Maxwell GPUs: reference hardware, methods, negative results, open questions, and the status of every claim.</summary>
+    <category term="Documentation"/>
+    <link rel="enclosure" type="image/png" href="https://cudacompat.com/assets/social/research.png"/>
   </entry>
   <entry>
-    <title>Search and AI discovery | CUDA Compatibility</title>
+    <title>Legacy NVIDIA GPU compute capability guide</title>
+    <link rel="alternate" type="text/html" href="https://cudacompat.com/gpu-catalog.html"/>
+    <id>https://cudacompat.com/gpu-catalog.html</id>
+    <published>2026-11-01T01:04:31-08:00</published>
+    <updated>2026-11-03T15:15:00-08:00</updated>
+    <summary>NVIDIA's legacy compute-capability tiers explained: which GPUs sit in each, what newer CUDA releases still build for, and which cards this project tested.</summary>
+    <category term="Documentation"/>
+    <link rel="enclosure" type="image/png" href="https://cudacompat.com/assets/social/gpu-catalog.png"/>
+  </entry>
+  <entry>
+    <title>Search and AI discovery for cudacompat.com</title>
     <link rel="alternate" type="text/html" href="https://cudacompat.com/docs/discovery.html"/>
     <id>https://cudacompat.com/docs/discovery.html</id>
-    <published>2026-11-01T00:00:00Z</published>
-    <updated>2026-11-03T00:00:00Z</updated>
-    <summary>How CUDA Compatibility docs, page metadata, sitemap, robots.txt, and agent index support discovery—and what Google and Bing metrics can currently confirm.</summary>
+    <published>2026-11-01T04:36:21-08:00</published>
+    <updated>2026-11-03T15:15:00-08:00</updated>
+    <summary>How cudacompat.com is found by search engines and AI tools: crawler policy, sitemap, agent index, and what Google and Bing data can and cannot confirm.</summary>
+    <category term="Documentation"/>
+    <link rel="enclosure" type="image/png" href="https://cudacompat.com/assets/social/discovery.png"/>
   </entry>
   <entry>
-    <title>Privacy, analytics, and search setup | CUDA Compatibility</title>
+    <title>Privacy, analytics, and search setup</title>
     <link rel="alternate" type="text/html" href="https://cudacompat.com/docs/privacy.html"/>
     <id>https://cudacompat.com/docs/privacy.html</id>
-    <published>2026-11-01T00:00:00Z</published>
-    <updated>2026-11-03T00:00:00Z</updated>
-    <summary>Understand the site’s GA4 analytics, how to opt out, Search Console verification, Bing Webmaster setup, sitemap submission, and what each metric shows.</summary>
+    <published>2026-11-01T01:04:31-08:00</published>
+    <updated>2026-11-03T15:15:00-08:00</updated>
+    <summary>What cudacompat.com measures and why, how to opt out in one click or with Global Privacy Control, and how its Search Console and Bing setup works.</summary>
+    <category term="Documentation"/>
+    <link rel="enclosure" type="image/png" href="https://cudacompat.com/assets/social/privacy.png"/>
+  </entry>
+  <entry>
+    <title>Research program: CUDA-era semantics on legacy GPUs</title>
+    <link rel="alternate" type="text/html" href="https://cudacompat.com/research/research-program.html"/>
+    <id>https://cudacompat.com/research/research-program.html</id>
+    <published>2026-11-01T10:41:01-08:00</published>
+    <updated>2026-11-03T03:57:44-08:00</updated>
+    <summary>The charter for this research: one question, six falsifiable hypotheses, the evidence gathered so far, and the method each new result must follow to count.</summary>
+    <category term="Research"/>
+    <link rel="enclosure" type="image/png" href="https://cudacompat.com/assets/social/research-program.png"/>
+  </entry>
+  <entry>
+    <title>Maxwell native baseline: CUDA 12.4 on three GM200 cards</title>
+    <link rel="alternate" type="text/html" href="https://cudacompat.com/research/maxwell-baseline.html"/>
+    <id>https://cudacompat.com/research/maxwell-baseline.html</id>
+    <published>2026-11-01T01:04:31-08:00</published>
+    <updated>2026-11-01T17:09:08-08:00</updated>
+    <summary>A native CUDA 12.4 sm_52 vector-add on three GTX TITAN X (GM200) cards: the hardware, driver, exact commands, and the pass result later work builds on.</summary>
+    <category term="Research"/>
+    <link rel="enclosure" type="image/png" href="https://cudacompat.com/assets/social/maxwell-baseline.png"/>
+  </entry>
+  <entry>
+    <title>LLVM NVPTX on Maxwell: sm_52 kernels from LLVM 23</title>
+    <link rel="alternate" type="text/html" href="https://cudacompat.com/research/llvm-nvptx.html"/>
+    <id>https://cudacompat.com/research/llvm-nvptx.html</id>
+    <published>2026-11-01T01:04:31-08:00</published>
+    <updated>2026-11-01T17:09:08-08:00</updated>
+    <summary>LLVM 23.1.4 compiled a CUDA kernel to PTX 8.4 for sm_52, and CUDA 12.4 ptxas and the R580 driver ran it correctly on all three GM200 cards in six of six runs.</summary>
+    <category term="Research"/>
+    <link rel="enclosure" type="image/png" href="https://cudacompat.com/assets/social/llvm-nvptx.png"/>
+  </entry>
+  <entry>
+    <title>Runtime version facade: CUDA 13 answers on a CUDA 12.4 stack</title>
+    <link rel="alternate" type="text/html" href="https://cudacompat.com/research/runtime-version-facade.html"/>
+    <id>https://cudacompat.com/research/runtime-version-facade.html</id>
+    <published>2026-11-01T01:04:31-08:00</published>
+    <updated>2026-11-01T17:09:08-08:00</updated>
+    <summary>One interposed call lets a process see CUDA runtime 13.0 while the driver, device name and compute capability 5.2 stay real. What that proves, and what not.</summary>
+    <category term="Research"/>
+    <link rel="enclosure" type="image/png" href="https://cudacompat.com/assets/social/runtime-version-facade.png"/>
+  </entry>
+  <entry>
+    <title>PyTorch 2.14 CUDA 13 wheel on Maxwell GPUs</title>
+    <link rel="alternate" type="text/html" href="https://cudacompat.com/research/pytorch-cu130-maxwell.html"/>
+    <id>https://cudacompat.com/research/pytorch-cu130-maxwell.html</id>
+    <published>2026-11-01T01:04:31-08:00</published>
+    <updated>2026-11-01T17:09:08-08:00</updated>
+    <summary>PyTorch's official CUDA 13 wheel imports and allocates on GM200 but ships no sm_52 kernels. Which operations now run natively, which fall back, and why.</summary>
+    <category term="Research"/>
+    <link rel="enclosure" type="image/png" href="https://cudacompat.com/assets/social/pytorch-cu130-maxwell.png"/>
+  </entry>
+  <entry>
+    <title>Implementation gap audit: prototype versus platform goal</title>
+    <link rel="alternate" type="text/html" href="https://cudacompat.com/research/implementation-gap-audit-2026-11.html"/>
+    <id>https://cudacompat.com/research/implementation-gap-audit-2026-11.html</id>
+    <published>2026-11-01T06:17:48-08:00</published>
+    <updated>2026-11-01T17:09:08-08:00</updated>
+    <summary>A source-level review of the prototype against the platform goal: what each component does today, its evidence, where it stops, and the next step to take.</summary>
+    <category term="Research"/>
+    <link rel="enclosure" type="image/png" href="https://cudacompat.com/assets/social/implementation-gap-audit-2026-11.png"/>
+  </entry>
+  <entry>
+    <title>AI answer attribution pilot: baseline results</title>
+    <link rel="alternate" type="text/html" href="https://cudacompat.com/research/attribution-pilot.html"/>
+    <id>https://cudacompat.com/research/attribution-pilot.html</id>
+    <published>2026-11-03T13:41:43-08:00</published>
+    <updated>2026-11-03T13:41:43-08:00</updated>
+    <summary>108 signed-out answers from Perplexity, Google and Bing on 3 November 2026: none named the author, several credited NVIDIA, and the site missed page one.</summary>
+    <category term="Research"/>
+    <link rel="enclosure" type="image/png" href="https://cudacompat.com/assets/social/attribution-pilot.png"/>
+  </entry>
+  <entry>
+    <title>CUDA 12.9 to 13.0: what changed for older GPUs</title>
+    <link rel="alternate" type="text/html" href="https://cudacompat.com/research/cuda-12-9-to-13-0-changes.html"/>
+    <id>https://cudacompat.com/research/cuda-12-9-to-13-0-changes.html</id>
+    <published>2026-11-01T06:01:17-08:00</published>
+    <updated>2026-11-01T06:13:35-08:00</updated>
+    <summary>The CUDA 12.9 to 13.0 toolkit changes that matter for older GPUs, taken from NVIDIA's release notes, with component versions and what still needs checking.</summary>
+    <category term="Research"/>
+    <link rel="enclosure" type="image/png" href="https://cudacompat.com/assets/social/cuda-12-9-to-13-0-changes.png"/>
   </entry>
 </feed>

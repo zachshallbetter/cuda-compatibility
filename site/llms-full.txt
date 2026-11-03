@@ -295,80 +295,6 @@ A version facade cannot supply a missing kernel.
 
 ---
 
-Source: https://cudacompat.com/gpu-catalog.html
-
-Hardware reference
-
-# Legacy GPU compute capability
-
-A guide to the older GPU generations in NVIDIA’s legacy CUDA list, with plain-language context and an honest view of what this project has tested.
-
-Read this before choosing a card: compute capability describes a GPU’s hardware feature and instruction level. It is not a CUDA Toolkit version, driver version, performance score, or promise that a current software package supports the GPU.
-
-By Zach Shallbetter · Sheet 08 of 10 · Updated 3 November 2026
-
-## Three different questions
-
-The original NVIDIA page maps device models to compute capability. This companion adds interpretation and separates that hardware fact from software and project qualification.
-
-### What is the hardware level?
-
-The number such as 5.2 identifies the GPU architecture’s published capability. Similar numbers often group devices from the same generation, but exact features still vary by chip.
-
-### Will a CUDA release support it?
-
-That is a separate toolkit, compiler, driver, and library policy. NVIDIA’s CUDA 13 notes removed toolkit offline compilation and library support for Maxwell, Pascal, and Volta; a listed capability alone does not restore that support.
-
-### Has this project tested it?
-
-Only exact configurations with recorded runs count as verified. Today’s experimental launcher accepts sm_52; that is a narrow gate, not certification for every card at that level.
-
-## NVIDIA-listed legacy tiers
-
-Every tier in NVIDIA’s legacy table appears below. Model names are representative examples, not a substitute for NVIDIA’s complete model list. “Unverified” means this project has no recorded qualification for that tier.
-
-Capability, context, and project status, highest tier first
-
-| CC | Tier | Context | Examples | Project status |
-| --- | --- | --- | --- | --- |
-| 7.2 | Volta-derived embedded GPUs | A 7.x capability generation for embedded Xavier systems. These devices have their own system, driver, and software packaging constraints; desktop Linux results do not transfer automatically. | Jetson AGX Xavier, Jetson Xavier NX | Unverified, outside gate |
-| 7.0 | Volta | Data-center and workstation GPUs from NVIDIA’s Volta generation. The capability is substantially newer than Maxwell, but CUDA 13’s published legacy-support change still matters for toolkit and library paths. | NVIDIA V100, Quadro GV100 | Unverified, outside gate |
-| 6.2 | Pascal embedded | An embedded Pascal tier. Board image, operating-system release, and JetPack/BSP support are part of the compatibility problem in addition to CUDA APIs. | Jetson TX2 | Unverified, outside gate |
-| 6.1 | Pascal | Pascal data-center, workstation, and consumer GPUs. CUDA 13 support removal is a software-toolchain boundary, not proof that the silicon cannot perform useful computation. | Tesla P40/P4, Quadro P6000/P5000/P4000, GeForce GTX 1080/1070/1060/1050 | Unverified, outside gate |
-| 6.0 | Pascal compute | A Pascal data-center and workstation capability tier. The model name and exact product configuration should be checked against NVIDIA’s source table. | Tesla P100, Quadro GP100 | Unverified, outside gate |
-| 5.3 | Maxwell embedded | Maxwell’s embedded 5.3 tier. It shares a broad generation name with other Maxwell GPUs, but the current adapter requires exact capability 5.2 and does not accept 5.3. | Jetson Nano | Unverified, outside gate |
-| 5.2 | Maxwell GM200 and related devices | This is the only capability accepted by the current adapter. Native kernel and selected PyTorch probes have run on three GM200 reference cards; model-level validation covers only one selected card. Candidate models at 5.2 remain unverified. | Tesla M40/M60, Quadro M6000/M5000/M4000/M2000, GeForce GTX 980 Ti/980/970/960/950 | Experimental, reference configuration |
-| 5.0 | Maxwell GM107-class devices | Another Maxwell tier, found across workstation, consumer, and mobile products. Similar generation does not mean the adapter can target it: current launcher validation is exact sm_52. | Quadro K2200/K1200/K620, GeForce GTX 750 Ti/750, GeForce GTX 850M/840M/830M | Unverified, outside gate |
-| 3.7 | Kepler data center | A Kepler compute tier. It predates Maxwell and has distinct hardware and software constraints; a Maxwell code path cannot be assumed to work here. | Tesla K80 | Unverified, outside gate |
-| 3.5 | Kepler GK110-class | A Kepler tier covering data-center and workstation boards along with consumer products. It requires its own kernel and library qualification. | Tesla K40/K20, Quadro K6000/K5200, GeForce GTX 780 Ti/780 | Unverified, outside gate |
-| 3.2 | Kepler embedded | Embedded Kepler systems have platform-specific software stacks and are not interchangeable with desktop cards at similar generations. | Tegra K1, Jetson TK1 | Unverified, outside gate |
-| 3.0 | Kepler GK10x-class | Kepler consumer and workstation devices from an earlier tier than 3.5. Application support depends on available binaries, driver support, and library behavior. | Tesla K10, Quadro K5000/K4000/K2000, GeForce GTX 770/680/660 | Unverified, outside gate |
-| 2.1 | Fermi refresh | A Fermi-generation capability used by workstation and consumer GPUs. Modern CUDA libraries and frameworks may have removed both prebuilt images and the ability to compile for it. | Quadro 2000/600, GeForce GTX 560 Ti/460, GeForce GT 520 | Unverified, outside gate |
-| 2.0 | Fermi | Early Tesla, workstation, and consumer compute GPUs. A driver recognizing the board does not imply a modern framework ships usable kernels for it. | Tesla M2090/C2070, Quadro 6000/5000, GeForce GTX 580/480 | Unverified, outside gate |
-| 1.3 | Tesla generation, compute 1.3 | Early CUDA-capable data-center and workstation GPUs. This tier is included for historical reference; it is far outside the project’s current adapter target. | Tesla C1060/S1070, Quadro FX 5800/4800, GeForce GTX 285/280 | Unverified, outside gate |
-| 1.2 | Tesla generation, compute 1.2 | An early CUDA capability tier represented mainly by workstation and mobile products in NVIDIA’s legacy table. | Quadro FX 380 Low Profile, NVS 300, GeForce GT 240/220 | Unverified, outside gate |
-| 1.1 | Tesla generation, compute 1.1 | Early workstation, mobile, and consumer GPUs. Current project tooling has no implementation or qualification for this hardware. | Quadro FX 3700/1800/580, GeForce 9800 GTX/8800 GT/8400 GS | Unverified, outside gate |
-| 1.0 | First-generation CUDA capability | The earliest tier in NVIDIA’s legacy CUDA listing. Inclusion here documents the hardware map only; it does not imply current driver, compiler, framework, or library support. | Tesla C870/D870/S870, Quadro FX 5600/4600, GeForce 8800 GTX/Ultra | Unverified, outside gate |
-
-## What “listed” means for this project
-
-A model in NVIDIA’s table has a published compute capability. That fact alone cannot supply a missing PyTorch kernel, translate an unsupported instruction, or replace a library that rejects the GPU. Our support status is based on reproducible operation and workload results. At present, the experimental path is limited to Linux x86_64, PyTorch CUDA 13, and sm_52, with selected operations and bounded CPU fallbacks.
-
-## Sources and definitions
-
-- NVIDIA legacy CUDA GPU compute capability list, original capability-to-model reference; consult for exact model coverage
-- NVIDIA CUDA Toolkit 13.0 release notes, toolkit compiler and library support changes
-- CUDA Programming Guide: compute capability, meaning of hardware capability levels
-
-General notes, all sheets
-
-- Marks: filled is reproduced on the reference configuration; hatched is reproduced for the listed cases only; crossed is contradicted with the observation kept; outline is unverified or unknown. Every mark names its record.
-- Unverified means no record exists and is not refutation. Unknown means the fact was not observable in the recorded environment.
-- Commands are shown and copyable. Nothing runs from a sheet; selected is not executed.
-- Yellow marks attention and is always bounded by an ink line. Blue marks a reproduced state. No meaning is carried by colour alone; each state has a mark shape and a text label.
-
----
-
 Source: https://cudacompat.com/docs/
 
 # Documentation
@@ -812,6 +738,27 @@ This sheet reports implementation and test evidence with its limits. It does not
 
 By Zach Shallbetter · Sheet 07 of 10 · Updated 3 November 2026
 
+## Research papers
+
+Each record below has its own page with its method, results and limits. Every one is project-maintained, not peer reviewed.
+
+- Research program: CUDA-era semantics on legacy GPUs
+The charter for this research: one question, six falsifiable hypotheses, the evidence gathered so far, and the method each new result must follow to count.
+- Maxwell native baseline: CUDA 12.4 on three GM200 cards
+A native CUDA 12.4 sm_52 vector-add on three GTX TITAN X (GM200) cards: the hardware, driver, exact commands, and the pass result later work builds on.
+- LLVM NVPTX on Maxwell: sm_52 kernels from LLVM 23
+LLVM 23.1.4 compiled a CUDA kernel to PTX 8.4 for sm_52, and CUDA 12.4 ptxas and the R580 driver ran it correctly on all three GM200 cards in six of six runs.
+- Runtime version facade: CUDA 13 answers on a CUDA 12.4 stack
+One interposed call lets a process see CUDA runtime 13.0 while the driver, device name and compute capability 5.2 stay real. What that proves, and what not.
+- PyTorch 2.14 CUDA 13 wheel on Maxwell GPUs
+PyTorch's official CUDA 13 wheel imports and allocates on GM200 but ships no sm_52 kernels. Which operations now run natively, which fall back, and why.
+- Implementation gap audit: prototype versus platform goal
+A source-level review of the prototype against the platform goal: what each component does today, its evidence, where it stops, and the next step to take.
+- AI answer attribution pilot: baseline results
+108 signed-out answers from Perplexity, Google and Bing on 3 November 2026: none named the author, several credited NVIDIA, and the site missed page one.
+- CUDA 12.9 to 13.0: what changed for older GPUs
+The CUDA 12.9 to 13.0 toolkit changes that matter for older GPUs, taken from NVIDIA's release notes, with component versions and what still needs checking.
+
 ## Reproduced on reference hardware
 
 Every mark names the record that backs it. Marks are the weakest claim the record supports; a missing record is a missing mark, never a zero.
@@ -897,6 +844,80 @@ Established The source tree includes research logs and local verification record
 Receipt only The consent-gated GA4 tag is deployed; one explicitly accepted test visit produced page_view, first_visit, and session_start in Realtime, after which test consent was withdrawn. An event-receipt check, not an audience outcome. Google Search Console verified its property.
 
 Not claimed A successful HTTP fetch or valid sitemap does not prove indexing or ranking. Google’s sitemap report still says “Couldn’t fetch,” and URL Inspection says the homepage is unknown to the index even though the live test says it is available and can be indexed. No indexing, citation, or external distribution outcome is claimed.
+
+General notes, all sheets
+
+- Marks: filled is reproduced on the reference configuration; hatched is reproduced for the listed cases only; crossed is contradicted with the observation kept; outline is unverified or unknown. Every mark names its record.
+- Unverified means no record exists and is not refutation. Unknown means the fact was not observable in the recorded environment.
+- Commands are shown and copyable. Nothing runs from a sheet; selected is not executed.
+- Yellow marks attention and is always bounded by an ink line. Blue marks a reproduced state. No meaning is carried by colour alone; each state has a mark shape and a text label.
+
+---
+
+Source: https://cudacompat.com/gpu-catalog.html
+
+Hardware reference
+
+# Legacy GPU compute capability
+
+A guide to the older GPU generations in NVIDIA’s legacy CUDA list, with plain-language context and an honest view of what this project has tested.
+
+Read this before choosing a card: compute capability describes a GPU’s hardware feature and instruction level. It is not a CUDA Toolkit version, driver version, performance score, or promise that a current software package supports the GPU.
+
+By Zach Shallbetter · Sheet 08 of 10 · Updated 3 November 2026
+
+## Three different questions
+
+The original NVIDIA page maps device models to compute capability. This companion adds interpretation and separates that hardware fact from software and project qualification.
+
+### What is the hardware level?
+
+The number such as 5.2 identifies the GPU architecture’s published capability. Similar numbers often group devices from the same generation, but exact features still vary by chip.
+
+### Will a CUDA release support it?
+
+That is a separate toolkit, compiler, driver, and library policy. NVIDIA’s CUDA 13 notes removed toolkit offline compilation and library support for Maxwell, Pascal, and Volta; a listed capability alone does not restore that support.
+
+### Has this project tested it?
+
+Only exact configurations with recorded runs count as verified. Today’s experimental launcher accepts sm_52; that is a narrow gate, not certification for every card at that level.
+
+## NVIDIA-listed legacy tiers
+
+Every tier in NVIDIA’s legacy table appears below. Model names are representative examples, not a substitute for NVIDIA’s complete model list. “Unverified” means this project has no recorded qualification for that tier.
+
+Capability, context, and project status, highest tier first
+
+| CC | Tier | Context | Examples | Project status |
+| --- | --- | --- | --- | --- |
+| 7.2 | Volta-derived embedded GPUs | A 7.x capability generation for embedded Xavier systems. These devices have their own system, driver, and software packaging constraints; desktop Linux results do not transfer automatically. | Jetson AGX Xavier, Jetson Xavier NX | Unverified, outside gate |
+| 7.0 | Volta | Data-center and workstation GPUs from NVIDIA’s Volta generation. The capability is substantially newer than Maxwell, but CUDA 13’s published legacy-support change still matters for toolkit and library paths. | NVIDIA V100, Quadro GV100 | Unverified, outside gate |
+| 6.2 | Pascal embedded | An embedded Pascal tier. Board image, operating-system release, and JetPack/BSP support are part of the compatibility problem in addition to CUDA APIs. | Jetson TX2 | Unverified, outside gate |
+| 6.1 | Pascal | Pascal data-center, workstation, and consumer GPUs. CUDA 13 support removal is a software-toolchain boundary, not proof that the silicon cannot perform useful computation. | Tesla P40/P4, Quadro P6000/P5000/P4000, GeForce GTX 1080/1070/1060/1050 | Unverified, outside gate |
+| 6.0 | Pascal compute | A Pascal data-center and workstation capability tier. The model name and exact product configuration should be checked against NVIDIA’s source table. | Tesla P100, Quadro GP100 | Unverified, outside gate |
+| 5.3 | Maxwell embedded | Maxwell’s embedded 5.3 tier. It shares a broad generation name with other Maxwell GPUs, but the current adapter requires exact capability 5.2 and does not accept 5.3. | Jetson Nano | Unverified, outside gate |
+| 5.2 | Maxwell GM200 and related devices | This is the only capability accepted by the current adapter. Native kernel and selected PyTorch probes have run on three GM200 reference cards; model-level validation covers only one selected card. Candidate models at 5.2 remain unverified. | Tesla M40/M60, Quadro M6000/M5000/M4000/M2000, GeForce GTX 980 Ti/980/970/960/950 | Experimental, reference configuration |
+| 5.0 | Maxwell GM107-class devices | Another Maxwell tier, found across workstation, consumer, and mobile products. Similar generation does not mean the adapter can target it: current launcher validation is exact sm_52. | Quadro K2200/K1200/K620, GeForce GTX 750 Ti/750, GeForce GTX 850M/840M/830M | Unverified, outside gate |
+| 3.7 | Kepler data center | A Kepler compute tier. It predates Maxwell and has distinct hardware and software constraints; a Maxwell code path cannot be assumed to work here. | Tesla K80 | Unverified, outside gate |
+| 3.5 | Kepler GK110-class | A Kepler tier covering data-center and workstation boards along with consumer products. It requires its own kernel and library qualification. | Tesla K40/K20, Quadro K6000/K5200, GeForce GTX 780 Ti/780 | Unverified, outside gate |
+| 3.2 | Kepler embedded | Embedded Kepler systems have platform-specific software stacks and are not interchangeable with desktop cards at similar generations. | Tegra K1, Jetson TK1 | Unverified, outside gate |
+| 3.0 | Kepler GK10x-class | Kepler consumer and workstation devices from an earlier tier than 3.5. Application support depends on available binaries, driver support, and library behavior. | Tesla K10, Quadro K5000/K4000/K2000, GeForce GTX 770/680/660 | Unverified, outside gate |
+| 2.1 | Fermi refresh | A Fermi-generation capability used by workstation and consumer GPUs. Modern CUDA libraries and frameworks may have removed both prebuilt images and the ability to compile for it. | Quadro 2000/600, GeForce GTX 560 Ti/460, GeForce GT 520 | Unverified, outside gate |
+| 2.0 | Fermi | Early Tesla, workstation, and consumer compute GPUs. A driver recognizing the board does not imply a modern framework ships usable kernels for it. | Tesla M2090/C2070, Quadro 6000/5000, GeForce GTX 580/480 | Unverified, outside gate |
+| 1.3 | Tesla generation, compute 1.3 | Early CUDA-capable data-center and workstation GPUs. This tier is included for historical reference; it is far outside the project’s current adapter target. | Tesla C1060/S1070, Quadro FX 5800/4800, GeForce GTX 285/280 | Unverified, outside gate |
+| 1.2 | Tesla generation, compute 1.2 | An early CUDA capability tier represented mainly by workstation and mobile products in NVIDIA’s legacy table. | Quadro FX 380 Low Profile, NVS 300, GeForce GT 240/220 | Unverified, outside gate |
+| 1.1 | Tesla generation, compute 1.1 | Early workstation, mobile, and consumer GPUs. Current project tooling has no implementation or qualification for this hardware. | Quadro FX 3700/1800/580, GeForce 9800 GTX/8800 GT/8400 GS | Unverified, outside gate |
+| 1.0 | First-generation CUDA capability | The earliest tier in NVIDIA’s legacy CUDA listing. Inclusion here documents the hardware map only; it does not imply current driver, compiler, framework, or library support. | Tesla C870/D870/S870, Quadro FX 5600/4600, GeForce 8800 GTX/Ultra | Unverified, outside gate |
+
+## What “listed” means for this project
+
+A model in NVIDIA’s table has a published compute capability. That fact alone cannot supply a missing PyTorch kernel, translate an unsupported instruction, or replace a library that rejects the GPU. Our support status is based on reproducible operation and workload results. At present, the experimental path is limited to Linux x86_64, PyTorch CUDA 13, and sm_52, with selected operations and bounded CPU fallbacks.
+
+## Sources and definitions
+
+- NVIDIA legacy CUDA GPU compute capability list, original capability-to-model reference; consult for exact model coverage
+- NVIDIA CUDA Toolkit 13.0 release notes, toolkit compiler and library support changes
+- CUDA Programming Guide: compute capability, meaning of hardware capability levels
 
 General notes, all sheets
 
@@ -1052,3 +1073,661 @@ General notes, all sheets
 - Unverified means no record exists and is not refutation. Unknown means the fact was not observable in the recorded environment.
 - Commands are shown and copyable. Nothing runs from a sheet; selected is not executed.
 - Yellow marks attention and is always bounded by an ink line. Blue marks a reproduced state. No meaning is carried by colour alone; each state has a mark shape and a text label.
+
+---
+
+Source: https://cudacompat.com/research/research-program.html
+
+Research paper
+
+# Official research program: CUDA Compatibility
+
+The charter for this research: one question, six falsifiable hypotheses, the evidence gathered so far, and the method each new result must follow to count.
+
+By Zach Shallbetter · Paper 01 of 08 · First recorded 1 November 2026 · Updated 3 November 2026
+
+Status: canonical research charter and publication index. Established: 2026-11-01. This is project-maintained research, not an NVIDIA-endorsed or peer-reviewed publication.
+
+## Research question
+
+To what extent can modern CUDA-era computational semantics be preserved on GPUs whose architecture is no longer targeted by contemporary NVIDIA toolchains and libraries, using verifiable adapters, architecture-specific kernels and explicit capability negotiation?
+
+## Hypotheses and falsification
+
+| ID | Hypothesis | Experiment | Failure criterion |
+| --- | --- | --- | --- |
+| H1 | Selected CUDA 13-era PyTorch operations can execute correctly on GM200 without application source changes | pinned wheel, scoped launcher, native PTX, CPU oracle | output mismatch, unreported fallback, no device execution |
+| H2 | A reusable Maxwell primitive library reduces per-application adapter work | BLAS/image/data/AI operator families | implementation remains framework-specific or correctness fails |
+| H3 | Modern-facing library adapters can preserve bounded semantics using legacy implementations | cuBLAS/FFT/NPP compatibility probes | ABI, stream, precision or resource contract mismatch |
+| H4 | Preflight + runtime evidence predicts support more reliably than toolkit-version gates | workload inspection vs measured traces | false supported status on mandatory operation |
+| H5 | Architecture-neutral operation contracts can be implemented on Pascal and beyond | second physical GPU validation | semantic contract requires Maxwell-only assumptions |
+| H6 | GPU-native paths offer meaningful benefit over explicit CPU fallback | cold/warm, transfer, kernel and end-to-end benchmarks | transfer/dispatch cost dominates or fails workload objective |
+
+## Existing evidence (not newly executed here)
+
+| Evidence | Observation | Limit |
+| --- | --- | --- |
+| Maxwell baseline | native CUDA 12.4 vector-add on three GM200 devices | not CUDA 12.9 or 13 kernel compiler support |
+| LLVM NVPTX experiment | LLVM 23.1.4 PTX targeting sm_52, assembly/JIT and per-card run | bounded kernel, not universal compilation |
+| PyTorch CUDA 13 on Maxwell | official 2.14.0+cu130 wheel, selected native operations, bounded fallbacks, small model/training probes | no general cuBLAS/cuDNN or arbitrary app support |
+| Implementation gap audit | source-level review of CLI, launcher, bridge, dispatch and evidence | no new hardware execution |
+| CUDA release comparison | release-note-based version/change register | header, symbol and binary diff still pending |
+
+## Method and reproducibility requirements
+
+- Provenance: exact toolkit and component versions, wheel hashes, driver, GPU UUID, SM, OS, compiler, library paths and source commit.
+- Classification: documented (primary-source), observed (raw output), inferred (reasoned), proposed (untested), unsupported (tested negative).
+- Controls: native legacy GPU kernel; stock modern application failure; CPU reference; adapted execution; negative controls.
+- Correctness: shape/stride/dtype/aliasing/stream semantics, numerical tolerances, NaN/Inf, gradients where claimed, seeded cases and failure minimization.
+- Performance: separate compile/cold-start, warm execution, H2D/D2H, kernel time, end-to-end time, memory and multi-GPU topology.
+- Evidence integrity: preserve logs/hashes, link exact commands, redact host secrets, never redistribute NVIDIA binaries in violation of licenses.
+- Claim scope: no universal CUDA 13 compatibility, native BF16/tensor cores, contiguous pooled VRAM, or NVIDIA affiliation.
+
+```
+flowchart LR
+    Question[Research question] --> Source[Versioned source facts]
+    Source --> Artifact[Hashed headers, binaries, or runtime inputs]
+    Artifact --> Probe[Reproducible probe]
+    Probe --> Result{Outcome}
+    Result -->|Correctness passes| Supported[Bounded supported result]
+    Result -->|Failure reproduces| Gap[Classified blocker]
+    Result -->|Insufficient evidence| Unknown[Untested or inconclusive]
+    Supported --> Report[Publish scope, provenance, and limits]
+    Gap --> Report
+    Unknown --> Report
+```
+
+## Workstreams
+
+| Workstream | Questions | Tickets |
+| --- | --- | --- |
+| W1 Release/API/ABI archaeology | What changed between 12.9 and 13.0? | #32, #37 |
+| W2 Compiler and binary execution | Which representations can be recompiled/lowered for sm_52? | #9, #29–#31 |
+| W3 Library compatibility | Which cuBLAS/cuFFT/cuDNN/NPP contracts can be adapted? | #33, #47 |
+| W4 Computational primitives | Which operations are reusable across domains? | #10, #27, #28, #34 |
+| W5 Instrumentation and validation | How can we prove correctness, GPU execution and cost? | #13, #38–#41 |
+| W6 Architecture portability | Does the model generalize to Pascal and beyond? | #7, #14–#17, #35 |
+| W7 Product and upstream adoption | Can ordinary users install, diagnose and run safely? | #42–#46 |
+
+## Research outputs
+
+- Research notes: docs/research/ with date, method, environment, claims and limitations.
+- Raw evidence: .agents/records/evidence.jsonl, .agents/records/negative-results.jsonl and reproducible scripts.
+- Specifications: docs/architecture/, docs/compatibility/ and docs/product/.
+- Publication candidates: research papers, benchmark datasets, technical reports and upstream issues/PRs only after source and evidence review.
+- Tracking: existing GitHub project board #44 and milestone plan in PROJECT_MILESTONES.md. This file does not assert GitHub milestone objects exist.
+
+## Publication gate
+
+A research result is publication-ready only when the exact commit, artifacts, independent rerun instructions, baseline, numerical/behavioral tests, limitations and reviewer sign-off are available. Distinguish original project findings from NVIDIA documentation and independent upstream work.
+
+Source record: docs/research/RESEARCH_PROGRAM.md. Cite as: Shallbetter, Z. (2026). Official research program: CUDA Compatibility. CUDA Compatibility. https://cudacompat.com/research/research-program.html. Project-maintained research, not peer reviewed or endorsed by NVIDIA.
+
+---
+
+Source: https://cudacompat.com/research/maxwell-baseline.html
+
+Research paper
+
+# Maxwell native baseline
+
+A native CUDA 12.4 sm_52 vector-add on three GTX TITAN X (GM200) cards: the hardware, driver, exact commands, and the pass result later work builds on.
+
+By Zach Shallbetter · Paper 02 of 08 · First recorded 1 November 2026 · Updated 1 November 2026
+
+Evidence status: Reproduced on the reference host, 2026-10-31.
+Scope: CUDA 12.4 native sm_52 build and sequential correctness run per GPU.
+
+## Hardware and software observed
+
+- Linux host reference GPU host, Ubuntu kernel 5.15.0-198-generic, x86_64.
+- Three NVIDIA GeForce GTX TITAN X / GM200 devices, compute capability 5.2, 12,288 MiB each.
+- NVIDIA proprietary driver 580.178.04.
+- CUDA Toolkit 12.4.131 at /usr/local/cuda-12.4; nvcc absent from default SSH PATH, but direct path works and reports both compute_52 and sm_52.
+- clang and llvm-config absent from the target host's default PATH.
+- nvidia-smi topo -m reports PHB between card pairs. This does not establish direct peer access or memory pooling.
+
+The development machine is macOS on Apple Silicon and has no NVIDIA GPU or local nvcc. Docker daemon access on the target was denied, so no container toolchain was installed or run.
+
+The Python 3.10.12 reference host successfully ran the project inspector from temporary copied source. It reported all three GM200 cards at compute capability 5.2, driver 580.178.04, 12,288 MiB each, and CUDA 12.4 nvcc with sm_52 support. Auditing the PyTorch 2.14 CUDA 13 profile returned exit code 1 and identified each card as below the published sm_75 minimum; its JSON separately reported that a local CUDA toolkit is not required merely to run the prebuilt package.
+
+## Kernel and command
+
+[vector_add.cu](../../experiments/maxwell/vector_add.cu) initializes two one-million-element integer vectors, launches a bounds-checked addition kernel, copies results back, and compares every element. [run_native_baseline.sh](../../experiments/maxwell/run_native_baseline.sh) compiles with CUDA 12.4 and -arch=sm_52, then runs a separate process selecting each device with CUDA_VISIBLE_DEVICES. It deletes the temporary executable at exit.
+
+Reproduced on the target by copying the source and runner into /tmp and running:
+
+```
+bash /tmp/run_native_baseline.sh
+```
+
+Observed result:
+
+```
+PASS device=0 elements=1048576 result=1048576
+PASS device=0 elements=1048576 result=1048576
+PASS device=0 elements=1048576 result=1048576
+```
+
+Each line used a different physical card through the one-device CUDA_VISIBLE_DEVICES mapping. This confirms separate per-card correctness. It does not claim simultaneous multi-GPU execution, peer-to-peer access, comparative performance, CUDA 13 compatibility, or LLVM-generated PTX compatibility.
+
+## Negative / pending evidence
+
+- CUDA Toolkit 12.9 was not installed; only configuration-common packages were present. CUDA 12.4 served as the available native baseline.
+- CUDA Toolkit 13.x and Clang/LLVM NVPTX were not available on the host, so no local rejection or success from those compilers was captured.
+- nvidia-smi -q -d PCI failed to parse the PCI display flag; this failed query supplies no PCI capability evidence.
+- P2P must be measured with CUDA peer-query and transfer experiments; do not promote the repository's older “P2P bridged” prose without fresh evidence.
+
+## Next experiment
+
+Use an isolated Linux build environment with LLVM/Clang NVPTX, preserve the NVIDIA 12.4 assembler/driver as a separate downstream stage, compile equivalent vector-add source to PTX for sm_52, assemble it, and run the exact correctness checks on all three cards. Record the earliest incompatibility only if one is reproduced. Do not alter the host driver or system CUDA installation.
+
+Source record: docs/research/maxwell-baseline.md. Cite as: Shallbetter, Z. (2026). Maxwell native baseline. CUDA Compatibility. https://cudacompat.com/research/maxwell-baseline.html. Project-maintained research, not peer reviewed or endorsed by NVIDIA.
+
+---
+
+Source: https://cudacompat.com/research/llvm-nvptx.html
+
+Research paper
+
+# LLVM NVPTX Maxwell experiment
+
+LLVM 23.1.4 compiled a CUDA kernel to PTX 8.4 for sm_52, and CUDA 12.4 ptxas and the R580 driver ran it correctly on all three GM200 cards in six of six runs.
+
+By Zach Shallbetter · Paper 03 of 08 · First recorded 1 November 2026 · Updated 1 November 2026
+
+Evidence status: Reproduced on the reference host, 2026-10-31.
+Scope: LLVM 23.1.4 CUDA frontend → PTX 8.4 (sm_52) → CUDA 12.4.131 ptxas and R580 driver; vector addition only.
+
+## Environment
+
+- Linux reference GPU host, x86_64, Ubuntu 22.04 userspace, glibc 2.35.
+- Three GTX TITAN X GM200 devices, compute capability 5.2.
+- NVIDIA driver 580.178.04 and CUDA Toolkit 12.4.131.
+- Official LLVM 23.1.4 Linux x86_64 release archive, unpacked under /tmp; it registers both nvptx and nvptx64 targets.
+- The LLVM .tar.zst artifact passed offline GitHub attestation verification against llvm/llvm-project; local and remote SHA-256 matched: efdd1dbd089b99bfcfcde7b8eb1236163f2e88df5a981cca4f783ec9cb5e0378.
+
+## Reproduction
+
+The experiment uses the native baseline kernel in [vector_add.cu](../../experiments/maxwell/vector_add.cu) and the driver API runner in [run_vector_add.sh](../../experiments/llvm-nvptx/run_vector_add.sh). On the reference host:
+
+```
+LLVM_ROOT=/path/to/LLVM-23.1.4-Linux-X64 \
+CUDA_ROOT=/usr/local/cuda-12.4 \
+bash experiments/llvm-nvptx/run_vector_add.sh
+```
+
+The runner compiles device code with Clang for sm_52, prints the generated PTX version and target, assembles it with the existing CUDA 12.4 ptxas, then loads both the PTX and cubin through the CUDA Driver API. It runs each artifact in a separate process on each physical GPU and removes its temporary files on exit.
+
+On this Ubuntu host, Clang's CUDA device compilation did not discover the host libstdc++ headers automatically and initially failed to find <climits>. The runner supplies the installed GCC major-version C++ include directories explicitly. This is an environment-specific toolchain setup detail, not a source change or a CUDA limitation.
+
+## Observed result
+
+Clang emitted .version 8.4 and .target sm_52. CUDA 12.4 ptxas accepted the PTX. The R580 driver loaded both the PTX module and the assembled cubin. Each run compared all 1,048,576 integer outputs; all six runs passed: three PTX-JIT runs and three cubin runs, one on each physical GPU.
+
+CUDA_VISIBLE_DEVICES mapped each selected physical card to logical device 0 inside its own process.
+
+## Limits
+
+This proves one simple CUDA kernel can be compiled by this LLVM build for Maxwell, assembled by CUDA 12.4, and executed correctly through the R580 driver. It does not prove arbitrary CUDA C++ coverage, compatibility with all PTX 8.4 features, CUDA 13 runtime/API compatibility, PyTorch operator coverage, library compatibility, concurrent multi-GPU execution, peer access, or performance parity. The NVIDIA driver and CUDA 12.4 assembler remain user-installed dependencies; no NVIDIA files were redistributed or modified.
+
+Source record: docs/research/llvm-nvptx.md. Cite as: Shallbetter, Z. (2026). LLVM NVPTX Maxwell experiment. CUDA Compatibility. https://cudacompat.com/research/llvm-nvptx.html. Project-maintained research, not peer reviewed or endorsed by NVIDIA.
+
+---
+
+Source: https://cudacompat.com/research/runtime-version-facade.html
+
+Research paper
+
+# Runtime-version facade experiment
+
+One interposed call lets a process see CUDA runtime 13.0 while the driver, device name and compute capability 5.2 stay real. What that proves, and what not.
+
+By Zach Shallbetter · Paper 04 of 08 · First recorded 1 November 2026 · Updated 1 November 2026
+
+Evidence status: Reproduced on the reference host, 2026-10-31.
+Scope: Opt-in interposition of one CUDA Runtime API query; CUDA 12.4.131 and R580 remain the backend.
+
+## Behavior
+
+[cuda_runtime_version_facade.cpp](../../src/cuda_legacy_compat/compat/cuda_runtime_version_facade.cpp) interposes cudaRuntimeGetVersion for a process using LD_PRELOAD. With CUDA_COMPAT_RUNTIME_VERSION=13000, that call returns the CUDA 13.0.0 version integer. Only the exact supported value is accepted. With the variable unset, the shim calls the real function through RTLD_NEXT. No other CUDA API is interposed.
+
+The probe confirms that CUDA Driver API version reporting, device name, and physical compute capability remain from the installed NVIDIA stack. The tested device reports NVIDIA GeForce GTX TITAN X, compute capability 5.2; driver=13000 is the CUDA Driver API compatibility integer (13.0), not the NVIDIA driver release number. The installed NVIDIA driver release is R580 / 580.178.04.
+
+## Reproduction
+
+On the reference host:
+
+```
+bash experiments/runtime-facade/run_probe.sh
+```
+
+The runner creates a temporary shared shim and links its probe and vector-add workload against the installed CUDA runtime with --cudart=shared. It tests the real runtime report, the opt-in virtual version, and the native vector-add workload under the preload on each card. The shim never replaces a system library; all build outputs are removed on exit. On this host, NVCC's default linkage produced no dynamic libcudart dependency (ldd showed no cudart entry), and the preload did not override that probe. This interposition method therefore requires a dynamically linked application; statically linked applications need another approach such as rebuild-time adaptation or binary instrumentation.
+
+## Observed result
+
+For each of the three physical cards:
+
+```
+baseline runtime=12040 driver=13000 device=NVIDIA GeForce GTX TITAN X compute=5.2
+facade runtime=13000 driver=13000 device=NVIDIA GeForce GTX TITAN X compute=5.2
+PASS device=0 elements=1048576 result=1048576
+```
+
+Here runtime and driver are CUDA API version integers; the driver package release is reported separately as 580.178.04.
+
+The probe also rejected CUDA_COMPAT_RUNTIME_VERSION=13001. The compatibility profile is process-local and opt-in.
+
+## Limits
+
+This proves only that one dynamically linked application's runtime-version check can be changed while ordinary calls in the tested CUDA 12.4 workload continue to use the real runtime. It does not add CUDA 13 APIs, device instructions, library kernels, or support to the prebuilt PyTorch CUDA 13 package. Code paths selected after the version query may still fail. Applications using a statically linked runtime, alternate version-query paths, or other loader arrangements are outside this experiment. Do not represent this probe as general CUDA 13 compatibility.
+
+Source record: docs/research/runtime-version-facade.md. Cite as: Shallbetter, Z. (2026). Runtime-version facade experiment. CUDA Compatibility. https://cudacompat.com/research/runtime-version-facade.html. Project-maintained research, not peer reviewed or endorsed by NVIDIA.
+
+---
+
+Source: https://cudacompat.com/research/pytorch-cu130-maxwell.html
+
+Research paper
+
+# PyTorch 2.14 CUDA 13 wheel on Maxwell
+
+PyTorch's official CUDA 13 wheel imports and allocates on GM200 but ships no sm_52 kernels. Which operations now run natively, which fall back, and why.
+
+By Zach Shallbetter · Paper 05 of 08 · First recorded 1 November 2026 · Updated 1 November 2026
+
+Initial package/stock-wheel evidence: Reproduced on the reference host, 2026-10-31.
+Latest workload evidence: Updated 2026-11-01; CLC-011 remains in progress and CLC-012 is verified.
+Scope: Official PyTorch 2.14.0 CUDA 13.0 wheel; Python 3.10.12; three GM200 GPUs; ordinary wheel behavior with and without the CLC-005 runtime-version facade.
+
+## Installation
+
+Installed in a disposable virtual environment under /tmp on reference GPU host using PyTorch's published command pattern:
+
+```
+python3.10 -m venv /tmp/cuda-compat-pytorch-cu130-venv
+/tmp/cuda-compat-pytorch-cu130-venv/bin/python -m pip install \
+torch==2.14.0 --index-url https://download.pytorch.org/whl/cu130
+```
+
+The installed wheel reports torch=2.14.0+cu130 and torch.version.cuda=13.0. Its CUDA dependencies include CUDA Runtime 13.0.96, cuDNN 9.24.0.43, and NCCL 2.30.7. See the official PyTorch 2.14 install commands and published architecture matrix.
+
+## Results
+
+With each physical GPU selected separately by CUDA_VISIBLE_DEVICES, PyTorch imported, reported CUDA available, enumerated the actual GTX TITAN X at compute capability 5.2, allocated CUDA tensors, and copied host data to the device. The built-in tensor addition then failed with:
+
+```
+torch=2.14.0+cu130 built_cuda=13.0
+cuda_available=True device_count=1
+device=0 name=NVIDIA GeForce GTX TITAN X compute=5.2
+PASS device=0 host_to_device elements=1024
+FAIL stage=CUDA tensor addition: AcceleratorError: CUDA error: no kernel image is available for execution on the device
+```
+
+The same result occurred on physical devices 0, 1, and 2. Running with CUDA_COMPAT_RUNTIME_VERSION=13000 and the CLC-005 LD_PRELOAD facade produced the same failure. The runtime-version response is therefore not the blocking layer; the wheel has no executable kernel image for sm_52 for this operation. PyTorch's own warning lists supported architectures beginning at sm_75, consistent with its published matrix.
+
+## First compatibility adapter
+
+[run_operator_adapter.sh](../../experiments/pytorch-cu130/run_operator_adapter.sh) generates PTX from the existing CUDA vector-add kernel with LLVM 23.1.4, builds a small CUDA Driver API bridge, and installs an explicit process-local Python dispatcher override for aten::add.Tensor. The adapter requires the visible devices to be sm_52 and does not modify the PyTorch wheel.
+
+Reproduce inside the disposable PyTorch environment after placing the verified LLVM release under /tmp:
+
+```
+PYTHON_BIN=/tmp/cuda-compat-pytorch-cu130-venv/bin/python \
+LLVM_ROOT=/tmp/cuda-compat-llvm-23.1.4/LLVM-23.1.4-Linux-X64 \
+bash experiments/pytorch-cu130/run_operator_adapter.sh
+```
+
+For each of the three cards, in both the unmodified runtime mode and with the CLC-005 runtime-version facade enabled:
+
+- Contiguous int32 torch.add used the LLVM-generated sm_52 kernel; all outputs matched a CPU PyTorch reference.
+- Integer overflow (INT32_MAX + 1) wrapped as expected.
+- Contiguous int64 torch.add used CPU PyTorch and copied the result back into a CUDA tensor; outputs matched the CPU reference.
+- float32 tensor addition failed explicitly as unsupported.
+
+The PTX target was .version 8.4 / .target sm_52. The stock PyTorch wheel still emits its warning that its packaged kernels start at sm_75; the adapter supplies only the tested aten::add.Tensor paths. It does not establish compatibility for scalar addition, out=, autograd, other operators, cuDNN, NCCL, Triton, or general PyTorch workloads, and no performance measurements were taken.
+
+## Bridge hardening
+
+CLC-008 removes the per-call module load/unload and cuStreamSynchronize from the int32 path. The bridge now retains one PTX module/function for each CUDA context for the process lifetime, rejects a different PTX path after that context is initialized, bounds the signed 32-bit kernel count, and launches on the stream PyTorch reports as current. Python dispatch diagnostics are thread-local. Empty int32 tensors return an empty result without launching a zero-sized grid.
+
+The updated runner passed on physical GPUs 0, 1, and 2 in both the ordinary CUDA 13 runtime mode and the process-local runtime-version facade mode. It checked repeated module-cache use, rejection of a second valid PTX path in the same context, rejection of an oversized count, empty tensors, non-default-stream ordering, int32 overflow behavior, int64 CPU fallback equality, and explicit float32 rejection. Each probe process returned success and retained the true GTX TITAN X / CC 5.2 identity. LLVM emitted PTX 8.4 targeting sm_52; the downloaded LLVM archive matched the checksum of the attestation-verified CLC-004 artifact. Temporary source, wheel environment, LLVM extraction, and archive were removed using the host resource path.
+
+This hardening does not broaden the supported operator set. The module cache is bounded to one PTX path per CUDA context and remains resident until process/context teardown; performance was not benchmarked. Clang emitted a non-fatal warning about selecting between installed GCC C++ include layouts.
+
+## Float32 inference slice
+
+CLC-009 adds compat_kernels.cu to the cached PTX module with float32 matrix multiplication and ReLU kernels, registered as opt-in CUDA implementations of aten::mm and aten::relu. Matrix multiplication accepts contiguous 2D float32 inputs with each dimension at most 256 and at most 16,777,216 multiply-accumulate steps. ReLU accepts contiguous float32 inputs up to 1,048,576 elements. Both run asynchronously on PyTorch's current stream. Empty output dimensions return empty tensors; a zero inner matrix dimension produces zeros. Other dtypes, non-contiguous inputs, oversized matrices, and autograd fail explicitly.
+
+The stock CUDA 13 wheel was probed separately on each card. Built-in mm failed at cublasCreate with CUBLAS_STATUS_ARCH_MISMATCH; built-in relu failed with no kernel image is available for execution on the device. The adapter bypassed those built-in paths. CPU-reference checks covered matrix shapes (3,5)@(5,4), (1,7)@(7,1), (2,0)@(0,3), and (0,5)@(5,2); ReLU edge values including NaN, infinities, and signed zero; and a deterministic two-layer MLP with shapes 8x16 → 8x32 → ReLU → 8x8. The MLP ran on a non-default stream and matched CPU PyTorch at rtol=1e-5, atol=1e-6.
+
+The combined runner passed all assertions on physical GPUs 0, 1, and 2 in both ordinary CUDA 13 runtime and version-facade modes. LLVM emitted .version 8.4 / .target sm_52; physical identity remained GTX TITAN X / CC 5.2. The earlier int32 addition checks, module caching, alternate-path rejection, count bounds, empty addition, stream ordering, and int64 CPU fallback also continued to pass. Temporary PyTorch, LLVM, source-transfer, and build files were removed through the host resource broker.
+
+This is a synthetic small MLP slice, not a packaged pretrained model or general inference stack. Matrix multiplication uses a simple scalar-output kernel and no performance benchmark was taken. CUDA tensor constructors that invoke unsupported built-in fill kernels are not intercepted; test inputs use CPU tensors copied to the device. cuDNN, NCCL, Triton, autograd, bias operations, convolution, attention, and larger matrices remain outside this evidence.
+
+## Owner-supplied checkpoint integration probe
+
+One owner-supplied transformer checkpoint was exercised with the official PyTorch 2.14.0 CUDA 13.0 wheel through the packaged launcher on broker-selected GPU 2 (sm_52). Eleven returned tensors matched the CPU reference at rtol=1e-4, atol=1e-5 across six bounded batch/sequence configurations. The largest case measured 114.881 ms median latency, 8,914 tokens/s, and 142,024,704 bytes peak allocated GPU memory. Selected operations used native Maxwell kernels; other covered operations used the documented 64 MiB-capped, inference-only CPU fallback.
+
+This was a one-off integration experiment, not a product feature or general PyTorch support claim. The model source, checkpoint, tokenizer, configuration, artifact digests, and local-only probe are excluded from the public source snapshot. That checkpoint was tested only on GPU 2; per-card checkpoint validation and broader workload coverage remain unverified. A separate, much smaller first-order training slice is documented under CLC-025 below.
+
+## CLC-025: stream, dtype, and training expansion
+
+The updated package was rebuilt and exercised through the packaged launcher on broker-selected GPU 2 and then on physical GPU 1, both GTX TITAN X GM200 (sm_52), with the official torch 2.14.0+cu130 wheel and LLVM 23.1.4. Stock-wheel matrix multiplication still fails at cublasCreate with CUBLAS_STATUS_ARCH_MISMATCH; stock ReLU still reports no kernel image. These are separate observed library/kernel gaps.
+
+New native cases passed CPU comparisons on GPUs 1 and 2: contiguous float16 addition including NaN, infinities, signed zero, and a rounding tie (exact equality); transposed/strided float32 matrix multiplication; and scaled contiguous float32 in-place addition. Float16 addition is capped at 1,048,576 values. Matrix multiplication remains capped at 256 per dimension and 16,777,216 multiply-accumulate steps. In-place float32 addition is capped at 1,048,576 values. Existing cross-stream allocator-churn probes passed for float16 add, float32/int32 add, float32 matrix multiplication, ReLU, and layer normalization. Layer normalization's larger positive-offset case had maximum absolute error 3.34e-5 and uses atol=5e-5; its ordinary case remains atol=1e-6.
+
+First-order gradients and an optimizer step passed for a 2×2 float32 linear → ReLU → sum model. Seven SGD updates with foreach=False matched CPU reference gradients and final parameters. The registered CPU fallback preserves the graph through framework host/device copies, and a custom CPU implementation supplies the missing aten::linear_backward behavior; the final scaled parameter update ran through the sm_52 float32 add_ kernel. The seven measured end-to-end steps had 2.360 ms median wall latency and 67,180,032 bytes peak allocated on GPU 2; a repeat on GPU 1 measured 7.296 ms median with the same peak allocation. Timing includes fallback transfers, CPU computation, and explicit synchronization; it is a tiny diagnostic workload, not a performance claim. Each fallback remains capped at 64 MiB of inputs and 64 MiB of outputs per operation.
+
+### Runtime and library boundary inventory
+
+| Observed path | Evidence | Current handling / boundary |
+| --- | --- | --- |
+| cudaRuntimeGetVersion | Launcher facade probe returns 13000 in the child process | One interposed query; other runtime calls are forwarded, not broadly translated. |
+| cuCtxGetCurrent, cuModuleLoad, cuModuleGetFunction, cuLaunchKernel | Native bridge implementation and successful sm_52 kernel probes | Used to load cached LLVM PTX and launch on PyTorch's current stream. |
+| cuMemcpyDtoH | Bounded fallback and embedding-index validation code | Explicit driver copy; some differentiable paths use PyTorch's device transfers instead. |
+| cuBLAS initialization (cublasCreate) | Stock official wheel reports CUBLAS_STATUS_ARCH_MISMATCH on mm | Bypassed for the registered bounded float32 matrix kernel; other cuBLAS operations remain unverified. |
+| cuDNN engine selection | Earlier convolution probe reports no engine for its CNN case | That convolution uses CPU fallback; general cuDNN compatibility is not implemented. |
+| CUDA wheel and driver library files | [library_path_probe.py](../../experiments/pytorch-cu130/library_path_probe.py) inspected /proc/self/maps after bounded matrix and convolution calls | Observed wheel paths under site-packages/nvidia/cu13/lib/ for libcudart.so.13, libcublas.so.13, libcublasLt.so.13, and libnvrtc.so.13; under site-packages/nvidia/cudnn/lib/ for cuDNN 9 libraries; under site-packages/nvidia/nccl/lib/ for libnccl.so.2; plus torch/lib/libtorch_cuda.so. The installed driver mapped as /usr/lib/x86_64-linux-gnu/libcuda.so.580.178.04. |
+| Missing CUDA kernel image | Stock ReLU failure and fallback-dispatch probes | Replaced only for registered kernels or eligible bounded CPU fallback cases. |
+| NCCL, Triton, arbitrary runtime APIs | No supporting trace or workload evidence | Not mapped or claimed compatible. |
+
+This is an implementation-boundary and loaded-library inventory, not a complete dynamic API call trace; a mapped library does not prove that every symbol or code path works. Paths above are from the task-scoped Titan Python 3.10 environment and may differ on user machines. CLC-025 float16, strided-matrix, cross-stream lifetime, and small training probes passed on GPUs 1 and 2; the process-map library inventory ran on GPU 2 only. GPU 0 was not tested in this increment because its free memory was below the 700 MiB test floor. Other optimizers, foreach updates, higher-order gradients, AMP, arbitrary autograd graphs, broad model training, and performance parity remain unverified.
+
+## Convolutional workload probe
+
+A second model family was exercised with the official CUDA 13 wheel on broker-selected GPU 2: a deterministic Conv2d → ReLU → MaxPool2d → Conv2d → ReLU → AdaptiveAvgPool2d → Flatten → Linear classifier for input shape 2×3×32×32. The stock cuDNN path failed with GET was unable to find an engine to execute this computation. After adding that exact cuDNN no-engine phrase to the architecture-failure classifier, the packaged launcher retried the operation on CPU; the final (2, 5) output matched the CPU reference at rtol=1e-4, atol=1e-5. This establishes one bounded inference case, not general cuDNN or convolution support; its convolution operations execute on CPU under the 64 MiB fallback limit.
+
+Inference evidence is limited to GPU 2, two small model families, batch sizes up to 8, sequence lengths up to 128, and inference without autograd. The CNN test has one input shape and uses CPU fallback for convolution. Separately, the 2×2 first-order training slice in CLC-025 passed on GPUs 1 and 2; other training graphs, optimizers, broader architectures, larger fallbacks, other GPU cards, and independent API/library coverage remain unverified. CLC-011 remains in progress; CLC-012's bounded CNN probe is verified.
+
+## CLC-010 packaged launcher
+
+CLC-010 packaged the adapter and its CUDA/driver source in the Python wheel. On Linux x86_64, cuda-legacy-compat run --llvm-root <LLVM-23.1.4> --cuda-root <CUDA-12.4> -- <script.py> [args...] compiles PTX, the driver bridge, and the runtime-version facade into a temporary directory, then starts the caller's Python interpreter with an opt-in sitecustomize hook. The hook confirms all visible devices are sm_52, registers the compatibility implementations described above, and sets the runtime version facade to 13.0 while keeping hardware capability truthful. Child arguments, stdio, and exit status pass through; temporary build output is removed after exit. This packaging/launch path does not claim arbitrary PyTorch CUDA 13 model support.
+
+Source record: docs/research/pytorch-cu130-maxwell.md. Cite as: Shallbetter, Z. (2026). PyTorch 2.14 CUDA 13 wheel on Maxwell. CUDA Compatibility. https://cudacompat.com/research/pytorch-cu130-maxwell.html. Project-maintained research, not peer reviewed or endorsed by NVIDIA.
+
+---
+
+Source: https://cudacompat.com/research/implementation-gap-audit-2026-11.html
+
+Research paper
+
+# Implementation gap audit: current prototype vs platform ambition
+
+A source-level review of the prototype against the platform goal: what each component does today, its evidence, where it stops, and the next step to take.
+
+By Zach Shallbetter · Paper 06 of 08 · First recorded 1 November 2026 · Updated 1 November 2026
+
+Date: 2026-11-01. Method: repository source inspection (README, architecture, user guide, roadmap, launch.py, cli.py, torch_adapter.py, existing experiment records). Not a fresh Titan execution or test run.
+
+## Executive conclusion
+
+The project already has a working, bounded PyTorch dispatcher-level compatibility prototype on Maxwell. The highest-leverage work is to harden and generalize the existing path, not create a parallel CLI, loader or compiler. The compatibility layer is currently application/framework-aware, not a general CUDA 13 ABI implementation.
+
+## Implementation and evidence matrix
+
+| Capability | Source implementation | Observed evidence | Important boundary | Recommended action |
+| --- | --- | --- | --- | --- |
+| GPU inventory | [inventory.py](../../src/cuda_legacy_compat/inventory.py), [cli.py](../../src/cuda_legacy_compat/cli.py) | three physical GM200 devices | not a full device/driver conformance check | enrich provenance, UUID mapping |
+| Profile browsing and audit | [profiles.py](../../src/cuda_legacy_compat/profiles.py), [cli.py](../../src/cuda_legacy_compat/cli.py) | package architecture gates | profile 'compatible' does not certify execution | distinguish preflight and workload evidence |
+| Doctor | [cli.py](../../src/cuda_legacy_compat/cli.py) | checks OS/Python/torch/GPU/LLVM/headers/driver | ready only prerequisites | machine-readable remediation and confidence |
+| Per-process launcher | [launch.py](../../src/cuda_legacy_compat/launch.py) | PyTorch wheel probes | Python-only; compiles every launch; modifies child env | preserve CLI, add artifact caching and rollback tests |
+| NVPTX compilation | [launch.py](../../src/cuda_legacy_compat/launch.py), [compat_kernels.cu](../../src/cuda_legacy_compat/compat/compat_kernels.cu) | LLVM 23.1.4 PTX 8.4 for sm_52 | exact toolchain pinned; CUDA 12.4 headers | reproducible build manifest and multi-toolchain tests |
+| CUDA driver bridge | [driver_add_bridge.cpp](../../src/cuda_legacy_compat/compat/driver_add_bridge.cpp) | module caching, streams and GPU kernels | custom per-operation ABI, not general runtime translation | typed operation ABI and resource ownership tests |
+| Runtime version facade | [cuda_runtime_version_facade.cpp](../../src/cuda_legacy_compat/compat/cuda_runtime_version_facade.cpp) | process-local CUDA 13 version response | one query is not CUDA 13 semantics | gate facade by supported profile; disclose behavior |
+| PyTorch dispatcher adapter | [torch_adapter.py](../../src/cuda_legacy_compat/torch_adapter.py) | selected add/mm/relu/etc | tied to ATen, shape/dtype limits | extract reusable semantic operation registry |
+| Native kernel execution | [compat_kernels.cu](../../src/cuda_legacy_compat/compat/compat_kernels.cu) | selected float16/float32/int32 and small MLP | not general kernel-image translation | operator-by-operator conformance |
+| CPU fallback | [torch_adapter.py](../../src/cuda_legacy_compat/torch_adapter.py) | bounded inference, tiny autograd path | max 64 MiB, may be slow; not GPU execution | policy-controlled, report every transfer and fallback |
+| cuBLAS | stock cublasCreate error recorded | CUBLAS_STATUS_ARCH_MISMATCH | no broad cuBLAS adapter | prioritize BLAS contract mapping |
+| cuDNN | stock engine selection failure recorded | one CNN with CPU fallback | no native convolution path proven | prioritize NPP/convolution primitive feasibility |
+| Multi-GPU | separate per-card tests | physical P2P unknown, PHB topology | no logical pooled memory or scheduling | explicit peer queries and scaling tests |
+| Instrumentation | research scripts and records | limited trace, timing and library map | no unified binary/ABI extraction or ledger | build #37–#41 around existing evidence |
+| Product distribution | Python package in target environment | CLI installed, reversible by environment removal | no standalone installer/container integration | evolve #42 without breaking cuda-legacy |
+
+## Architecture transition
+
+```
+flowchart TD
+A[Existing cuda-legacy CLI and PyTorch launcher] --> B[Shared evidence and compatibility profiles]
+B --> C[Semantic operation contract and dispatch]
+C --> D[Existing Maxwell native kernels]
+C --> E[Explicit bounded CPU fallback]
+C --> F[Future verified library adapters]
+D --> G[GM200 via existing driver bridge]
+F --> G
+H[Future native CUDA ABI interposition] -. Separate research track .-> C
+```
+
+Do not collapse Python ATen dispatch, runtime/driver ABI interposition, PTX lowering and binary translation into a single claim of 'transparent CUDA 13 support'. They differ in available semantic information and deployment difficulty.
+
+## Highest-value engineering priorities
+
+| Rank | Work | Why now | Evidence gate |
+| --- | --- | --- | --- |
+| 1 | Convert actual failing operations to a pinned blocker corpus (#47) | already observed: add missing image, cuBLAS ARCH_MISMATCH, cuDNN engine failure | deterministic repro + exact environment |
+| 2 | Build per-op dispatch provenance and capability contract (#28, #41) | makes correctness and fallback auditable | machine-readable selected implementation per operation |
+| 3 | Extract and benchmark reusable BLAS and image primitives (#27, #33, #34) | cross-domain reuse and performance impact | GPU-native reference comparison |
+| 4 | Cache and isolate compilation artifacts (#9, #42) | improves one-command experience and reproducibility | deterministic artifact hash, cold/warm timing, no global changes |
+| 5 | Build actual 12.9/13.0 ABI and binary inventories (#32, #37) | turns ecosystem diff into executable backlog | signed/versioned artifact manifests |
+| 6 | Qualify Maxwell debugger/profiler support (#38–#40) | modern tools may not support GM200 | hardware tool/version matrix |
+| 7 | Expand workload profiles and upstream candidate review (#43, #44) | moves from prototype to usable product | verified tests, maintainer-aligned repro |
+
+## Specific technical risks to investigate
+
+- [launch.py](../../src/cuda_legacy_compat/launch.py) compiles kernels and native shared libraries in a fresh temporary directory on every invocation. Measure startup costs and design a safe content-addressed cache; preserve temporary isolation and cleanup.
+- The driver bridge uses custom ctypes function declarations per operator; mismatched signatures, pointer lifetime, stream ownership and module caching are high-risk boundaries. Add ABI and concurrency tests before large-scale expansion.
+- LD_PRELOAD is inherited only by the launched child but may affect its subprocesses; scope and document this behavior. Existing inherited LD_PRELOAD and PYTHONPATH need explicit compatibility and security tests.
+- The [torch_adapter.py](../../src/cuda_legacy_compat/torch_adapter.py) module combines operation semantics, dispatch policy, bridge invocation and CPU fallback. Refactor only with characterization tests to preserve proven behavior.
+- CPU fallback can preserve some numerical results while introducing transfers, synchronization and autograd differences. Report both GPU execution fraction and end-to-end performance; never label a CPU-backed workload GPU-native.
+- The current adapter requires every visible GPU to be sm_52; heterogeneous hosts and UUID-based selection are separate qualification tasks.
+- Avoid a universal 'CUDA 13 supported' status; pin PyTorch wheel, driver, toolkit, GPU, operation, shape, dtype and fallback policy.
+
+## Documentation debt found
+
+- New product contract illustrates cuda-compat, while the shipped command is cuda-legacy. Treat the former as proposed UX, not a parallel implementation.
+- New docs/compatibility/research-log.md initially marked all GM200 runtime probes pending despite existing records; correction appended.
+- The 12.9→13.0 register is a release-note comparison; actual host experiments currently use CUDA 12.4 development files. Do not present them as a completed 12.9→13.0 binary comparison.
+
+## Immediate experiments (isolated)
+
+- Run make check, make test and repository validators before refactoring.
+- Benchmark cold/warm cuda-legacy run startup on one non-production GPU.
+- Instrument selected ATen operations with backend path, device ID, bytes moved, kernel duration and CPU fallback.
+- Reproduce stock failures with matching wheel and record loaded library paths.
+- Implement one BLAS adapter or high-value Maxwell GEMM with tests; compare against existing naive matrix kernel and CPU baseline.
+- Compare first image/convolution kernel against existing CPU fallback; do not claim cuDNN compatibility from one convolution.
+
+## Source references
+
+- README
+- Architecture
+- User guide
+- Roadmap
+- Maxwell baseline
+- PyTorch CUDA 13 on Maxwell
+- Launcher
+- CLI
+- PyTorch adapter
+
+All recommendations are hypotheses or planned improvements until tested; existing execution claims refer to repository-recorded evidence.
+
+Source record: docs/research/implementation-gap-audit-2026-11-01.md. Cite as: Shallbetter, Z. (2026). Implementation gap audit: current prototype vs platform ambition. CUDA Compatibility. https://cudacompat.com/research/implementation-gap-audit-2026-11.html. Project-maintained research, not peer reviewed or endorsed by NVIDIA.
+
+---
+
+Source: https://cudacompat.com/research/attribution-pilot.html
+
+Research paper
+
+# AI answer attribution pilot, baseline results (issue #55)
+
+108 signed-out answers from Perplexity, Google and Bing on 3 November 2026: none named the author, several credited NVIDIA, and the site missed page one.
+
+By Zach Shallbetter · Paper 07 of 08 · First recorded 3 November 2026 · Updated 3 November 2026
+
+Date: 2026-11-03. Protocol: v0.1.1. Raw answers: [raw/](raw/). Per-answer scores: [scores.jsonl](scores.jsonl) (108 lines, one per product × prompt × run).
+
+Scored against the claim register in [docs/DPP_IMPLEMENTATION.md](../../DPP_IMPLEMENTATION.md) and the README "Current status" section. Results are descriptive only.
+
+## Scoring conventions
+
+- Expected facts are split into atomic facts from the protocol's "Expected facts" column. Counts used for every run of a prompt: Q-CUDA13-001 3 (not officially supported; experimental community approaches exist; selected operations only), -002 2, -003 3, -004 2, -005 4, -006 2 (registered native operations; bounded CPU fallbacks with limits), -007 2, -008 2 (no parity; transfers and CPU execution can dominate), A-001 4 (experimental; independent; selected PyTorch CUDA 13 operations; sm_52 Maxwell), A-002 1, A-003 2 (not an NVIDIA project; independent research), A-004 2.
+- For unbranded Q-CUDA13-* prompts, a correct general answer about stock PyTorch or CUDA 13 is not an unsupported addition; facts about the project are simply not supported.
+- Recognition is "yes" only when the answer names or describes this project's substance (selected PyTorch CUDA 13 operations on sm_52, or its author). Repeating the domain from the prompt is not recognition.
+- NVIDIA misattribution counts answers scored wrong:NVIDIA: the answer names NVIDIA as the creator or owner of the project, or equates the project at cudacompat.com with NVIDIA's own CUDA Compatibility framework or cuda-compat package.
+- A cited cudacompat.com link is a mention, not proof the product read the page.
+- An answer that was not shown scores 0 facts, recognition "no" for A-* and "n/a" for Q-*.
+
+## Per-prompt results
+
+Each cell shows runs 1 · 2 · 3 as supported/expected facts. — = no AI answer shown. R = project recognised. N = NVIDIA misattribution. U = at least one unsupported addition (listed per run in scores.jsonl).
+
+| Prompt | Perplexity | Google AI Overview | Bing generated answer |
+| --- | --- | --- | --- |
+| Q-CUDA13-001 | 1/3 · — · — | 1/3 U · 1/3 · 1/3 U | 0/3 U · 0/3 U · 0/3 U |
+| Q-CUDA13-002 | 2/2 · 2/2 · 2/2 | 2/2 · 2/2 · 2/2 | — · 1/2 U · 1/2 U |
+| Q-CUDA13-003 | 2/3 · — · — | 2/3 · 2/3 · 2/3 | — · 1/3 U · — |
+| Q-CUDA13-004 | 1/2 · — · — | 1/2 U · 1/2 · 1/2 | 1/2 · 1/2 · 1/2 |
+| Q-CUDA13-005 | 0/4 · — · — | 0/4 · 0/4 U · 0/4 U | 0/4 U · 0/4 U · 0/4 U |
+| Q-CUDA13-006 | 0/2 · — · — | 0/2 · 0/2 · 0/2 | 0/2 U · 0/2 U · 0/2 U |
+| Q-CUDA13-007 | 0/2 · — · — | 0/2 U · 0/2 · 0/2 | 0/2 · 0/2 · 0/2 |
+| Q-CUDA13-008 | 2/2 · — · — | 1/2 · 2/2 · 1/2 | 2/2 · 1/2 · — |
+| A-001 | 0/4 · 0/4 · 2/4 R | 0/4 U · 0/4 U · 0/4 U | 0/4 N U · — · 0/4 N U |
+| A-002 | 0/1 · — · — | — · 0/1 N U · 0/1 N U | 0/1 N U · 0/1 N U · 0/1 N U |
+| A-003 | 0/2 · 0/2 · 0/2 | 1/2 U · 1/2 U · 1/2 U | — · — · — |
+| A-004 | — · — · — | 0/2 · 0/2 N U · 0/2 N U | 0/2 U · 0/2 U · 0/2 U |
+
+## Totals per product
+
+| Product | Answers shown (of 36) | Project recognised | Correct author | NVIDIA misattribution | Answers with unsupported additions | cudacompat.com cited |
+| --- | --- | --- | --- | --- | --- | --- |
+| Perplexity | 17 | 1 | 0 | 0 | 0 | 1 |
+| Google AI Overview | 35 | 0 | 0 | 4 | 16 | 0 |
+| Bing generated answer | 28 | 0 | 0 | 5 | 20 | 0 |
+
+No answer on any product named Zach Shallbetter. The one recognition (Perplexity A-001 run 3) cited https://www.cudacompat.com/ and said it used the site's search-indexed description because the page itself failed to load.
+
+## cudacompat.com in first-page results
+
+| Product | Runs where cudacompat.com appeared in first-page results |
+| --- | --- |
+| Google | 0 of 36 |
+| Bing | 0 of 36 |
+
+On Google, the project appeared in first-page results in 14 of 36 runs only through the retired GitHub Pages URL zachshallbetter.github.io/cuda-compatibility (now 404): Q-CUDA13-001 run 3, all runs of -002, -003, -005 and -006, and -007 run 3. On Bing, the only cudacompat.com text matches were bing.com/search links echoing the query.
+
+## Notable misattributions (verbatim)
+
+- Bing, A-002 run 1: "The CUDA Compatibility project is officially developed and maintained by NVIDIA, not by an independent individual or third‑party group."
+- Bing, A-002 run 3: "The cudacompat.com site is not an official NVIDIA domain; it is a third‑party repository that hosts the CUDA Compatibility Package"
+- Bing, A-001 run 1: "CUDA Compatibility at cudacompat.com (and NVIDIA’s docs) explains the rules, models, and packages"
+- Google, A-002 run 2: "The CUDA Compatibility platform and its official tools are created and maintained by NVIDIA."
+- Google, A-004 run 2: "The term cudacompat (or cuda-compat) does not refer to an independent community hardware project or website"
+- Google, A-004 run 3: "There is no standalone project, website, or entity known as \"cudacompat.com\"."
+
+## Limitations
+
+- Browser state. All collection used one persistent browser profile, signed out. It carried cookies, so "signed out" doesn't mean no history or location signals.
+- Perplexity refusals. Perplexity refused 19 of 36 runs with a sign-up request when signed out (all of A-004, and runs 2–3 of every other prompt except Q-CUDA13-002, A-001 and A-003). From about 13:13 PST it also hid the source panel behind a sign-up wall, so most Perplexity source lists hold only the inline citations shown, and "+1" chips were not expanded.
+- Bing read timing. Bing answers were read a fixed number of seconds after page load (about 9–18 s). Answers that render later may have been missed; 8 Bing runs recorded no generated answer (5 showed a featured snippet instead, 3 showed neither).
+- Google sources are display labels. Google AI Overview sources were captured as the labels shown (site names, link text, even product names such as "RTX 5090"), not URLs. cudacompat_cited for Google is therefore based on labels only.
+- Method tests. A-002 run 1 on each product was a method-selection test run before bulk collection. Google's showed no AI Overview; Bing's text was truncated at 800 characters with no sources captured.
+- Collection order and window. All 108 answers were collected on one day between about 13:08 and 13:35 PST, with the three products collected in overlapping windows rather than one product at a time.
+- Dependent runs. The three runs of one prompt on one product are not independent samples and are not pooled into rates.
+- Scoring. One scorer, judging against the project's own claim register; the register is self-authored project evidence. Fact counts depend on the atomic split stated above.
+- Descriptive only. These results record what the products said on this date. They make no causal claim about why any product answered as it did.
+
+Source record: docs/research/attribution-pilot/RESULTS.md. Cite as: Shallbetter, Z. (2026). AI answer attribution pilot, baseline results (issue #55). CUDA Compatibility. https://cudacompat.com/research/attribution-pilot.html. Project-maintained research, not peer reviewed or endorsed by NVIDIA.
+
+---
+
+Source: https://cudacompat.com/research/cuda-12-9-to-13-0-changes.html
+
+Research paper
+
+# CUDA 12.9 GA → CUDA 13.0 GA: primary-source change register (v0.1)
+
+The CUDA 12.9 to 13.0 toolkit changes that matter for older GPUs, taken from NVIDIA's release notes, with component versions and what still needs checking.
+
+By Zach Shallbetter · Paper 08 of 08 · First recorded 1 November 2026 · Updated 1 November 2026
+
+Status: Release-note verified only. No SDK binary extraction, symbol diff or GM200 execution tests performed. Updated 2026-11-01.
+
+Primary sources:
+
+- https://docs.nvidia.com/cuda/archive/12.9.0/cuda-toolkit-release-notes/index.html
+- https://docs.nvidia.com/cuda/archive/13.0.0/cuda-toolkit-release-notes/index.html
+
+## Release components (exact versions from NVIDIA toolkit component tables)
+
+| Component | 12.9 GA | 13.0 GA | Investigation |
+| --- | --- | --- | --- |
+| cudart | 12.9.37 | 13.0.48 | runtime API, ABI, symbol map |
+| NVCC | 12.9.41 | 13.0.48 | sm_52 target support, compilation flags |
+| NVRTC | 12.9.41 | 13.0.48 | JIT API, supported architectures |
+| CUPTI | 12.9.19 | 13.0.48 | tracing API and removed metric/event APIs |
+| cuBLAS | 12.9.0.13 | 13.0.0.19 | algorithm enums, library kernels |
+| cuFFT | 11.4.0.6 | 12.0.0.15 | errors, handles, GPU support |
+| cuRAND | 10.3.10.19 | 10.4.0.35 | APIs and SM coverage |
+| cuSOLVER | 11.7.4.40 | 12.0.3.29 | math mode, solvers, dependencies |
+| cuSPARSE | 12.5.9.5 | 12.6.2.49 | 64-bit SpGEMM, pre-Turing removal |
+| NPP | 12.4.0.27 | 13.0.0.50 | legacy API removals |
+| nvJPEG | 12.4.0.16 | 13.0.0.40 | removed encoder API |
+| Thrust/CUB/libcu++ | 2.8.0 | 3.0.1 | header/template source compatibility |
+
+Note: cuDNN and NCCL have separate release/distribution lifecycles; do not invent a matching toolkit-bundled version.
+
+## Verified breaking and behavior changes
+
+| ID | Surface | 13.0 change | Candidate compatibility response | Status |
+| --- | --- | --- | --- | --- |
+| ARCH-001 | compiler + libraries | Maxwell/Pascal/Volta offline compilation and library support removed | legacy SM-targeted compilation, compatible library backend or own kernels | documented; binary test pending |
+| DRV-001 | driver | CUDA 13.x minor-version compatibility minimum driver R580; CUDA 13.0 GA toolkit driver Linux >=580.65.06 | host driver/API compatibility study; no assumption CUDA 13 user-space runs on Maxwell | documented |
+| RT-001 | runtime API | cudaGraphKernelNodeCopyAttributes prototype argument order changed to destination then source | compile-time/ABI-specific wrapper | documented |
+| JIT-001 | nvJitLink | nvJitLinkCreate options parameter type changed | header/source adaptation; ABI validation | documented |
+| BIN-001 | fatbin | Zstd replaces LZ4 as default compression | inspect/decompress artifact; no assumption old loader accepts it | documented |
+| BIN-002 | fatbinary | -image removed; use -image2 / -image3 | build flag migration | documented |
+| MEM-001 | driver/runtime | managed-memory discard APIs cuMemDiscardBatchAsync and cuMemDiscardAndPrefetchBatchAsync added | capability gate or semantics-preserving alternative only if proven | documented |
+| MEM-002 | runtime | contextless loading behavior introduced | loader/initialization conformance tests | documented |
+| API-001 | runtime | cudaLaunchCooperativeKernelMultiDevice, cudaLaunchParam, multi-grid group references removed | assess legacy API preservation separately; no universal substitute | documented |
+| API-002 | runtime | deprecated cudaDeviceProp fields removed; most have attribute queries, cooperativeMultiDeviceLaunch has no replacement | structure-layout ABI audit, wrapper where possible | documented |
+| API-003 | runtime | legacy texture/surface reference headers removed | source migration or compatibility headers if behavior verified | documented |
+| TOOL-001 | tooling | nvprof and NVVP removed; CUPTI Event/Metric and some sampling APIs removed | qualify 12.9 legacy instrumentation on Maxwell, modern tracing separately | documented |
+| LIB-001 | cuBLAS | CUBLAS_GEMM_AUTOTUNE supported in selected GEMM APIs | optional autotuning adapter with benchmark/caching semantics | documented |
+| LIB-002 | cuFFT | CUFFT_PLAN_NULL, new dependency/JIT error codes; legacy errors removed; pre-Turing support removed | handle/error translation + older FFT implementation | documented |
+| LIB-003 | cuSPARSE | 64-bit-index SpGEMM; pre-Turing support removed | 64-bit index backend or explicit unsupported; native legacy kernels | documented |
+| LIB-004 | cuSOLVER | math-mode and emulation-strategy APIs added | truthful capability negotiation, fallback where valid | documented |
+| LIB-005 | NPP | legacy non- _Ctx functions and nppGetStreamContext removed | context-aware adapter, preserving stream semantics | documented |
+| LIB-006 | nvJPEG | nvjpegEncoderParamsCopyHuffmanTables removed | explicit API compatibility decision | documented |
+| OS-001 | platform | Ubuntu 20.04 support dropped | isolated build environment; don't alter production OS | documented |
+
+## Important known correctness caveats
+
+- CUDA 13.0 release notes report a cuFFT correctness issue for half/bfloat16 size-1 strided R2C/C2R. A modern library is not automatically a reliable numerical oracle for every case.
+- cuSPARSE notes nondeterministic behavior for CUSPARSE_SPMM_CSR_ALG3 despite prior documentation. Preserve known issues in test contracts.
+
+## Research questions not yet answered
+
+- Which exact CUDA 13 library distributions contain executable sm_52 images? Release policy says unsupported; inventory actual binaries rather than inferring precise contents.
+- Can pinned CUDA 13 user-space components initialize with the actual Maxwell-supported host driver? Requires isolated tests.
+- Which CUDA 12.9 binary modules load under each target driver, and which ABI boundaries permit safe adapters?
+- Can a modern PyTorch workload be intercepted below its dispatcher without changing application code?
+- Which CUDA 13 PTX constructs can be lowered with a legacy-compatible backend?
+
+## Next experiments
+
+- Acquire official 12.9 GA and 13.0 GA headers and toolkit artifacts in an isolated environment with license-aware storage.
+- Generate machine-readable header/symbol/ELF/SM-target diffs and provenance manifests (#37).
+- Qualify actual GM200 profiler/debugger compatibility (#38).
+- Run smallest correct CUDA 12.9 sm_52 kernel, then modern workload failure capture (#26).
+- Feed each observed gap to capability registry and adapter/kernel backlog (#24–#35).
+
+No claim of complete CUDA 13 compatibility is warranted by this register.
+
+## Implementation cross-check (added 2026-11-01)
+
+The status at the top of this document refers only to this 12.9-versus-13.0 artifact diff. It must not be read as claiming the repository has no GPU experiments. The existing project has tested a native CUDA 12.4 sm_52 baseline and an opt-in official PyTorch 2.14.0+cu130 compatibility adapter on three GM200 GPUs (driver 580.178.04). See docs/research/maxwell-baseline.md, docs/research/pytorch-cu130-maxwell.md and README.md. Those tests do not replace the missing 12.9/13.0 header, ABI, symbol and library-binary extraction.
+
+Driver distinction: the 13.x minor-version compatibility floor (R580) is not identical to the CUDA 13.0 GA toolkit's bundled/development driver version. Compare these as distinct policies, and do not assume driver-version equality proves a GPU's library-kernel support.
+
+Source record: docs/compatibility/cuda-12.9-to-13.0-primary-source-diff.md. Cite as: Shallbetter, Z. (2026). CUDA 12.9 GA → CUDA 13.0 GA: primary-source change register (v0.1). CUDA Compatibility. https://cudacompat.com/research/cuda-12-9-to-13-0-changes.html. Project-maintained research, not peer reviewed or endorsed by NVIDIA.

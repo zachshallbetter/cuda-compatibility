@@ -326,7 +326,7 @@ def audit_site(site_root: Path) -> list[str]:
         main_at, h1_at = source.find("<main"), source.find("<h1")
         if main_at < 0 or h1_at < main_at:
             errors.append(f"{label}: the h1 must sit inside main so skip links and reader views start at the title")
-        if "TechArticle" in source and not re.search(r'<time datetime="\d{4}-\d\d-\d\d">', source):
+        if ("TechArticle" in source or "ScholarlyArticle" in source) and not re.search(r'<time datetime="\d{4}-\d\d-\d\d">', source):
             errors.append(f"{label}: article pages must show their updated date in a <time> element")
         for wrapper in re.findall(r'<div\b[^>]*overflow-x:auto[^>]*>', source):
             if 'tabindex="0"' not in wrapper or "aria-label=" not in wrapper:
@@ -362,7 +362,7 @@ def audit_site(site_root: Path) -> list[str]:
             for node in nodes:
                 if not isinstance(node, dict):
                     continue
-                if node.get("@type") in {"Article", "TechArticle"}:
+                if node.get("@type") in {"Article", "TechArticle", "ScholarlyArticle"}:
                     if node.get("@id") != f"{canonical}#article":
                         errors.append(f"{label}: article JSON-LD must have a stable canonical #article id")
                     if (node.get("author") or {}).get("@id") != f"{origin}{prefix}#author":
@@ -485,7 +485,7 @@ def audit_site(site_root: Path) -> list[str]:
 
     try:
         feed = ElementTree.parse(site_root / "feed.xml").getroot()
-        feed_urls = {node.get("href") for node in feed.findall("{*}entry/{*}link")}
+        feed_urls = {node.get("href") for node in feed.findall("{*}entry/{*}link") if node.get("rel") == "alternate"}
         if feed_urls != canonical_urls:
             errors.append("feed.xml entries do not exactly match canonical HTML pages")
     except (OSError, ElementTree.ParseError) as exc:

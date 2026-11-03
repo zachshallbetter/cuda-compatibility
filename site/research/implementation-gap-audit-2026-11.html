@@ -1,0 +1,159 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="only light"><meta name="theme-color" content="#F2F2EE"><meta name="description" content="A source-level review of the prototype against the platform goal: what each component does today, its evidence, where it stops, and the next step to take.">
+<link rel="icon" href="../favicon.ico" sizes="32x32">
+<link rel="icon" type="image/svg+xml" href="../favicon.svg">
+<link rel="apple-touch-icon" href="../apple-touch-icon.png">
+<link rel="mask-icon" href="../mask-icon.svg" color="#000000">
+<link rel="manifest" href="../manifest.webmanifest">
+<link rel="alternate" type="application/atom+xml" title="CUDA Compatibility sheets" href="../feed.xml">
+<link rel="prev" href="pytorch-cu130-maxwell.html">
+<link rel="next" href="attribution-pilot.html">
+<link rel="author" href="../humans.txt">
+<link rel="license" href="https://github.com/zachshallbetter/cuda-compatibility/blob/main/LICENSE-MIT">
+<meta name="application-name" content="CUDA Compatibility">
+<meta name="apple-mobile-web-app-title" content="CUDA Compat">
+<meta name="format-detection" content="telephone=no">
+<title>Implementation gap audit, November 2026 | CUDA Compatibility</title>
+<link rel="canonical" href="https://cudacompat.com/research/implementation-gap-audit-2026-11.html">
+<meta name="author" content="Zach Shallbetter">
+<meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1">
+<meta name="citation_title" content="Implementation gap audit: current prototype vs platform ambition">
+<meta name="citation_author" content="Shallbetter, Zach">
+<meta name="citation_publication_date" content="2026/11/01">
+<meta name="citation_online_date" content="2026/11/01">
+<meta name="citation_publisher" content="CUDA Compatibility">
+<meta name="citation_public_url" content="https://cudacompat.com/research/implementation-gap-audit-2026-11.html">
+<meta property="og:type" content="article">
+<meta property="article:published_time" content="2026-11-01T06:17:48-08:00">
+<meta property="article:modified_time" content="2026-11-01T17:09:08-08:00">
+<meta property="article:author" content="https://zachshallbetter.com/">
+<meta property="article:section" content="Research">
+<meta property="og:site_name" content="CUDA Compatibility">
+<meta property="og:url" content="https://cudacompat.com/research/implementation-gap-audit-2026-11.html">
+<meta property="og:locale" content="en_US">
+<meta property="og:title" content="Implementation gap audit: prototype versus platform goal">
+<meta property="og:description" content="A source-level review of the prototype against the platform goal: what each component does today, its evidence, where it stops, and the next step to take.">
+<meta property="og:image" content="https://cudacompat.com/assets/social/implementation-gap-audit-2026-11.png">
+<meta property="og:image:type" content="image/png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Share card: Implementation gap audit: prototype versus platform goal. Research paper, Paper 06 of 08, CUDA Compatibility, cudacompat.com, beside a wireframe of a GM200 graphics card">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Implementation gap audit: prototype versus platform goal">
+<meta name="twitter:description" content="A source-level review of the prototype against the platform goal: what each component does today, its evidence, where it stops, and the next step to take.">
+<meta name="twitter:image" content="https://cudacompat.com/assets/social/implementation-gap-audit-2026-11.png">
+<meta name="twitter:image:alt" content="Share card: Implementation gap audit: prototype versus platform goal. Research paper, Paper 06 of 08, CUDA Compatibility, cudacompat.com, beside a wireframe of a GM200 graphics card">
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"WebSite","@id":"https://cudacompat.com/#website","url":"https://cudacompat.com/","name":"CUDA Compatibility","alternateName":"cudacompat.com","inLanguage":"en","publisher":{"@id":"https://cudacompat.com/#author"},"copyrightHolder":{"@id":"https://cudacompat.com/#author"},"license":"https://github.com/zachshallbetter/cuda-compatibility/blob/main/LICENSE-MIT"},{"@type":"Person","@id":"https://cudacompat.com/#author","name":"Zach Shallbetter","url":"https://zachshallbetter.com/","sameAs":["https://github.com/zachshallbetter"],"jobTitle":"Systems engineer and independent researcher","description":"Zach Shallbetter is a systems engineer and independent researcher based in Spokane, Washington. His work spans applied AI, computer vision, embedded systems, and developer tooling. Through Snack Studio, he builds software that connects modern workflows with existing hardware, with an emphasis on compatibility, performance, and keeping useful systems operational.","homeLocation":{"@type":"Place","name":"Spokane, Washington"},"worksFor":{"@id":"https://cudacompat.com/#org"}},{"@type":"Organization","@id":"https://cudacompat.com/#org","name":"Snack Studio","url":"https://snackstud.io/","founder":{"@id":"https://cudacompat.com/#author"}},{"@type":"SoftwareApplication","@id":"https://cudacompat.com/#software","name":"CUDA Compatibility","url":"https://cudacompat.com/"},{"@type":"WebPage","@id":"https://cudacompat.com/research/implementation-gap-audit-2026-11.html","url":"https://cudacompat.com/research/implementation-gap-audit-2026-11.html","name":"Implementation gap audit: prototype versus platform goal","description":"A source-level review of the prototype against the platform goal: what each component does today, its evidence, where it stops, and the next step to take.","inLanguage":"en","isPartOf":{"@id":"https://cudacompat.com/#website"},"breadcrumb":{"@id":"https://cudacompat.com/research/implementation-gap-audit-2026-11.html#breadcrumb"},"primaryImageOfPage":{"@id":"https://cudacompat.com/assets/social/implementation-gap-audit-2026-11.png"},"mainEntity":{"@id":"https://cudacompat.com/research/implementation-gap-audit-2026-11.html#article"},"datePublished":"2026-11-01T06:17:48-08:00","dateModified":"2026-11-01T17:09:08-08:00"},{"@type":"ImageObject","@id":"https://cudacompat.com/assets/social/implementation-gap-audit-2026-11.png","url":"https://cudacompat.com/assets/social/implementation-gap-audit-2026-11.png","contentUrl":"https://cudacompat.com/assets/social/implementation-gap-audit-2026-11.png","width":1200,"height":630,"caption":"Share card: Implementation gap audit: prototype versus platform goal. Research paper, Paper 06 of 08, CUDA Compatibility, cudacompat.com, beside a wireframe of a GM200 graphics card","encodingFormat":"image/png"},{"@type":"ScholarlyArticle","@id":"https://cudacompat.com/research/implementation-gap-audit-2026-11.html#article","headline":"Implementation gap audit: current prototype vs platform ambition","name":"Implementation gap audit: prototype versus platform goal","abstract":"A source-level review of the prototype against the platform goal: what each component does today, its evidence, where it stops, and the next step to take.","description":"A source-level review of the prototype against the platform goal: what each component does today, its evidence, where it stops, and the next step to take.","url":"https://cudacompat.com/research/implementation-gap-audit-2026-11.html","mainEntityOfPage":{"@id":"https://cudacompat.com/research/implementation-gap-audit-2026-11.html"},"image":{"@id":"https://cudacompat.com/assets/social/implementation-gap-audit-2026-11.png"},"inLanguage":"en","datePublished":"2026-11-01T06:17:48-08:00","dateModified":"2026-11-01T17:09:08-08:00","author":{"@id":"https://cudacompat.com/#author"},"publisher":{"@id":"https://cudacompat.com/#author"},"copyrightHolder":{"@id":"https://cudacompat.com/#author"},"copyrightYear":2026,"license":"https://github.com/zachshallbetter/cuda-compatibility/blob/main/LICENSE-MIT","isAccessibleForFree":true,"isPartOf":{"@id":"https://cudacompat.com/#website"},"about":{"@id":"https://cudacompat.com/#software"},"isBasedOn":"https://github.com/zachshallbetter/cuda-compatibility/blob/main/docs/research/implementation-gap-audit-2026-11-01.md","articleSection":"Research","position":6,"creativeWorkStatus":"Published","genre":"Research record"},{"@type":"BreadcrumbList","@id":"https://cudacompat.com/research/implementation-gap-audit-2026-11.html#breadcrumb","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://cudacompat.com/"},{"@type":"ListItem","position":2,"name":"Research and evidence","item":"https://cudacompat.com/docs/research.html"},{"@type":"ListItem","position":3,"name":"Implementation gap audit: prototype versus platform goal","item":"https://cudacompat.com/research/implementation-gap-audit-2026-11.html"}]}]}</script>
+<link rel="stylesheet" href="../styles.css">
+<link rel="stylesheet" href="../docs.css">
+</head>
+<body>
+<div style="display:flex;flex-direction:column;min-height:100%">
+<a class="skip-link" href="#main">Skip to content</a>
+<header style="border-bottom:1px solid currentColor">
+<svg class="reg l" aria-hidden="true" viewBox="0 0 16 16"><circle cx="8" cy="8" r="5" fill="none" stroke="currentColor" stroke-width="1.2"/><path d="M8 0v16M0 8h16" stroke="currentColor" stroke-width="1.2"/></svg><svg class="reg r" aria-hidden="true" viewBox="0 0 16 16"><circle cx="8" cy="8" r="5" fill="none" stroke="currentColor" stroke-width="1.2"/><path d="M8 0v16M0 8h16" stroke="currentColor" stroke-width="1.2"/></svg>
+<div class="wrap" style="padding-top:18px;padding-bottom:18px;display:flex;justify-content:space-between;align-items:center;gap:24px;flex-wrap:wrap">
+<a href="../index.html" style="text-decoration:none;color:inherit;font-stretch:110%;font-weight:800;font-size:17px;letter-spacing:-0.02em;display:inline-flex;align-items:center;gap:12px"><svg aria-hidden="true" width="26" height="26" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="3"><rect x="5" y="5" width="22" height="22"></rect><rect x="12" y="12" width="8" height="8" fill="currentColor" stroke="none"></rect></svg>CUDA Compatibility</a>
+<div style="display:flex;align-items:center;gap:32px;flex-wrap:wrap">
+<nav class="nav" aria-label="Main navigation">
+<a href="../index.html#works">What works</a>
+<a href="../index.html#stack">How it works</a>
+<a href="../index.html#hardware">Hardware</a>
+<a href="../index.html#install">Install</a>
+<a href="../docs/index.html" aria-current="true" style="color:var(--link)">Docs</a>
+<a href="https://github.com/zachshallbetter/cuda-compatibility/releases">Releases</a>
+</nav>
+<a class="repo" href="https://github.com/zachshallbetter/cuda-compatibility">Repository<svg aria-hidden="true" width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 10 10 2M4 2h6v6"></path></svg></a>
+</div>
+</div>
+</header>
+
+<main id="main">
+<article id="article" aria-labelledby="title">
+<header class="band">
+<div class="wrap" style="padding-top:56px;padding-bottom:56px;display:flex;flex-direction:column;gap:18px">
+<nav aria-label="Breadcrumb" class="crumbs"><ol><li><a href="../index.html">Home</a></li><li><a href="../docs/research.html">Research and evidence</a></li><li aria-current="page">Paper 06 / 08</li></ol></nav>
+<p class="sheet" style="margin:0">Research paper</p>
+<h1 id="title" class="disp" style="font-size:clamp(36px,4.2vw,58px);max-width:22ch">Implementation gap audit: current prototype vs platform ambition</h1>
+<p class="excerpt" style="margin:0;font-size:20px;line-height:1.45;max-width:60ch;font-weight:500">A source-level review of the prototype against the platform goal: what each component does today, its evidence, where it stops, and the next step to take.</p>
+<p class="byline">By <a rel="author" href="https://zachshallbetter.com/">Zach Shallbetter</a> · Paper 06 of 08 · First recorded <time datetime="2026-11-01">1 November 2026</time> · Updated <time datetime="2026-11-01">1 November 2026</time></p>
+</div>
+</header>
+<div class="wrap body" style="padding-top:56px;padding-bottom:96px">
+<nav aria-label="Documentation" style="display:flex;flex-direction:column;gap:12px">
+<p class="sheet" style="margin:0">Sheets</p>
+<ul class="side">
+<li><a href="../docs/index.html"><i>02</i>Documentation home</a></li>
+<li><a href="../docs/getting-started.html"><i>03</i>Install and run</a></li>
+<li><a href="../docs/compatibility.html"><i>04</i>Support matrix</a></li>
+<li><a href="../docs/architecture.html"><i>05</i>How it works</a></li>
+<li><a href="../docs/cli.html"><i>06</i>Command line</a></li>
+<li><a class="current" aria-current="true" href="../docs/research.html"><i>07</i>Research and evidence</a></li>
+<li><a href="../gpu-catalog.html"><i>08</i>Legacy GPU catalog</a></li>
+<li><a href="../docs/discovery.html"><i>09</i>Search and AI discovery</a></li>
+<li><a href="../docs/privacy.html"><i>10</i>Privacy and measurement</a></li>
+</ul>
+<p class="sheet" style="margin:12px 0 0">Papers</p>
+<ul class="side" style="border-top-width:1px"><li><a href="research-program.html"><i>01</i>Research program: CUDA-era semantics on legacy GPUs</a></li><li><a href="maxwell-baseline.html"><i>02</i>Maxwell native baseline: CUDA 12.4 on three GM200 cards</a></li><li><a href="llvm-nvptx.html"><i>03</i>LLVM NVPTX on Maxwell: sm_52 kernels from LLVM 23</a></li><li><a href="runtime-version-facade.html"><i>04</i>Runtime version facade: CUDA 13 answers on a CUDA 12.4 stack</a></li><li><a href="pytorch-cu130-maxwell.html"><i>05</i>PyTorch 2.14 CUDA 13 wheel on Maxwell GPUs</a></li><li><a class="current" aria-current="page" href="implementation-gap-audit-2026-11.html"><i>06</i>Implementation gap audit: prototype versus platform goal</a></li><li><a href="attribution-pilot.html"><i>07</i>AI answer attribution pilot: baseline results</a></li><li><a href="cuda-12-9-to-13-0-changes.html"><i>08</i>CUDA 12.9 to 13.0: what changed for older GPUs</a></li></ul>
+<p class="sheet" style="margin:12px 0 0">On this paper</p>
+<ul class="side" style="border-top-width:1px"><li><a href="#executive-conclusion"><i>A</i>Executive conclusion</a></li><li><a href="#implementation-and-evidence-matrix"><i>B</i>Implementation and evidence matrix</a></li><li><a href="#architecture-transition"><i>C</i>Architecture transition</a></li><li><a href="#highest-value-engineering-priorities"><i>D</i>Highest-value engineering priorities</a></li><li><a href="#specific-technical-risks-to-investigate"><i>E</i>Specific technical risks to investigate</a></li><li><a href="#documentation-debt-found"><i>F</i>Documentation debt found</a></li><li><a href="#immediate-experiments-isolated"><i>G</i>Immediate experiments (isolated)</a></li><li><a href="#source-references"><i>H</i>Source references</a></li></ul>
+</nav>
+<div class="prose" style="display:flex;flex-direction:column;gap:20px;min-width:0">
+<p><strong>Date:</strong> 2026-11-01. <strong>Method:</strong> repository source inspection (README, architecture, user guide, roadmap, <code>launch.py</code>, <code>cli.py</code>, <code>torch_adapter.py</code>, existing experiment records). <strong>Not a fresh Titan execution or test run.</strong></p>
+<h2 id="executive-conclusion">Executive conclusion</h2>
+<p>The project already has a working, bounded <em>PyTorch dispatcher-level</em> compatibility prototype on Maxwell. The highest-leverage work is to harden and generalize the existing path, not create a parallel CLI, loader or compiler. The compatibility layer is currently <strong>application/framework-aware</strong>, not a general CUDA 13 ABI implementation.</p>
+<h2 id="implementation-and-evidence-matrix">Implementation and evidence matrix</h2>
+<div class="scroll" role="region" aria-label="Implementation and evidence matrix (scrolls sideways)" tabindex="0" style="overflow-x:auto"><table aria-label="Implementation and evidence matrix"><thead><tr><th scope="col">Capability</th><th scope="col">Source implementation</th><th scope="col">Observed evidence</th><th scope="col">Important boundary</th><th scope="col">Recommended action</th></tr></thead><tbody><tr><td>GPU inventory</td><td>[<code>inventory.py</code>](../../src/cuda_legacy_compat/inventory.py), [<code>cli.py</code>](../../src/cuda_legacy_compat/cli.py)</td><td>three physical GM200 devices</td><td>not a full device/driver conformance check</td><td>enrich provenance, UUID mapping</td></tr><tr><td>Profile browsing and audit</td><td>[<code>profiles.py</code>](../../src/cuda_legacy_compat/profiles.py), [<code>cli.py</code>](../../src/cuda_legacy_compat/cli.py)</td><td>package architecture gates</td><td>profile 'compatible' does not certify execution</td><td>distinguish preflight and workload evidence</td></tr><tr><td>Doctor</td><td>[<code>cli.py</code>](../../src/cuda_legacy_compat/cli.py)</td><td>checks OS/Python/torch/GPU/LLVM/headers/driver</td><td><code>ready</code> only prerequisites</td><td>machine-readable remediation and confidence</td></tr><tr><td>Per-process launcher</td><td>[<code>launch.py</code>](../../src/cuda_legacy_compat/launch.py)</td><td>PyTorch wheel probes</td><td>Python-only; compiles every launch; modifies child env</td><td>preserve CLI, add artifact caching and rollback tests</td></tr><tr><td>NVPTX compilation</td><td>[<code>launch.py</code>](../../src/cuda_legacy_compat/launch.py), [<code>compat_kernels.cu</code>](../../src/cuda_legacy_compat/compat/compat_kernels.cu)</td><td>LLVM 23.1.4 PTX 8.4 for <code>sm_52</code></td><td>exact toolchain pinned; CUDA 12.4 headers</td><td>reproducible build manifest and multi-toolchain tests</td></tr><tr><td>CUDA driver bridge</td><td>[<code>driver_add_bridge.cpp</code>](../../src/cuda_legacy_compat/compat/driver_add_bridge.cpp)</td><td>module caching, streams and GPU kernels</td><td>custom per-operation ABI, not general runtime translation</td><td>typed operation ABI and resource ownership tests</td></tr><tr><td>Runtime version facade</td><td>[<code>cuda_runtime_version_facade.cpp</code>](../../src/cuda_legacy_compat/compat/cuda_runtime_version_facade.cpp)</td><td>process-local CUDA 13 version response</td><td>one query is not CUDA 13 semantics</td><td>gate facade by supported profile; disclose behavior</td></tr><tr><td>PyTorch dispatcher adapter</td><td>[<code>torch_adapter.py</code>](../../src/cuda_legacy_compat/torch_adapter.py)</td><td>selected add/mm/relu/etc</td><td>tied to ATen, shape/dtype limits</td><td>extract reusable semantic operation registry</td></tr><tr><td>Native kernel execution</td><td>[<code>compat_kernels.cu</code>](../../src/cuda_legacy_compat/compat/compat_kernels.cu)</td><td>selected float16/float32/int32 and small MLP</td><td>not general kernel-image translation</td><td>operator-by-operator conformance</td></tr><tr><td>CPU fallback</td><td>[<code>torch_adapter.py</code>](../../src/cuda_legacy_compat/torch_adapter.py)</td><td>bounded inference, tiny autograd path</td><td>max 64 MiB, may be slow; not GPU execution</td><td>policy-controlled, report every transfer and fallback</td></tr><tr><td>cuBLAS</td><td>stock <code>cublasCreate</code> error recorded</td><td><code>CUBLAS_STATUS_ARCH_MISMATCH</code></td><td>no broad cuBLAS adapter</td><td>prioritize BLAS contract mapping</td></tr><tr><td>cuDNN</td><td>stock engine selection failure recorded</td><td>one CNN with CPU fallback</td><td>no native convolution path proven</td><td>prioritize NPP/convolution primitive feasibility</td></tr><tr><td>Multi-GPU</td><td>separate per-card tests</td><td>physical P2P unknown, PHB topology</td><td>no logical pooled memory or scheduling</td><td>explicit peer queries and scaling tests</td></tr><tr><td>Instrumentation</td><td>research scripts and records</td><td>limited trace, timing and library map</td><td>no unified binary/ABI extraction or ledger</td><td>build #37–#41 around existing evidence</td></tr><tr><td>Product distribution</td><td>Python package in target environment</td><td>CLI installed, reversible by environment removal</td><td>no standalone installer/container integration</td><td>evolve #42 without breaking <code>cuda-legacy</code></td></tr></tbody></table></div>
+<h2 id="architecture-transition">Architecture transition</h2>
+<pre aria-label="mermaid code"><code>flowchart TD
+  A[Existing cuda-legacy CLI and PyTorch launcher] --&gt; B[Shared evidence and compatibility profiles]
+  B --&gt; C[Semantic operation contract and dispatch]
+  C --&gt; D[Existing Maxwell native kernels]
+  C --&gt; E[Explicit bounded CPU fallback]
+  C --&gt; F[Future verified library adapters]
+  D --&gt; G[GM200 via existing driver bridge]
+  F --&gt; G
+  H[Future native CUDA ABI interposition] -. Separate research track .-&gt; C</code></pre>
+<p><strong>Do not collapse</strong> Python ATen dispatch, runtime/driver ABI interposition, PTX lowering and binary translation into a single claim of 'transparent CUDA 13 support'. They differ in available semantic information and deployment difficulty.</p>
+<h2 id="highest-value-engineering-priorities">Highest-value engineering priorities</h2>
+<div class="scroll" role="region" aria-label="Highest-value engineering priorities (scrolls sideways)" tabindex="0" style="overflow-x:auto"><table aria-label="Highest-value engineering priorities"><thead><tr><th scope="col">Rank</th><th scope="col">Work</th><th scope="col">Why now</th><th scope="col">Evidence gate</th></tr></thead><tbody><tr><td>1</td><td>Convert actual failing operations to a pinned blocker corpus (#47)</td><td>already observed: add missing image, cuBLAS ARCH_MISMATCH, cuDNN engine failure</td><td>deterministic repro + exact environment</td></tr><tr><td>2</td><td>Build per-op dispatch provenance and capability contract (#28, #41)</td><td>makes correctness and fallback auditable</td><td>machine-readable selected implementation per operation</td></tr><tr><td>3</td><td>Extract and benchmark reusable BLAS and image primitives (#27, #33, #34)</td><td>cross-domain reuse and performance impact</td><td>GPU-native reference comparison</td></tr><tr><td>4</td><td>Cache and isolate compilation artifacts (#9, #42)</td><td>improves one-command experience and reproducibility</td><td>deterministic artifact hash, cold/warm timing, no global changes</td></tr><tr><td>5</td><td>Build actual 12.9/13.0 ABI and binary inventories (#32, #37)</td><td>turns ecosystem diff into executable backlog</td><td>signed/versioned artifact manifests</td></tr><tr><td>6</td><td>Qualify Maxwell debugger/profiler support (#38–#40)</td><td>modern tools may not support GM200</td><td>hardware tool/version matrix</td></tr><tr><td>7</td><td>Expand workload profiles and upstream candidate review (#43, #44)</td><td>moves from prototype to usable product</td><td>verified tests, maintainer-aligned repro</td></tr></tbody></table></div>
+<h2 id="specific-technical-risks-to-investigate">Specific technical risks to investigate</h2>
+<ul class="list"><li>[<code>launch.py</code>](../../src/cuda_legacy_compat/launch.py) compiles kernels and native shared libraries in a fresh temporary directory on <strong>every</strong> invocation. Measure startup costs and design a safe content-addressed cache; preserve temporary isolation and cleanup.</li><li>The <a href="https://github.com/zachshallbetter/cuda-compatibility/blob/main/src/cuda_legacy_compat/compat/driver_add_bridge.cpp">driver bridge</a> uses custom <code>ctypes</code> function declarations per operator; mismatched signatures, pointer lifetime, stream ownership and module caching are high-risk boundaries. Add ABI and concurrency tests before large-scale expansion.</li><li><code>LD_PRELOAD</code> is inherited only by the launched child but may affect its subprocesses; scope and document this behavior. Existing inherited <code>LD_PRELOAD</code> and <code>PYTHONPATH</code> need explicit compatibility and security tests.</li><li>The [<code>torch_adapter.py</code>](../../src/cuda_legacy_compat/torch_adapter.py) module combines operation semantics, dispatch policy, bridge invocation and CPU fallback. Refactor only with characterization tests to preserve proven behavior.</li><li>CPU fallback can preserve some numerical results while introducing transfers, synchronization and autograd differences. Report <em>both</em> GPU execution fraction and end-to-end performance; never label a CPU-backed workload GPU-native.</li><li>The current adapter requires every visible GPU to be <code>sm_52</code>; heterogeneous hosts and UUID-based selection are separate qualification tasks.</li><li>Avoid a universal 'CUDA 13 supported' status; pin PyTorch wheel, driver, toolkit, GPU, operation, shape, dtype and fallback policy.</li></ul>
+<h2 id="documentation-debt-found">Documentation debt found</h2>
+<ul class="list"><li>New <a href="https://github.com/zachshallbetter/cuda-compatibility/blob/main/docs/product/product-contract.md">product contract</a> illustrates <code>cuda-compat</code>, while the shipped command is <code>cuda-legacy</code>. Treat the former as proposed UX, not a parallel implementation.</li><li>New <code>docs/compatibility/research-log.md</code> initially marked all GM200 runtime probes pending despite existing records; correction appended.</li><li>The 12.9→13.0 register is a <strong>release-note</strong> comparison; actual host experiments currently use CUDA 12.4 development files. Do not present them as a completed 12.9→13.0 binary comparison.</li></ul>
+<h2 id="immediate-experiments-isolated">Immediate experiments (isolated)</h2>
+<ol class="list"><li>Run <code>make check</code>, <code>make test</code> and repository validators before refactoring.</li><li>Benchmark cold/warm <code>cuda-legacy run</code> startup on one non-production GPU.</li><li>Instrument selected ATen operations with backend path, device ID, bytes moved, kernel duration and CPU fallback.</li><li>Reproduce stock failures with matching wheel and record loaded library paths.</li><li>Implement one BLAS adapter or high-value Maxwell GEMM with tests; compare against existing naive matrix kernel and CPU baseline.</li><li>Compare first image/convolution kernel against existing CPU fallback; do not claim cuDNN compatibility from one convolution.</li></ol>
+<h2 id="source-references">Source references</h2>
+<ul class="list"><li><a href="https://github.com/zachshallbetter/cuda-compatibility/blob/main/README.md">README</a></li><li><a href="https://github.com/zachshallbetter/cuda-compatibility/blob/main/docs/architecture.md">Architecture</a></li><li><a href="https://github.com/zachshallbetter/cuda-compatibility/blob/main/docs/user-guide.md">User guide</a></li><li><a href="https://github.com/zachshallbetter/cuda-compatibility/blob/main/docs/roadmap.md">Roadmap</a></li><li><a href="maxwell-baseline.html">Maxwell baseline</a></li><li><a href="pytorch-cu130-maxwell.html">PyTorch CUDA 13 on Maxwell</a></li><li><a href="https://github.com/zachshallbetter/cuda-compatibility/blob/main/src/cuda_legacy_compat/launch.py">Launcher</a></li><li><a href="https://github.com/zachshallbetter/cuda-compatibility/blob/main/src/cuda_legacy_compat/cli.py">CLI</a></li><li><a href="https://github.com/zachshallbetter/cuda-compatibility/blob/main/src/cuda_legacy_compat/torch_adapter.py">PyTorch adapter</a></li></ul>
+<p>All recommendations are hypotheses or planned improvements until tested; existing execution claims refer to repository-recorded evidence.</p>
+<aside class="note" aria-label="Source and citation"><p style="margin:0;font-size:15px">Source record: <a href="https://github.com/zachshallbetter/cuda-compatibility/blob/main/docs/research/implementation-gap-audit-2026-11-01.md">docs/research/implementation-gap-audit-2026-11-01.md</a>. Cite as: Shallbetter, Z. (2026). Implementation gap audit: current prototype vs platform ambition. CUDA Compatibility. https://cudacompat.com/research/implementation-gap-audit-2026-11.html. Project-maintained research, not peer reviewed or endorsed by NVIDIA.</p></aside>
+<nav class="pager" aria-label="Papers, previous and next"><a rel="previous" href="pytorch-cu130-maxwell.html"><span class="sheet">Previous · paper 05</span><span class="pager-title">PyTorch 2.14 CUDA 13 wheel on Maxwell GPUs</span></a><a rel="next" href="attribution-pilot.html"><span class="sheet">Next · paper 07</span><span class="pager-title">AI answer attribution pilot: baseline results</span></a></nav>
+</div>
+</div>
+</article>
+</main>
+
+<footer class="foot">
+<div class="wrap" style="padding-top:40px;padding-bottom:40px;display:flex;flex-direction:column;gap:20px;font-size:15px">
+<div class="tb" role="group" aria-label="Title block">
+<div><span>Project</span><span>CUDA Compatibility</span></div>
+<div><span>Drawn by</span><span><a href="https://zachshallbetter.com/">Zach Shallbetter</a></span></div>
+<div><span>Project version</span><span>0.1.0</span></div>
+<div><span>License</span><span>MIT or Apache-2.0</span></div>
+<div><span>Status</span><span>Active research</span></div>
+<div><span>Paper</span><span>06 / 08, Implementation gap audit: prototype versus platform goal</span></div>
+<div><span>Correct this paper</span><span><a href="https://github.com/zachshallbetter/cuda-compatibility/issues/new?title=Correction%3A%20paper%2006%20implementation-gap-audit-2026-11">Open an issue naming the record</a></span></div>
+</div>
+<table class="rev" aria-label="Revision table"><thead><tr><th scope="col">Rev</th><th scope="col">Date</th><th scope="col">Change</th><th scope="col">By</th></tr></thead><tbody><tr><td>A</td><td>2026-11-01</td><td>First recorded</td><td>ZS</td></tr></tbody></table>
+<div style="display:flex;justify-content:space-between;gap:24px;flex-wrap:wrap"><span>Independent research, not affiliated with NVIDIA. Hardware identity stays real.</span><div style="display:flex;gap:20px;flex-wrap:wrap"><a href="https://github.com/zachshallbetter">GitHub</a><a href="https://linkedin.com/in/zachshallbetter">LinkedIn</a><a href="../docs/privacy.html">Privacy and analytics</a></div></div>
+</div>
+</footer>
+
+</div>
+<script src="../site.js" defer></script>
+<script src="../analytics.js" defer></script>
+</body>
+</html>

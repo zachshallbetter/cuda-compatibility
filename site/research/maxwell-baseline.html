@@ -1,0 +1,150 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="only light"><meta name="theme-color" content="#F2F2EE"><meta name="description" content="A native CUDA 12.4 sm_52 vector-add on three GTX TITAN X (GM200) cards: the hardware, driver, exact commands, and the pass result later work builds on.">
+<link rel="icon" href="../favicon.ico" sizes="32x32">
+<link rel="icon" type="image/svg+xml" href="../favicon.svg">
+<link rel="apple-touch-icon" href="../apple-touch-icon.png">
+<link rel="mask-icon" href="../mask-icon.svg" color="#000000">
+<link rel="manifest" href="../manifest.webmanifest">
+<link rel="alternate" type="application/atom+xml" title="CUDA Compatibility sheets" href="../feed.xml">
+<link rel="prev" href="research-program.html">
+<link rel="next" href="llvm-nvptx.html">
+<link rel="author" href="../humans.txt">
+<link rel="license" href="https://github.com/zachshallbetter/cuda-compatibility/blob/main/LICENSE-MIT">
+<meta name="application-name" content="CUDA Compatibility">
+<meta name="apple-mobile-web-app-title" content="CUDA Compat">
+<meta name="format-detection" content="telephone=no">
+<title>Maxwell native CUDA 12.4 baseline on GM200 | CUDA Compatibility</title>
+<link rel="canonical" href="https://cudacompat.com/research/maxwell-baseline.html">
+<meta name="author" content="Zach Shallbetter">
+<meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1">
+<meta name="citation_title" content="Maxwell native baseline">
+<meta name="citation_author" content="Shallbetter, Zach">
+<meta name="citation_publication_date" content="2026/11/01">
+<meta name="citation_online_date" content="2026/11/01">
+<meta name="citation_publisher" content="CUDA Compatibility">
+<meta name="citation_public_url" content="https://cudacompat.com/research/maxwell-baseline.html">
+<meta property="og:type" content="article">
+<meta property="article:published_time" content="2026-11-01T01:04:31-08:00">
+<meta property="article:modified_time" content="2026-11-01T17:09:08-08:00">
+<meta property="article:author" content="https://zachshallbetter.com/">
+<meta property="article:section" content="Research">
+<meta property="og:site_name" content="CUDA Compatibility">
+<meta property="og:url" content="https://cudacompat.com/research/maxwell-baseline.html">
+<meta property="og:locale" content="en_US">
+<meta property="og:title" content="Maxwell native baseline: CUDA 12.4 on three GM200 cards">
+<meta property="og:description" content="A native CUDA 12.4 sm_52 vector-add on three GTX TITAN X (GM200) cards: the hardware, driver, exact commands, and the pass result later work builds on.">
+<meta property="og:image" content="https://cudacompat.com/assets/social/maxwell-baseline.png">
+<meta property="og:image:type" content="image/png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Share card: Maxwell native baseline: CUDA 12.4 on three GM200 cards. Research paper, Paper 02 of 08, CUDA Compatibility, cudacompat.com, beside a wireframe of a GM200 graphics card">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Maxwell native baseline: CUDA 12.4 on three GM200 cards">
+<meta name="twitter:description" content="A native CUDA 12.4 sm_52 vector-add on three GTX TITAN X (GM200) cards: the hardware, driver, exact commands, and the pass result later work builds on.">
+<meta name="twitter:image" content="https://cudacompat.com/assets/social/maxwell-baseline.png">
+<meta name="twitter:image:alt" content="Share card: Maxwell native baseline: CUDA 12.4 on three GM200 cards. Research paper, Paper 02 of 08, CUDA Compatibility, cudacompat.com, beside a wireframe of a GM200 graphics card">
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"WebSite","@id":"https://cudacompat.com/#website","url":"https://cudacompat.com/","name":"CUDA Compatibility","alternateName":"cudacompat.com","inLanguage":"en","publisher":{"@id":"https://cudacompat.com/#author"},"copyrightHolder":{"@id":"https://cudacompat.com/#author"},"license":"https://github.com/zachshallbetter/cuda-compatibility/blob/main/LICENSE-MIT"},{"@type":"Person","@id":"https://cudacompat.com/#author","name":"Zach Shallbetter","url":"https://zachshallbetter.com/","sameAs":["https://github.com/zachshallbetter"],"jobTitle":"Systems engineer and independent researcher","description":"Zach Shallbetter is a systems engineer and independent researcher based in Spokane, Washington. His work spans applied AI, computer vision, embedded systems, and developer tooling. Through Snack Studio, he builds software that connects modern workflows with existing hardware, with an emphasis on compatibility, performance, and keeping useful systems operational.","homeLocation":{"@type":"Place","name":"Spokane, Washington"},"worksFor":{"@id":"https://cudacompat.com/#org"}},{"@type":"Organization","@id":"https://cudacompat.com/#org","name":"Snack Studio","url":"https://snackstud.io/","founder":{"@id":"https://cudacompat.com/#author"}},{"@type":"SoftwareApplication","@id":"https://cudacompat.com/#software","name":"CUDA Compatibility","url":"https://cudacompat.com/"},{"@type":"WebPage","@id":"https://cudacompat.com/research/maxwell-baseline.html","url":"https://cudacompat.com/research/maxwell-baseline.html","name":"Maxwell native baseline: CUDA 12.4 on three GM200 cards","description":"A native CUDA 12.4 sm_52 vector-add on three GTX TITAN X (GM200) cards: the hardware, driver, exact commands, and the pass result later work builds on.","inLanguage":"en","isPartOf":{"@id":"https://cudacompat.com/#website"},"breadcrumb":{"@id":"https://cudacompat.com/research/maxwell-baseline.html#breadcrumb"},"primaryImageOfPage":{"@id":"https://cudacompat.com/assets/social/maxwell-baseline.png"},"mainEntity":{"@id":"https://cudacompat.com/research/maxwell-baseline.html#article"},"datePublished":"2026-11-01T01:04:31-08:00","dateModified":"2026-11-01T17:09:08-08:00"},{"@type":"ImageObject","@id":"https://cudacompat.com/assets/social/maxwell-baseline.png","url":"https://cudacompat.com/assets/social/maxwell-baseline.png","contentUrl":"https://cudacompat.com/assets/social/maxwell-baseline.png","width":1200,"height":630,"caption":"Share card: Maxwell native baseline: CUDA 12.4 on three GM200 cards. Research paper, Paper 02 of 08, CUDA Compatibility, cudacompat.com, beside a wireframe of a GM200 graphics card","encodingFormat":"image/png"},{"@type":"ScholarlyArticle","@id":"https://cudacompat.com/research/maxwell-baseline.html#article","headline":"Maxwell native baseline","name":"Maxwell native baseline: CUDA 12.4 on three GM200 cards","abstract":"A native CUDA 12.4 sm_52 vector-add on three GTX TITAN X (GM200) cards: the hardware, driver, exact commands, and the pass result later work builds on.","description":"A native CUDA 12.4 sm_52 vector-add on three GTX TITAN X (GM200) cards: the hardware, driver, exact commands, and the pass result later work builds on.","url":"https://cudacompat.com/research/maxwell-baseline.html","mainEntityOfPage":{"@id":"https://cudacompat.com/research/maxwell-baseline.html"},"image":{"@id":"https://cudacompat.com/assets/social/maxwell-baseline.png"},"inLanguage":"en","datePublished":"2026-11-01T01:04:31-08:00","dateModified":"2026-11-01T17:09:08-08:00","author":{"@id":"https://cudacompat.com/#author"},"publisher":{"@id":"https://cudacompat.com/#author"},"copyrightHolder":{"@id":"https://cudacompat.com/#author"},"copyrightYear":2026,"license":"https://github.com/zachshallbetter/cuda-compatibility/blob/main/LICENSE-MIT","isAccessibleForFree":true,"isPartOf":{"@id":"https://cudacompat.com/#website"},"about":{"@id":"https://cudacompat.com/#software"},"isBasedOn":"https://github.com/zachshallbetter/cuda-compatibility/blob/main/docs/research/maxwell-baseline.md","articleSection":"Research","position":2,"creativeWorkStatus":"Published","genre":"Research record"},{"@type":"BreadcrumbList","@id":"https://cudacompat.com/research/maxwell-baseline.html#breadcrumb","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://cudacompat.com/"},{"@type":"ListItem","position":2,"name":"Research and evidence","item":"https://cudacompat.com/docs/research.html"},{"@type":"ListItem","position":3,"name":"Maxwell native baseline: CUDA 12.4 on three GM200 cards","item":"https://cudacompat.com/research/maxwell-baseline.html"}]}]}</script>
+<link rel="stylesheet" href="../styles.css">
+<link rel="stylesheet" href="../docs.css">
+</head>
+<body>
+<div style="display:flex;flex-direction:column;min-height:100%">
+<a class="skip-link" href="#main">Skip to content</a>
+<header style="border-bottom:1px solid currentColor">
+<svg class="reg l" aria-hidden="true" viewBox="0 0 16 16"><circle cx="8" cy="8" r="5" fill="none" stroke="currentColor" stroke-width="1.2"/><path d="M8 0v16M0 8h16" stroke="currentColor" stroke-width="1.2"/></svg><svg class="reg r" aria-hidden="true" viewBox="0 0 16 16"><circle cx="8" cy="8" r="5" fill="none" stroke="currentColor" stroke-width="1.2"/><path d="M8 0v16M0 8h16" stroke="currentColor" stroke-width="1.2"/></svg>
+<div class="wrap" style="padding-top:18px;padding-bottom:18px;display:flex;justify-content:space-between;align-items:center;gap:24px;flex-wrap:wrap">
+<a href="../index.html" style="text-decoration:none;color:inherit;font-stretch:110%;font-weight:800;font-size:17px;letter-spacing:-0.02em;display:inline-flex;align-items:center;gap:12px"><svg aria-hidden="true" width="26" height="26" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="3"><rect x="5" y="5" width="22" height="22"></rect><rect x="12" y="12" width="8" height="8" fill="currentColor" stroke="none"></rect></svg>CUDA Compatibility</a>
+<div style="display:flex;align-items:center;gap:32px;flex-wrap:wrap">
+<nav class="nav" aria-label="Main navigation">
+<a href="../index.html#works">What works</a>
+<a href="../index.html#stack">How it works</a>
+<a href="../index.html#hardware">Hardware</a>
+<a href="../index.html#install">Install</a>
+<a href="../docs/index.html" aria-current="true" style="color:var(--link)">Docs</a>
+<a href="https://github.com/zachshallbetter/cuda-compatibility/releases">Releases</a>
+</nav>
+<a class="repo" href="https://github.com/zachshallbetter/cuda-compatibility">Repository<svg aria-hidden="true" width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 10 10 2M4 2h6v6"></path></svg></a>
+</div>
+</div>
+</header>
+
+<main id="main">
+<article id="article" aria-labelledby="title">
+<header class="band">
+<div class="wrap" style="padding-top:56px;padding-bottom:56px;display:flex;flex-direction:column;gap:18px">
+<nav aria-label="Breadcrumb" class="crumbs"><ol><li><a href="../index.html">Home</a></li><li><a href="../docs/research.html">Research and evidence</a></li><li aria-current="page">Paper 02 / 08</li></ol></nav>
+<p class="sheet" style="margin:0">Research paper</p>
+<h1 id="title" class="disp" style="font-size:clamp(36px,4.2vw,58px);max-width:22ch">Maxwell native baseline</h1>
+<p class="excerpt" style="margin:0;font-size:20px;line-height:1.45;max-width:60ch;font-weight:500">A native CUDA 12.4 sm_52 vector-add on three GTX TITAN X (GM200) cards: the hardware, driver, exact commands, and the pass result later work builds on.</p>
+<p class="byline">By <a rel="author" href="https://zachshallbetter.com/">Zach Shallbetter</a> · Paper 02 of 08 · First recorded <time datetime="2026-11-01">1 November 2026</time> · Updated <time datetime="2026-11-01">1 November 2026</time></p>
+</div>
+</header>
+<div class="wrap body" style="padding-top:56px;padding-bottom:96px">
+<nav aria-label="Documentation" style="display:flex;flex-direction:column;gap:12px">
+<p class="sheet" style="margin:0">Sheets</p>
+<ul class="side">
+<li><a href="../docs/index.html"><i>02</i>Documentation home</a></li>
+<li><a href="../docs/getting-started.html"><i>03</i>Install and run</a></li>
+<li><a href="../docs/compatibility.html"><i>04</i>Support matrix</a></li>
+<li><a href="../docs/architecture.html"><i>05</i>How it works</a></li>
+<li><a href="../docs/cli.html"><i>06</i>Command line</a></li>
+<li><a class="current" aria-current="true" href="../docs/research.html"><i>07</i>Research and evidence</a></li>
+<li><a href="../gpu-catalog.html"><i>08</i>Legacy GPU catalog</a></li>
+<li><a href="../docs/discovery.html"><i>09</i>Search and AI discovery</a></li>
+<li><a href="../docs/privacy.html"><i>10</i>Privacy and measurement</a></li>
+</ul>
+<p class="sheet" style="margin:12px 0 0">Papers</p>
+<ul class="side" style="border-top-width:1px"><li><a href="research-program.html"><i>01</i>Research program: CUDA-era semantics on legacy GPUs</a></li><li><a class="current" aria-current="page" href="maxwell-baseline.html"><i>02</i>Maxwell native baseline: CUDA 12.4 on three GM200 cards</a></li><li><a href="llvm-nvptx.html"><i>03</i>LLVM NVPTX on Maxwell: sm_52 kernels from LLVM 23</a></li><li><a href="runtime-version-facade.html"><i>04</i>Runtime version facade: CUDA 13 answers on a CUDA 12.4 stack</a></li><li><a href="pytorch-cu130-maxwell.html"><i>05</i>PyTorch 2.14 CUDA 13 wheel on Maxwell GPUs</a></li><li><a href="implementation-gap-audit-2026-11.html"><i>06</i>Implementation gap audit: prototype versus platform goal</a></li><li><a href="attribution-pilot.html"><i>07</i>AI answer attribution pilot: baseline results</a></li><li><a href="cuda-12-9-to-13-0-changes.html"><i>08</i>CUDA 12.9 to 13.0: what changed for older GPUs</a></li></ul>
+<p class="sheet" style="margin:12px 0 0">On this paper</p>
+<ul class="side" style="border-top-width:1px"><li><a href="#hardware-and-software-observed"><i>A</i>Hardware and software observed</a></li><li><a href="#kernel-and-command"><i>B</i>Kernel and command</a></li><li><a href="#negative-pending-evidence"><i>C</i>Negative / pending evidence</a></li><li><a href="#next-experiment"><i>D</i>Next experiment</a></li></ul>
+</nav>
+<div class="prose" style="display:flex;flex-direction:column;gap:20px;min-width:0">
+<p><strong>Evidence status:</strong> Reproduced on the reference host, 2026-10-31.<br> <strong>Scope:</strong> CUDA 12.4 native <code>sm_52</code> build and sequential correctness run per GPU.</p>
+<h2 id="hardware-and-software-observed">Hardware and software observed</h2>
+<ul class="list"><li>Linux host <code>reference GPU host</code>, Ubuntu kernel <code>5.15.0-198-generic</code>, x86_64.</li><li>Three NVIDIA GeForce GTX TITAN X / GM200 devices, compute capability 5.2, 12,288 MiB each.</li><li>NVIDIA proprietary driver <code>580.178.04</code>.</li><li>CUDA Toolkit 12.4.131 at <code>/usr/local/cuda-12.4</code>; <code>nvcc</code> absent from default SSH <code>PATH</code>, but direct path works and reports both <code>compute_52</code> and <code>sm_52</code>.</li><li><code>clang</code> and <code>llvm-config</code> absent from the target host's default <code>PATH</code>.</li><li><code>nvidia-smi topo -m</code> reports PHB between card pairs. This does not establish direct peer access or memory pooling.</li></ul>
+<p>The development machine is macOS on Apple Silicon and has no NVIDIA GPU or local <code>nvcc</code>. Docker daemon access on the target was denied, so no container toolchain was installed or run.</p>
+<p>The Python 3.10.12 reference host successfully ran the project inspector from temporary copied source. It reported all three GM200 cards at compute capability 5.2, driver 580.178.04, 12,288 MiB each, and CUDA 12.4 <code>nvcc</code> with <code>sm_52</code> support. Auditing the PyTorch 2.14 CUDA 13 profile returned exit code 1 and identified each card as below the published <code>sm_75</code> minimum; its JSON separately reported that a local CUDA toolkit is not required merely to run the prebuilt package.</p>
+<h2 id="kernel-and-command">Kernel and command</h2>
+<p>[<code>vector_add.cu</code>](../../experiments/maxwell/vector_add.cu) initializes two one-million-element integer vectors, launches a bounds-checked addition kernel, copies results back, and compares every element. [<code>run_native_baseline.sh</code>](../../experiments/maxwell/run_native_baseline.sh) compiles with CUDA 12.4 and <code>-arch=sm_52</code>, then runs a separate process selecting each device with <code>CUDA_VISIBLE_DEVICES</code>. It deletes the temporary executable at exit.</p>
+<p>Reproduced on the target by copying the source and runner into <code>/tmp</code> and running:</p>
+<pre aria-label="Shell commands"><code>bash /tmp/run_native_baseline.sh</code></pre>
+<p>Observed result:</p>
+<pre aria-label="Output"><code>PASS device=0 elements=1048576 result=1048576
+PASS device=0 elements=1048576 result=1048576
+PASS device=0 elements=1048576 result=1048576</code></pre>
+<p>Each line used a different physical card through the one-device <code>CUDA_VISIBLE_DEVICES</code> mapping. This confirms separate per-card correctness. It does not claim simultaneous multi-GPU execution, peer-to-peer access, comparative performance, CUDA 13 compatibility, or LLVM-generated PTX compatibility.</p>
+<h2 id="negative-pending-evidence">Negative / pending evidence</h2>
+<ul class="list"><li>CUDA Toolkit 12.9 was not installed; only configuration-common packages were present. CUDA 12.4 served as the available native baseline.</li><li>CUDA Toolkit 13.x and Clang/LLVM NVPTX were not available on the host, so no local rejection or success from those compilers was captured.</li><li><code>nvidia-smi -q -d PCI</code> failed to parse the <code>PCI</code> display flag; this failed query supplies no PCI capability evidence.</li><li>P2P must be measured with CUDA peer-query and transfer experiments; do not promote the repository's older “P2P bridged” prose without fresh evidence.</li></ul>
+<h2 id="next-experiment">Next experiment</h2>
+<p>Use an isolated Linux build environment with LLVM/Clang NVPTX, preserve the NVIDIA 12.4 assembler/driver as a separate downstream stage, compile equivalent vector-add source to PTX for <code>sm_52</code>, assemble it, and run the exact correctness checks on all three cards. Record the earliest incompatibility only if one is reproduced. Do not alter the host driver or system CUDA installation.</p>
+<aside class="note" aria-label="Source and citation"><p style="margin:0;font-size:15px">Source record: <a href="https://github.com/zachshallbetter/cuda-compatibility/blob/main/docs/research/maxwell-baseline.md">docs/research/maxwell-baseline.md</a>. Cite as: Shallbetter, Z. (2026). Maxwell native baseline. CUDA Compatibility. https://cudacompat.com/research/maxwell-baseline.html. Project-maintained research, not peer reviewed or endorsed by NVIDIA.</p></aside>
+<nav class="pager" aria-label="Papers, previous and next"><a rel="previous" href="research-program.html"><span class="sheet">Previous · paper 01</span><span class="pager-title">Research program: CUDA-era semantics on legacy GPUs</span></a><a rel="next" href="llvm-nvptx.html"><span class="sheet">Next · paper 03</span><span class="pager-title">LLVM NVPTX on Maxwell: sm_52 kernels from LLVM 23</span></a></nav>
+</div>
+</div>
+</article>
+</main>
+
+<footer class="foot">
+<div class="wrap" style="padding-top:40px;padding-bottom:40px;display:flex;flex-direction:column;gap:20px;font-size:15px">
+<div class="tb" role="group" aria-label="Title block">
+<div><span>Project</span><span>CUDA Compatibility</span></div>
+<div><span>Drawn by</span><span><a href="https://zachshallbetter.com/">Zach Shallbetter</a></span></div>
+<div><span>Project version</span><span>0.1.0</span></div>
+<div><span>License</span><span>MIT or Apache-2.0</span></div>
+<div><span>Status</span><span>Active research</span></div>
+<div><span>Paper</span><span>02 / 08, Maxwell native baseline: CUDA 12.4 on three GM200 cards</span></div>
+<div><span>Correct this paper</span><span><a href="https://github.com/zachshallbetter/cuda-compatibility/issues/new?title=Correction%3A%20paper%2002%20maxwell-baseline">Open an issue naming the record</a></span></div>
+</div>
+<table class="rev" aria-label="Revision table"><thead><tr><th scope="col">Rev</th><th scope="col">Date</th><th scope="col">Change</th><th scope="col">By</th></tr></thead><tbody><tr><td>A</td><td>2026-11-01</td><td>First recorded</td><td>ZS</td></tr></tbody></table>
+<div style="display:flex;justify-content:space-between;gap:24px;flex-wrap:wrap"><span>Independent research, not affiliated with NVIDIA. Hardware identity stays real.</span><div style="display:flex;gap:20px;flex-wrap:wrap"><a href="https://github.com/zachshallbetter">GitHub</a><a href="https://linkedin.com/in/zachshallbetter">LinkedIn</a><a href="../docs/privacy.html">Privacy and analytics</a></div></div>
+</div>
+</footer>
+
+</div>
+<script src="../site.js" defer></script>
+<script src="../analytics.js" defer></script>
+</body>
+</html>

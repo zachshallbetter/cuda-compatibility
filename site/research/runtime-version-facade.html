@@ -1,0 +1,149 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="only light"><meta name="theme-color" content="#F2F2EE"><meta name="description" content="One interposed call lets a process see CUDA runtime 13.0 while the driver, device name and compute capability 5.2 stay real. What that proves, and what not.">
+<link rel="icon" href="../favicon.ico" sizes="32x32">
+<link rel="icon" type="image/svg+xml" href="../favicon.svg">
+<link rel="apple-touch-icon" href="../apple-touch-icon.png">
+<link rel="mask-icon" href="../mask-icon.svg" color="#000000">
+<link rel="manifest" href="../manifest.webmanifest">
+<link rel="alternate" type="application/atom+xml" title="CUDA Compatibility sheets" href="../feed.xml">
+<link rel="prev" href="llvm-nvptx.html">
+<link rel="next" href="pytorch-cu130-maxwell.html">
+<link rel="author" href="../humans.txt">
+<link rel="license" href="https://github.com/zachshallbetter/cuda-compatibility/blob/main/LICENSE-MIT">
+<meta name="application-name" content="CUDA Compatibility">
+<meta name="apple-mobile-web-app-title" content="CUDA Compat">
+<meta name="format-detection" content="telephone=no">
+<title>CUDA runtime version facade experiment | CUDA Compatibility</title>
+<link rel="canonical" href="https://cudacompat.com/research/runtime-version-facade.html">
+<meta name="author" content="Zach Shallbetter">
+<meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1">
+<meta name="citation_title" content="Runtime-version facade experiment">
+<meta name="citation_author" content="Shallbetter, Zach">
+<meta name="citation_publication_date" content="2026/11/01">
+<meta name="citation_online_date" content="2026/11/01">
+<meta name="citation_publisher" content="CUDA Compatibility">
+<meta name="citation_public_url" content="https://cudacompat.com/research/runtime-version-facade.html">
+<meta property="og:type" content="article">
+<meta property="article:published_time" content="2026-11-01T01:04:31-08:00">
+<meta property="article:modified_time" content="2026-11-01T17:09:08-08:00">
+<meta property="article:author" content="https://zachshallbetter.com/">
+<meta property="article:section" content="Research">
+<meta property="og:site_name" content="CUDA Compatibility">
+<meta property="og:url" content="https://cudacompat.com/research/runtime-version-facade.html">
+<meta property="og:locale" content="en_US">
+<meta property="og:title" content="Runtime version facade: CUDA 13 answers on a CUDA 12.4 stack">
+<meta property="og:description" content="One interposed call lets a process see CUDA runtime 13.0 while the driver, device name and compute capability 5.2 stay real. What that proves, and what not.">
+<meta property="og:image" content="https://cudacompat.com/assets/social/runtime-version-facade.png">
+<meta property="og:image:type" content="image/png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Share card: Runtime version facade: CUDA 13 answers on a CUDA 12.4 stack. Research paper, Paper 04 of 08, CUDA Compatibility, cudacompat.com, beside a wireframe of a GM200 graphics card">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Runtime version facade: CUDA 13 answers on a CUDA 12.4 stack">
+<meta name="twitter:description" content="One interposed call lets a process see CUDA runtime 13.0 while the driver, device name and compute capability 5.2 stay real. What that proves, and what not.">
+<meta name="twitter:image" content="https://cudacompat.com/assets/social/runtime-version-facade.png">
+<meta name="twitter:image:alt" content="Share card: Runtime version facade: CUDA 13 answers on a CUDA 12.4 stack. Research paper, Paper 04 of 08, CUDA Compatibility, cudacompat.com, beside a wireframe of a GM200 graphics card">
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"WebSite","@id":"https://cudacompat.com/#website","url":"https://cudacompat.com/","name":"CUDA Compatibility","alternateName":"cudacompat.com","inLanguage":"en","publisher":{"@id":"https://cudacompat.com/#author"},"copyrightHolder":{"@id":"https://cudacompat.com/#author"},"license":"https://github.com/zachshallbetter/cuda-compatibility/blob/main/LICENSE-MIT"},{"@type":"Person","@id":"https://cudacompat.com/#author","name":"Zach Shallbetter","url":"https://zachshallbetter.com/","sameAs":["https://github.com/zachshallbetter"],"jobTitle":"Systems engineer and independent researcher","description":"Zach Shallbetter is a systems engineer and independent researcher based in Spokane, Washington. His work spans applied AI, computer vision, embedded systems, and developer tooling. Through Snack Studio, he builds software that connects modern workflows with existing hardware, with an emphasis on compatibility, performance, and keeping useful systems operational.","homeLocation":{"@type":"Place","name":"Spokane, Washington"},"worksFor":{"@id":"https://cudacompat.com/#org"}},{"@type":"Organization","@id":"https://cudacompat.com/#org","name":"Snack Studio","url":"https://snackstud.io/","founder":{"@id":"https://cudacompat.com/#author"}},{"@type":"SoftwareApplication","@id":"https://cudacompat.com/#software","name":"CUDA Compatibility","url":"https://cudacompat.com/"},{"@type":"WebPage","@id":"https://cudacompat.com/research/runtime-version-facade.html","url":"https://cudacompat.com/research/runtime-version-facade.html","name":"Runtime version facade: CUDA 13 answers on a CUDA 12.4 stack","description":"One interposed call lets a process see CUDA runtime 13.0 while the driver, device name and compute capability 5.2 stay real. What that proves, and what not.","inLanguage":"en","isPartOf":{"@id":"https://cudacompat.com/#website"},"breadcrumb":{"@id":"https://cudacompat.com/research/runtime-version-facade.html#breadcrumb"},"primaryImageOfPage":{"@id":"https://cudacompat.com/assets/social/runtime-version-facade.png"},"mainEntity":{"@id":"https://cudacompat.com/research/runtime-version-facade.html#article"},"datePublished":"2026-11-01T01:04:31-08:00","dateModified":"2026-11-01T17:09:08-08:00"},{"@type":"ImageObject","@id":"https://cudacompat.com/assets/social/runtime-version-facade.png","url":"https://cudacompat.com/assets/social/runtime-version-facade.png","contentUrl":"https://cudacompat.com/assets/social/runtime-version-facade.png","width":1200,"height":630,"caption":"Share card: Runtime version facade: CUDA 13 answers on a CUDA 12.4 stack. Research paper, Paper 04 of 08, CUDA Compatibility, cudacompat.com, beside a wireframe of a GM200 graphics card","encodingFormat":"image/png"},{"@type":"ScholarlyArticle","@id":"https://cudacompat.com/research/runtime-version-facade.html#article","headline":"Runtime-version facade experiment","name":"Runtime version facade: CUDA 13 answers on a CUDA 12.4 stack","abstract":"One interposed call lets a process see CUDA runtime 13.0 while the driver, device name and compute capability 5.2 stay real. What that proves, and what not.","description":"One interposed call lets a process see CUDA runtime 13.0 while the driver, device name and compute capability 5.2 stay real. What that proves, and what not.","url":"https://cudacompat.com/research/runtime-version-facade.html","mainEntityOfPage":{"@id":"https://cudacompat.com/research/runtime-version-facade.html"},"image":{"@id":"https://cudacompat.com/assets/social/runtime-version-facade.png"},"inLanguage":"en","datePublished":"2026-11-01T01:04:31-08:00","dateModified":"2026-11-01T17:09:08-08:00","author":{"@id":"https://cudacompat.com/#author"},"publisher":{"@id":"https://cudacompat.com/#author"},"copyrightHolder":{"@id":"https://cudacompat.com/#author"},"copyrightYear":2026,"license":"https://github.com/zachshallbetter/cuda-compatibility/blob/main/LICENSE-MIT","isAccessibleForFree":true,"isPartOf":{"@id":"https://cudacompat.com/#website"},"about":{"@id":"https://cudacompat.com/#software"},"isBasedOn":"https://github.com/zachshallbetter/cuda-compatibility/blob/main/docs/research/runtime-version-facade.md","articleSection":"Research","position":4,"creativeWorkStatus":"Published","genre":"Research record"},{"@type":"BreadcrumbList","@id":"https://cudacompat.com/research/runtime-version-facade.html#breadcrumb","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://cudacompat.com/"},{"@type":"ListItem","position":2,"name":"Research and evidence","item":"https://cudacompat.com/docs/research.html"},{"@type":"ListItem","position":3,"name":"Runtime version facade: CUDA 13 answers on a CUDA 12.4 stack","item":"https://cudacompat.com/research/runtime-version-facade.html"}]}]}</script>
+<link rel="stylesheet" href="../styles.css">
+<link rel="stylesheet" href="../docs.css">
+</head>
+<body>
+<div style="display:flex;flex-direction:column;min-height:100%">
+<a class="skip-link" href="#main">Skip to content</a>
+<header style="border-bottom:1px solid currentColor">
+<svg class="reg l" aria-hidden="true" viewBox="0 0 16 16"><circle cx="8" cy="8" r="5" fill="none" stroke="currentColor" stroke-width="1.2"/><path d="M8 0v16M0 8h16" stroke="currentColor" stroke-width="1.2"/></svg><svg class="reg r" aria-hidden="true" viewBox="0 0 16 16"><circle cx="8" cy="8" r="5" fill="none" stroke="currentColor" stroke-width="1.2"/><path d="M8 0v16M0 8h16" stroke="currentColor" stroke-width="1.2"/></svg>
+<div class="wrap" style="padding-top:18px;padding-bottom:18px;display:flex;justify-content:space-between;align-items:center;gap:24px;flex-wrap:wrap">
+<a href="../index.html" style="text-decoration:none;color:inherit;font-stretch:110%;font-weight:800;font-size:17px;letter-spacing:-0.02em;display:inline-flex;align-items:center;gap:12px"><svg aria-hidden="true" width="26" height="26" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="3"><rect x="5" y="5" width="22" height="22"></rect><rect x="12" y="12" width="8" height="8" fill="currentColor" stroke="none"></rect></svg>CUDA Compatibility</a>
+<div style="display:flex;align-items:center;gap:32px;flex-wrap:wrap">
+<nav class="nav" aria-label="Main navigation">
+<a href="../index.html#works">What works</a>
+<a href="../index.html#stack">How it works</a>
+<a href="../index.html#hardware">Hardware</a>
+<a href="../index.html#install">Install</a>
+<a href="../docs/index.html" aria-current="true" style="color:var(--link)">Docs</a>
+<a href="https://github.com/zachshallbetter/cuda-compatibility/releases">Releases</a>
+</nav>
+<a class="repo" href="https://github.com/zachshallbetter/cuda-compatibility">Repository<svg aria-hidden="true" width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 10 10 2M4 2h6v6"></path></svg></a>
+</div>
+</div>
+</header>
+
+<main id="main">
+<article id="article" aria-labelledby="title">
+<header class="band">
+<div class="wrap" style="padding-top:56px;padding-bottom:56px;display:flex;flex-direction:column;gap:18px">
+<nav aria-label="Breadcrumb" class="crumbs"><ol><li><a href="../index.html">Home</a></li><li><a href="../docs/research.html">Research and evidence</a></li><li aria-current="page">Paper 04 / 08</li></ol></nav>
+<p class="sheet" style="margin:0">Research paper</p>
+<h1 id="title" class="disp" style="font-size:clamp(36px,4.2vw,58px);max-width:22ch">Runtime-version facade experiment</h1>
+<p class="excerpt" style="margin:0;font-size:20px;line-height:1.45;max-width:60ch;font-weight:500">One interposed call lets a process see CUDA runtime 13.0 while the driver, device name and compute capability 5.2 stay real. What that proves, and what not.</p>
+<p class="byline">By <a rel="author" href="https://zachshallbetter.com/">Zach Shallbetter</a> · Paper 04 of 08 · First recorded <time datetime="2026-11-01">1 November 2026</time> · Updated <time datetime="2026-11-01">1 November 2026</time></p>
+</div>
+</header>
+<div class="wrap body" style="padding-top:56px;padding-bottom:96px">
+<nav aria-label="Documentation" style="display:flex;flex-direction:column;gap:12px">
+<p class="sheet" style="margin:0">Sheets</p>
+<ul class="side">
+<li><a href="../docs/index.html"><i>02</i>Documentation home</a></li>
+<li><a href="../docs/getting-started.html"><i>03</i>Install and run</a></li>
+<li><a href="../docs/compatibility.html"><i>04</i>Support matrix</a></li>
+<li><a href="../docs/architecture.html"><i>05</i>How it works</a></li>
+<li><a href="../docs/cli.html"><i>06</i>Command line</a></li>
+<li><a class="current" aria-current="true" href="../docs/research.html"><i>07</i>Research and evidence</a></li>
+<li><a href="../gpu-catalog.html"><i>08</i>Legacy GPU catalog</a></li>
+<li><a href="../docs/discovery.html"><i>09</i>Search and AI discovery</a></li>
+<li><a href="../docs/privacy.html"><i>10</i>Privacy and measurement</a></li>
+</ul>
+<p class="sheet" style="margin:12px 0 0">Papers</p>
+<ul class="side" style="border-top-width:1px"><li><a href="research-program.html"><i>01</i>Research program: CUDA-era semantics on legacy GPUs</a></li><li><a href="maxwell-baseline.html"><i>02</i>Maxwell native baseline: CUDA 12.4 on three GM200 cards</a></li><li><a href="llvm-nvptx.html"><i>03</i>LLVM NVPTX on Maxwell: sm_52 kernels from LLVM 23</a></li><li><a class="current" aria-current="page" href="runtime-version-facade.html"><i>04</i>Runtime version facade: CUDA 13 answers on a CUDA 12.4 stack</a></li><li><a href="pytorch-cu130-maxwell.html"><i>05</i>PyTorch 2.14 CUDA 13 wheel on Maxwell GPUs</a></li><li><a href="implementation-gap-audit-2026-11.html"><i>06</i>Implementation gap audit: prototype versus platform goal</a></li><li><a href="attribution-pilot.html"><i>07</i>AI answer attribution pilot: baseline results</a></li><li><a href="cuda-12-9-to-13-0-changes.html"><i>08</i>CUDA 12.9 to 13.0: what changed for older GPUs</a></li></ul>
+<p class="sheet" style="margin:12px 0 0">On this paper</p>
+<ul class="side" style="border-top-width:1px"><li><a href="#behavior"><i>A</i>Behavior</a></li><li><a href="#reproduction"><i>B</i>Reproduction</a></li><li><a href="#observed-result"><i>C</i>Observed result</a></li><li><a href="#limits"><i>D</i>Limits</a></li></ul>
+</nav>
+<div class="prose" style="display:flex;flex-direction:column;gap:20px;min-width:0">
+<p><strong>Evidence status:</strong> Reproduced on the reference host, 2026-10-31.<br> <strong>Scope:</strong> Opt-in interposition of one CUDA Runtime API query; CUDA 12.4.131 and R580 remain the backend.</p>
+<h2 id="behavior">Behavior</h2>
+<p>[<code>cuda_runtime_version_facade.cpp</code>](../../src/cuda_legacy_compat/compat/cuda_runtime_version_facade.cpp) interposes <code>cudaRuntimeGetVersion</code> for a process using <code>LD_PRELOAD</code>. With <code>CUDA_COMPAT_RUNTIME_VERSION=13000</code>, that call returns the CUDA 13.0.0 version integer. Only the exact supported value is accepted. With the variable unset, the shim calls the real function through <code>RTLD_NEXT</code>. No other CUDA API is interposed.</p>
+<p>The probe confirms that CUDA Driver API version reporting, device name, and physical compute capability remain from the installed NVIDIA stack. The tested device reports <code>NVIDIA GeForce GTX TITAN X</code>, compute capability 5.2; <code>driver=13000</code> is the CUDA Driver API compatibility integer (13.0), not the NVIDIA driver release number. The installed NVIDIA driver release is R580 / 580.178.04.</p>
+<h2 id="reproduction">Reproduction</h2>
+<p>On the reference host:</p>
+<pre aria-label="Shell commands"><code>bash experiments/runtime-facade/run_probe.sh</code></pre>
+<p>The runner creates a temporary shared shim and links its probe and vector-add workload against the installed CUDA runtime with <code>--cudart=shared</code>. It tests the real runtime report, the opt-in virtual version, and the native vector-add workload under the preload on each card. The shim never replaces a system library; all build outputs are removed on exit. On this host, NVCC's default linkage produced no dynamic <code>libcudart</code> dependency (<code>ldd</code> showed no <code>cudart</code> entry), and the preload did not override that probe. This interposition method therefore requires a dynamically linked application; statically linked applications need another approach such as rebuild-time adaptation or binary instrumentation.</p>
+<h2 id="observed-result">Observed result</h2>
+<p>For each of the three physical cards:</p>
+<pre aria-label="Output"><code>baseline runtime=12040 driver=13000 device=NVIDIA GeForce GTX TITAN X compute=5.2
+facade runtime=13000 driver=13000 device=NVIDIA GeForce GTX TITAN X compute=5.2
+PASS device=0 elements=1048576 result=1048576</code></pre>
+<p>Here <code>runtime</code> and <code>driver</code> are CUDA API version integers; the driver package release is reported separately as 580.178.04.</p>
+<p>The probe also rejected <code>CUDA_COMPAT_RUNTIME_VERSION=13001</code>. The compatibility profile is process-local and opt-in.</p>
+<h2 id="limits">Limits</h2>
+<p>This proves only that one dynamically linked application's runtime-version check can be changed while ordinary calls in the tested CUDA 12.4 workload continue to use the real runtime. It does not add CUDA 13 APIs, device instructions, library kernels, or support to the prebuilt PyTorch CUDA 13 package. Code paths selected after the version query may still fail. Applications using a statically linked runtime, alternate version-query paths, or other loader arrangements are outside this experiment. Do not represent this probe as general CUDA 13 compatibility.</p>
+<aside class="note" aria-label="Source and citation"><p style="margin:0;font-size:15px">Source record: <a href="https://github.com/zachshallbetter/cuda-compatibility/blob/main/docs/research/runtime-version-facade.md">docs/research/runtime-version-facade.md</a>. Cite as: Shallbetter, Z. (2026). Runtime-version facade experiment. CUDA Compatibility. https://cudacompat.com/research/runtime-version-facade.html. Project-maintained research, not peer reviewed or endorsed by NVIDIA.</p></aside>
+<nav class="pager" aria-label="Papers, previous and next"><a rel="previous" href="llvm-nvptx.html"><span class="sheet">Previous · paper 03</span><span class="pager-title">LLVM NVPTX on Maxwell: sm_52 kernels from LLVM 23</span></a><a rel="next" href="pytorch-cu130-maxwell.html"><span class="sheet">Next · paper 05</span><span class="pager-title">PyTorch 2.14 CUDA 13 wheel on Maxwell GPUs</span></a></nav>
+</div>
+</div>
+</article>
+</main>
+
+<footer class="foot">
+<div class="wrap" style="padding-top:40px;padding-bottom:40px;display:flex;flex-direction:column;gap:20px;font-size:15px">
+<div class="tb" role="group" aria-label="Title block">
+<div><span>Project</span><span>CUDA Compatibility</span></div>
+<div><span>Drawn by</span><span><a href="https://zachshallbetter.com/">Zach Shallbetter</a></span></div>
+<div><span>Project version</span><span>0.1.0</span></div>
+<div><span>License</span><span>MIT or Apache-2.0</span></div>
+<div><span>Status</span><span>Active research</span></div>
+<div><span>Paper</span><span>04 / 08, Runtime version facade: CUDA 13 answers on a CUDA 12.4 stack</span></div>
+<div><span>Correct this paper</span><span><a href="https://github.com/zachshallbetter/cuda-compatibility/issues/new?title=Correction%3A%20paper%2004%20runtime-version-facade">Open an issue naming the record</a></span></div>
+</div>
+<table class="rev" aria-label="Revision table"><thead><tr><th scope="col">Rev</th><th scope="col">Date</th><th scope="col">Change</th><th scope="col">By</th></tr></thead><tbody><tr><td>A</td><td>2026-11-01</td><td>First recorded</td><td>ZS</td></tr></tbody></table>
+<div style="display:flex;justify-content:space-between;gap:24px;flex-wrap:wrap"><span>Independent research, not affiliated with NVIDIA. Hardware identity stays real.</span><div style="display:flex;gap:20px;flex-wrap:wrap"><a href="https://github.com/zachshallbetter">GitHub</a><a href="https://linkedin.com/in/zachshallbetter">LinkedIn</a><a href="../docs/privacy.html">Privacy and analytics</a></div></div>
+</div>
+</footer>
+
+</div>
+<script src="../site.js" defer></script>
+<script src="../analytics.js" defer></script>
+</body>
+</html>
