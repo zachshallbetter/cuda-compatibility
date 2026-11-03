@@ -1,14 +1,14 @@
 {
   "format": "2",
-  "generatorVersion": "0.6.1",
+  "generatorVersion": "0.6.2",
   "root": ".",
   "validityBasis": "aggregate-source-digest",
   "selectedPaths": [],
   "sourceSelection": {
     "includedCount": 173,
-    "includedBytes": 1551702,
+    "includedBytes": 1553352,
     "excludedCounts": {
-      "excluded-directory": 34,
+      "excluded-directory": 1,
       "excluded-path": 1,
       "extension": 26,
       "generated-or-transient-file": 1
@@ -20,14 +20,14 @@
     "repositories": [
       {
         "path": ".",
-        "commit": "725c934959dbe608f8fdf4ceae1f2e68ff32a0a5",
+        "commit": "8c9ed9847aec21bde7226d55f712c5c289956109",
         "branch": "chore/bootstrap-0.6.1",
         "dirty": true,
         "remote": "https://github.com/zachshallbetter/cuda-compatibility.git"
       }
     ]
   },
-  "aggregateSourceDigest": "0f973ebb92b76e977f3a94cce91a64a697bf71d36ad2b4326f13dbb915d798f1",
+  "aggregateSourceDigest": "9eb12ad324495d74973572a2e31133ac86752dc8ed01c0c916bf2d8cd33e6858",
   "sources": [
     {
       "path": ".agents/rules/ci.md",
@@ -227,7 +227,7 @@
     {
       "path": ".formal-bootstrap.json",
       "bytes": 372,
-      "sha256": "8e01c3a3aa2184ec551657dba63643a55b721c36005905954c29657f00b2c0be"
+      "sha256": "655a733e781d96ec5b555a458e507d44095e76f7388b9a03f952be61c7ab2386"
     },
     {
       "path": ".github/workflows/verify.yml",
@@ -262,7 +262,7 @@
     {
       "path": "PROJECT_PROFILE.json",
       "bytes": 2326,
-      "sha256": "c2b52b94412b027810de7cbf77f922afcc921bb89220f577dc61f7877c4d0b40"
+      "sha256": "4cc182b5271f2ae0c4bc955a23d8d7555e2d34ae26fbfaef3c91e4e8cc2dff86"
     },
     {
       "path": "README.md",
@@ -272,7 +272,7 @@
     {
       "path": "VERSION",
       "bytes": 6,
-      "sha256": "87b241b275c591694846560e9879f50c9da3150f854efdabd782c539772f3033"
+      "sha256": "a466ef209f5c3aee5ff0c702e2e9d5cced4783d2a655e8ab66330f21a5557b3f"
     },
     {
       "path": "bindings/PROJECT_BINDINGS.yaml",
@@ -401,8 +401,8 @@
     },
     {
       "path": "docs/UPGRADING.md",
-      "bytes": 3050,
-      "sha256": "5d68f584e31904d26097f04721b509bbfc02a04be6816eff182c8456f9f0a9c7"
+      "bytes": 3313,
+      "sha256": "b9877ed333f89244c8e55b4cf563e6df27d2af5ecdb8b87fad04b902a850944d"
     },
     {
       "path": "docs/WORK_GRAPH.md",
@@ -676,8 +676,8 @@
     },
     {
       "path": "scripts/gen-context.py",
-      "bytes": 13729,
-      "sha256": "0c951731c9b7596de1eb2241a31cbb84723ece20ed830db3af76aa929a112627"
+      "bytes": 14390,
+      "sha256": "1cecc3bc593ef0c89cc24692db223c5a29a5e434561e0ebf4c36bf9464799c1b"
     },
     {
       "path": "scripts/iepe-adopt.py",
@@ -701,8 +701,8 @@
     },
     {
       "path": "scripts/upgrade-project.py",
-      "bytes": 18113,
-      "sha256": "47b68d85e61f64d9ea1febdac5b617484d5a7fe91c2b604aabd2f22c2e8e3ad7"
+      "bytes": 18839,
+      "sha256": "0b4ae27bc0fdf0dbc8fa1553ecdc47de9cab79be4d5a26ac18677aee9f3b6230"
     },
     {
       "path": "scripts/validate-bootstrap.py",
