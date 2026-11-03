@@ -27,6 +27,13 @@ REPO = "https://github.com/zachshallbetter/cuda-compatibility"
 LICENSE = REPO + "/blob/main/LICENSE-MIT"
 
 
+# How inner pages name the project's software. Google's software-app check needs two of offers,
+# aggregateRating, applicationCategory and operatingSystem; these three are true, and no rating is invented.
+SOFTWARE = {"@type": "SoftwareApplication", "@id": ORIGIN + "#software", "name": "CUDA Compatibility", "url": ORIGIN,
+            "applicationCategory": "DeveloperApplication", "operatingSystem": "Linux x86_64",
+            "offers": {"@type": "Offer", "price": "0", "priceCurrency": "USD"}}
+
+
 def load() -> dict:
     data = json.loads(REGISTRY.read_text(encoding="utf-8"))
     for page in data["pages"]:
@@ -219,7 +226,7 @@ def identity_nodes(data: dict) -> list[dict]:
     graph = json.loads(re.search(r'<script type="application/ld\+json">(.*?)</script>', home.read_text(encoding="utf-8"), re.S)[1])["@graph"]
     keep = {"WebSite", "Person", "Organization"}
     nodes = [n for n in graph if n.get("@type") in keep]
-    nodes.append({"@type": "SoftwareApplication", "@id": ORIGIN + "#software", "name": "CUDA Compatibility", "url": ORIGIN})
+    nodes.append(dict(SOFTWARE))
     return nodes
 
 
@@ -358,6 +365,8 @@ def apply_meta(s: str, page: dict) -> str:
         s = _set_meta(s, "name", key, {"twitter:title": page["share_title"], "twitter:description": page["excerpt"], "twitter:image:alt": page["alt"]}[key])
     match = re.search(r'(<script type="application/ld\+json">)(.*?)(</script>)', s, re.S)
     graph = json.loads(match[2])
+    if page["kind"] != "home":
+        graph["@graph"] = [dict(SOFTWARE) if n.get("@type") == "SoftwareApplication" else n for n in graph["@graph"]]
     for node in graph["@graph"]:
         kind = node.get("@type")
         if kind == "WebPage":
