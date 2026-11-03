@@ -60,7 +60,7 @@ class SiteDiscoveryChecksTests(unittest.TestCase):
             site = self.copy_site(directory)
             privacy = site / "docs" / "privacy.html"
             source = privacy.read_text(encoding="utf-8").replace(
-                "The configured tag is deployed; requests to Google measurement services begin only after opt-in.",
+                "Requests to Google measurement services begin only after opt-in.",
                 "The live deployment has not yet been updated.",
                 1,
             )
@@ -72,8 +72,8 @@ class SiteDiscoveryChecksTests(unittest.TestCase):
             site = self.copy_site(directory)
             page = site / "docs" / "discovery.html"
             source = page.read_text(encoding="utf-8").replace(
-                "The public GitHub Pages site is live.",
-                "The public GitHub Pages deployment has not been verified for this revision.",
+                "Point-in-time HTTP checks establish availability",
+                "The public deployment has not been verified for this revision. Point-in-time HTTP checks establish availability",
                 1,
             )
             page.write_text(source, encoding="utf-8")
@@ -106,7 +106,7 @@ class SiteDiscoveryChecksTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as directory:
             site = self.copy_site(directory)
             sitemap = site / "sitemap.xml"
-            sitemap.write_text(sitemap.read_text(encoding="utf-8").replace("  <url><loc>https://zachshallbetter.github.io/cuda-compatibility/docs/privacy.html</loc></url>\n", ""), encoding="utf-8")
+            sitemap.write_text(sitemap.read_text(encoding="utf-8").replace("  <url><loc>https://cuda-compatibility.vercel.app/docs/privacy.html</loc></url>\n", ""), encoding="utf-8")
             self.assertTrue(any("sitemap URLs" in error for error in audit_site(site)))
 
     def test_rejects_duplicate_meta_descriptions(self) -> None:
@@ -148,8 +148,8 @@ class SiteDiscoveryChecksTests(unittest.TestCase):
             site = self.copy_site(directory)
             page = site / "docs" / "architecture.html"
             source = page.read_text(encoding="utf-8").replace(
-                "/blob/codex/cuda-compat-publication/",
                 "/blob/main/",
+                "/blob/missing-branch/",
                 1,
             )
             page.write_text(source, encoding="utf-8")

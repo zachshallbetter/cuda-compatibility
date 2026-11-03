@@ -11,7 +11,7 @@ from xml.etree import ElementTree
 
 
 # Update with the repository's default branch whenever its published ref changes.
-PROJECT_SOURCE_REF = "codex/cuda-compat-publication"
+PROJECT_SOURCE_REF = "main"
 
 
 class PageParser(HTMLParser):
@@ -164,7 +164,8 @@ def audit_site(site_root: Path) -> list[str]:
             errors.append("docs/discovery.html: stale claim says the public deployment is unverified")
         if "bing webmaster tools" not in discovery_source:
             errors.append("docs/discovery.html: missing Bing Webmaster Tools setup guidance")
-        if "https://zachshallbetter.github.io/cuda-compatibility/" not in discovery_source:
+        home_canonicals = parsed[home][0].canonicals
+        if not home_canonicals or home_canonicals[0].lower() not in discovery_source:
             errors.append("docs/discovery.html: missing the exact hosted site URL-prefix property")
         if "site has no ga4 measurement id" in discovery_source or "ga4 remains inactive" in discovery_source:
             errors.append("docs/discovery.html: stale claim says GA4 is unconfigured")

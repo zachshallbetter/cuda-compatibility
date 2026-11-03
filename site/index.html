@@ -3,24 +3,25 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="theme-color" content="#0b1017">
+<meta name="color-scheme" content="only light">
+<meta name="theme-color" content="#000000">
 <meta name="description" content="Open-source CUDA compatibility for older NVIDIA GPUs: use selected CUDA 13 PyTorch operations on Maxwell sm_52 with native kernels, CPU fallbacks, and explicit limits.">
 <link rel="icon" type="image/svg+xml" href="favicon.svg">
 <meta property="og:type" content="website">
 <meta property="og:title" content="CUDA Compatibility — Newer CUDA workloads on older GPUs">
 <meta property="og:description" content="An evidence-first path to practical PyTorch CUDA 13 use on older NVIDIA GPUs.">
 <title>CUDA Compatibility: CUDA 13 on Older NVIDIA GPUs</title>
-<link rel="canonical" href="https://zachshallbetter.github.io/cuda-compatibility/">
+<link rel="canonical" href="https://cuda-compatibility.vercel.app/">
 <meta name="author" content="Zach Shallbetter">
 <meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1">
 <meta name="googlebot" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1">
 <meta name="google-site-verification" content="2DE5E0VRt_DWCUmeZbGK35YDdealoZyJDKURNXr04ZM">
 <meta name="msvalidate.01" content="CDE813454E6BD389334E94C9B9C70981">
 <meta property="og:site_name" content="CUDA Compatibility">
-<meta property="og:url" content="https://zachshallbetter.github.io/cuda-compatibility/">
+<meta property="og:url" content="https://cuda-compatibility.vercel.app/">
 <meta property="og:locale" content="en_US">
-<meta property="og:image" content="https://zachshallbetter.github.io/cuda-compatibility/assets/social-card.png">
-<meta property="og:image:secure_url" content="https://zachshallbetter.github.io/cuda-compatibility/assets/social-card.png">
+<meta property="og:image" content="https://cuda-compatibility.vercel.app/assets/social-card.png">
+<meta property="og:image:secure_url" content="https://cuda-compatibility.vercel.app/assets/social-card.png">
 <meta property="og:image:type" content="image/png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
@@ -28,148 +29,409 @@
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="CUDA Compatibility: CUDA 13 on older GPUs">
 <meta name="twitter:description" content="An experimental, evidence-led compatibility layer for selected CUDA 13 PyTorch operations on older NVIDIA GPUs.">
-<meta name="twitter:image" content="https://zachshallbetter.github.io/cuda-compatibility/assets/social-card.png">
+<meta name="twitter:image" content="https://cuda-compatibility.vercel.app/assets/social-card.png">
 <meta name="twitter:image:alt" content="CUDA Compatibility: CUDA 13, older GPUs, and truthful sm_52 support">
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
   "@graph": [
-    {"@type":"WebSite","@id":"https://zachshallbetter.github.io/cuda-compatibility/#website","url":"https://zachshallbetter.github.io/cuda-compatibility/","name":"CUDA Compatibility","inLanguage":"en","publisher":{"@id":"https://zachshallbetter.github.io/cuda-compatibility/#author"}},
-    {"@type":"Person","@id":"https://zachshallbetter.github.io/cuda-compatibility/#author","name":"Zach Shallbetter","url":"https://zachshallbetter.com/","sameAs":["https://github.com/zachshallbetter"]},
-    {"@type":"SoftwareApplication","@id":"https://zachshallbetter.github.io/cuda-compatibility/#software","name":"CUDA Compatibility","url":"https://zachshallbetter.github.io/cuda-compatibility/","description":"An experimental compatibility layer for selected PyTorch CUDA 13 operations on older NVIDIA GPUs, with actual device identity preserved.","applicationCategory":"DeveloperApplication","operatingSystem":"Linux x86_64","softwareVersion":"0.1.0","isAccessibleForFree":true,"codeRepository":"https://github.com/zachshallbetter/cuda-compatibility","author":{"@id":"https://zachshallbetter.github.io/cuda-compatibility/#author"},"featureList":["GPU inventory and compatibility profile checks","Process-local CUDA Runtime version facade","Selected native sm_52 PyTorch operator kernels","Bounded inference CPU fallback"]}
+    {"@type":"WebSite","@id":"https://cuda-compatibility.vercel.app/#website","url":"https://cuda-compatibility.vercel.app/","name":"CUDA Compatibility","inLanguage":"en","publisher":{"@id":"https://cuda-compatibility.vercel.app/#author"}},
+    {"@type":"Person","@id":"https://cuda-compatibility.vercel.app/#author","name":"Zach Shallbetter","url":"https://zachshallbetter.com/","sameAs":["https://github.com/zachshallbetter"]},
+    {"@type":"SoftwareApplication","@id":"https://cuda-compatibility.vercel.app/#software","name":"CUDA Compatibility","url":"https://cuda-compatibility.vercel.app/","description":"An experimental compatibility layer for selected PyTorch CUDA 13 operations on older NVIDIA GPUs, with actual device identity preserved.","applicationCategory":"DeveloperApplication","operatingSystem":"Linux x86_64","softwareVersion":"0.1.0","isAccessibleForFree":true,"codeRepository":"https://github.com/zachshallbetter/cuda-compatibility","author":{"@id":"https://cuda-compatibility.vercel.app/#author"},"featureList":["GPU inventory and compatibility profile checks","Process-local CUDA Runtime version facade","Selected native sm_52 PyTorch operator kernels","Bounded inference CPU fallback"]}
   ]
 }
 </script>
 <link rel="stylesheet" href="styles.css">
+<link rel="stylesheet" href="home.css">
 </head>
 <body>
-<a class="skip-link" href="#main">Skip to content</a>
-<header class="topbar">
-<a class="brand" href="#top" aria-label="CUDA Compatibility home"><span class="brand-mark" aria-hidden="true">C</span><span>CUDA Compatibility</span></a>
-<nav aria-label="Main navigation"><a href="#status">Features</a><a href="#approach">How it works</a><a href="#hardware">Hardware</a><a href="docs/index.html">Docs</a><a href="#start">Get started</a></nav>
-<a class="top-link" href="https://github.com/zachshallbetter/cuda-compatibility" target="_blank" rel="noreferrer">Project repository <span aria-hidden="true">↗</span></a>
+<div style="display:flex;flex-direction:column;min-height:100%">
+
+<a class="skip-link" href="#top">Skip to content</a>
+<header style="border-bottom:1px solid currentColor">
+<div class="wrap" style="padding-top:18px;padding-bottom:18px;display:flex;justify-content:space-between;align-items:center;gap:24px;flex-wrap:wrap">
+<a href="#top" style="text-decoration:none;color:inherit;font-stretch:110%;font-weight:800;font-size:17px;letter-spacing:-0.02em;display:inline-flex;align-items:center;gap:12px"><svg aria-hidden="true" width="26" height="26" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="3"><rect x="5" y="5" width="22" height="22"></rect><rect x="12" y="12" width="8" height="8" fill="currentColor" stroke="none"></rect></svg>CUDA Compatibility</a>
+<div style="display:flex;align-items:center;gap:32px;flex-wrap:wrap">
+<nav class="nav" aria-label="Main navigation">
+<a href="#works">What works</a>
+<a href="#stack">How it works</a>
+<a href="#hardware">Hardware</a>
+<a href="#install">Install</a>
+<a href="docs/index.html">Docs</a>
+<a href="https://github.com/zachshallbetter/cuda-compatibility/releases">Releases</a>
+</nav>
+<a class="repo" href="https://github.com/zachshallbetter/cuda-compatibility">Repository<svg aria-hidden="true" width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 10 10 2M4 2h6v6"></path></svg></a>
+</div>
+</div>
 </header>
-<main id="main">
-<section class="hero" id="top">
-<div class="hero-copy">
-<p class="eyebrow"><span class="pulse" aria-hidden="true"></span> Open compatibility research · Linux · NVIDIA</p>
-<h1>Newer CUDA.<br><em>Older GPUs.</em></h1>
-<p class="hero-lede">A practical compatibility layer for running supported CUDA 13 PyTorch workloads on GPUs that newer software has left behind.</p>
-<div class="hero-actions"><a class="button button-primary" href="#status">See what works <span aria-hidden="true">↓</span></a><a class="button button-quiet" href="docs/index.html">Read the documentation</a></div>
-<p class="truth-note"><strong>Current reality:</strong> experimental, process-local, and workload-specific. It does not make every CUDA 13 application work.</p>
+
+<main id="top" style="display:flex;flex-direction:column">
+
+<section class="inv paper" style="overflow:hidden;position:relative">
+<svg class="mark" style="top:12px;left:12px" aria-hidden="true" viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1"><path d="M11 0v22M0 11h22"></path><circle cx="11" cy="11" r="6"></circle></svg><svg class="mark" style="top:12px;right:12px" aria-hidden="true" viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1"><path d="M11 0v22M0 11h22"></path><circle cx="11" cy="11" r="6"></circle></svg><svg class="mark" style="bottom:12px;left:12px" aria-hidden="true" viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1"><path d="M11 0v22M0 11h22"></path><circle cx="11" cy="11" r="6"></circle></svg><svg class="mark" style="bottom:12px;right:12px" aria-hidden="true" viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1"><path d="M11 0v22M0 11h22"></path><circle cx="11" cy="11" r="6"></circle></svg>
+<canvas id="titan" role="img" aria-label="Wireframe of the GM200 reference card assembling itself from the circuit board outward, with the blower fan, GM200 package, heatsink fins and PCIe bracket labelled" style="position:absolute;inset:0;width:100%;height:100%;display:block"></canvas>
+<div class="wrap hero built" style="position:relative;padding-top:48px;padding-bottom:48px;min-height:720px;box-sizing:border-box">
+<div style="display:flex;flex-direction:column;gap:32px;align-self:center">
+<p class="sheet" style="margin:0;opacity:0.6">Open compatibility research, Linux, NVIDIA</p>
+<h1 class="disp" style="font-size:clamp(44px,4.8vw,68px)"><span style="display:block;white-space:nowrap">Newer <span class="ink">CUDA.</span></span><span style="display:block;white-space:nowrap">Older <span class="ink">GPUs.</span></span></h1>
+<p class="soft" style="margin:0;font-size:19px;line-height:1.5;max-width:40ch;font-weight:400;letter-spacing:0.002em">Selected CUDA 13 PyTorch operations running on Maxwell cards NVIDIA stopped compiling for. The real device identity is never touched.</p>
+<div style="display:flex;gap:14px;flex-wrap:wrap">
+<a class="btn primary" href="#works"><span>See what works</span><svg aria-hidden="true" width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 2v10M2.5 7.5 7 12l4.5-4.5"></path></svg></a>
+<a class="btn quiet" href="#get"><span>Get the project</span></a>
 </div>
-<div class="hero-visual" aria-label="The compatibility path translates selected CUDA 13 PyTorch operations to Maxwell sm_52 kernels or bounded CPU fallbacks.">
-<div class="visual-label">COMPATIBILITY PATH / 001</div>
-<div class="pipeline">
-<div class="pipeline-node app-node"><span class="node-index">01 / APPLICATION</span><strong>PyTorch<br>CUDA 13</strong><small>official wheel</small></div>
-<div class="pipeline-arrow"><span>selected ops</span><i aria-hidden="true">↓</i></div>
-<div class="pipeline-node layer-node"><span class="node-index">02 / INTERPOSITION</span><strong>CUDA<br>Compatibility</strong><small>opt-in launcher</small></div>
-<div class="route-split"><span class="route-line"></span><span class="route-label">route by operator</span></div>
-<div class="route-pair"><div class="route-card"><b class="route-dot green"></b><strong>Maxwell kernel</strong><small>LLVM → PTX → sm_52</small></div><div class="route-card"><b class="route-dot amber"></b><strong>CPU fallback</strong><small>inference · bounded</small></div></div>
-<div class="gpu-strip"><span class="gpu-icon" aria-hidden="true">▥</span><span><strong>Real device stays visible</strong><small>GM200 Maxwell · compute capability 5.2</small></span><span class="status-tag">TRUTHFUL</span></div>
 </div>
-<div class="visual-foot"><span>NO HARDWARE IDENTITY SPOOFING</span><span>CUDA RUNTIME 13.0 FACADE</span></div>
+<div></div>
 </div>
-<div class="hero-index" aria-hidden="true">RESEARCH / 2026</div>
+<div class="wrap" style="position:relative">
+<div style="display:flex;justify-content:space-between;align-items:center;gap:24px;flex-wrap:wrap;border-top:1px solid var(--yellow);padding:14px 0 28px">
+<p style="margin:0;font-size:15px;line-height:1.3;max-width:46ch"><span style="font-weight:600;color:var(--yellow)">GM200 reference card, compute capability 5.2.</span> <span class="mute">The only hardware tested so far. Experimental, process-local, workload-specific.</span></p>
+<dl style="margin:0;display:flex;gap:32px;flex-wrap:wrap">
+<div style="display:flex;flex-direction:column;gap:2px"><dt class="sheet" style="opacity:0.6">Reference cards</dt><dd style="margin:0;font-weight:800;font-size:22px;line-height:1">3</dd></div>
+<div style="display:flex;flex-direction:column;gap:2px"><dt class="sheet" style="opacity:0.6">Native operations</dt><dd style="margin:0;font-weight:800;font-size:22px;line-height:1">6</dd></div>
+<div style="display:flex;flex-direction:column;gap:2px"><dt class="sheet" style="opacity:0.6">Claims of universal support</dt><dd style="margin:0;font-weight:800;font-size:22px;line-height:1">0</dd></div>
+</dl>
+<button type="button" class="replay" id="replay" hidden aria-label="Replay the card assembly">Replay build<svg aria-hidden="true" width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M10 6a4 4 0 1 1-1.2-2.9M9 1v2.5H6.5"></path></svg></button>
+</div>
+</div>
 </section>
-<section class="ticker" aria-label="Project facts"><span><b>3</b> reference GM200 cards</span><i aria-hidden="true">/</i><span><b>sm_52</b> real compute capability</span><i aria-hidden="true">/</i><span><b>6</b> native operator paths</span><i aria-hidden="true">/</i><span><b>0</b> claims of universal support</span></section>
-<section class="section status-section" id="status">
-<div class="section-heading"><div><p class="eyebrow">01 — Evidence, not promises</p><h2>What works today</h2></div><p>The tool currently provides hardware and profile diagnostics plus an experimental CUDA 13 launch path with selected native kernels and bounded inference fallbacks.</p></div>
-<div class="status-grid">
-<article class="status-card primary-card"><div class="card-topline"><span class="badge badge-green">AVAILABLE</span><span class="mono">CLI</span></div><h3>GPU inventory and profile checks</h3><p>Inspect visible NVIDIA devices and compiler tools, review bundled compatibility profiles, and compare a machine’s reported hardware against a target’s published requirements. Unknown facts stay unknown; a profile match is not a workload certification.</p><div class="card-rule"></div><p class="card-detail"><b>Commands:</b> <code>inspect</code>, <code>profiles</code>, <code>audit</code>, and <code>doctor</code>.</p></article>
-<article class="status-card"><div class="card-topline"><span class="badge badge-amber">EXPERIMENTAL</span><span class="mono">CHILD PROCESS</span></div><h3>CUDA 13 process launcher</h3><p>Launch a Python application with a process-local CUDA Runtime version facade and PyTorch adapter. The runtime query presents CUDA 13.0 while the actual GPU name and compute capability remain intact.</p><div class="metric-line"><span>Framework exercised</span><b>PyTorch 2.14 · CUDA 13</b></div><div class="metric-line"><span>System changes</span><b>none</b></div></article>
-<article class="status-card"><div class="card-topline"><span class="badge badge-amber">EXPERIMENTAL</span><span class="mono">GPU · sm_52</span></div><h3>Native Maxwell operator kernels</h3><p>Selected PyTorch operations use LLVM-generated PTX compiled for the real <code>sm_52</code> device and launched through the CUDA Driver API.</p><div class="metric-line"><span>Registered operations</span><b>add · arange · embedding</b></div><div class="metric-line"><span>Also covered</span><b>layer norm · matmul · ReLU</b></div><div class="metric-line"><span>Baseline verification</span><b>selected cases on 3 cards</b></div><div class="metric-line"><span>Float16 · strided mm · SGD</span><b>verified on GPUs 1 and 2</b></div></article>
-<article class="status-card"><div class="card-topline"><span class="badge badge-amber">EXPERIMENTAL</span><span class="mono">BOUNDED AUTOGRAD</span></div><h3>CPU fallback and training slice</h3><p>Selected CPU fallbacks preserve first-order gradients for a tested linear→ReLU→sum path. A small SGD update runs through a native float32 Maxwell in-place add kernel.</p><div class="metric-line"><span>Fallback limit</span><b>64 MiB inputs and outputs</b></div><div class="metric-line"><span>Training evidence</span><b>2×2 linear · 7 SGD steps · GPUs 1 &amp; 2</b></div><div class="metric-line"><span>Median step latency</span><b>GPU 2 2.360 ms · GPU 1 7.296 ms</b></div><div class="metric-line"><span>Peak allocated memory</span><b>67,180,032 bytes</b></div><div class="metric-line"><span>Broader training</span><b>not verified</b></div></article>
+<section id="get" class="wrap" style="padding-top:40px;padding-bottom:0">
+<div class="qs">
+<div style="display:flex;flex-direction:column;gap:10px;min-width:0">
+<h2 style="font-size:30px;font-stretch:110%;font-weight:800;letter-spacing:-0.02em;line-height:1">Get it running</h2>
+<p class="soft" style="margin:0;font-size:16px;max-width:40ch">Two commands from a checkout, inside the Python environment that already holds the CUDA 13 PyTorch wheel. Linux x86_64, visible sm_52 GPUs only. No PyPI package yet.</p>
+<div style="display:flex;gap:14px;flex-wrap:wrap;align-items:center"><a href="docs/getting-started.html" style="font-weight:700;font-size:15px">Full install sheet</a><a href="https://github.com/zachshallbetter/cuda-compatibility/releases" style="font-weight:700;font-size:15px">Releases</a><a href="https://github.com/zachshallbetter/cuda-compatibility/archive/refs/heads/main.zip" style="font-weight:700;font-size:15px">Download zip</a></div>
 </div>
-<section class="operator-coverage" aria-labelledby="operator-coverage-title">
-<div class="coverage-heading"><p class="eyebrow">Operator-level support</p><h3 id="operator-coverage-title">Which PyTorch operations have a path?</h3><p>These are the current registered paths, with dtype, layout, and size limits. Support applies only to the cases listed; unsupported combinations fail explicitly.</p></div>
-<div class="coverage-grid">
-<article class="coverage-panel native-panel"><div class="coverage-panel-heading"><h4>Runs on the GPU</h4><span class="badge badge-green">NATIVE sm_52 KERNEL</span></div><ul class="coverage-ops">
-<li><strong>Tensor addition</strong><span>Contiguous float32 (up to 1,048,576 values) and int32 tensors (up to 2,147,483,647); same shape/device and <code>alpha=1</code>.</span></li>
-<li><strong>Float16 addition</strong><span>Same-shape contiguous float16 tensors, <code>alpha=1</code>, up to 1,048,576 values; edge values checked exactly.</span></li>
-<li><strong>Float32 in-place addition</strong><span>Same-shape contiguous float32 tensors, up to 1,048,576 values; supports scaled updates used by tested SGD.</span></li>
-<li><strong>Range creation</strong><span>CUDA int64 <code>arange</code>, up to 1,048,576 values.</span></li>
-<li><strong>Embedding</strong><span>Inference with float32 weights and int64 indices; 1D/2D indices and up to 1,048,576 output values.</span></li>
-<li><strong>Layer normalization</strong><span>Inference on contiguous float32 input, normalized over the last dimension with float32 weight and bias; up to 1,048,576 values.</span></li>
-<li><strong>Matrix multiplication</strong><span>2D float32 matrices with nonnegative strides; each dimension up to 256 and at most 16,777,216 multiply-accumulate steps.</span></li>
-<li><strong>ReLU</strong><span>Contiguous float32 tensors, up to 1,048,576 values.</span></li>
-</ul><p class="coverage-note">Kernels target the real <code>sm_52</code> device. Native forward kernels are not differentiable; eligible grad-enabled operations use differentiable CPU transfers instead.</p></article>
-<article class="coverage-panel fallback-panel"><div class="coverage-panel-heading"><h4>Runs through CPU fallback</h4><span class="badge badge-amber">BOUNDED AUTOGRAD</span></div><ul class="fallback-ops">
-<li><code>linear</code>, <code>bmm</code></li>
-<li><code>softmax</code>, <code>scaled_dot_product_attention</code>, <code>GELU</code></li>
-<li><code>add</code>, <code>multiply</code>, <code>divide</code></li>
-<li><code>sum</code>, <code>clamp_min</code></li>
-<li><code>concatenate</code>, <code>contiguous</code></li>
-</ul><p>These use PyTorch’s CPU implementation and differentiable host/device transfers for selected first-order gradient paths. The dispatcher can also retry eligible out-of-place operations after recognized missing-image, architecture-mismatch, or cuDNN no-engine errors.</p><p class="coverage-note">Each operation is limited to 64 MiB of CUDA inputs and 64 MiB of outputs. Fallback requires one CUDA device. Training evidence is limited to linear→ReLU→sum with float32 SGD (<code>foreach=False</code>); other autograd and optimizer paths are unverified.</p></article>
+<div style="display:flex;flex-direction:column;gap:10px;min-width:0">
+<div class="cmd"><span class="sheet" style="opacity:0.6">1 · clone</span><code>git clone https://github.com/zachshallbetter/cuda-compatibility.git</code><button type="button" class="copy" data-copy hidden aria-label="Copy clone command">Copy</button></div>
+<div class="cmd"><span class="sheet" style="opacity:0.6">2 · install</span><code>cd cuda-compatibility &amp;&amp; python -m pip install .</code><button type="button" class="copy" data-copy hidden aria-label="Copy install command">Copy</button></div>
+<div class="cmd"><span class="sheet" style="opacity:0.6">3 · check</span><code>cuda-legacy doctor --llvm-root /path/to/LLVM-23.1.4</code><button type="button" class="copy" data-copy hidden aria-label="Copy doctor command">Copy</button></div>
 </div>
-<p class="coverage-footnote">The installed CUDA 13 PyTorch wheel provides its own runtime and libraries. This project currently interposes one runtime-version query and does not replace the CUDA 13 API surface or implement general cuDNN, cuBLAS, NCCL, or Triton compatibility.</p>
-</section>
-<div class="scope-callout"><span class="callout-mark" aria-hidden="true">!</span><p><strong>What this means in practice:</strong> the launcher is a workload adapter for a narrow PyTorch subset, not a universal CUDA 13 runtime. It currently requires Linux x86_64 and homogeneous visible <code>sm_52</code> GPUs. Only one small first-order training step has been verified; other devices, operations, optimizers, dtypes/layouts, and library paths need separate implementations and evidence.</p></div>
-</section>
-<section class="section approach-section" id="approach">
-<div class="section-heading"><div><p class="eyebrow">02 — Where the gap lives</p><h2>Compatibility is a stack</h2></div><p>A version number can be adapted at one boundary. Useful results require every operation beneath it to have a valid implementation.</p></div>
-<div class="stack-list">
-<article class="stack-row"><span class="stack-number">01</span><div class="stack-title"><span>Application contract</span><small>PyTorch 2.14 · CUDA 13 wheel</small></div><p>The published PyTorch CUDA 13 profile starts at compute capability 7.5. The adapter’s experimental gate is sm_52; missing kernels and library paths still need real solutions.</p><span class="stack-state state-target">TARGET</span></article>
-<article class="stack-row"><span class="stack-number">02</span><div class="stack-title"><span>Process interposition</span><small>opt-in Python launcher</small></div><p>Prepare a child process with a CUDA Runtime 13.0 version facade and a PyTorch operator adapter. The host driver, system CUDA install, and parent process are not replaced.</p><span class="stack-state state-built">BUILT</span></article>
-<article class="stack-row"><span class="stack-number">03</span><div class="stack-title"><span>Kernel and fallback routing</span><small>operator registry · LLVM / PTX · CPU</small></div><p>Selected supported operations run on Maxwell kernels. A narrow set can fall back to CPU during inference, within explicit size and semantic limits. There is no general binary translator.</p><span class="stack-state state-partial">PARTIAL</span></article>
-<article class="stack-row"><span class="stack-number">04</span><div class="stack-title"><span>Runtime, libraries, hardware</span><small>driver · cuDNN · cuBLAS · device ISA</small></div><p>Every API, library path, dtype, synchronization rule, and instruction must be supported, translated, or replaced. Unsupported proprietary paths cannot be fixed by spoofing a version string.</p><span class="stack-state state-open">OPEN WORK</span></article>
 </div>
-<div class="why-now"><div class="why-symbol" aria-hidden="true">13</div><div><p class="eyebrow">Why this project exists</p><p>NVIDIA's CUDA 13 release notes say offline compilation and library support for Maxwell, Pascal, and Volta were removed from the toolkit. This project investigates how much useful application behavior can be recovered with a compiler path, adapters, and faithful fallbacks—without hiding the real device.</p><a class="text-link" href="https://docs.nvidia.com/cuda/archive/13.0.0/cuda-toolkit-release-notes/index.html#deprecated-or-dropped-features" target="_blank" rel="noreferrer">Read CUDA 13 release notes <span aria-hidden="true">↗</span></a></div></div>
 </section>
-<section class="hardware-section" id="hardware"><div class="section hardware-inner">
-<div class="section-heading"><div><p class="eyebrow">03 — Hardware map</p><h2>Cards to test next</h2></div><p>The candidate models below share NVIDIA-listed <code>sm_52</code> capability with the reference GM200 Maxwell devices. Those reference devices are the only cards tested so far; every candidate model remains unverified.</p></div>
-<div class="hardware-notice"><span class="notice-icon" aria-hidden="true">◎</span><p><strong>Architecture match ≠ compatibility certification.</strong> Each exact board, driver, memory configuration, and workload still needs a run. These are research candidates, not supported products.</p></div>
-<div class="gpu-table-wrap"><table><thead><tr><th scope="col">GPU family</th><th scope="col">NVIDIA-listed <abbr title="Compute Capability">CC</abbr></th><th scope="col">Project status</th></tr></thead><tbody>
-<tr><td><strong>GeForce GTX 980 Ti, 980, 970, 960, 950</strong></td><td><code>5.2</code></td><td><span class="table-candidate">UNVERIFIED CANDIDATE</span></td></tr>
-<tr><td><strong>GeForce GTX 980M, 970M, 965M, 910M</strong></td><td><code>5.2</code></td><td><span class="table-candidate">UNVERIFIED CANDIDATE</span></td></tr>
-<tr><td><strong>GM200 Maxwell reference GPU</strong></td><td><code>5.2</code></td><td><span class="table-verified">REFERENCE DEVICE</span><small>Three physical cards; not every model workload tested on each</small></td></tr>
-<tr><td><strong>Tesla M40, M60</strong></td><td><code>5.2</code></td><td><span class="table-candidate">UNVERIFIED CANDIDATE</span></td></tr>
-<tr><td><strong>Quadro M6000 (including 24GB), M5000, M4000, M2000</strong></td><td><code>5.2</code></td><td><span class="table-candidate">UNVERIFIED CANDIDATE</span></td></tr>
-<tr><td><strong>Quadro M5500M, M2200, M620</strong></td><td><code>5.2</code></td><td><span class="table-candidate">UNVERIFIED CANDIDATE</span></td></tr>
-</tbody></table></div>
-<div class="hardware-foot"><span>Same compute capability as reference target</span><a class="text-link" href="https://developer.nvidia.com/cuda/gpus/legacy" target="_blank" rel="noreferrer">NVIDIA legacy GPU capability list <span aria-hidden="true">↗</span></a></div>
-<div class="catalog-callout"><p>The NVIDIA legacy list spans several hardware generations and markets. The table above focuses on the exact <code>sm_52</code> gate used by today’s adapter; <a href="gpu-catalog.html">browse the explained legacy GPU catalog</a> for all listed compute-capability tiers, example models, and the project status for each.</p></div>
-<p class="model-warning"><b>Scope:</b> this candidate list covers only models NVIDIA maps to compute capability 5.2. Other Maxwell variants such as 5.0 or 5.3, plus Pascal and newer families, are outside the current launcher's exact-<code>sm_52</code> hardware gate.</p>
-</div></section>
-<section class="section start-section" id="start">
-<div class="section-heading"><div><p class="eyebrow">04 — Try the current prototype</p><h2>Run it in a controlled environment</h2></div><p>Install the package into the same Python environment that already contains the official target PyTorch wheel. The tested launcher setup requires Linux x86_64 and the project’s pinned CUDA 13 PyTorch / LLVM / host-header combination; package installation does not install NVIDIA components.</p></div>
-<div class="install-location"><h3>Install the command where your PyTorch environment can find it</h3><p>For GPU runs, install CUDA Compatibility into the same active virtual or Conda environment as PyTorch. The command is placed in that environment’s <code>bin/</code> directory. A user-site install is also available outside a virtual environment; find its scripts path with <code>python3 -m site --user-base</code> and add <code>/bin</code> to <code>PATH</code>. The Python used for that install must already contain PyTorch.</p><a class="text-link" href="https://packaging.python.org/en/latest/tutorials/installing-packages/" target="_blank" rel="noreferrer">Python Packaging User Guide <span aria-hidden="true">↗</span></a></div>
-<div class="start-grid">
-<div class="install-steps">
-<div class="step"><span>1</span><div><h3>Install into the PyTorch environment</h3><pre><code># from the project checkout, in the target PyTorch environment
-python -m pip install .</code></pre></div></div>
-<div class="step"><span>2</span><div><h3>Check the host and target</h3><pre><code>cuda-legacy inspect
+<section class="wrap" style="padding-top:40px;padding-bottom:0">
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(240px,100%),1fr));gap:0;border-bottom:3px solid currentColor">
+<div style="padding:28px 24px 28px 0;display:flex;flex-direction:column;gap:6px"><span class="mute" style="font-size:14px;font-weight:600">GPU</span><strong style="font-size:20px;font-weight:800">GM200 Maxwell, 3 cards</strong></div>
+<div style="padding:28px 24px;display:flex;flex-direction:column;gap:6px;border-left:1px solid currentColor"><span class="mute" style="font-size:14px;font-weight:600">PyTorch</span><strong style="font-size:20px;font-weight:800">2.14.0, CUDA 13.0 wheel</strong></div>
+<div style="padding:28px 24px;display:flex;flex-direction:column;gap:6px;border-left:1px solid currentColor"><span class="mute" style="font-size:14px;font-weight:600">Driver</span><strong style="font-size:20px;font-weight:800">NVIDIA 580.178.04</strong></div>
+<div style="padding:28px 24px;display:flex;flex-direction:column;gap:6px;border-left:1px solid currentColor"><span class="mute" style="font-size:14px;font-weight:600">Compiler</span><strong style="font-size:20px;font-weight:800">LLVM/Clang 23.1.4</strong></div>
+<div style="padding:28px 0 28px 24px;display:flex;flex-direction:column;gap:6px;border-left:1px solid currentColor"><span class="mute" style="font-size:14px;font-weight:600">Host</span><strong style="font-size:20px;font-weight:800">Linux x86_64, Python 3.10.12, CUDA 12.4 headers</strong></div>
+</div>
+</section>
+
+
+<section id="works" class="paper">
+<div class="wrap" style="padding-top:88px;padding-bottom:96px;display:flex;flex-direction:column;gap:48px">
+<div style="display:flex;flex-direction:column;gap:24px">
+<div class="sec"><span class="cut" aria-hidden="true">A</span><h2 class="h2" style="font-size:44px">What works today</h2><span class="plane" aria-hidden="true"></span><span class="sheet">Sheet 01 / 10</span></div>
+<p style="margin:0;font-size:19px;max-width:48ch">Hardware and profile diagnostics are in place. The CUDA 13 launch path is experimental: a handful of native Maxwell kernels plus bounded CPU fallbacks, each with explicit limits. Every figure below was measured on the configuration above.</p>
+<div class="legend" aria-label="Status legend"><span><i class="sw full" aria-hidden="true"></i>Reproduced, tested</span><span><i class="sw half" aria-hidden="true"></i>Listed cases only</span><span><i class="sw x" aria-hidden="true"></i>Contradicted, kept</span><span><i class="sw" aria-hidden="true"></i>Unverified or unknown</span><span style="text-transform:none;letter-spacing:0;font-weight:500">Every mark names its record</span></div>
+</div>
+
+<div style="display:flex;flex-direction:column;border-top:3px solid currentColor;background:var(--bg)">
+<article class="row">
+<div style="display:flex;flex-direction:column;gap:10px;align-items:center"><span class="balloon" aria-hidden="true">1</span><svg class="glyph" role="img" aria-label="Inventory" viewBox="0 0 44 44" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="26" height="26"></rect><rect x="17" y="17" width="10" height="10"></rect><path d="M14 2v7M22 2v7M30 2v7M14 35v7M22 35v7M30 35v7M2 14h7M2 22h7M2 30h7M35 14h7M35 22h7M35 30h7"></path></svg></div>
+<span><span class="state ok"><i class="sw full" aria-hidden="true" style="border-color:#FFFFFF;background:#FFFFFF;width:10px;height:10px;margin-right:7px"></i>Available</span></span>
+<div style="display:flex;flex-direction:column;gap:10px">
+<h3 style="font-size:26px">GPU inventory and profile checks</h3>
+<p style="margin:0">Inspect visible NVIDIA devices and compiler tools, review bundled compatibility profiles, and compare a machine’s reported hardware against a target’s published requirements. Unknown facts stay unknown; a profile match is not a workload certification.</p>
+<p style="margin:0" class="mute">Commands: <code>inspect</code>, <code>profiles</code>, <code>audit</code>, <code>doctor</code></p>
+<div class="ev"><a href="https://github.com/zachshallbetter/cuda-compatibility/blob/main/records/evidence.jsonl">CLC-001-target-inventory-audit</a><a href="https://github.com/zachshallbetter/cuda-compatibility/blob/main/records/evidence.jsonl">CLC-014-installed-cli-workflow</a></div>
+</div>
+<span class="mute" style="font-size:14px;font-weight:600">Command line</span>
+</article>
+<article class="row">
+<div style="display:flex;flex-direction:column;gap:10px;align-items:center"><span class="balloon" aria-hidden="true">2</span><svg class="glyph" role="img" aria-label="Launcher" viewBox="0 0 44 44" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="7" width="38" height="30"></rect><path d="M3 14h38M10 22l6 5-6 5M20 32h10"></path></svg></div>
+<span><span class="state exp"><i class="sw half" aria-hidden="true" style="width:10px;height:10px;margin-right:7px;"></i>Experimental</span></span>
+<div style="display:flex;flex-direction:column;gap:10px">
+<h3 style="font-size:26px">CUDA 13 process launcher</h3>
+<p style="margin:0">Launch a Python application in a child process with a process-local CUDA Runtime version facade and a PyTorch adapter. The runtime query reports CUDA 13.0; the GPU name and compute capability stay intact. Nothing on the system is changed.</p>
+<p style="margin:0" class="mute">Exercised with PyTorch 2.14 and the official CUDA 13 wheel.</p>
+<div class="ev"><a href="https://github.com/zachshallbetter/cuda-compatibility/blob/main/records/evidence.jsonl">CLC-005-runtime-version-facade</a><a href="https://github.com/zachshallbetter/cuda-compatibility/blob/main/records/evidence.jsonl">CLC-010-packaged-launcher-sm52</a></div>
+</div>
+<span class="mute" style="font-size:14px;font-weight:600">Child process</span>
+</article>
+<article class="row">
+<div style="display:flex;flex-direction:column;gap:10px;align-items:center"><span class="balloon" aria-hidden="true">3</span><svg class="glyph" role="img" aria-label="Native kernels" viewBox="0 0 44 44" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="4" y="4" width="16" height="16" fill="currentColor"></rect><rect x="24" y="4" width="16" height="16"></rect><rect x="4" y="24" width="16" height="16"></rect><rect x="24" y="24" width="16" height="16" fill="currentColor"></rect></svg></div>
+<span><span class="state exp"><i class="sw half" aria-hidden="true" style="width:10px;height:10px;margin-right:7px;"></i>Experimental</span></span>
+<div style="display:flex;flex-direction:column;gap:10px">
+<h3 style="font-size:26px">Native Maxwell operator kernels</h3>
+<p style="margin:0">Selected PyTorch operations use LLVM-generated PTX compiled for the real <code>sm_52</code> device and launched through the CUDA Driver API: add, arange, embedding, layer norm, matmul, and ReLU. Float16 add, strided matmul, and an SGD step are verified on GPUs 1 and 2.</p>
+<div class="ev"><a href="https://github.com/zachshallbetter/cuda-compatibility/blob/main/records/evidence.jsonl">CLC-007-pytorch-aten-add-sm52</a><a href="https://github.com/zachshallbetter/cuda-compatibility/blob/main/records/evidence.jsonl">CLC-009-pytorch-fp32-mlp-sm52</a><a href="https://github.com/zachshallbetter/cuda-compatibility/blob/main/records/evidence.jsonl">CLC-025-sm52-operator-training</a></div>
+</div>
+<span class="mute" style="font-size:14px;font-weight:600">GPU, sm_52</span>
+</article>
+<article class="row">
+<div style="display:flex;flex-direction:column;gap:10px;align-items:center"><span class="balloon" aria-hidden="true">4</span><svg class="glyph" role="img" aria-label="CPU fallback" viewBox="0 0 44 44" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="4" y="4" width="18" height="18"></rect><path d="M22 13h12v27M28 34l6 6 6-6"></path><path d="M9 9h8v8H9z" fill="currentColor" stroke="none"></path></svg></div>
+<span><span class="state exp"><i class="sw half" aria-hidden="true" style="width:10px;height:10px;margin-right:7px;"></i>Experimental</span></span>
+<div style="display:flex;flex-direction:column;gap:10px">
+<h3 style="font-size:26px">CPU fallback and a training slice</h3>
+<p style="margin:0">Selected CPU fallbacks preserve first-order gradients for a tested linear → ReLU → sum path. A small SGD update runs through a native float32 in-place add kernel. Each fallback is limited to 64 MiB of inputs and 64 MiB of outputs.</p>
+<dl class="ledger" style="margin-top:8px;max-width:640px;border-top:1px solid currentColor">
+<dt class="mute">Training evidence</dt><dd>2×2 linear, 7 SGD steps, GPUs 1 and 2</dd>
+<dt class="mute">Median step latency</dt><dd>2.360 ms on GPU 2, 7.296 ms on GPU 1</dd>
+<dt class="mute">Peak allocated memory</dt><dd>67,180,032 bytes</dd>
+<dt class="mute">Broader training</dt><dd>Not verified</dd>
+</dl>
+<div class="ev"><a href="https://github.com/zachshallbetter/cuda-compatibility/blob/main/records/evidence.jsonl">CLC-025-sm52-operator-training</a></div>
+</div>
+<span class="mute" style="font-size:14px;font-weight:600">Bounded autograd</span>
+</article>
+<article class="row">
+<div style="display:flex;flex-direction:column;gap:10px;align-items:center"><span class="balloon" aria-hidden="true">5</span><svg class="glyph" role="img" aria-label="Stock path" viewBox="0 0 44 44" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="6" y="6" width="32" height="32"></rect><path d="M12 12l20 20M32 12L12 32"></path></svg></div>
+<span><span class="state con"><i class="sw x" aria-hidden="true" style="width:10px;height:10px;margin-right:7px"></i>Contradicted</span></span>
+<div style="display:flex;flex-direction:column;gap:10px">
+<h3 style="font-size:26px">Stock kernels on the official wheel</h3>
+<p style="margin:0">Without the adapter, stock float32 <code>mm</code> fails in cuBLAS with <code>CUBLAS_STATUS_ARCH_MISMATCH</code> and stock ReLU reports no kernel image for <code>sm_52</code>. Both observations are kept as negative results and reopen only if a future wheel passes the same probes.</p>
+<div class="ev"><a href="https://github.com/zachshallbetter/cuda-compatibility/blob/main/records/negative-results.jsonl">CLC-009-stock-mm-cublas-arch-mismatch</a><a href="https://github.com/zachshallbetter/cuda-compatibility/blob/main/records/negative-results.jsonl">CLC-009-stock-relu-no-kernel-image</a></div>
+</div>
+<span class="mute" style="font-size:14px;font-weight:600">Why the adapter exists</span>
+</article>
+</div>
+
+<div class="sec" style="padding-top:8px"><span class="cut" aria-hidden="true">B</span><h2 class="h2" style="font-size:44px">Operator support</h2><span class="plane" aria-hidden="true"></span><span class="sheet">Sheet 01 / 10</span></div>
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(440px,100%),1fr));gap:56px">
+<div style="display:flex;flex-direction:column;gap:18px;background:var(--bg)">
+<div style="display:flex;justify-content:space-between;align-items:flex-end;gap:16px;flex-wrap:wrap">
+<h3 style="font-size:26px">Runs on the GPU</h3>
+<span class="state ok"><i class="sw full" aria-hidden="true" style="border-color:#FFFFFF;background:#FFFFFF;width:10px;height:10px;margin-right:7px"></i>Native sm_52 kernel</span>
+</div>
+<div class="dim"><span>Operation / limits as registered</span></div>
+<ul class="ops">
+<li><strong>Tensor addition</strong><span class="soft">Contiguous float32 (up to 1,048,576 values) and int32 tensors (up to 2,147,483,647); same shape and device, <code>alpha=1</code>.</span></li>
+<li><strong>Float16 addition</strong><span class="soft">Same-shape contiguous float16 tensors, <code>alpha=1</code>, up to 1,048,576 values; edge values checked exactly.</span></li>
+<li><strong>Float32 in-place addition</strong><span class="soft">Same-shape contiguous float32 tensors, up to 1,048,576 values; supports the scaled updates used by the tested SGD step.</span></li>
+<li><strong>Range creation</strong><span class="soft">CUDA int64 <code>arange</code>, up to 1,048,576 values.</span></li>
+<li><strong>Embedding</strong><span class="soft">Inference with float32 weights and int64 indices; 1D or 2D indices, up to 1,048,576 output values.</span></li>
+<li><strong>Layer normalization</strong><span class="soft">Inference on contiguous float32 input over the last dimension with float32 weight and bias; up to 1,048,576 values.</span></li>
+<li><strong>Matrix multiplication</strong><span class="soft">2D float32 matrices with nonnegative strides; each dimension up to 256, at most 16,777,216 multiply-accumulate steps.</span></li>
+<li><strong>ReLU</strong><span class="soft">Contiguous float32 tensors, up to 1,048,576 values.</span></li>
+</ul>
+<p class="mute" style="margin:0;font-size:15px">Native forward kernels are not differentiable. Grad-enabled calls on these operations use differentiable CPU transfers instead.</p>
+</div>
+<div style="display:flex;flex-direction:column;gap:18px;background:var(--bg)">
+<div style="display:flex;justify-content:space-between;align-items:flex-end;gap:16px;flex-wrap:wrap">
+<h3 style="font-size:26px">Runs through CPU fallback</h3>
+<span class="state exp"><i class="sw half" aria-hidden="true" style="width:10px;height:10px;margin-right:7px;"></i>Bounded autograd</span>
+</div>
+<div class="dim"><span>Operation / CPU implementation</span></div>
+<ul class="ops">
+<li><strong>Linear algebra</strong><span class="soft"><code>linear</code>, <code>bmm</code></span></li>
+<li><strong>Attention and activations</strong><span class="soft"><code>softmax</code>, <code>scaled_dot_product_attention</code>, <code>GELU</code></span></li>
+<li><strong>Arithmetic</strong><span class="soft"><code>add</code>, <code>multiply</code>, <code>divide</code></span></li>
+<li><strong>Reductions</strong><span class="soft"><code>sum</code>, <code>clamp_min</code></span></li>
+<li><strong>Layout</strong><span class="soft"><code>concatenate</code>, <code>contiguous</code></span></li>
+</ul>
+<p style="margin:0;font-size:15px">These use PyTorch’s CPU implementation with differentiable host and device transfers on selected first-order gradient paths. The dispatcher can also retry eligible out-of-place operations after recognized missing-image, architecture-mismatch, or cuDNN no-engine errors.</p>
+<p class="mute" style="margin:0;font-size:15px">Fallback requires one CUDA device. Training evidence is limited to linear → ReLU → sum with float32 SGD (<code>foreach=False</code>); other autograd and optimizer paths are unverified.</p>
+</div>
+</div>
+
+<div class="note">
+<h3 style="font-size:20px">Scope</h3>
+<p style="margin:0;font-size:16px">The launcher is a workload adapter for a narrow PyTorch subset, not a universal CUDA 13 runtime. It requires Linux x86_64 and homogeneous visible <code>sm_52</code> GPUs. It interposes one runtime-version query and does not replace the CUDA 13 API surface or implement general cuDNN, cuBLAS, NCCL, or Triton compatibility. Other devices, operations, optimizers, dtypes, layouts, and library paths need their own implementations and evidence.</p>
+</div>
+</div>
+</section>
+
+<section id="stack" class="inv">
+<div class="wrap" style="padding-top:88px;padding-bottom:96px;display:flex;flex-direction:column;gap:40px">
+<div style="display:flex;flex-direction:column;gap:24px">
+<div class="sec"><span class="cut" aria-hidden="true">C</span><h2 class="h2" style="font-size:44px">Compat­ibility is a stack</h2><span class="plane" aria-hidden="true"></span><span class="sheet">Sheet 01 / 10</span></div>
+<p style="margin:0;font-size:19px;max-width:52ch">A version number can be adapted at one boundary. Useful results require every layer beneath it to have a real implementation. The path a supported operation takes today:</p>
+</div>
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(420px,100%),1fr));gap:64px;align-items:start">
+<div style="display:flex;flex-direction:column;gap:0" role="group" aria-label="Compatibility path">
+<div class="dim"><span>Compatibility path, one supported operation</span></div>
+<div style="height:16px"></div>
+<div style="border:2px solid currentColor;padding:14px 18px;display:grid;grid-template-columns:30px minmax(0,1fr);gap:4px 14px;align-items:center"><span class="balloon" aria-hidden="true" style="grid-row:1 / span 2">1</span><strong style="font-size:17px;font-weight:800">Application</strong><span class="mute" style="font-size:14px;grid-column:2">PyTorch 2.14, official CUDA 13 wheel</span></div>
+<div style="display:flex;align-items:center;gap:12px;padding:0 0 0 14px"><span aria-hidden="true" style="width:0;height:28px;border-left:1px dashed currentColor;opacity:0.6;position:relative"><i style="position:absolute;left:-5px;bottom:-1px;width:0;height:0;border-left:5px solid transparent;border-right:5px solid transparent;border-top:8px solid currentColor;display:block"></i></span><span class="sheet" style="opacity:0.6">Selected operations</span></div>
+<div style="border:2px solid currentColor;padding:14px 18px;display:grid;grid-template-columns:30px minmax(0,1fr);gap:4px 14px;align-items:center;border-color:var(--yellow)"><span class="balloon" aria-hidden="true" style="grid-row:1 / span 2">2</span><strong style="font-size:17px;font-weight:800">Interposition</strong><span class="mute" style="font-size:14px;grid-column:2">CUDA Compatibility opt-in launcher, CUDA Runtime 13.0 version facade</span></div>
+<div style="display:flex;align-items:center;gap:12px;padding:0 0 0 14px"><span aria-hidden="true" style="width:0;height:28px;border-left:1px dashed currentColor;opacity:0.6;position:relative"><i style="position:absolute;left:-5px;bottom:-1px;width:0;height:0;border-left:5px solid transparent;border-right:5px solid transparent;border-top:8px solid currentColor;display:block"></i></span><span class="sheet" style="opacity:0.6">Route by operator</span></div>
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(200px,100%),1fr));gap:12px">
+<div style="border:2px solid var(--blue);padding:14px 18px;display:flex;flex-direction:column;gap:4px"><span class="state ok"><i class="sw full" aria-hidden="true" style="border-color:#FFFFFF;background:#FFFFFF;width:10px;height:10px;margin-right:7px"></i>Maxwell kernel</span><span class="mute" style="font-size:14px">LLVM to PTX, launched on the real sm_52 device</span></div>
+<div style="border:2px solid var(--yellow);padding:14px 18px;display:flex;flex-direction:column;gap:4px"><span class="state exp"><i class="sw half" aria-hidden="true" style="width:10px;height:10px;margin-right:7px;"></i>CPU fallback</span><span class="mute" style="font-size:14px">Inference, bounded to 64 MiB in and out</span></div>
+</div>
+<div style="display:flex;align-items:center;gap:12px;padding:0 0 0 14px"><span aria-hidden="true" style="width:0;height:28px;border-left:1px dashed currentColor;opacity:0.6;position:relative"><i style="position:absolute;left:-5px;bottom:-1px;width:0;height:0;border-left:5px solid transparent;border-right:5px solid transparent;border-top:8px solid currentColor;display:block"></i></span><span class="sheet" style="opacity:0.6">Result returned</span></div>
+<div style="border:2px solid currentColor;padding:14px 18px;display:grid;grid-template-columns:30px minmax(0,1fr);gap:4px 14px;align-items:center"><span class="balloon" aria-hidden="true" style="grid-row:1 / span 2">4</span><strong style="font-size:17px;font-weight:800">Real device stays visible</strong><span class="mute" style="font-size:14px;grid-column:2">GM200 Maxwell, compute capability 5.2. No hardware identity spoofing.</span></div>
+</div>
+<div style="display:flex;flex-direction:column;border-top:3px solid currentColor">
+<div class="dim" style="padding:10px 0"><span>Layers and their state</span></div>
+<article style="display:grid;grid-template-columns:48px minmax(0,1fr) auto;gap:8px 16px;padding:22px 0;border-top:1px solid currentColor;align-items:start">
+<span class="balloon" aria-hidden="true">1</span>
+<div style="display:flex;flex-direction:column;gap:6px"><h3 style="font-size:22px">Application contract</h3><p class="mute" style="margin:0;font-size:14px">PyTorch 2.14, CUDA 13 wheel</p><p class="soft" style="margin:0;font-size:16px">The published PyTorch CUDA 13 profile starts at compute capability 7.5. The adapter’s experimental gate is sm_52; missing kernels and library paths still need real solutions.</p></div>
+<span class="state open"><i class="sw" aria-hidden="true" style="width:10px;height:10px;margin-right:7px"></i>Target</span>
+</article>
+<article style="display:grid;grid-template-columns:48px minmax(0,1fr) auto;gap:8px 16px;padding:22px 0;border-top:1px solid currentColor;align-items:start">
+<span class="balloon" aria-hidden="true">2</span>
+<div style="display:flex;flex-direction:column;gap:6px"><h3 style="font-size:22px">Process interposition</h3><p class="mute" style="margin:0;font-size:14px">Opt-in Python launcher</p><p class="soft" style="margin:0;font-size:16px">Prepare a child process with a CUDA Runtime 13.0 version facade and a PyTorch operator adapter. The host driver, system CUDA install, and parent process are not touched.</p></div>
+<span class="state ok"><i class="sw full" aria-hidden="true" style="border-color:#FFFFFF;background:#FFFFFF;width:10px;height:10px;margin-right:7px"></i>Built</span>
+</article>
+<article style="display:grid;grid-template-columns:48px minmax(0,1fr) auto;gap:8px 16px;padding:22px 0;border-top:1px solid currentColor;align-items:start">
+<span class="balloon" aria-hidden="true">3</span>
+<div style="display:flex;flex-direction:column;gap:6px"><h3 style="font-size:22px">Kernel and fallback routing</h3><p class="mute" style="margin:0;font-size:14px">Operator registry, LLVM to PTX, CPU</p><p class="soft" style="margin:0;font-size:16px">Supported operations run on Maxwell kernels. A narrow set falls back to CPU within explicit size and semantic limits. There is no general binary translator.</p></div>
+<span class="state exp"><i class="sw half" aria-hidden="true" style="width:10px;height:10px;margin-right:7px;"></i>Partial</span>
+</article>
+<article style="display:grid;grid-template-columns:48px minmax(0,1fr) auto;gap:8px 16px;padding:22px 0;border-top:1px solid currentColor;border-bottom:3px solid currentColor;align-items:start">
+<span class="balloon" aria-hidden="true">4</span>
+<div style="display:flex;flex-direction:column;gap:6px"><h3 style="font-size:22px">Runtime, libraries, hardware</h3><p class="mute" style="margin:0;font-size:14px">Driver, cuDNN, cuBLAS, device ISA</p><p class="soft" style="margin:0;font-size:16px">Every API, library path, dtype, synchronization rule, and instruction must be supported, translated, or replaced. Spoofing a version string fixes none of it.</p></div>
+<span class="state open"><i class="sw" aria-hidden="true" style="width:10px;height:10px;margin-right:7px"></i>Open work</span>
+</article>
+</div>
+</div>
+<div style="display:grid;grid-template-columns:96px minmax(0,1fr);gap:24px;align-items:start;border:2px solid var(--yellow);padding:24px 28px">
+<span aria-hidden="true" style="width:96px;height:96px;border:2px solid var(--yellow);border-radius:50%;display:grid;place-items:center;font-stretch:110%;font-weight:800;font-size:40px;color:var(--yellow)">13</span>
+<div style="display:flex;flex-direction:column;gap:8px">
+<h3 style="font-size:20px">Why this project exists</h3>
+<p class="soft" style="margin:0;font-size:16px;max-width:70ch">NVIDIA’s CUDA 13 release notes say offline compilation and library support for Maxwell, Pascal, and Volta were removed from the toolkit. This project measures how much useful application behavior can be recovered with a compiler path, adapters, and faithful fallbacks, without hiding the real device.</p>
+<a href="https://docs.nvidia.com/cuda/archive/13.0.0/cuda-toolkit-release-notes/index.html#deprecated-or-dropped-features" style="font-size:16px;color:var(--yellow)">CUDA 13 release notes</a>
+</div>
+</div>
+</div>
+</section>
+
+<section id="hardware" class="paper">
+<div class="wrap" style="padding-top:88px;padding-bottom:96px;display:flex;flex-direction:column;gap:40px">
+<div style="display:flex;flex-direction:column;gap:24px">
+<div class="sec"><span class="cut" aria-hidden="true">D</span><h2 class="h2" style="font-size:44px">Cards to test next</h2><span class="plane" aria-hidden="true"></span><span class="sheet">Sheet 01 / 10</span></div>
+<p style="margin:0;font-size:19px;max-width:50ch">These models share NVIDIA-listed <code>sm_52</code> capability with the reference GM200 cards. The reference cards are the only hardware tested so far. An architecture match is not a certification: each board, driver, memory configuration, and workload still needs a run.</p>
+</div>
+<div class="dim"><span>Candidate models, same NVIDIA-listed compute capability as the reference target</span></div>
+<div style="overflow-x:auto;background:var(--bg)">
+<table>
+<thead><tr><th scope="col" style="width:56px">Item</th><th scope="col">GPU family</th><th scope="col">NVIDIA-listed compute capability</th><th scope="col">Project status</th></tr></thead>
+<tbody>
+<tr><td><strong style="font-weight:800">D1</strong></td><td><strong style="font-weight:800;font-size:18px">GeForce GTX 980 Ti, 980, 970, 960, 950</strong></td><td style="font-weight:600">5.2</td><td><span class="state open"><i class="sw" aria-hidden="true" style="width:10px;height:10px;margin-right:7px"></i>Unverified candidate</span></td></tr>
+<tr><td><strong style="font-weight:800">D2</strong></td><td><strong style="font-weight:800;font-size:18px">GeForce GTX 980M, 970M, 965M, 910M</strong></td><td style="font-weight:600">5.2</td><td><span class="state open"><i class="sw" aria-hidden="true" style="width:10px;height:10px;margin-right:7px"></i>Unverified candidate</span></td></tr>
+<tr class="y" style="box-shadow:inset 0 2px 0 #000000,inset 0 -2px 0 #000000"><td style="padding-left:12px;border-bottom-color:#000000"><strong style="font-weight:800">D3</strong></td><td style="padding-left:12px;border-bottom-color:#000000"><strong style="font-weight:800;font-size:18px">GM200 Maxwell reference GPU</strong><br><span style="font-size:14px">Three physical cards; not every workload tested on each</span></td><td style="font-weight:600;border-bottom-color:#000000">5.2</td><td style="border-bottom-color:#000000"><span class="state ok"><i class="sw full" aria-hidden="true" style="border-color:#FFFFFF;background:#FFFFFF;width:10px;height:10px;margin-right:7px"></i>Reference device</span><div class="ev" style="margin-top:8px"><a href="https://github.com/zachshallbetter/cuda-compatibility/blob/main/records/evidence.jsonl">CLC-001-gm200-baseline</a><a href="https://github.com/zachshallbetter/cuda-compatibility/blob/main/records/evidence.jsonl">CLC-025-sm52-operator-training</a></div></td></tr>
+<tr><td><strong style="font-weight:800">D4</strong></td><td><strong style="font-weight:800;font-size:18px">Tesla M40, M60</strong></td><td style="font-weight:600">5.2</td><td><span class="state open"><i class="sw" aria-hidden="true" style="width:10px;height:10px;margin-right:7px"></i>Unverified candidate</span></td></tr>
+<tr><td><strong style="font-weight:800">D5</strong></td><td><strong style="font-weight:800;font-size:18px">Quadro M6000 (including 24GB), M5000, M4000, M2000</strong></td><td style="font-weight:600">5.2</td><td><span class="state open"><i class="sw" aria-hidden="true" style="width:10px;height:10px;margin-right:7px"></i>Unverified candidate</span></td></tr>
+<tr><td style="border-bottom-width:3px"><strong style="font-weight:800">D6</strong></td><td style="border-bottom-width:3px"><strong style="font-weight:800;font-size:18px">Quadro M5500M, M2200, M620</strong></td><td style="border-bottom-width:3px;font-weight:600">5.2</td><td style="border-bottom-width:3px"><span class="state open"><i class="sw" aria-hidden="true" style="width:10px;height:10px;margin-right:7px"></i>Unverified candidate</span></td></tr>
+</tbody>
+</table>
+</div>
+<div style="display:flex;justify-content:space-between;gap:24px;flex-wrap:wrap;font-size:15px">
+<p class="mute" style="margin:0;max-width:60ch">Only models NVIDIA maps to compute capability 5.2 are listed. Other Maxwell variants (5.0, 5.3), Pascal, and newer families are outside the launcher’s exact-<code>sm_52</code> gate. <a href="gpu-catalog.html">Browse the full legacy GPU catalog</a> for every compute-capability tier.</p>
+<a href="https://developer.nvidia.com/cuda/gpus/legacy">NVIDIA legacy GPU capability list</a>
+</div>
+</div>
+</section>
+
+<section id="install">
+<div class="wrap" style="padding-top:88px;padding-bottom:96px;display:grid;grid-template-columns:repeat(auto-fit,minmax(min(400px,100%),1fr));gap:64px">
+<div style="display:flex;flex-direction:column;gap:28px">
+<div class="sec"><span class="cut" aria-hidden="true">E</span><h2 class="h2" style="font-size:44px">Try the prototype</h2><span class="plane" aria-hidden="true"></span><span class="sheet">Sheet 01 / 10</span></div>
+<p style="margin:0;font-size:19px;max-width:42ch">Install into the same Python environment that already holds the official CUDA 13 PyTorch wheel. The package installs no NVIDIA components and changes nothing system-wide.</p>
+<p class="mute" style="margin:0;font-size:15px;max-width:48ch">The command lands in that environment’s <code>bin/</code>. For a user-site install, find the scripts path with <code>python3 -m site --user-base</code> and add <code>/bin</code> to <code>PATH</code>. The Python used for that install must already contain PyTorch. <a href="https://packaging.python.org/en/latest/tutorials/installing-packages/">Python Packaging User Guide</a></p>
+<div class="note y" style="display:grid;grid-template-columns:44px minmax(0,1fr);gap:6px 16px;align-items:start">
+<svg class="glyph" role="img" aria-label="Caution" viewBox="0 0 44 44" fill="none" stroke="currentColor" stroke-width="2.5" style="grid-row:1 / span 2"><path d="M22 5 41 39H3z"></path><path d="M22 17v11M22 32v3"></path></svg>
+<h3 style="font-size:20px">Trusted scripts only</h3>
+<p style="margin:0;font-size:15px">The launcher uses <code>LD_PRELOAD</code> and Python startup customization. Start with the probes in the repository and compare every result with a CPU reference.</p>
+</div>
+</div>
+<div style="display:flex;flex-direction:column;gap:36px">
+<div class="step">
+<span class="num">1</span>
+<div style="display:flex;flex-direction:column;gap:12px">
+<h3 style="font-size:24px">Install into the PyTorch environment</h3>
+<pre><code># from the project checkout, in the target PyTorch environment
+python -m pip install .</code></pre>
+</div>
+</div>
+<div class="step">
+<span class="num">2</span>
+<div style="display:flex;flex-direction:column;gap:12px">
+<h3 style="font-size:24px">Check the host and target</h3>
+<pre><code>cuda-legacy inspect
 cuda-legacy doctor
-cuda-legacy profiles show pytorch-2.14-cu130</code></pre></div></div>
-<div class="step"><span>3</span><div><h3>Launch one trusted script</h3><pre><code>cuda-legacy run \
+cuda-legacy profiles show pytorch-2.14-cu130</code></pre>
+</div>
+</div>
+<div class="step">
+<span class="num">3</span>
+<div style="display:flex;flex-direction:column;gap:12px">
+<h3 style="font-size:24px">Launch one trusted script</h3>
+<pre><code>cuda-legacy run \
   --llvm-root /path/to/LLVM-23.1.4 \
   --cuda-root /usr/local/cuda-12.4 \
-  -- app.py</code></pre></div></div>
+  -- app.py</code></pre>
 </div>
-<aside class="requirements-card"><p class="eyebrow">Known tested configuration</p><ul class="requirements">
-<li><span>System</span><b>Linux x86_64</b></li><li><span>Python</span><b>3.10.12</b></li><li><span>PyTorch</span><b>2.14.0 + CUDA 13.0</b></li><li><span>GPU</span><b>GM200 Maxwell · sm_52</b></li><li><span>Driver</span><b>NVIDIA 580.178.04</b></li><li><span>Compiler</span><b>LLVM/Clang 23.1.4</b></li><li><span>Headers</span><b>CUDA 12.4 development files</b></li>
-</ul><p class="requirements-note">Other versions and cards may work, but have not been validated. The launcher starts your script in the same Python environment; it does not install or change the system driver.</p><a class="text-link" href="https://pytorch.org/get-started/locally/" target="_blank" rel="noreferrer">PyTorch installation guide <span aria-hidden="true">↗</span></a></aside>
 </div>
-<div class="safety-line"><span aria-hidden="true">↳</span><p>The launcher uses <code>LD_PRELOAD</code> and Python startup customization. Use it only with scripts you trust. Start with the probes in the source project and compare every result with a CPU reference.</p></div>
+<p class="mute" style="margin:0;font-size:15px">Other versions and cards may work but have not been validated.</p>
+<a href="https://pytorch.org/get-started/locally/" style="font-size:15px;font-weight:600;align-self:flex-start">PyTorch installation guide</a>
+</div>
+</div>
 </section>
-<section class="section roadmap-section" id="roadmap">
-<div class="section-heading"><div><p class="eyebrow">05 — What “full practical support” means</p><h2>Build coverage from evidence</h2></div><p>The project’s destination is machine-wide practical compatibility. Each layer has to earn its support claim through tested behavior.</p></div>
-<div class="roadmap-grid">
-<article><span class="roadmap-mark done">✓</span><h3>Truthful discovery</h3><p>Report actual GPU identity and compute capability; diagnose host prerequisites and target profiles.</p><small>IN PLACE</small></article>
-<article><span class="roadmap-mark active">↗</span><h3>Grow the operator set</h3><p>Implement or adapt common PyTorch operations with stream, dtype, shape, and error behavior tested.</p><small>IN PROGRESS</small></article>
-<article><span class="roadmap-mark active">↗</span><h3>Broaden libraries &amp; training</h3><p>A small float32 SGD/autograd path is verified; broaden optimizer, gradient, and proprietary-library coverage.</p><small>PARTIAL · IN PROGRESS</small></article>
-<article><span class="roadmap-mark open">○</span><h3>Qualify cards &amp; workloads</h3><p>Run representative models and edge cases across each claimed GPU and publish limits, speed, and memory costs.</p><small>NOT VERIFIED</small></article>
+
+<section id="roadmap" class="paper">
+<div class="wrap" style="padding-top:88px;padding-bottom:96px;display:flex;flex-direction:column;gap:48px">
+<div style="display:flex;flex-direction:column;gap:24px">
+<div class="sec"><span class="cut" aria-hidden="true">F</span><h2 class="h2" style="font-size:44px">What full support would mean</h2><span class="plane" aria-hidden="true"></span><span class="sheet">Sheet 01 / 10</span></div>
+<p style="margin:0;font-size:19px;max-width:50ch">The destination is machine-wide practical compatibility. Each layer earns its support claim through tested behavior, not by assertion.</p>
 </div>
-<p class="roadmap-footnote">A version facade alone cannot supply a missing kernel or reproduce an unsupported instruction. Compatibility means preserving the operation’s behavior or returning an explicit unsupported result.</p>
+<div style="overflow-x:auto;background:var(--bg)">
+<table class="rev">
+<thead><tr><th scope="col">Item</th><th scope="col">Description</th><th scope="col">State</th></tr></thead>
+<tbody>
+<tr><td>F1</td><td><strong style="font-weight:800;font-size:18px;display:block;margin-bottom:4px">Truthful discovery</strong>Report actual GPU identity and compute capability; diagnose host prerequisites and target profiles.</td><td><span class="state ok"><i class="sw full" aria-hidden="true" style="border-color:#FFFFFF;background:#FFFFFF;width:10px;height:10px;margin-right:7px"></i>In place</span></td></tr>
+<tr><td>F2</td><td><strong style="font-weight:800;font-size:18px;display:block;margin-bottom:4px">Grow the operator set</strong>Implement or adapt common PyTorch operations with stream, dtype, shape, and error behavior tested.</td><td><span class="state exp"><i class="sw half" aria-hidden="true" style="width:10px;height:10px;margin-right:7px;"></i>In progress</span></td></tr>
+<tr><td>F3</td><td><strong style="font-weight:800;font-size:18px;display:block;margin-bottom:4px">Broaden libraries and training</strong>A small float32 SGD and autograd path is verified; broaden optimizer, gradient, and proprietary-library coverage.</td><td><span class="state exp"><i class="sw half" aria-hidden="true" style="width:10px;height:10px;margin-right:7px;"></i>Partial</span></td></tr>
+<tr><td style="border-bottom-width:3px">F4</td><td style="border-bottom-width:3px"><strong style="font-weight:800;font-size:18px;display:block;margin-bottom:4px">Qualify cards and workloads</strong>Run representative models and edge cases on each claimed GPU; publish limits, speed, and memory costs.</td><td style="border-bottom-width:3px"><span class="state open"><i class="sw" aria-hidden="true" style="width:10px;height:10px;margin-right:7px"></i>Not verified</span></td></tr>
+</tbody>
+</table>
+</div>
+<p class="disp" style="margin:0;font-size:clamp(28px,3vw,40px);max-width:26ch">A version facade cannot supply a missing kernel.</p>
+</div>
 </section>
-<section class="owner-section"><div class="owner-copy"><p class="eyebrow">An independent open-source project</p><h2>Built by <a href="https://zachshallbetter.com/" target="_blank" rel="noreferrer">Zach Shallbetter</a></h2><p>CUDA Compatibility is independent research and is not affiliated with NVIDIA. Project code is dual-licensed MIT OR Apache-2.0. NVIDIA drivers, toolkit files, and proprietary libraries remain user-installed dependencies.</p></div><div class="owner-links"><a href="https://zachshallbetter.com/" target="_blank" rel="noreferrer">Personal site <span aria-hidden="true">↗</span></a><a href="https://github.com/zachshallbetter" target="_blank" rel="noreferrer">GitHub account <span aria-hidden="true">↗</span></a></div></section>
-<section class="sources section"><details><summary>Sources &amp; project records <span aria-hidden="true">＋</span></summary><div class="source-list">
-<a href="https://docs.nvidia.com/cuda/archive/13.0.0/cuda-toolkit-release-notes/index.html" target="_blank" rel="noreferrer"><span>NVIDIA CUDA Toolkit 13.0 release notes</span><small>Architecture and compilation/library support</small><b aria-hidden="true">↗</b></a>
-<a href="https://developer.nvidia.com/cuda/gpus/legacy" target="_blank" rel="noreferrer"><span>NVIDIA legacy GPU compute capability list</span><small>Model-to-compute-capability mapping for candidate cards</small><b aria-hidden="true">↗</b></a>
-<a href="https://github.com/pytorch/pytorch/blob/main/RELEASE.md" target="_blank" rel="noreferrer"><span>PyTorch release compatibility matrix</span><small>Published CUDA build and GPU architecture coverage</small><b aria-hidden="true">↗</b></a>
-<a href="https://github.com/zachshallbetter" target="_blank" rel="noreferrer"><span>Project author: Zach Shallbetter</span><small>GitHub profile</small><b aria-hidden="true">↗</b></a>
-</div><p class="source-note">Project-specific experiment procedures, result tolerances, and limitations are maintained in the source repository’s <code>docs/research/</code> records and README.</p></details></section>
+
 </main>
-<footer class="footer"><a class="brand" href="#top"><span class="brand-mark" aria-hidden="true">C</span><span>CUDA Compatibility</span></a><span>Independent research · Evidence first · Hardware identity stays real</span><a href="https://zachshallbetter.com/" target="_blank" rel="noreferrer">Zach Shallbetter <span aria-hidden="true">↗</span></a> <a href="docs/privacy.html">Privacy &amp; analytics</a></footer>
+
+<footer class="foot inv">
+<div class="wrap" style="padding-top:48px;padding-bottom:48px;display:flex;flex-direction:column;gap:28px;font-size:15px">
+<div style="display:flex;flex-direction:column;gap:14px">
+<div class="dim" style="color:var(--inv-mute)"><span>General notes, all sheets</span></div>
+<ol class="gn">
+<li>Marks: filled is reproduced on the reference configuration; hatched is reproduced for the listed cases only; crossed is contradicted with the observation kept; outline is unverified or unknown. Every mark names its record.</li>
+<li>Unverified means no record exists and is not refutation. Unknown means the fact was not observable in the recorded environment.</li>
+<li>Commands are shown and copyable. Nothing runs from a sheet; selected is not executed.</li>
+<li>Yellow marks attention and is always bounded by an ink line. Blue marks a reproduced state. No meaning is carried by colour alone; each state has a mark shape and a text label.</li>
+</ol>
+</div>
+<div class="tb" role="group" aria-label="Title block">
+<div><span>Project</span><span>CUDA Compatibility</span></div>
+<div><span>Drawn by</span><span><a href="https://zachshallbetter.com/">Zach Shallbetter</a></span></div>
+<div><span>Project version</span><span>0.6.0</span></div>
+<div><span>Reference hardware</span><span>GM200, compute capability 5.2</span></div>
+<div><span>License</span><span>MIT or Apache-2.0</span></div>
+<div><span>Affiliation</span><span>Independent research, not affiliated with NVIDIA</span></div>
+<div><span>Source</span><span><a href="https://github.com/zachshallbetter/cuda-compatibility">github.com/zachshallbetter/cuda-compatibility</a></span></div>
+<div><span>Status</span><span>Active research</span></div>
+<div><span>Links</span><span><a href="https://github.com/zachshallbetter">GitHub</a>, <a href="https://linkedin.com/in/zachshallbetter">LinkedIn</a>, <a href="https://zachshallbetter.com/">zachshallbetter.com</a></span></div>
+<div><span>Sheet</span><span>01 / 10, home</span></div>
+<div><span>Surface</span><span>focus; resolved from <code style="background:transparent;color:inherit">site/data/site-canon.json</code></span></div>
+<div><span>Recipient</span><span>None named, status primitive</span></div>
+<div><span>Correct this sheet</span><span><a href="https://github.com/zachshallbetter/cuda-compatibility/issues/new?title=Correction%3A%20sheet%2001%20home">Open an issue naming the record</a></span></div>
+</div>
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(300px,100%),1fr));gap:40px">
+<div style="display:flex;flex-direction:column;gap:12px">
+<h3 style="font-size:17px">References</h3>
+<ol class="soft" style="margin:0;padding-left:20px;display:flex;flex-direction:column;gap:8px">
+<li><a href="https://docs.nvidia.com/cuda/archive/13.0.0/cuda-toolkit-release-notes/index.html">NVIDIA CUDA Toolkit 13.0 release notes</a>, architecture, compilation, and library support</li>
+<li><a href="https://developer.nvidia.com/cuda/gpus/legacy">NVIDIA legacy GPU compute capability list</a>, model-to-compute-capability mapping for candidate cards</li>
+<li><a href="https://github.com/pytorch/pytorch/blob/main/RELEASE.md">PyTorch release compatibility matrix</a>, published CUDA build and GPU architecture coverage</li>
+<li><a href="https://github.com/zachshallbetter">Project author, GitHub profile</a></li>
+</ol>
+</div>
+<div style="display:flex;flex-direction:column;gap:12px">
+<h3 style="font-size:17px">Notes</h3>
+<p class="soft" style="margin:0">NVIDIA drivers, toolkit files, and proprietary libraries remain user-installed dependencies. Experiment procedures, tolerances, and limitations live in the repository’s <code>docs/research/</code> records and README.</p>
+<div style="display:flex;gap:20px;flex-wrap:wrap"><a href="docs/index.html">Documentation</a><a href="docs/privacy.html">Privacy and analytics</a></div>
+</div>
+</div>
+</div>
+</footer>
+
+</div>
+<script src="site.js" defer></script>
 <script src="analytics.js" defer></script>
-</body></html>
+</body>
+</html>

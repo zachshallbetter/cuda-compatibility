@@ -1,31 +1,156 @@
 <!doctype html>
 <html lang="en">
 <head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="theme-color" content="#0b1017">
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="only light"><meta name="theme-color" content="#000000">
 <meta name="description" content="How CUDA Compatibility docs, page metadata, sitemap, robots.txt, and agent index support discovery—and what Google and Bing metrics can currently confirm.">
 <link rel="icon" type="image/svg+xml" href="../favicon.svg"><title>Search and AI discovery | CUDA Compatibility</title>
-<link rel="canonical" href="https://zachshallbetter.github.io/cuda-compatibility/docs/discovery.html">
+<link rel="canonical" href="https://cuda-compatibility.vercel.app/docs/discovery.html">
 <meta name="author" content="Zach Shallbetter"><meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1">
-<meta property="og:type" content="article"><meta property="og:site_name" content="CUDA Compatibility"><meta property="og:url" content="https://zachshallbetter.github.io/cuda-compatibility/docs/discovery.html"><meta property="og:title" content="Search and AI discovery"><meta property="og:description" content="Live site availability, Google and Bing webmaster setup, crawler policy, and measured discovery limits."><meta property="og:locale" content="en_US"><meta property="og:image" content="https://zachshallbetter.github.io/cuda-compatibility/assets/social-card.png"><meta property="og:image:type" content="image/png"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630"><meta property="og:image:alt" content="CUDA Compatibility: CUDA 13, older GPUs, and truthful sm_52 support">
-<meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="Search and AI discovery"><meta name="twitter:description" content="Live site availability, Google and Bing setup, and unverified indexing or AI retrieval outcomes."><meta name="twitter:image" content="https://zachshallbetter.github.io/cuda-compatibility/assets/social-card.png"><meta name="twitter:image:alt" content="CUDA Compatibility social preview card">
-<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"TechArticle","@id":"https://zachshallbetter.github.io/cuda-compatibility/docs/discovery.html#article","headline":"Search and AI discovery","description":"Crawler access, sitemap and agent index behavior, and the limits of current search and AI visibility evidence.","url":"https://zachshallbetter.github.io/cuda-compatibility/docs/discovery.html","inLanguage":"en","dateModified":"2026-11-01","author":{"@id":"https://zachshallbetter.github.io/cuda-compatibility/#author","@type":"Person","name":"Zach Shallbetter","url":"https://zachshallbetter.com/"},"isPartOf":{"@id":"https://zachshallbetter.github.io/cuda-compatibility/#website","@type":"WebSite","name":"CUDA Compatibility","url":"https://zachshallbetter.github.io/cuda-compatibility/"},"mainEntityOfPage":"https://zachshallbetter.github.io/cuda-compatibility/docs/discovery.html"},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://zachshallbetter.github.io/cuda-compatibility/"},{"@type":"ListItem","position":2,"name":"Documentation","item":"https://zachshallbetter.github.io/cuda-compatibility/docs/"},{"@type":"ListItem","position":3,"name":"Search and AI discovery","item":"https://zachshallbetter.github.io/cuda-compatibility/docs/discovery.html"}]}]}</script>
+<meta property="og:type" content="article"><meta property="og:site_name" content="CUDA Compatibility"><meta property="og:url" content="https://cuda-compatibility.vercel.app/docs/discovery.html"><meta property="og:title" content="Search and AI discovery"><meta property="og:description" content="Live site availability, Google and Bing webmaster setup, crawler policy, and measured discovery limits."><meta property="og:locale" content="en_US"><meta property="og:image" content="https://cuda-compatibility.vercel.app/assets/social-card.png"><meta property="og:image:type" content="image/png"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630"><meta property="og:image:alt" content="CUDA Compatibility: CUDA 13, older GPUs, and truthful sm_52 support">
+<meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="Search and AI discovery"><meta name="twitter:description" content="Live site availability, Google and Bing setup, and unverified indexing or AI retrieval outcomes."><meta name="twitter:image" content="https://cuda-compatibility.vercel.app/assets/social-card.png"><meta name="twitter:image:alt" content="CUDA Compatibility social preview card">
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"TechArticle","@id":"https://cuda-compatibility.vercel.app/docs/discovery.html#article","headline":"Search and AI discovery","description":"Crawler access, sitemap and agent index behavior, and the limits of current search and AI visibility evidence.","url":"https://cuda-compatibility.vercel.app/docs/discovery.html","inLanguage":"en","dateModified":"2026-11-01","author":{"@id":"https://cuda-compatibility.vercel.app/#author","@type":"Person","name":"Zach Shallbetter","url":"https://zachshallbetter.com/"},"isPartOf":{"@id":"https://cuda-compatibility.vercel.app/#website","@type":"WebSite","name":"CUDA Compatibility","url":"https://cuda-compatibility.vercel.app/"},"mainEntityOfPage":"https://cuda-compatibility.vercel.app/docs/discovery.html"},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://cuda-compatibility.vercel.app/"},{"@type":"ListItem","position":2,"name":"Documentation","item":"https://cuda-compatibility.vercel.app/docs/"},{"@type":"ListItem","position":3,"name":"Search and AI discovery","item":"https://cuda-compatibility.vercel.app/docs/discovery.html"}]}]}</script>
 <link rel="stylesheet" href="../styles.css">
+<link rel="stylesheet" href="../docs.css">
+<style>
+td.op{font-weight:800;white-space:nowrap}
+.cell{padding:18px 20px;border-right:1px solid currentColor;border-bottom:1px solid currentColor;display:flex;flex-direction:column;gap:8px;font-size:15px}
+</style>
 </head>
-<body><a class="skip-link" href="#main">Skip to content</a><header class="topbar"><a class="brand" href="../index.html#top" aria-label="CUDA Compatibility home"><span class="brand-mark" aria-hidden="true">C</span><span>CUDA Compatibility</span></a><nav aria-label="Main navigation"><a href="../index.html#status">Features</a><a href="../index.html#approach">How it works</a><a href="../index.html#hardware">Hardware</a><a href="index.html" aria-current="page">Docs</a><a href="../index.html#start">Get started</a></nav><a class="top-link" href="https://github.com/zachshallbetter/cuda-compatibility" target="_blank" rel="noreferrer">Project repository <span aria-hidden="true">↗</span></a></header>
-<main id="main" class="docs-main"><section class="docs-hero" id="top"><p class="eyebrow">Discovery · Crawling · AI retrieval</p><h1>Search and AI discovery</h1><p>What this project makes accessible to crawlers, how its discovery files work, and what has—and has not—been observed.</p></section>
-<div class="docs-layout"><aside class="doc-sidebar"><p class="eyebrow">Documentation</p><nav aria-label="Documentation pages"><a href="index.html">Documentation home</a><a href="getting-started.html">Install and run</a><a href="compatibility.html">Support matrix</a><a href="architecture.html">Architecture</a><a href="cli.html">CLI reference</a><a href="research.html">Research and evidence</a><a href="discovery.html" aria-current="page">Search and AI discovery</a><a href="privacy.html">Privacy and measurement</a></nav><a class="doc-agent-link" href="../llms.txt">Agent-readable index ↗</a></aside><article class="docs-content">
-<p class="doc-lede">The site is prepared with crawlable HTML pages, internal links, canonical URLs, an XML sitemap, a robots policy, and an informal <code>llms.txt</code> index. These make content easier to request and interpret; none proves a search engine indexed a page or an AI system retrieved, cited, or recommended it.</p>
-<section class="doc-section"><h2>What can be requested</h2><div class="doc-table-wrap"><table class="doc-table"><thead><tr><th>Surface</th><th>Purpose</th><th>Evidence boundary</th></tr></thead><tbody>
-<tr><th>HTML pages</th><td>Human-readable project overview, install steps, operation limits, hardware catalog, and research records.</td><td>Local page rendering proves only that the current files render in the tested browser.</td></tr>
-<tr><th><a href="../robots.txt"><code>robots.txt</code></a></th><td>Declares crawler preferences. Search and user-requested retrieval agents are allowed; selected model-training agents are disallowed.</td><td>Robots rules are voluntary crawler guidance, not authentication or access control.</td></tr>
-<tr><th><a href="../sitemap.xml"><code>sitemap.xml</code></a></th><td>Lists the intended canonical HTML URLs.</td><td>A sitemap entry is not a crawl, index, ranking, or reach receipt.</td></tr>
-<tr><th><a href="../llms.txt"><code>llms.txt</code></a></th><td>Provides a concise navigation map for humans and automated readers.</td><td>It is an informal index, not a standardized retrieval interface or an instruction source.</td></tr>
-</tbody></table></div></section>
-<section class="doc-section"><h2>Current observation state</h2><p>The public GitHub Pages site is live. The latest release audit fetched all 10 sitemap pages, <code>sitemap.xml</code>, <code>robots.txt</code>, <code>llms.txt</code>, <code>favicon.svg</code>, and both social-card assets successfully. These point-in-time HTTP checks establish availability, not search indexing or audience reach.</p><p>Google Search Console auto-verified its URL-prefix property by HTML tag on 2026-11-01. Its sitemap report still says “Couldn't fetch” with zero discovered pages. URL Inspection says the homepage is unknown to Google's index and detects no referring sitemap, while the live URL test says the page is available to Google and can be indexed. It is not currently indexed; no indexing request receipt is recorded. Bing Webmaster Tools verified its owner through meta-tag authentication, and its sitemap now reports <strong>Success</strong> with 10 URLs discovered and zero errors or warnings. These vendor reports describe distinct processing states. The consent-gated GA4 tag is deployed. One explicitly accepted test visit produced <code>page_view</code>, <code>first_visit</code>, and <code>session_start</code> in GA4 Realtime; test consent was withdrawn afterward. This single test is not audience coverage. No search impressions, indexed-page sample, AI retrieval trace, answer citation, or referral outcome is claimed. Public accessibility is verified; discovery and engagement remain unmeasured.</p></section>
-<section class="doc-section"><h2>How AI references are evaluated</h2><p>A visible answer that names this project is an answer mention. A linked citation is evidence that the answer referenced a URL. Neither proves the system retrieved that page; verified retrieval requires a direct trace from an instrumented system. A citation also does not prove that the answer represented the source accurately.</p><p>For any future sample, the project records the product and model version when available, date, locale, exact query, answer, cited URLs, source snapshot, scoring rubric, and limitations. One answer is not a census, and changing metadata or <code>llms.txt</code> alone does not prove an effect.</p></section>
-<section class="doc-section"><h2>Connect search measurement</h2><p>This project is hosted below the shared <code>github.io</code> domain. Add a <strong>URL-prefix property</strong> for <code>https://zachshallbetter.github.io/cuda-compatibility/</code>; a Domain property would require DNS control for <code>github.io</code>, which project maintainers do not have. In Search Console, use the exact verification method and token provided for that property. For HTML-tag verification, add its meta tag to the homepage head and keep it there; never invent or reuse a token. Then submit <code>https://zachshallbetter.github.io/cuda-compatibility/sitemap.xml</code> and inspect the homepage and key docs URLs.</p><p>After Search Console verification, Bing Webmaster Tools can import the verified site and sitemap. This requires signing into the Google account and granting Bing access during the import flow. Alternatively, use Bing’s offered XML-file or meta-tag verification, then submit the same sitemap and review submission status, last-read date, and processing errors.</p><p>Report each platform, property prefix, observation window, extraction date, and missing data separately. Search Console or Bing reporting does not guarantee indexing or ranking. See the official guides for <a href="https://support.google.com/webmasters/answer/34592?hl=en">Search Console properties</a>, <a href="https://support.google.com/webmasters/answer/9008080?hl=en">ownership verification</a>, <a href="https://blogs.bing.com/webmaster/2019/9/Import-sites-from-Search-Console-to-Bing-Webmaster-Tools/">Bing site import</a>, and <a href="https://blogs.bing.com/webmaster/2025/7/Keeping-Content-Discoverable-with-Sitemaps-in-AI-Powered-Search/">Bing sitemap processing</a>.</p><p>Optional first-party analytics is configured with a GA4 measurement ID and requires affirmative visitor consent before contacting Google measurement services. It records only the documented page-view and allowlisted link events. Read the <a href="privacy.html">privacy and measurement guide</a> for current settings and limitations.</p></section>
-<section class="doc-callout"><h2>Support claims have their own evidence</h2><p>Search visibility does not establish CUDA compatibility. For hardware and workload support, use the <a href="compatibility.html">operation-by-operation support matrix</a> and the <a href="research.html">reproduction records</a>. A GPU name, compute capability, profile match, version query, search result, or AI recommendation is not a workload certification.</p></section>
-<p class="doc-source-links">Discovery policy: <a href="../robots.txt">robots.txt</a> · <a href="../sitemap.xml">sitemap</a> · <a href="../llms.txt">agent index</a> · <a href="privacy.html">privacy and measurement</a>.</p></article></div></main>
-<footer class="footer"><a class="brand" href="../index.html#top"><span class="brand-mark" aria-hidden="true">C</span><span>CUDA Compatibility</span></a><span>Independent research · Evidence first · Hardware identity stays real</span><a href="https://zachshallbetter.com/" target="_blank" rel="noreferrer">Zach Shallbetter ↗</a> <a href="privacy.html">Privacy &amp; analytics</a></footer>
+<body>
+<div style="display:flex;flex-direction:column;min-height:100%">
+<a class="skip-link" href="#main">Skip to content</a>
+<header style="border-bottom:1px solid currentColor">
+<svg class="reg l" aria-hidden="true" viewBox="0 0 16 16"><circle cx="8" cy="8" r="5" fill="none" stroke="currentColor" stroke-width="1.2"/><path d="M8 0v16M0 8h16" stroke="currentColor" stroke-width="1.2"/></svg><svg class="reg r" aria-hidden="true" viewBox="0 0 16 16"><circle cx="8" cy="8" r="5" fill="none" stroke="currentColor" stroke-width="1.2"/><path d="M8 0v16M0 8h16" stroke="currentColor" stroke-width="1.2"/></svg>
+<div class="wrap" style="padding-top:18px;padding-bottom:18px;display:flex;justify-content:space-between;align-items:center;gap:24px;flex-wrap:wrap">
+<a href="../index.html" style="text-decoration:none;color:inherit;font-stretch:110%;font-weight:800;font-size:17px;letter-spacing:-0.02em;display:inline-flex;align-items:center;gap:12px"><svg aria-hidden="true" width="26" height="26" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="3"><rect x="5" y="5" width="22" height="22"></rect><rect x="12" y="12" width="8" height="8" fill="currentColor" stroke="none"></rect></svg>CUDA Compatibility</a>
+<div style="display:flex;align-items:center;gap:32px;flex-wrap:wrap">
+<nav class="nav" aria-label="Main navigation">
+<a href="../index.html#works">What works</a>
+<a href="../index.html#stack">How it works</a>
+<a href="../index.html#hardware">Hardware</a>
+<a href="../index.html#install">Install</a>
+<a href="../docs/index.html" style="color:var(--link)">Docs</a>
+<a href="https://github.com/zachshallbetter/cuda-compatibility/releases">Releases</a>
+</nav>
+<a class="repo" href="https://github.com/zachshallbetter/cuda-compatibility">Repository<svg aria-hidden="true" width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 10 10 2M4 2h6v6"></path></svg></a>
+</div>
+</div>
+</header>
+
+<section class="band">
+<div class="wrap" style="padding-top:56px;padding-bottom:56px;display:flex;flex-direction:column;gap:18px">
+<p class="sheet" style="margin:0;opacity:0.6">Discovery, crawling, AI retrieval, sheet 09 / 10</p>
+<h1 class="disp" style="font-size:clamp(40px,4.6vw,64px);max-width:16ch">Search and AI discovery</h1>
+<p style="margin:0;font-size:20px;line-height:1.4;max-width:56ch;font-weight:500">What this project makes accessible to crawlers, how its discovery files work, and what has, and has not, been observed.</p>
+<p class="mute" style="margin:0;font-size:16px;max-width:64ch">The site is prepared with crawlable HTML pages, internal links, canonical URLs, an XML sitemap, a robots policy, and an informal <code style="background:#222220;color:#FFFFFF">llms.txt</code> index. These make content easier to request and interpret; none proves a search engine indexed a page or an AI system retrieved, cited, or recommended it.</p>
+</div>
+</section>
+
+<main id="main" class="wrap body" style="padding-top:56px;padding-bottom:96px">
+<nav aria-label="Documentation" style="display:flex;flex-direction:column;gap:12px">
+<p class="sheet" style="margin:0">Sheets</p>
+<ul class="side">
+<li><a href="../docs/index.html"><i>02</i>Documentation home</a></li>
+<li><a href="../docs/getting-started.html"><i>03</i>Install and run</a></li>
+<li><a href="../docs/compatibility.html"><i>04</i>Support matrix</a></li>
+<li><a href="../docs/architecture.html"><i>05</i>How it works</a></li>
+<li><a href="../docs/cli.html"><i>06</i>Command line</a></li>
+<li><a href="../docs/research.html"><i>07</i>Research and evidence</a></li>
+<li><a href="../gpu-catalog.html"><i>08</i>Legacy GPU catalog</a></li>
+<li><a class="current" aria-current="page" href="../docs/discovery.html"><i>09</i>Search and AI discovery</a></li>
+<li><a href="../docs/privacy.html"><i>10</i>Privacy and measurement</a></li>
+</ul>
+<p class="sheet" style="margin:12px 0 0">On this sheet</p>
+<ul class="side" style="border-top-width:1px">
+<li><a href="#surfaces"><i>A</i>What can be requested</a></li>
+<li><a href="#state"><i>B</i>Current observation state</a></li>
+<li><a href="#ai"><i>C</i>How AI references are evaluated</a></li>
+<li><a href="#connect"><i>D</i>Connect search measurement</a></li>
+<li><a href="#claims"><i>E</i>Support claims have their own evidence</a></li>
+</ul>
+</nav>
+
+<div style="display:flex;flex-direction:column;gap:56px">
+<div id="surfaces" style="display:flex;flex-direction:column;gap:20px">
+<div class="sec"><span class="cut" aria-hidden="true">A</span><h2 class="h2">What can be requested</h2><span class="plane" aria-hidden="true"></span></div>
+<div style="overflow-x:auto">
+<table>
+<thead><tr><th scope="col">Surface</th><th scope="col">Purpose</th><th scope="col">Evidence boundary</th></tr></thead>
+<tbody>
+<tr><td class="op">HTML pages</td><td>Human-readable project overview, install steps, operation limits, hardware catalog, and research records.</td><td class="soft">Local page rendering proves only that the current files render in the tested browser.</td></tr>
+<tr><td class="op"><a href="https://cuda-compatibility.vercel.app/robots.txt">robots.txt</a></td><td>Declares crawler preferences. Search and user-requested retrieval agents are allowed; selected model-training agents are disallowed.</td><td class="soft">Robots rules are voluntary crawler guidance, not authentication or access control.</td></tr>
+<tr><td class="op"><a href="https://cuda-compatibility.vercel.app/sitemap.xml">sitemap.xml</a></td><td>Lists the intended canonical HTML URLs.</td><td class="soft">A sitemap entry is not a crawl, index, ranking, or reach receipt.</td></tr>
+<tr><td class="op" style="border-bottom-width:3px"><a href="https://cuda-compatibility.vercel.app/llms.txt">llms.txt</a></td><td style="border-bottom-width:3px">Provides a concise navigation map for humans and automated readers.</td><td class="soft" style="border-bottom-width:3px">It is an informal index, not a standardized retrieval interface or an instruction source.</td></tr>
+</tbody>
+</table>
+</div>
+</div>
+
+<div id="state" style="display:flex;flex-direction:column;gap:20px">
+<div class="sec"><span class="cut" aria-hidden="true">B</span><h2 class="h2">Current observation state</h2><span class="plane" aria-hidden="true"></span></div>
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(280px,100%),1fr));gap:0;border:2px solid currentColor">
+<div class="cell"><span class="state open" style="align-self:flex-start"><i class="sw" aria-hidden="true"></i>Unverified</span><strong>Public accessibility</strong><span class="soft">The site is moving from GitHub Pages to Vercel. No route audit of this redesign on the Vercel production address is recorded yet. Point-in-time HTTP checks establish availability, not search indexing or audience reach.</span></div>
+<div class="cell"><span class="state ok" style="align-self:flex-start"><i class="sw full" aria-hidden="true" style="border-color:#FFFFFF;background:#FFFFFF"></i>Verified</span><strong>Bing Webmaster Tools</strong><span class="soft">Ownership verified through meta-tag authentication; the sitemap reports Success with 10 URLs discovered and zero errors or warnings.</span></div>
+<div class="cell"><span class="state open" style="align-self:flex-start"><i class="sw" aria-hidden="true"></i>Unverified</span><strong>Google Search Console</strong><span class="soft">The URL-prefix property verified on 2026-11-01 covers the previous GitHub Pages address. The Vercel address needs its own property; no verification, sitemap submission, or indexing receipt is recorded for it.</span></div>
+<div class="cell"><span class="state exp" style="align-self:flex-start"><i class="sw half" aria-hidden="true"></i>Receipt only</span><strong>Analytics</strong><span class="soft">The consent-gated GA4 tag is deployed. One explicitly accepted test visit produced <code>page_view</code>, <code>first_visit</code>, and <code>session_start</code> in GA4 Realtime; test consent was withdrawn afterward. This single test is not audience coverage.</span></div>
+<div class="cell" style="grid-column:1 / -1;border-right:0"><span class="state open" style="align-self:flex-start"><i class="sw" aria-hidden="true"></i>Unmeasured</span><strong>Discovery and engagement</strong><span class="soft">These vendor reports describe distinct processing states. No search impressions, indexed-page sample, AI retrieval trace, answer citation, or referral outcome is claimed. Public accessibility is verified; discovery and engagement remain unmeasured.</span></div>
+</div>
+</div>
+
+<div id="ai" style="display:flex;flex-direction:column;gap:20px">
+<div class="sec"><span class="cut" aria-hidden="true">C</span><h2 class="h2">How AI references are evaluated</h2><span class="plane" aria-hidden="true"></span></div>
+<p class="soft" style="margin: 0; font-size: 16px; max-width: 72ch">A visible answer that names this project is an answer mention. A linked citation is evidence that the answer referenced a URL. Neither proves the system retrieved that page; verified retrieval requires a direct trace from an instrumented system. A citation also does not prove that the answer represented the source accurately.</p>
+<p class="soft" style="margin: 0; font-size: 16px; max-width: 72ch">For any future sample, the project records the product and model version when available, date, locale, exact query, answer, cited URLs, source snapshot, scoring rubric, and limitations. One answer is not a census, and changing metadata or <code>llms.txt</code> alone does not prove an effect.</p>
+</div>
+
+<div id="connect" style="display:flex;flex-direction:column;gap:20px">
+<div class="sec"><span class="cut" aria-hidden="true">D</span><h2 class="h2">Connect search measurement</h2><span class="plane" aria-hidden="true"></span></div>
+<p class="soft" style="margin:0;font-size:16px;max-width:72ch">This project is hosted on the shared vercel.app domain. Add a URL-prefix property for <code>https://cuda-compatibility.vercel.app/</code>; a Domain property would require DNS control for vercel.app, which project maintainers do not have. In Search Console, use the exact verification method and token provided for that property. For HTML-tag verification, add its meta tag to the homepage head and keep it there; never invent or reuse a token. Then submit the sitemap and inspect the homepage and key docs URLs.</p>
+<p class="soft" style="margin:0;font-size:16px;max-width:72ch">After Search Console verification, Bing Webmaster Tools can import the verified site and sitemap. This requires signing into the Google account and granting Bing access during the import flow. Alternatively, use Bing’s offered XML-file or meta-tag verification, then submit the same sitemap and review submission status, last-read date, and processing errors.</p>
+<p class="mute" style="margin:0;font-size:15px;max-width:72ch">Report each platform, property prefix, observation window, extraction date, and missing data separately. Search Console or Bing reporting does not guarantee indexing or ranking. Official guides: <a href="https://support.google.com/webmasters/answer/34592?hl=en">Search Console properties</a>, <a href="https://support.google.com/webmasters/answer/9008080?hl=en">ownership verification</a>, <a href="https://blogs.bing.com/webmaster/2019/9/Import-sites-from-Search-Console-to-Bing-Webmaster-Tools/">Bing site import</a>, <a href="https://blogs.bing.com/webmaster/2025/7/Keeping-Content-Discoverable-with-Sitemaps-in-AI-Powered-Search/">Bing sitemap processing</a>.</p>
+<p class="mute" style="margin:0;font-size:15px;max-width:72ch">Optional first-party analytics is configured with a GA4 measurement ID and requires affirmative visitor consent before contacting Google measurement services. It records only the documented page-view and allowlisted link events. Read the <a href="../docs/privacy.html">privacy and measurement guide</a> for current settings and limitations.</p>
+</div>
+
+<div id="claims" style="display:flex;flex-direction:column;gap:20px">
+<div class="sec"><span class="cut" aria-hidden="true">E</span><h2 class="h2">Support claims have their own evidence</h2><span class="plane" aria-hidden="true"></span></div>
+<div class="note" style="border-color:#000000">
+<p style="margin:0;font-size:16px">Search visibility does not establish CUDA compatibility. For hardware and workload support, use the <a href="../docs/compatibility.html">operation-by-operation support matrix</a> and the <a href="../docs/research.html">reproduction records</a>. A GPU name, compute capability, profile match, version query, search result, or AI recommendation is not a workload certification.</p>
+</div>
+<p class="mute" style="margin:0;font-size:15px">Discovery policy: <a href="https://cuda-compatibility.vercel.app/robots.txt">robots.txt</a>, <a href="https://cuda-compatibility.vercel.app/sitemap.xml">sitemap</a>, <a href="https://cuda-compatibility.vercel.app/llms.txt">agent index</a>, <a href="../docs/privacy.html">privacy and measurement</a>.</p>
+</div>
+<div style="display:flex;flex-direction:column;gap:14px">
+<div class="dim"><span>General notes, all sheets</span></div>
+<ol class="gn">
+<li>Marks: filled is reproduced on the reference configuration; hatched is reproduced for the listed cases only; crossed is contradicted with the observation kept; outline is unverified or unknown. Every mark names its record.</li>
+<li>Unverified means no record exists and is not refutation. Unknown means the fact was not observable in the recorded environment.</li>
+<li>Commands are shown and copyable. Nothing runs from a sheet; selected is not executed.</li>
+<li>Yellow marks attention and is always bounded by an ink line. Blue marks a reproduced state. No meaning is carried by colour alone; each state has a mark shape and a text label.</li>
+</ol>
+</div>
+</div>
+</main>
+
+<footer class="foot">
+<div class="wrap" style="padding-top:40px;padding-bottom:40px;display:flex;flex-direction:column;gap:20px;font-size:15px">
+<div class="tb" role="group" aria-label="Title block">
+<div><span>Project</span><span>CUDA Compatibility</span></div>
+<div><span>Drawn by</span><span><a href="https://zachshallbetter.com/">Zach Shallbetter</a></span></div>
+<div><span>Project version</span><span>0.6.0</span></div>
+<div><span>License</span><span>MIT or Apache-2.0</span></div>
+<div><span>Status</span><span>Active research</span></div>
+<div><span>Sheet</span><span>09 / 10, search and AI discovery</span></div>
+<div><span>Surface</span><span>explain; resolved from <code style="background:transparent;color:inherit">site/data/site-canon.json</code></span></div>
+<div><span>Recipient</span><span>None named, status primitive</span></div>
+<div><span>Correct this sheet</span><span><a href="https://github.com/zachshallbetter/cuda-compatibility/issues/new?title=Correction%3A%20sheet%2009%20discovery">Open an issue naming the record</a></span></div>
+</div>
+<table class="rev" aria-label="Revision table"><thead><tr><th scope="col">Rev</th><th scope="col">Date</th><th scope="col">Change</th><th scope="col">By</th></tr></thead><tbody><tr><td>A</td><td>2026-11-02</td><td>Sheet set redrawn in the engineering-drawing language</td><td>ZS</td></tr><tr><td>B</td><td>2026-11-02</td><td>Protocol alignment: evidence ids on every mark, contradicted state, contracts, correction path</td><td>ZS</td></tr></tbody></table>
+<div style="display:flex;justify-content:space-between;gap:24px;flex-wrap:wrap"><span style="color:#B8B8B2">Independent research, not affiliated with NVIDIA. Hardware identity stays real.</span><div style="display:flex;gap:20px;flex-wrap:wrap"><a href="https://github.com/zachshallbetter">GitHub</a><a href="https://linkedin.com/in/zachshallbetter">LinkedIn</a><a href="../docs/privacy.html">Privacy and analytics</a></div></div>
+</div>
+</footer>
+
+</div>
+<script src="../site.js" defer></script>
 <script src="../analytics.js" defer></script>
-</body></html>
+</body>
+</html>

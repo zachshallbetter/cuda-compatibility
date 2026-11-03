@@ -507,6 +507,23 @@ The first work item is being executed under the user's explicit request to creat
 - **Progress (2026-11-01):** Rewrote all 10 canonical page descriptions to be page-specific and 140–180 characters; added static checks for length and uniqueness. `make check` passed and `make test` passed 44/44. Commit `958388599dcad117b63470c31f3f584e1aa03c3f` was pushed to `codex/cuda-compat-publication` after exact ACP ALLOWs and deployed successfully in Pages run `41312924116`. The live audit fetched all 10 sitemap pages and six discovery assets/endpoints (16/16 HTTP 200); all 10 descriptions were unique and within range. Evidence: `CLC-028-bing-short-descriptions-recommendation`, `CLC-028-pages-release`, and `CLC-028-live-route-audit`. No ranking, traffic, or indexing effect is claimed.
 - **Disposition (2026-11-01):** Bing feedback has been addressed in the published site. Checks enforce the description bounds and uniqueness; the exact deployed revision returned HTTP 200 for all 16 audited routes/assets, with all 10 page descriptions between 140 and 180 characters. Search performance effects remain unobserved.
 
+## CLC-029 — Redesign the project site and move hosting to Vercel
+
+- **Intent:** Replace the GitHub Pages site with the engineering-drawing redesign, served from Vercel, without changing any hardware or support claim.
+- **Parent:** CLC-015 public project site; CLC-024 DPP discovery controls; CLC-027 consented analytics.
+- **Status:** In progress
+- **Objective:** Implement the "CUDA Compatibility site redesign" design canvas (home, documentation sheets 02–10, components, phone layouts) as the static `site/`, keep the existing page URLs, metadata, consent-gated analytics and discovery files, and publish it as a Vercel project.
+- **Scope:** `site/**`; `vercel.json`; `.vercelignore`; `.github/workflows/pages.yml`; `scripts/site_checks.py`; `tests/test_site_checks.py`; `README.md`; `docs/WORK_ITEMS.md`; `records/evidence.jsonl`; generated context.
+- **Exclusions:** New support, performance, or indexing claims; external font or script hosts at page load; redistributing NVIDIA components; custom domain or DNS changes; disabling the GitHub Pages site (owner action).
+- **Dependencies:** Design canvas `https://claude.ai/code/artifact/3857f1fe-4cb9-4338-a6c9-981bf9eeb801`; authenticated Vercel CLI; ACP decisions for push and production deploy.
+- **Acceptance:** All 10 canonical pages render the new design; canonical URLs, sitemap, robots.txt and llms.txt name the Vercel production origin; `make check` and `make test` pass; the Vercel production deployment returns HTTP 200 for every sitemap page and discovery asset.
+- **Evidence required:** Static check and unit test output; local browser render at desktop and phone widths; ACP decisions; Vercel deployment URL and live route audit.
+- **Evaluator:** Project owner, static checker, project tests, live route audit.
+- **Permissions:** E1 local source/docs/tests/evidence/context; E2 push and E3 Vercel production deploy only after exact ACP `ALLOW`.
+- **Target:** Vercel project `cuda-compatibility` (scope `zachshallbetter`).
+- **Budget:** No spend; Vercel Hobby static hosting.
+- **Stop conditions:** ACP refuses an external effect; a project gate fails; the redesign would require changing a verified claim.
+
 ## CLC-025 — Extend PyTorch CUDA 13 behavior on Maxwell with qualified operator and training coverage
 
 - **Intent:** `PROJECT_INTENT.md`; practical PyTorch CUDA 13 use on older NVIDIA GPUs.

@@ -1,27 +1,139 @@
 <!doctype html>
 <html lang="en">
 <head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="theme-color" content="#0b1017"><meta name="description" content="Find practical setup instructions, GPU compatibility, architecture, CLI commands, privacy and search setup, and measured evidence for CUDA Compatibility."><link rel="icon" type="image/svg+xml" href="../favicon.svg"><title>CUDA Compatibility documentation | CUDA Compatibility</title><link rel="stylesheet" href="../styles.css">
-<link rel="canonical" href="https://zachshallbetter.github.io/cuda-compatibility/docs/">
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="only light"><meta name="theme-color" content="#000000"><meta name="description" content="Find practical setup instructions, GPU compatibility, architecture, CLI commands, privacy and search setup, and measured evidence for CUDA Compatibility."><link rel="icon" type="image/svg+xml" href="../favicon.svg"><title>CUDA Compatibility documentation | CUDA Compatibility</title><link rel="canonical" href="https://cuda-compatibility.vercel.app/docs/">
 <meta name="author" content="Zach Shallbetter">
 <meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1">
-<meta property="og:type" content="article"><meta property="og:site_name" content="CUDA Compatibility"><meta property="og:url" content="https://zachshallbetter.github.io/cuda-compatibility/docs/"><meta property="og:title" content="CUDA Compatibility documentation"><meta property="og:description" content="User documentation for installation, compatibility coverage, architecture, CLI commands, and project evidence."><meta property="og:locale" content="en_US"><meta property="og:image" content="https://zachshallbetter.github.io/cuda-compatibility/assets/social-card.png"><meta property="og:image:type" content="image/png"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630"><meta property="og:image:alt" content="CUDA Compatibility: CUDA 13, older GPUs, and truthful sm_52 support"><meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="CUDA Compatibility documentation"><meta name="twitter:description" content="User documentation for installation, compatibility coverage, architecture, CLI commands, and project evidence."><meta name="twitter:image" content="https://zachshallbetter.github.io/cuda-compatibility/assets/social-card.png"><meta name="twitter:image:alt" content="CUDA Compatibility social preview card">
-<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@context":"https://schema.org","@type":"TechArticle","headline":"CUDA Compatibility documentation","description":"User documentation for installation, compatibility coverage, architecture, CLI commands, and project evidence.","url":"https://zachshallbetter.github.io/cuda-compatibility/docs/","inLanguage":"en","dateModified":"2026-11-01","author":{"@type":"Person","@id":"https://zachshallbetter.github.io/cuda-compatibility/#author","name":"Zach Shallbetter","url":"https://zachshallbetter.com/"},"isPartOf":{"@type":"WebSite","@id":"https://zachshallbetter.github.io/cuda-compatibility/#website","name":"CUDA Compatibility","url":"https://zachshallbetter.github.io/cuda-compatibility/"},"mainEntityOfPage":"https://zachshallbetter.github.io/cuda-compatibility/docs/","@id":"https://zachshallbetter.github.io/cuda-compatibility/docs/#article"},{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://zachshallbetter.github.io/cuda-compatibility/"},{"@type":"ListItem","position":2,"name":"Documentation","item":"https://zachshallbetter.github.io/cuda-compatibility/docs/"},{"@type":"ListItem","position":3,"name":"CUDA Compatibility documentation","item":"https://zachshallbetter.github.io/cuda-compatibility/docs/"}]}]}</script>
+<meta property="og:type" content="article"><meta property="og:site_name" content="CUDA Compatibility"><meta property="og:url" content="https://cuda-compatibility.vercel.app/docs/"><meta property="og:title" content="CUDA Compatibility documentation"><meta property="og:description" content="User documentation for installation, compatibility coverage, architecture, CLI commands, and project evidence."><meta property="og:locale" content="en_US"><meta property="og:image" content="https://cuda-compatibility.vercel.app/assets/social-card.png"><meta property="og:image:type" content="image/png"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630"><meta property="og:image:alt" content="CUDA Compatibility: CUDA 13, older GPUs, and truthful sm_52 support"><meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="CUDA Compatibility documentation"><meta name="twitter:description" content="User documentation for installation, compatibility coverage, architecture, CLI commands, and project evidence."><meta name="twitter:image" content="https://cuda-compatibility.vercel.app/assets/social-card.png"><meta name="twitter:image:alt" content="CUDA Compatibility social preview card">
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@context":"https://schema.org","@type":"TechArticle","headline":"CUDA Compatibility documentation","description":"User documentation for installation, compatibility coverage, architecture, CLI commands, and project evidence.","url":"https://cuda-compatibility.vercel.app/docs/","inLanguage":"en","dateModified":"2026-11-01","author":{"@type":"Person","@id":"https://cuda-compatibility.vercel.app/#author","name":"Zach Shallbetter","url":"https://zachshallbetter.com/"},"isPartOf":{"@type":"WebSite","@id":"https://cuda-compatibility.vercel.app/#website","name":"CUDA Compatibility","url":"https://cuda-compatibility.vercel.app/"},"mainEntityOfPage":"https://cuda-compatibility.vercel.app/docs/","@id":"https://cuda-compatibility.vercel.app/docs/#article"},{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://cuda-compatibility.vercel.app/"},{"@type":"ListItem","position":2,"name":"Documentation","item":"https://cuda-compatibility.vercel.app/docs/"},{"@type":"ListItem","position":3,"name":"CUDA Compatibility documentation","item":"https://cuda-compatibility.vercel.app/docs/"}]}]}</script>
+<link rel="stylesheet" href="../styles.css">
+<link rel="stylesheet" href="../docs.css">
+<style>
+.card{display:grid;grid-template-columns:36px minmax(0,1fr);gap:6px 16px;padding:22px 0;border-bottom:1px solid currentColor;text-decoration:none;color:var(--fg)}
+.card:hover h3{color:var(--link)}
+.card p{margin:0;font-size:16px;color:var(--soft);grid-column:2}
+.card .go{grid-column:2;font-size:14px;font-weight:700;color:var(--link)}
+</style>
 </head>
-<body><a class="skip-link" href="#main">Skip to content</a><header class="topbar"><a class="brand" href="../index.html#top" aria-label="CUDA Compatibility home"><span class="brand-mark" aria-hidden="true">C</span><span>CUDA Compatibility</span></a><nav aria-label="Main navigation"><a href="../index.html#status">Features</a><a href="../index.html#approach">How it works</a><a href="../index.html#hardware">Hardware</a><a href="index.html" aria-current="page">Docs</a><a href="../index.html#start">Get started</a></nav><a class="top-link" href="https://github.com/zachshallbetter/cuda-compatibility" target="_blank" rel="noreferrer">Project repository <span aria-hidden="true">↗</span></a></header>
-<main id="main" class="docs-main"><section class="docs-hero" id="top"><p class="eyebrow">User documentation · Experimental tool</p><h1>CUDA Compatibility documentation</h1><p>CUDA Compatibility helps users test selected CUDA 13 PyTorch paths on older NVIDIA GPUs while keeping hardware identity truthful.</p></section>
-<div class="docs-layout"><aside class="doc-sidebar"><p class="eyebrow">Documentation</p><nav aria-label="Documentation pages"><a href="index.html" aria-current="page">Documentation home</a><a href="getting-started.html">Install and run</a><a href="compatibility.html">Support matrix</a><a href="architecture.html">Architecture</a><a href="cli.html">CLI reference</a><a href="research.html">Research and evidence</a><a href="discovery.html">Search and AI discovery</a><a href="privacy.html">Privacy and measurement</a></nav><a class="doc-agent-link" href="../llms.txt">Agent-readable index ↗</a></aside><article class="docs-content"><p class="doc-lede">Start with setup, then check the support matrix before running an application. The prototype covers selected PyTorch operations on Linux <code>sm_52</code> devices; it does not make arbitrary CUDA 13 software compatible.</p>
-<div class="doc-card-grid">
-<a class="doc-card" href="getting-started.html"><span>01 / SETUP</span><h2>Install and run</h2><p>Prepare the Python environment, verify prerequisites, and launch one application process.</p><b>Getting started →</b></a>
-<a class="doc-card" href="compatibility.html"><span>02 / COVERAGE</span><h2>Support matrix</h2><p>Check native GPU kernels, CPU fallback paths, GPU scope, and unsupported cases.</p><b>Review compatibility →</b></a>
-<a class="doc-card" href="architecture.html"><span>03 / DESIGN</span><h2>How it works</h2><p>Follow the runtime facade, compiler, driver bridge, PyTorch dispatcher, and fallback routes.</p><b>Read the architecture →</b></a>
-<a class="doc-card" href="cli.html"><span>04 / REFERENCE</span><h2>Command line</h2><p>Look up commands, options, exit codes, and common setup errors.</p><b>Open the CLI reference →</b></a>
-<a class="doc-card" href="research.html"><span>05 / EVIDENCE</span><h2>Research and tests</h2><p>Inspect what was tested, how results were compared, and what remains unknown.</p><b>Review the evidence →</b></a>
-<a class="doc-card" href="../gpu-catalog.html"><span>06 / HARDWARE</span><h2>Legacy GPU catalog</h2><p>Browse NVIDIA compute-capability tiers and see the project’s current hardware gate.</p><b>Explore GPU families →</b></a>
-<a class="doc-card" href="discovery.html"><span>07 / DISCOVERY</span><h2>Search and AI discovery</h2><p>See how crawl access, sitemap, and agent index work—and what remains unobserved.</p><b>Review discovery status →</b></a>
+<body>
+<div style="display:flex;flex-direction:column;min-height:100%">
+<a class="skip-link" href="#main">Skip to content</a>
+<header style="border-bottom:1px solid currentColor">
+<svg class="reg l" aria-hidden="true" viewBox="0 0 16 16"><circle cx="8" cy="8" r="5" fill="none" stroke="currentColor" stroke-width="1.2"/><path d="M8 0v16M0 8h16" stroke="currentColor" stroke-width="1.2"/></svg><svg class="reg r" aria-hidden="true" viewBox="0 0 16 16"><circle cx="8" cy="8" r="5" fill="none" stroke="currentColor" stroke-width="1.2"/><path d="M8 0v16M0 8h16" stroke="currentColor" stroke-width="1.2"/></svg>
+<div class="wrap" style="padding-top:18px;padding-bottom:18px;display:flex;justify-content:space-between;align-items:center;gap:24px;flex-wrap:wrap">
+<a href="../index.html" style="text-decoration:none;color:inherit;font-stretch:110%;font-weight:800;font-size:17px;letter-spacing:-0.02em;display:inline-flex;align-items:center;gap:12px"><svg aria-hidden="true" width="26" height="26" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="3"><rect x="5" y="5" width="22" height="22"></rect><rect x="12" y="12" width="8" height="8" fill="currentColor" stroke="none"></rect></svg>CUDA Compatibility</a>
+<div style="display:flex;align-items:center;gap:32px;flex-wrap:wrap">
+<nav class="nav" aria-label="Main navigation">
+<a href="../index.html#works">What works</a>
+<a href="../index.html#stack">How it works</a>
+<a href="../index.html#hardware">Hardware</a>
+<a href="../index.html#install">Install</a>
+<a href="../docs/index.html" style="color:var(--link)">Docs</a>
+<a href="https://github.com/zachshallbetter/cuda-compatibility/releases">Releases</a>
+</nav>
+<a class="repo" href="https://github.com/zachshallbetter/cuda-compatibility">Repository<svg aria-hidden="true" width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 10 10 2M4 2h6v6"></path></svg></a>
 </div>
-<section class="doc-callout"><h2>Before you install</h2><p>The tested run path requires Linux x86_64, Python 3.10.12, PyTorch 2.14.0 with CUDA 13.0, LLVM/Clang 23.1.4, CUDA 12.4 development headers, a working NVIDIA driver, and only visible <code>sm_52</code> GPUs. Other setups are not yet qualified.</p></section>
-<section class="doc-section"><h2>Search and assistant access</h2><p>The site publishes <a href="../robots.txt">crawler preferences</a> and a <a href="../sitemap.xml">page sitemap</a>. Search and user-requested retrieval crawlers are allowed; selected model-training crawlers are disallowed. Robots rules are voluntary crawler instructions, not access control, and they do not guarantee fetching, indexing, or citations. See the <a href="https://developers.openai.com/api/docs/bots">OpenAI crawler guidance</a>, <a href="https://support.anthropic.com/en/articles/8896518-does-anthropic-crawl-data-from-the-web-and-how-can-site-owners-block-the-crawler">Anthropic crawler guidance</a>, and <a href="https://docs.perplexity.ai/docs/resources/perplexity-crawlers">Perplexity crawler guidance</a>.</p></section><section class="doc-section"><h2>Use the documentation as a support contract</h2><p>“Available,” “experimental,” and “unverified” are separate evidence states. A profile match or a successful CUDA version query does not certify an application. Check the exact operation, dtype, shape, library path, and device before relying on a result.</p><p>For support requests, include the tool version, OS, Python/PyTorch/CUDA versions, GPU compute capability, failing operation, and a small reproducer. Do not attach model weights, secrets, or private input data.</p><p><a href="../llms.txt">Agent-readable documentation index</a> · <a href="../sitemap.xml">Page sitemap</a> · <a href="privacy.html">Privacy and measurement</a> · <a href="https://github.com/zachshallbetter/cuda-compatibility">Source repository</a></p></section></article></div>
-</main><footer class="footer"><a class="brand" href="../index.html#top"><span class="brand-mark" aria-hidden="true">C</span><span>CUDA Compatibility</span></a><span>Independent research · Evidence first · Hardware identity stays real</span><a href="https://zachshallbetter.com/" target="_blank" rel="noreferrer">Zach Shallbetter ↗</a> <a href="privacy.html">Privacy &amp; analytics</a></footer>
+</div>
+</header>
+
+<section class="band">
+<div class="wrap" style="padding-top:56px;padding-bottom:56px;display:flex;flex-direction:column;gap:18px">
+<p class="sheet" style="margin:0;opacity:0.6">Documentation, sheet 02 / 10</p>
+<h1 class="disp" style="font-size:clamp(44px,5vw,72px)">Documentation</h1>
+<p style="margin:0;font-size:21px;line-height:1.4;max-width:46ch;font-weight:500">Start with setup, then check the support matrix before running an application.</p>
+<p class="mute" style="margin:0;font-size:16px;max-width:64ch">The prototype covers selected PyTorch operations on Linux <code style="background:#222220;color:#FFFFFF">sm_52</code> devices. It does not make arbitrary CUDA 13 software compatible.</p>
+</div>
+</section>
+
+<main id="main" class="wrap body" style="padding-top:56px;padding-bottom:96px">
+<nav aria-label="Documentation" style="display:flex;flex-direction:column;gap:12px">
+<p class="sheet" style="margin:0">Sheets</p>
+<ul class="side">
+<li><a class="current" aria-current="page" href="../docs/index.html"><i>02</i>Documentation home</a></li>
+<li><a href="../docs/getting-started.html"><i>03</i>Install and run</a></li>
+<li><a href="../docs/compatibility.html"><i>04</i>Support matrix</a></li>
+<li><a href="../docs/architecture.html"><i>05</i>How it works</a></li>
+<li><a href="../docs/cli.html"><i>06</i>Command line</a></li>
+<li><a href="../docs/research.html"><i>07</i>Research and evidence</a></li>
+<li><a href="../gpu-catalog.html"><i>08</i>Legacy GPU catalog</a></li>
+<li><a href="../docs/discovery.html"><i>09</i>Search and AI discovery</a></li>
+<li><a href="../docs/privacy.html"><i>10</i>Privacy and measurement</a></li>
+<li><a href="https://cuda-compatibility.vercel.app/llms.txt"><i>+</i>Agent-readable index</a></li>
+</ul>
+</nav>
+
+<div style="display:flex;flex-direction:column;gap:56px">
+<div style="display:flex;flex-direction:column;gap:20px">
+<div class="sec"><span class="cut" aria-hidden="true">A</span><h2 class="h2">Where to start</h2><span class="plane" aria-hidden="true"></span><span class="sheet">Index</span></div>
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(360px,100%),1fr));gap:0 56px;border-top:2px solid currentColor">
+<a class="card" href="../docs/getting-started.html"><span class="cut" aria-hidden="true" style="width:36px;height:36px;font-size:14px;grid-row:1 / span 3">03</span><h3>Install and run</h3><p>Prepare the Python environment, verify prerequisites, and launch one application process.</p><span class="go">Getting started</span></a>
+<a class="card" href="../docs/compatibility.html"><span class="cut" aria-hidden="true" style="width:36px;height:36px;font-size:14px;grid-row:1 / span 3">04</span><h3>Support matrix</h3><p>Check native GPU kernels, CPU fallback paths, GPU scope, and unsupported cases.</p><span class="go">Review compatibility</span></a>
+<a class="card" href="../docs/architecture.html"><span class="cut" aria-hidden="true" style="width:36px;height:36px;font-size:14px;grid-row:1 / span 3">05</span><h3>How it works</h3><p>Follow the runtime facade, compiler, driver bridge, PyTorch dispatcher, and fallback routes.</p><span class="go">Read the architecture</span></a>
+<a class="card" href="../docs/cli.html"><span class="cut" aria-hidden="true" style="width:36px;height:36px;font-size:14px;grid-row:1 / span 3">06</span><h3>Command line</h3><p>Look up commands, options, exit codes, and common setup errors.</p><span class="go">Open the CLI reference</span></a>
+<a class="card" href="../docs/research.html"><span class="cut" aria-hidden="true" style="width:36px;height:36px;font-size:14px;grid-row:1 / span 3">07</span><h3>Research and tests</h3><p>Inspect what was tested, how results were compared, and what remains unknown.</p><span class="go">Review the evidence</span></a>
+<a class="card" href="../gpu-catalog.html"><span class="cut" aria-hidden="true" style="width:36px;height:36px;font-size:14px;grid-row:1 / span 3">08</span><h3>Legacy GPU catalog</h3><p>Browse NVIDIA compute-capability tiers and see the project’s current hardware gate.</p><span class="go">Explore GPU families</span></a>
+<a class="card" href="../docs/discovery.html"><span class="cut" aria-hidden="true" style="width:36px;height:36px;font-size:14px;grid-row:1 / span 3">09</span><h3>Search and AI discovery</h3><p>See how crawl access, sitemap, and agent index work, and what remains unobserved.</p><span class="go">Review discovery status</span></a>
+<a class="card" href="../docs/privacy.html"><span class="cut" aria-hidden="true" style="width:36px;height:36px;font-size:14px;grid-row:1 / span 3">10</span><h3>Privacy and measurement</h3><p>How optional analytics work, what is measured, and how search measurement is connected.</p><span class="go">Read the privacy guide</span></a>
+</div>
+</div>
+
+<div style="display:flex;flex-direction:column;gap:20px">
+<div class="sec"><span class="cut" aria-hidden="true">B</span><h2 class="h2">Before you install</h2><span class="plane" aria-hidden="true"></span></div>
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(360px,100%),1fr));gap:24px">
+<div class="note y">
+<h3 style="font-size:18px">Tested run path</h3>
+<p style="margin:0;font-size:15px">Linux x86_64, Python 3.10.12, PyTorch 2.14.0 with CUDA 13.0, LLVM/Clang 23.1.4, CUDA 12.4 development headers, a working NVIDIA driver, and only visible <code>sm_52</code> GPUs. Other setups are not yet qualified.</p>
+</div>
+<div class="note" style="border-color:#000000">
+<h3 style="font-size:18px">Read the documentation as a support contract</h3>
+<p style="margin:0;font-size:15px">“Available,” “experimental,” “contradicted,” “unverified,” and “unknown” are separate evidence states, each backed by a named record or by the absence of one. Unverified means no record; unknown means the fact was not observable in the recorded environment. A profile match or a successful CUDA version query does not certify an application. Check the exact operation, dtype, shape, library path, and device before relying on a result.</p>
+</div>
+</div>
+</div>
+
+<div style="display:flex;flex-direction:column;gap:20px">
+<div class="sec"><span class="cut" aria-hidden="true">C</span><h2 class="h2">Search and assistant access</h2><span class="plane" aria-hidden="true"></span></div>
+<p style="margin:0;font-size:16px;max-width:72ch">The site publishes <a href="https://cuda-compatibility.vercel.app/robots.txt">crawler preferences</a> and a <a href="https://cuda-compatibility.vercel.app/sitemap.xml">page sitemap</a>. Search and user-requested retrieval crawlers are allowed; selected model-training crawlers are disallowed. Robots rules are voluntary crawler instructions, not access control, and they do not guarantee fetching, indexing, or citations. See the <a href="https://developers.openai.com/api/docs/bots">OpenAI crawler guidance</a>, <a href="https://support.anthropic.com/en/articles/8896518-does-anthropic-crawl-data-from-the-web-and-how-can-site-owners-block-the-crawler">Anthropic crawler guidance</a>, and <a href="https://docs.perplexity.ai/guides/bots">Perplexity crawler guidance</a>.</p>
+</div>
+
+<div style="display:flex;flex-direction:column;gap:20px">
+<div class="sec"><span class="cut" aria-hidden="true">D</span><h2 class="h2">Asking for support</h2><span class="plane" aria-hidden="true"></span></div>
+<p class="soft" style="margin:0;font-size:16px;max-width:72ch">Include the tool version, OS, Python, PyTorch, and CUDA versions, GPU compute capability, the failing operation, and a small reproducer. Do not attach model weights, secrets, or private input data.</p>
+<div style="display:flex;gap:20px;flex-wrap:wrap;font-size:15px"><a href="https://cuda-compatibility.vercel.app/llms.txt">Agent-readable documentation index</a><a href="https://cuda-compatibility.vercel.app/sitemap.xml">Page sitemap</a><a href="../docs/privacy.html">Privacy and measurement</a><a href="https://github.com/zachshallbetter/cuda-compatibility">Source repository</a></div>
+</div>
+<div style="display:flex;flex-direction:column;gap:14px">
+<div class="dim"><span>General notes, all sheets</span></div>
+<ol class="gn">
+<li>Marks: filled is reproduced on the reference configuration; hatched is reproduced for the listed cases only; crossed is contradicted with the observation kept; outline is unverified or unknown. Every mark names its record.</li>
+<li>Unverified means no record exists and is not refutation. Unknown means the fact was not observable in the recorded environment.</li>
+<li>Commands are shown and copyable. Nothing runs from a sheet; selected is not executed.</li>
+<li>Yellow marks attention and is always bounded by an ink line. Blue marks a reproduced state. No meaning is carried by colour alone; each state has a mark shape and a text label.</li>
+</ol>
+</div>
+</div>
+</main>
+
+<footer class="foot">
+<div class="wrap" style="padding-top:40px;padding-bottom:40px;display:flex;flex-direction:column;gap:20px;font-size:15px">
+<div class="tb" role="group" aria-label="Title block">
+<div><span>Project</span><span>CUDA Compatibility</span></div>
+<div><span>Drawn by</span><span><a href="https://zachshallbetter.com/">Zach Shallbetter</a></span></div>
+<div><span>Project version</span><span>0.6.0</span></div>
+<div><span>License</span><span>MIT or Apache-2.0</span></div>
+<div><span>Status</span><span>Active research</span></div>
+<div><span>Sheet</span><span>02 / 10, documentation</span></div>
+<div><span>Surface</span><span>collection; resolved from <code style="background:transparent;color:inherit">site/data/site-canon.json</code></span></div>
+<div><span>Recipient</span><span>None named, status primitive</span></div>
+<div><span>Correct this sheet</span><span><a href="https://github.com/zachshallbetter/cuda-compatibility/issues/new?title=Correction%3A%20sheet%2002%20documentation">Open an issue naming the record</a></span></div>
+</div>
+<table class="rev" aria-label="Revision table"><thead><tr><th scope="col">Rev</th><th scope="col">Date</th><th scope="col">Change</th><th scope="col">By</th></tr></thead><tbody><tr><td>A</td><td>2026-11-02</td><td>Sheet set redrawn in the engineering-drawing language</td><td>ZS</td></tr><tr><td>B</td><td>2026-11-02</td><td>Protocol alignment: evidence ids on every mark, contradicted state, contracts, correction path</td><td>ZS</td></tr></tbody></table>
+<div style="display:flex;justify-content:space-between;gap:24px;flex-wrap:wrap"><span style="color:#B8B8B2">Independent research, not affiliated with NVIDIA. Hardware identity stays real.</span><div style="display:flex;gap:20px;flex-wrap:wrap"><a href="https://github.com/zachshallbetter">GitHub</a><a href="https://linkedin.com/in/zachshallbetter">LinkedIn</a><a href="../docs/privacy.html">Privacy and analytics</a></div></div>
+</div>
+</footer>
+
+</div>
+<script src="../site.js" defer></script>
 <script src="../analytics.js" defer></script>
-</body></html>
+</body>
+</html>

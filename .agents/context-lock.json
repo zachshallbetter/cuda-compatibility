@@ -5,12 +5,12 @@
   "validityBasis": "aggregate-source-digest",
   "selectedPaths": [],
   "sourceSelection": {
-    "includedCount": 165,
-    "includedBytes": 1020961,
+    "includedCount": 169,
+    "includedBytes": 1447733,
     "excludedCounts": {
       "excluded-directory": 1,
       "excluded-path": 1,
-      "extension": 23
+      "extension": 25
     }
   },
   "repositoryState": {
@@ -19,14 +19,14 @@
     "repositories": [
       {
         "path": ".",
-        "commit": "4570360804d1d6f010dda4c6a90215c6932daf5b",
-        "branch": "codex/site-docs-pages-hardening",
+        "commit": "850ccad2328512c390b52377835c13fabc885fcb",
+        "branch": "design-vercel-setup-19d77a",
         "dirty": true,
         "remote": "https://github.com/zachshallbetter/cuda-compatibility.git"
       }
     ]
   },
-  "aggregateSourceDigest": "7c7ef6b1b19ccac7c799327ac81213020331b4daf59b95269d384c5d5263a142",
+  "aggregateSourceDigest": "379f59dbdc7fd3366cee9f480c741ea7eff69e8007c7d101d9ac84976424a83f",
   "sources": [
     {
       "path": ".agents/rules/ci.md",
@@ -229,9 +229,9 @@
       "sha256": "51b9a51c56f005c3cd4079e6504499cc54ce547b2b54ac28aead2c4543d1e3f8"
     },
     {
-      "path": ".github/workflows/pages.yml",
-      "bytes": 1566,
-      "sha256": "f96fc7ac7a9bf9b91715d9bfa533544e867d51118f11eeb7ca4f28832e91c859"
+      "path": ".github/workflows/verify.yml",
+      "bytes": 633,
+      "sha256": "520d93c6c0bbd33a317df3a147c51598188cccc98d18bb987c56b3d783f16e4b"
     },
     {
       "path": "AGENTS.md",
@@ -266,7 +266,7 @@
     {
       "path": "README.md",
       "bytes": 9113,
-      "sha256": "200b40ba99c143b0ba9edea2ee3b102d835b7bf7243d3a0ad59eb4746d07a35c"
+      "sha256": "6b82d873600e83f7a28fe8f6e3d0df770ac89293dadf8b6d3fe87fe479c8918a"
     },
     {
       "path": "VERSION",
@@ -405,8 +405,8 @@
     },
     {
       "path": "docs/WORK_ITEMS.md",
-      "bytes": 94537,
-      "sha256": "76fbb55fa2d0d9d264a51188bd418f6817fb37e5dac8d34e92bef362b3608eb5"
+      "bytes": 96717,
+      "sha256": "f943d0956c5a0e780e25c59dc85c940742f281df2fbcf5448196a516433a4527"
     },
     {
       "path": "docs/architecture.md",
@@ -675,8 +675,8 @@
     },
     {
       "path": "scripts/site_checks.py",
-      "bytes": 17230,
-      "sha256": "5c7df862643cb7560d0690912d8b4acd2538efb9ba3ca549d583f30ee83886b1"
+      "bytes": 17252,
+      "sha256": "1b5724bc1e7f4e35fc389bbba462b2a0980f5e222e99f7aa84a3b5978176e993"
     },
     {
       "path": "scripts/upgrade-project.py",
@@ -714,69 +714,89 @@
       "sha256": "61b89f0534921e8bd1419e115b61737a5a50e1cb65e7af4bbdd49dc1d64dc3f6"
     },
     {
+      "path": "site/assets/gm200-wireframe.json",
+      "bytes": 324372,
+      "sha256": "2f21eaaf293929c93ae9045ad21f7adc11937c32b32e0786240b151b4222e2e3"
+    },
+    {
+      "path": "site/docs.css",
+      "bytes": 9201,
+      "sha256": "00d01f0ef87658184c0eba9b18319f238b658447b4ac264106ba5fbbe4878b44"
+    },
+    {
       "path": "site/docs/architecture.html",
-      "bytes": 10310,
-      "sha256": "4620de141facc5b6195bece38c65f9afad9964c745e44a82674f5fe84a8ce464"
+      "bytes": 19177,
+      "sha256": "3c05a9e538bbe10e9f5f4cde93a83f7bc46d407fe332868a1536af2909d6819e"
     },
     {
       "path": "site/docs/cli.html",
-      "bytes": 8937,
-      "sha256": "65e03dc4a0e53d60a81cee738b2c07b0cc620c1a583fd33c2d235081b9887d01"
+      "bytes": 15428,
+      "sha256": "e08073dad8fa164abaa7cf21c8191847658511b5727041b61617c281b2c3da51"
     },
     {
       "path": "site/docs/compatibility.html",
-      "bytes": 11188,
-      "sha256": "4e4d2b283235d9a367809501beb84e030634cf83a9ead42b8372691309d2b23b"
+      "bytes": 20869,
+      "sha256": "913fb0bdaff769b4f21af4060130f6decb04333fca81878addb605ad7c8ceac3"
     },
     {
       "path": "site/docs/discovery.html",
-      "bytes": 12110,
-      "sha256": "81ec9d887481893dad92293a11c69d8be9ff16be650de85b516e42d46a2baa08"
+      "bytes": 19453,
+      "sha256": "b5c25477527190de173286f2b681cfbf31e6a4daa9c7f3952c6e48b95970119c"
     },
     {
       "path": "site/docs/getting-started.html",
-      "bytes": 8999,
-      "sha256": "b6a9cafc8d969850b15b877c78d7f83dea48926370829b6b1a908c8ed7578944"
+      "bytes": 15518,
+      "sha256": "5331acd0d77ee02e64404850f3287621dd191557f10284094d7d3611a048e511"
     },
     {
       "path": "site/docs/index.html",
-      "bytes": 9374,
-      "sha256": "df228d5809a876a1e3f83c4c54dc5b71e6c21d9d488c59a1045545d66ec375ee"
+      "bytes": 16562,
+      "sha256": "2950b0e48ce48fde7c2356b53ad5e460c187bc1ade89db8bb3368af884b50cf7"
     },
     {
       "path": "site/docs/privacy.html",
-      "bytes": 14010,
-      "sha256": "d286c9bd8a30e61f4f7fb9db046f238a67ecf80a8e23b9645bca8fdea6a84976"
+      "bytes": 21641,
+      "sha256": "083d2727d9341930e5abb636c46fa4e1e59bfdb00d0e4b4f96476b9701da988e"
     },
     {
       "path": "site/docs/research.html",
-      "bytes": 10817,
-      "sha256": "5bded3ac5615263d6d15ae5147a2c81b344a94be51f54d50113695ba7c58f649"
+      "bytes": 29145,
+      "sha256": "33e88faf93daf71ce6f8686f7dbb5538a5f9740eef1d6061ae3ad8d345f63f2a"
     },
     {
       "path": "site/gpu-catalog.html",
-      "bytes": 16763,
-      "sha256": "33711f6ff970e9167b32471fcb2f147b509e2474d033b2c36e3c081effc33668"
+      "bytes": 22948,
+      "sha256": "4059a9a337cbb37c78d060babd67041ebee4f180df23617be678d07721f280b1"
+    },
+    {
+      "path": "site/home.css",
+      "bytes": 13787,
+      "sha256": "965c1d78bd82beb0ae39845c01913388e8af38624f05fe75dec80bdf79d28b59"
     },
     {
       "path": "site/index.html",
-      "bytes": 27159,
-      "sha256": "8e6e3e8c518b6071939ee3e5f3605666c52c105b41646fb0fc71e55ae3f4da4f"
+      "bytes": 49053,
+      "sha256": "75881a6e9105d7b79be05f8754ed5106347909fb86b9e0dcb61a1198c573dbed"
     },
     {
       "path": "site/llms.txt",
-      "bytes": 2472,
-      "sha256": "0863c4e094786a37abbd9da041563c7189cc8d5db3b97d4cda4e7641275d8f01"
+      "bytes": 2322,
+      "sha256": "8e3f6b621203369bfe77464abe36405cb1ac7224f6e5caa71b21bbce93cd8e4c"
     },
     {
       "path": "site/robots.txt",
-      "bytes": 468,
-      "sha256": "39e3417d5e077c3fff629d90fa394ca720d7623808104d0280eb41d90ce002af"
+      "bytes": 453,
+      "sha256": "9d18cf371d0f64d7b43315cb9453f881e5897b3aa1968828e8a98ccb58464935"
+    },
+    {
+      "path": "site/site.js",
+      "bytes": 7349,
+      "sha256": "0f1b13000c8d60678666fea3b376d03b848c0a3bedb5c261fee59611a712ef4b"
     },
     {
       "path": "site/styles.css",
-      "bytes": 31169,
-      "sha256": "949c8a1fea65157d0f203da8981aa47ad990731caf5fbb7a0795bb20f506eb13"
+      "bytes": 2016,
+      "sha256": "5e501a4f3cc6057002af9261afc7241cc20c7979d5c6c8d041055637a7c995c5"
     },
     {
       "path": "src/cuda_legacy_compat/__init__.py",
@@ -850,8 +870,8 @@
     },
     {
       "path": "tests/test_site_checks.py",
-      "bytes": 8959,
-      "sha256": "c0b162b9f870f3fe9fd9c2acc45aa1a20d70c9fb13ce6855a2411a1046f6b36c"
+      "bytes": 8944,
+      "sha256": "f676e792927e8cc7578615ec225a8ff34af9b983b3eceb66b569b73c1ae313c5"
     }
   ]
 }

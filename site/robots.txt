@@ -31,4 +31,4 @@ Disallow: /
 User-agent: Google-CloudVertexBot
 Allow: /
 
-Sitemap: https://zachshallbetter.github.io/cuda-compatibility/sitemap.xml
+Sitemap: https://cuda-compatibility.vercel.app/sitemap.xml
