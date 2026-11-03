@@ -72,6 +72,21 @@ class SiteDiscoveryChecksTests(unittest.TestCase):
             page.write_text(page.read_text(encoding="utf-8").replace("List commands and example use.", "List every command.", 1), encoding="utf-8")
             self.assertTrue(any("llms-full.txt is stale" in error for error in audit_site(site)))
 
+    def test_rejects_missing_or_wrong_size_share_image(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            site = self.copy_site(directory)
+            (site / "assets" / "social" / "cli.png").write_bytes((site / "icon-192.png").read_bytes())
+            errors = audit_site(site)
+            self.assertTrue(any("docs/cli.html: og:image must be a local 1200x630 PNG" in error for error in errors))
+
+    def test_rejects_page_without_touch_icon(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            site = self.copy_site(directory)
+            page = site / "docs" / "cli.html"
+            source = page.read_text(encoding="utf-8")
+            page.write_text(source.replace('<link rel="apple-touch-icon" href="../apple-touch-icon.png">\n', ""), encoding="utf-8")
+            self.assertTrue(any("docs/cli.html: missing apple-touch-icon link" in error for error in audit_site(site)))
+
     def test_rejects_missing_webmaster_verification_tags(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             site = self.copy_site(directory)

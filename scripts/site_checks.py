@@ -120,6 +120,16 @@ def _expected_url(relative: Path, origin: str, prefix: str) -> str:
     return f"{origin}{prefix}{suffix}"
 
 
+def _png_size(path: Path) -> tuple[int, int] | None:
+    try:
+        header = path.read_bytes()[:24]
+    except OSError:
+        return None
+    if header[:8] != b"\x89PNG\r\n\x1a\n":
+        return None
+    return int.from_bytes(header[16:20], "big"), int.from_bytes(header[20:24], "big")
+
+
 def _load_llms_full_builder():
     spec = importlib.util.spec_from_file_location("build_llms_full", Path(__file__).with_name("build_llms_full.py"))
     module = importlib.util.module_from_spec(spec)
@@ -266,6 +276,19 @@ def audit_site(site_root: Path) -> list[str]:
             errors.append(f"{label}: missing privacy and measurement link")
         if not parser.jsonld:
             errors.append(f"{label}: missing JSON-LD")
+        share_image = (parser.meta.get("og:image") or [""])[0]
+        if share_image.startswith(origin + prefix):
+            image_path = site_root / share_image[len(origin + prefix):]
+            if _png_size(image_path) != (1200, 630):
+                errors.append(f"{label}: og:image must be a local 1200x630 PNG: {share_image}")
+        elif share_image:
+            errors.append(f"{label}: og:image must be served from the canonical origin")
+        if parser.meta.get("twitter:image") != parser.meta.get("og:image"):
+            errors.append(f"{label}: twitter:image does not match og:image")
+        rels = re.findall(r'<link\b[^>]*\brel="([^"]+)"', source, re.I)
+        for required in ("icon", "apple-touch-icon", "manifest"):
+            if required not in rels:
+                errors.append(f"{label}: missing {required} link")
         for raw in parser.jsonld:
             try:
                 structured = json.loads(raw)
@@ -377,6 +400,19 @@ def audit_site(site_root: Path) -> list[str]:
             errors.append("llms.txt URLs do not exactly match canonical HTML pages")
     except OSError as exc:
         errors.append(f"llms.txt is missing: {exc}")
+
+    manifest = site_root / "manifest.webmanifest"
+    try:
+        icons = json.loads(manifest.read_text(encoding="utf-8")).get("icons", [])
+        if not icons:
+            errors.append("manifest.webmanifest declares no icons")
+        for icon in icons:
+            size = _png_size(site_root / str(icon.get("src", "")).lstrip("/"))
+            declared = str(icon.get("sizes", ""))
+            if size is None or f"{size[0]}x{size[1]}" != declared:
+                errors.append(f"manifest.webmanifest: icon {icon.get('src')} is missing or not {declared}")
+    except (OSError, ValueError) as exc:
+        errors.append(f"manifest.webmanifest is missing or invalid: {exc}")
 
     full_text = site_root / "llms-full.txt"
     try:
