@@ -25,19 +25,19 @@
 <meta property="og:image:type" content="image/png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
-<meta property="og:image:alt" content="CUDA Compatibility: a practical CUDA 13 compatibility layer for legacy NVIDIA GPUs">
+<meta property="og:image:alt" content="Newer CUDA. Older GPUs. CUDA Compatibility, cudacompat.com, beside a wireframe of a GM200 reference graphics card">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="CUDA Compatibility: CUDA 13 on older GPUs">
 <meta name="twitter:description" content="An experimental, evidence-led compatibility layer for selected CUDA 13 PyTorch operations on older NVIDIA GPUs.">
 <meta name="twitter:image" content="https://cudacompat.com/assets/social-card.png">
-<meta name="twitter:image:alt" content="CUDA Compatibility: CUDA 13, older GPUs, and truthful sm_52 support">
+<meta name="twitter:image:alt" content="Newer CUDA. Older GPUs. CUDA Compatibility, cudacompat.com, beside a wireframe of a GM200 reference graphics card">
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
   "@graph": [
     {"@type":"WebSite","@id":"https://cudacompat.com/#website","url":"https://cudacompat.com/","name":"CUDA Compatibility","inLanguage":"en","publisher":{"@id":"https://cudacompat.com/#author"}},
     {"@type":"Person","@id":"https://cudacompat.com/#author","name":"Zach Shallbetter","url":"https://zachshallbetter.com/","sameAs":["https://github.com/zachshallbetter"]},
-    {"@type":"SoftwareApplication","@id":"https://cudacompat.com/#software","name":"CUDA Compatibility","url":"https://cudacompat.com/","description":"An experimental compatibility layer for selected PyTorch CUDA 13 operations on older NVIDIA GPUs, with actual device identity preserved.","applicationCategory":"DeveloperApplication","operatingSystem":"Linux x86_64","softwareVersion":"0.1.0","isAccessibleForFree":true,"codeRepository":"https://github.com/zachshallbetter/cuda-compatibility","author":{"@id":"https://cudacompat.com/#author"},"featureList":["GPU inventory and compatibility profile checks","Process-local CUDA Runtime version facade","Selected native sm_52 PyTorch operator kernels","Bounded inference CPU fallback"]}
+    {"@type":"SoftwareApplication","@id":"https://cudacompat.com/#software","name":"CUDA Compatibility","url":"https://cudacompat.com/","description":"An experimental compatibility layer for selected PyTorch CUDA 13 operations on older NVIDIA GPUs, with actual device identity preserved.","applicationCategory":"DeveloperApplication","operatingSystem":"Linux x86_64","softwareVersion":"0.1.0","isAccessibleForFree":true,"codeRepository":"https://github.com/zachshallbetter/cuda-compatibility","installUrl":"https://cudacompat.com/docs/getting-started.html","author":{"@id":"https://cudacompat.com/#author"},"featureList":["GPU inventory and compatibility profile checks","Process-local CUDA Runtime version facade","Selected native sm_52 PyTorch operator kernels","Bounded inference CPU fallback"]}
   ]
 }
 </script>
@@ -72,7 +72,7 @@
 <canvas id="titan" role="img" aria-label="Wireframe of the GM200 reference card assembling itself from the circuit board outward, with the blower fan, GM200 package, heatsink fins and PCIe bracket labelled" style="position:absolute;inset:0;width:100%;height:100%;display:block"></canvas>
 <div class="wrap hero built" style="position:relative;padding-top:48px;padding-bottom:48px;min-height:720px;box-sizing:border-box">
 <div style="display:flex;flex-direction:column;gap:32px;align-self:center">
-<p class="sheet" style="margin:0;opacity:0.6">Open compatibility research, Linux, NVIDIA</p>
+<p class="sheet" style="margin:0">Open compatibility research, Linux, NVIDIA</p>
 <h1 class="disp" style="font-size:clamp(44px,4.8vw,68px)"><span style="display:block;white-space:nowrap">Newer <span class="ink">CUDA.</span></span><span style="display:block;white-space:nowrap">Older <span class="ink">GPUs.</span></span></h1>
 <p class="soft" style="margin:0;font-size:19px;line-height:1.5;max-width:40ch;font-weight:400;letter-spacing:0.002em">Selected CUDA 13 PyTorch operations running on Maxwell cards NVIDIA stopped compiling for. The real device identity is never touched.</p>
 <div style="display:flex;gap:14px;flex-wrap:wrap">
@@ -86,9 +86,9 @@
 <div style="display:flex;justify-content:space-between;align-items:center;gap:24px;flex-wrap:wrap;border-top:1px solid var(--yellow);padding:14px 0 28px">
 <p style="margin:0;font-size:15px;line-height:1.3;max-width:46ch"><span style="font-weight:600;color:var(--yellow)">GM200 reference card, compute capability 5.2.</span> <span class="mute">The only hardware tested so far. Experimental, process-local, workload-specific.</span></p>
 <dl style="margin:0;display:flex;gap:32px;flex-wrap:wrap">
-<div style="display:flex;flex-direction:column;gap:2px"><dt class="sheet" style="opacity:0.6">Reference cards</dt><dd style="margin:0;font-weight:800;font-size:22px;line-height:1">3</dd></div>
-<div style="display:flex;flex-direction:column;gap:2px"><dt class="sheet" style="opacity:0.6">Native operations</dt><dd style="margin:0;font-weight:800;font-size:22px;line-height:1">6</dd></div>
-<div style="display:flex;flex-direction:column;gap:2px"><dt class="sheet" style="opacity:0.6">Claims of universal support</dt><dd style="margin:0;font-weight:800;font-size:22px;line-height:1">0</dd></div>
+<div style="display:flex;flex-direction:column;gap:2px"><dt class="sheet" >Reference cards</dt><dd style="margin:0;font-weight:800;font-size:22px;line-height:1">3</dd></div>
+<div style="display:flex;flex-direction:column;gap:2px"><dt class="sheet" >Native operations</dt><dd style="margin:0;font-weight:800;font-size:22px;line-height:1">6</dd></div>
+<div style="display:flex;flex-direction:column;gap:2px"><dt class="sheet" >Claims of universal support</dt><dd style="margin:0;font-weight:800;font-size:22px;line-height:1">0</dd></div>
 </dl>
 <button type="button" class="replay" id="replay" hidden aria-label="Replay the card assembly">Replay build<svg aria-hidden="true" width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M10 6a4 4 0 1 1-1.2-2.9M9 1v2.5H6.5"></path></svg></button>
 </div>
@@ -98,13 +98,13 @@
 <div class="qs">
 <div style="display:flex;flex-direction:column;gap:10px;min-width:0">
 <h2 style="font-size:30px;font-stretch:110%;font-weight:800;letter-spacing:-0.02em;line-height:1">Get it running</h2>
-<p class="soft" style="margin:0;font-size:16px;max-width:40ch">Two commands from a checkout, inside the Python environment that already holds the CUDA 13 PyTorch wheel. Linux x86_64, visible sm_52 GPUs only. No PyPI package yet.</p>
+<p class="soft" style="margin:0;font-size:16px;max-width:40ch">Two commands from a checkout, inside the Python environment that already holds the CUDA 13 PyTorch wheel. Linux x86_64, visible sm_52 GPUs only. No PyPI package yet; <a href="docs/getting-started.html#brew">Homebrew on Linux</a> builds from the main branch.</p>
 <div style="display:flex;gap:14px;flex-wrap:wrap;align-items:center"><a href="docs/getting-started.html" style="font-weight:700;font-size:15px">Full install sheet</a><a href="https://github.com/zachshallbetter/cuda-compatibility/releases" style="font-weight:700;font-size:15px">Releases</a><a href="https://github.com/zachshallbetter/cuda-compatibility/archive/refs/heads/main.zip" style="font-weight:700;font-size:15px">Download zip</a></div>
 </div>
 <div style="display:flex;flex-direction:column;gap:10px;min-width:0">
-<div class="cmd"><span class="sheet" style="opacity:0.6">1 · clone</span><code>git clone https://github.com/zachshallbetter/cuda-compatibility.git</code><button type="button" class="copy" data-copy="clone" hidden aria-label="Copy clone command">Copy</button></div>
-<div class="cmd"><span class="sheet" style="opacity:0.6">2 · install</span><code>cd cuda-compatibility &amp;&amp; python -m pip install .</code><button type="button" class="copy" data-copy="install" hidden aria-label="Copy install command">Copy</button></div>
-<div class="cmd"><span class="sheet" style="opacity:0.6">3 · check</span><code>cuda-legacy doctor --llvm-root /path/to/LLVM-23.1.4</code><button type="button" class="copy" data-copy="check" hidden aria-label="Copy doctor command">Copy</button></div>
+<div class="cmd"><span class="sheet" >1 · clone</span><code>git clone https://github.com/zachshallbetter/cuda-compatibility.git</code><button type="button" class="copy" data-copy="clone" hidden aria-label="Copy clone command">Copy</button></div>
+<div class="cmd"><span class="sheet" >2 · install</span><code>cd cuda-compatibility &amp;&amp; python -m pip install .</code><button type="button" class="copy" data-copy="install" hidden aria-label="Copy install command">Copy</button></div>
+<div class="cmd"><span class="sheet" >3 · check</span><code>cuda-legacy doctor --llvm-root /path/to/LLVM-23.1.4</code><button type="button" class="copy" data-copy="check" hidden aria-label="Copy doctor command">Copy</button></div>
 </div>
 </div>
 </section>
@@ -244,14 +244,14 @@
 <div class="dim"><span>Compatibility path, one supported operation</span></div>
 <div style="height:16px"></div>
 <div style="border:2px solid currentColor;padding:14px 18px;display:grid;grid-template-columns:30px minmax(0,1fr);gap:4px 14px;align-items:center"><span class="balloon" aria-hidden="true" style="grid-row:1 / span 2">1</span><strong style="font-size:17px;font-weight:800">Application</strong><span class="mute" style="font-size:14px;grid-column:2">PyTorch 2.14, official CUDA 13 wheel</span></div>
-<div style="display:flex;align-items:center;gap:12px;padding:0 0 0 14px"><span aria-hidden="true" style="width:0;height:28px;border-left:1px dashed currentColor;opacity:0.6;position:relative"><i style="position:absolute;left:-5px;bottom:-1px;width:0;height:0;border-left:5px solid transparent;border-right:5px solid transparent;border-top:8px solid currentColor;display:block"></i></span><span class="sheet" style="opacity:0.6">Selected operations</span></div>
+<div style="display:flex;align-items:center;gap:12px;padding:0 0 0 14px"><span aria-hidden="true" style="width:0;height:28px;border-left:1px dashed currentColor;position:relative"><i style="position:absolute;left:-5px;bottom:-1px;width:0;height:0;border-left:5px solid transparent;border-right:5px solid transparent;border-top:8px solid currentColor;display:block"></i></span><span class="sheet" >Selected operations</span></div>
 <div style="border:2px solid currentColor;padding:14px 18px;display:grid;grid-template-columns:30px minmax(0,1fr);gap:4px 14px;align-items:center;border-color:var(--yellow)"><span class="balloon" aria-hidden="true" style="grid-row:1 / span 2">2</span><strong style="font-size:17px;font-weight:800">Interposition</strong><span class="mute" style="font-size:14px;grid-column:2">CUDA Compatibility opt-in launcher, CUDA Runtime 13.0 version facade</span></div>
-<div style="display:flex;align-items:center;gap:12px;padding:0 0 0 14px"><span aria-hidden="true" style="width:0;height:28px;border-left:1px dashed currentColor;opacity:0.6;position:relative"><i style="position:absolute;left:-5px;bottom:-1px;width:0;height:0;border-left:5px solid transparent;border-right:5px solid transparent;border-top:8px solid currentColor;display:block"></i></span><span class="sheet" style="opacity:0.6">Route by operator</span></div>
+<div style="display:flex;align-items:center;gap:12px;padding:0 0 0 14px"><span aria-hidden="true" style="width:0;height:28px;border-left:1px dashed currentColor;position:relative"><i style="position:absolute;left:-5px;bottom:-1px;width:0;height:0;border-left:5px solid transparent;border-right:5px solid transparent;border-top:8px solid currentColor;display:block"></i></span><span class="sheet" >Route by operator</span></div>
 <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(200px,100%),1fr));gap:12px">
 <div style="border:2px solid var(--blue);padding:14px 18px;display:flex;flex-direction:column;gap:4px"><span class="state ok"><i class="sw full" aria-hidden="true" style="border-color:#FFFFFF;background:#FFFFFF;width:10px;height:10px;margin-right:7px"></i>Maxwell kernel</span><span class="mute" style="font-size:14px">LLVM to PTX, launched on the real sm_52 device</span></div>
 <div style="border:2px solid var(--yellow);padding:14px 18px;display:flex;flex-direction:column;gap:4px"><span class="state exp"><i class="sw half" aria-hidden="true" style="width:10px;height:10px;margin-right:7px;"></i>CPU fallback</span><span class="mute" style="font-size:14px">Inference, bounded to 64 MiB in and out</span></div>
 </div>
-<div style="display:flex;align-items:center;gap:12px;padding:0 0 0 14px"><span aria-hidden="true" style="width:0;height:28px;border-left:1px dashed currentColor;opacity:0.6;position:relative"><i style="position:absolute;left:-5px;bottom:-1px;width:0;height:0;border-left:5px solid transparent;border-right:5px solid transparent;border-top:8px solid currentColor;display:block"></i></span><span class="sheet" style="opacity:0.6">Result returned</span></div>
+<div style="display:flex;align-items:center;gap:12px;padding:0 0 0 14px"><span aria-hidden="true" style="width:0;height:28px;border-left:1px dashed currentColor;position:relative"><i style="position:absolute;left:-5px;bottom:-1px;width:0;height:0;border-left:5px solid transparent;border-right:5px solid transparent;border-top:8px solid currentColor;display:block"></i></span><span class="sheet" >Result returned</span></div>
 <div style="border:2px solid currentColor;padding:14px 18px;display:grid;grid-template-columns:30px minmax(0,1fr);gap:4px 14px;align-items:center"><span class="balloon" aria-hidden="true" style="grid-row:1 / span 2">4</span><strong style="font-size:17px;font-weight:800">Real device stays visible</strong><span class="mute" style="font-size:14px;grid-column:2">GM200 Maxwell, compute capability 5.2. No hardware identity spoofing.</span></div>
 </div>
 <div style="display:flex;flex-direction:column;border-top:3px solid currentColor">
@@ -297,7 +297,7 @@
 </div>
 <div class="dim"><span>Candidate models, same NVIDIA-listed compute capability as the reference target</span></div>
 <div style="overflow-x:auto;background:var(--bg)">
-<table>
+<table aria-label="Cards to test next">
 <thead><tr><th scope="col" style="width:56px">Item</th><th scope="col">GPU family</th><th scope="col">NVIDIA-listed compute capability</th><th scope="col">Project status</th></tr></thead>
 <tbody>
 <tr><td><strong style="font-weight:800">D1</strong></td><td><strong style="font-weight:800;font-size:18px">GeForce GTX 980 Ti, 980, 970, 960, 950</strong></td><td style="font-weight:600">5.2</td><td><span class="state open"><i class="sw" aria-hidden="true" style="width:10px;height:10px;margin-right:7px"></i>Unverified candidate</span></td></tr>
@@ -369,7 +369,7 @@ cuda-legacy profiles show pytorch-2.14-cu130</code></pre>
 <p style="margin:0;font-size:19px;max-width:50ch">The destination is machine-wide practical compatibility. Each layer earns its support claim through tested behavior, not by assertion.</p>
 </div>
 <div style="overflow-x:auto;background:var(--bg)">
-<table class="rev">
+<table class="rev" aria-label="Layers toward full support">
 <thead><tr><th scope="col">Item</th><th scope="col">Description</th><th scope="col">State</th></tr></thead>
 <tbody>
 <tr><td>F1</td><td><strong style="font-weight:800;font-size:18px;display:block;margin-bottom:4px">Truthful discovery</strong>Report actual GPU identity and compute capability; diagnose host prerequisites and target profiles.</td><td><span class="state ok"><i class="sw full" aria-hidden="true" style="border-color:#FFFFFF;background:#FFFFFF;width:10px;height:10px;margin-right:7px"></i>In place</span></td></tr>

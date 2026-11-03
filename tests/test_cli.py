@@ -208,6 +208,36 @@ class CliOutputTests(unittest.TestCase):
         self.assertEqual(checks["gpu"]["status"], "not_ready")
         self.assertIn("nvidia-smi", checks["gpu"]["next_step"])
 
+    def test_doctor_queries_the_interpreter_named_by_python(self) -> None:
+        inventory = {
+            "gpu_inventory": {"status": "not_found", "devices": []},
+            "nvcc": {"status": "not_found", "version": None},
+        }
+        with tempfile.TemporaryDirectory() as temp_dir:
+            fake = Path(temp_dir) / "python"
+            fake.write_text(
+                "#!/bin/sh\n"
+                "echo '{\"version\": [3, 10, 12], \"torch\": \"2.14.0+cu130\"}'\n"
+            )
+            fake.chmod(0o755)
+            with patch.object(cli, "inspect_system", return_value=inventory):
+                report = cli._doctor_report(None, "/missing-cuda", str(fake))
+        checks = {check["id"]: check for check in report["checks"]}
+        self.assertEqual(checks["python"]["status"], "ready")
+        self.assertEqual(checks["pytorch"]["status"], "ready")
+
+    def test_doctor_reports_unreachable_interpreter_without_guessing_pytorch(self) -> None:
+        inventory = {
+            "gpu_inventory": {"status": "not_found", "devices": []},
+            "nvcc": {"status": "not_found", "version": None},
+        }
+        with patch.object(cli, "inspect_system", return_value=inventory):
+            report = cli._doctor_report(None, "/missing-cuda", "/nonexistent/python")
+        checks = {check["id"]: check for check in report["checks"]}
+        self.assertEqual(checks["python"]["status"], "not_ready")
+        self.assertIn("--python", checks["python"]["next_step"])
+        self.assertNotIn("pytorch", checks)
+
     def test_help_command_shows_run_usage(self) -> None:
         output = StringIO()
         with redirect_stdout(output):

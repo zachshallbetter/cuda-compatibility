@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 from html.parser import HTMLParser
+import importlib.util
 import json
 from pathlib import Path
 import re
@@ -119,6 +120,13 @@ def _expected_url(relative: Path, origin: str, prefix: str) -> str:
     return f"{origin}{prefix}{suffix}"
 
 
+def _load_llms_full_builder():
+    spec = importlib.util.spec_from_file_location("build_llms_full", Path(__file__).with_name("build_llms_full.py"))
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+
 def _audit_event_allowlist(analytics_source: str, site_script: Path) -> list[str]:
     """Allowlisted analytics events and events the site can emit must match exactly."""
     allowlist = re.search(r"allowedEvents = new Set\(\[(.*?)\]\)", analytics_source, re.S)
@@ -139,7 +147,8 @@ def _audit_event_allowlist(analytics_source: str, site_script: Path) -> list[str
 def audit_site(site_root: Path) -> list[str]:
     site_root = site_root.resolve()
     errors: list[str] = []
-    pages = sorted(site_root.rglob("*.html"))
+    not_found = site_root / "404.html"
+    pages = sorted(page for page in site_root.rglob("*.html") if page != not_found)
     home = site_root / "index.html"
     if not home.is_file():
         return ["site/index.html is missing"]
@@ -163,6 +172,11 @@ def audit_site(site_root: Path) -> list[str]:
         errors.append("analytics.js: visitors without a saved choice must receive a consent prompt")
 
     errors.extend(_audit_event_allowlist(analytics_source, site_root / "site.js"))
+
+    if not_found.is_file():
+        not_found_meta = _parse(not_found)[0].meta
+        if not any("noindex" in value.lower() for value in not_found_meta.get("robots", [])):
+            errors.append("404.html: the error page must declare noindex")
 
     homepage_meta = parsed[home][0].meta
     for name in ("google-site-verification", "msvalidate.01"):
@@ -353,11 +367,24 @@ def audit_site(site_root: Path) -> list[str]:
     llms = site_root / "llms.txt"
     try:
         llms_urls = set(re.findall(r"https://[^\s)]+", llms.read_text(encoding="utf-8")))
-        site_urls = {url for url in llms_urls if url.startswith(origin + prefix)}
+        site_urls = {
+            url for url in llms_urls
+            if url.startswith(origin + prefix) and (url.endswith("/") or url.endswith(".html"))
+        }
+        if f"{origin}{prefix}llms-full.txt" not in llms_urls:
+            errors.append("llms.txt does not point to llms-full.txt")
         if site_urls != canonical_urls:
             errors.append("llms.txt URLs do not exactly match canonical HTML pages")
     except OSError as exc:
         errors.append(f"llms.txt is missing: {exc}")
+
+    full_text = site_root / "llms-full.txt"
+    try:
+        builder = _load_llms_full_builder()
+        if full_text.read_text(encoding="utf-8") != builder.render(site_root):
+            errors.append("llms-full.txt is stale; run python3 scripts/build_llms_full.py")
+    except OSError as exc:
+        errors.append(f"llms-full.txt is missing: {exc}")
 
     css = site_root / "styles.css"
     if css.is_file() and re.search(r"(?:@import\s+|url\()\s*['\"]?https?://", css.read_text(encoding="utf-8"), re.I):

@@ -104,7 +104,38 @@ def _selected_gpu_devices(
     return selected, None
 
 
-def _doctor_report(llvm_root: str | None, cuda_root: str) -> dict[str, Any]:
+_INTERPRETER_PROBE = (
+    "import importlib.metadata as m, json, sys\n"
+    "try:\n    torch = m.version('torch')\n"
+    "except m.PackageNotFoundError:\n    torch = None\n"
+    "print(json.dumps({'version': list(sys.version_info[:3]), 'torch': torch}))"
+)
+
+
+def _interpreter_facts(python: str | None) -> tuple[tuple[int, int, int] | None, str | None, str | None]:
+    """Return (version, torch version, error) for this interpreter or the one named by --python."""
+    if python is None:
+        try:
+            torch_version: str | None = importlib.metadata.version("torch")
+        except importlib.metadata.PackageNotFoundError:
+            torch_version = None
+        major, minor, micro = sys.version_info[:3]
+        return (major, minor, micro), torch_version, None
+    try:
+        result = subprocess.run(
+            [python, "-c", _INTERPRETER_PROBE], capture_output=True, text=True, timeout=30, check=False
+        )
+        facts = json.loads(result.stdout) if result.returncode == 0 else None
+    except (OSError, subprocess.TimeoutExpired, ValueError) as exc:
+        return None, None, f"could not query {python}: {exc}"
+    if not isinstance(facts, dict) or not isinstance(facts.get("version"), list):
+        detail = result.stderr.strip() or f"exit code {result.returncode}"
+        return None, None, f"could not query {python}: {detail}"
+    major, minor, micro = (int(part) for part in facts["version"][:3])
+    return (major, minor, micro), facts.get("torch"), None
+
+
+def _doctor_report(llvm_root: str | None, cuda_root: str, python: str | None = None) -> dict[str, Any]:
     checks: list[dict[str, str]] = []
     system = platform.system()
     machine = platform.machine().lower()
@@ -120,8 +151,18 @@ def _doctor_report(llvm_root: str | None, cuda_root: str) -> dict[str, Any]:
             )
         )
 
-    python_version = f"{sys.version_info.major}.{sys.version_info.minor}.{sys.version_info.micro}"
-    if sys.version_info < (3, 10):
+    interpreter_version, torch_version, interpreter_error = _interpreter_facts(python)
+    python_version = ".".join(str(part) for part in interpreter_version or ())
+    if interpreter_version is None:
+        checks.append(
+            _doctor_check(
+                "python",
+                "not_ready",
+                interpreter_error or "the target interpreter could not be queried",
+                "Pass --python with the interpreter of the environment that contains PyTorch.",
+            )
+        )
+    elif interpreter_version < (3, 10):
         checks.append(
             _doctor_check(
                 "python",
@@ -130,7 +171,7 @@ def _doctor_report(llvm_root: str | None, cuda_root: str) -> dict[str, Any]:
                 "Use Python 3.10 or newer in the environment that contains PyTorch.",
             )
         )
-    elif sys.version_info[:2] == (3, 10):
+    elif interpreter_version[:2] == (3, 10):
         checks.append(_doctor_check("python", "ready", f"Python {python_version} (tested series)"))
     else:
         checks.append(
@@ -143,9 +184,7 @@ def _doctor_report(llvm_root: str | None, cuda_root: str) -> dict[str, Any]:
             )
         )
 
-    try:
-        torch_version = importlib.metadata.version("torch")
-    except importlib.metadata.PackageNotFoundError:
+    if interpreter_version is not None and torch_version is None:
         checks.append(
             _doctor_check(
                 "pytorch",
@@ -154,7 +193,7 @@ def _doctor_report(llvm_root: str | None, cuda_root: str) -> dict[str, Any]:
                 "Install the CUDA-enabled PyTorch wheel into this same environment.",
             )
         )
-    else:
+    elif interpreter_version is not None and torch_version is not None:
         if torch_version == "2.14.0+cu130":
             status = "ready"
             next_step = None
@@ -446,6 +485,11 @@ def _build_parser(
         "--cuda-root", default=os.environ.get("CUDA_COMPAT_CUDA_ROOT", "/usr/local/cuda-12.4"),
         help="CUDA development headers root (default: /usr/local/cuda-12.4)",
     )
+    doctor_parser.add_argument(
+        "--python", default=os.environ.get("CUDA_COMPAT_PYTHON"),
+        help="interpreter of the environment that contains PyTorch "
+        "(or CUDA_COMPAT_PYTHON; default: the interpreter running cuda-legacy)",
+    )
     doctor_parser.add_argument("--json", action="store_true", help="print machine-readable JSON")
 
     audit_parser = commands.add_parser(
@@ -465,7 +509,12 @@ def _build_parser(
         help="CUDA development headers root (default: /usr/local/cuda-12.4)",
     )
     run_parser.add_argument(
-        "script", help="Python script to execute with this environment's Python"
+        "--python", default=os.environ.get("CUDA_COMPAT_PYTHON"),
+        help="interpreter of the environment that contains PyTorch "
+        "(or CUDA_COMPAT_PYTHON; default: the interpreter running cuda-legacy)",
+    )
+    run_parser.add_argument(
+        "script", help="Python script to execute with the selected interpreter"
     )
     run_parser.add_argument(
         "script_args", nargs=argparse.REMAINDER,
@@ -525,7 +574,7 @@ def main(argv: Sequence[str] | None = None) -> int:
                 print(f"Notes: {profile['notes']}")
         return 0
     if args.command == "doctor":
-        report = _doctor_report(args.llvm_root, args.cuda_root)
+        report = _doctor_report(args.llvm_root, args.cuda_root, args.python)
         if args.json:
             _print_json(report)
         else:
@@ -542,6 +591,7 @@ def main(argv: Sequence[str] | None = None) -> int:
                 script_args,
                 llvm_root=Path(args.llvm_root),
                 cuda_root=Path(args.cuda_root),
+                python=args.python,
             )
         except LaunchError as exc:
             print(f"launch error: {exc}", file=sys.stderr)

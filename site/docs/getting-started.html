@@ -5,8 +5,8 @@
 <meta name="color-scheme" content="only light"><meta name="theme-color" content="#000000"><meta name="description" content="Install CUDA Compatibility for PyTorch 2.14 CUDA 13 on Linux x86_64, check LLVM and toolkit prerequisites, and launch the opt-in Maxwell adapter."><link rel="icon" type="image/svg+xml" href="../favicon.svg"><title>Install CUDA Compatibility for an older NVIDIA GPU | CUDA Compatibility</title><link rel="canonical" href="https://cudacompat.com/docs/getting-started.html">
 <meta name="author" content="Zach Shallbetter">
 <meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1">
-<meta property="og:type" content="article"><meta property="og:site_name" content="CUDA Compatibility"><meta property="og:url" content="https://cudacompat.com/docs/getting-started.html"><meta property="og:title" content="Install CUDA Compatibility for an older NVIDIA GPU"><meta property="og:description" content="Install and run the experimental CUDA Compatibility launcher in the same Python environment as a CUDA 13 PyTorch wheel."><meta property="og:locale" content="en_US"><meta property="og:image" content="https://cudacompat.com/assets/social-card.png"><meta property="og:image:type" content="image/png"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630"><meta property="og:image:alt" content="CUDA Compatibility: CUDA 13, older GPUs, and truthful sm_52 support"><meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="Install CUDA Compatibility for an older NVIDIA GPU"><meta name="twitter:description" content="Install and run the experimental CUDA Compatibility launcher in the same Python environment as a CUDA 13 PyTorch wheel."><meta name="twitter:image" content="https://cudacompat.com/assets/social-card.png"><meta name="twitter:image:alt" content="CUDA Compatibility social preview card">
-<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@context":"https://schema.org","@type":"TechArticle","headline":"Install CUDA Compatibility for an older NVIDIA GPU","description":"Install and run the experimental CUDA Compatibility launcher in the same Python environment as a CUDA 13 PyTorch wheel.","url":"https://cudacompat.com/docs/getting-started.html","inLanguage":"en","dateModified":"2026-11-02","author":{"@type":"Person","@id":"https://cudacompat.com/#author","name":"Zach Shallbetter","url":"https://zachshallbetter.com/"},"isPartOf":{"@type":"WebSite","@id":"https://cudacompat.com/#website","name":"CUDA Compatibility","url":"https://cudacompat.com/"},"mainEntityOfPage":"https://cudacompat.com/docs/getting-started.html","@id":"https://cudacompat.com/docs/getting-started.html#article"},{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://cudacompat.com/"},{"@type":"ListItem","position":2,"name":"Documentation","item":"https://cudacompat.com/docs/"},{"@type":"ListItem","position":3,"name":"Install CUDA Compatibility for an older NVIDIA GPU","item":"https://cudacompat.com/docs/getting-started.html"}]}]}</script>
+<meta property="og:type" content="article"><meta property="og:site_name" content="CUDA Compatibility"><meta property="og:url" content="https://cudacompat.com/docs/getting-started.html"><meta property="og:title" content="Install CUDA Compatibility for an older NVIDIA GPU"><meta property="og:description" content="Install and run the experimental CUDA Compatibility launcher in the same Python environment as a CUDA 13 PyTorch wheel."><meta property="og:locale" content="en_US"><meta property="og:image" content="https://cudacompat.com/assets/social-card.png"><meta property="og:image:type" content="image/png"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630"><meta property="og:image:alt" content="Newer CUDA. Older GPUs. CUDA Compatibility, cudacompat.com, beside a wireframe of a GM200 reference graphics card"><meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="Install CUDA Compatibility for an older NVIDIA GPU"><meta name="twitter:description" content="Install and run the experimental CUDA Compatibility launcher in the same Python environment as a CUDA 13 PyTorch wheel."><meta name="twitter:image" content="https://cudacompat.com/assets/social-card.png"><meta name="twitter:image:alt" content="Newer CUDA. Older GPUs. CUDA Compatibility, cudacompat.com, beside a wireframe of a GM200 reference graphics card">
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@context":"https://schema.org","@type":"TechArticle","headline":"Install CUDA Compatibility for an older NVIDIA GPU","description":"Install and run the experimental CUDA Compatibility launcher in the same Python environment as a CUDA 13 PyTorch wheel.","url":"https://cudacompat.com/docs/getting-started.html","inLanguage":"en","dateModified":"2026-11-02","author":{"@type":"Person","@id":"https://cudacompat.com/#author","name":"Zach Shallbetter","url":"https://zachshallbetter.com/"},"isPartOf":{"@type":"WebSite","@id":"https://cudacompat.com/#website","name":"CUDA Compatibility","url":"https://cudacompat.com/"},"mainEntityOfPage":"https://cudacompat.com/docs/getting-started.html","@id":"https://cudacompat.com/docs/getting-started.html#article"},{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://cudacompat.com/"},{"@type":"ListItem","position":2,"name":"Documentation","item":"https://cudacompat.com/docs/"},{"@type":"ListItem","position":3,"name":"Install and run","item":"https://cudacompat.com/docs/getting-started.html"}]}]}</script>
 <link rel="stylesheet" href="../styles.css">
 <link rel="stylesheet" href="../docs.css">
 </head>
@@ -23,7 +23,7 @@
 <a href="../index.html#stack">How it works</a>
 <a href="../index.html#hardware">Hardware</a>
 <a href="../index.html#install">Install</a>
-<a href="../docs/index.html" style="color:var(--link)">Docs</a>
+<a href="index.html" aria-current="true" style="color:var(--link)">Docs</a>
 <a href="https://github.com/zachshallbetter/cuda-compatibility/releases">Releases</a>
 </nav>
 <a class="repo" href="https://github.com/zachshallbetter/cuda-compatibility">Repository<svg aria-hidden="true" width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 10 10 2M4 2h6v6"></path></svg></a>
@@ -33,7 +33,7 @@
 
 <section class="band">
 <div class="wrap" style="padding-top:56px;padding-bottom:56px;display:flex;flex-direction:column;gap:18px">
-<p class="sheet" style="margin:0;opacity:0.6">Documentation, sheet 03 / 10</p>
+<nav aria-label="Breadcrumb" class="crumbs"><ol><li><a href="../index.html">Home</a></li><li><a href="index.html">Documentation</a></li><li aria-current="page">Install and run, sheet 03 / 10</li></ol></nav>
 <h1 class="disp" style="font-size:clamp(40px,4.6vw,64px);max-width:16ch">Install CUDA Compatibility for an older NVIDIA GPU</h1>
 <p style="margin:0;font-size:20px;line-height:1.4;max-width:56ch;font-weight:500">Install the package into the same Python environment as the CUDA-enabled PyTorch wheel. The launcher builds a process-local adapter and starts your script as a child process; it does not install or replace the system driver.</p>
 </div>
@@ -57,7 +57,8 @@
 <ul class="side" style="border-top-width:1px">
 <li><a href="#req"><i>A</i>Requirements</a></li>
 <li><a href="#steps"><i>B</i>Four steps</a></li>
-<li><a href="#tested"><i>C</i>Tested configuration</a></li>
+<li><a href="#brew"><i>C</i>Homebrew on Linux</a></li>
+<li><a href="#tested"><i>D</i>Tested configuration</a></li>
 </ul>
 </nav>
 
@@ -126,8 +127,18 @@ cuda-legacy doctor --llvm-root /path/to/LLVM-23.1.4</code></pre>
 </div>
 </div>
 
+<div id="brew" style="display:flex;flex-direction:column;gap:20px">
+<div class="sec"><span class="cut" aria-hidden="true">C</span><h2 class="h2">Homebrew on Linux</h2><span class="plane" aria-hidden="true"></span><span class="state exp"><i class="sw half" aria-hidden="true"></i>Head build</span></div>
+<p class="soft" style="margin:0;font-size:16px;max-width:72ch">Homebrew on Linux can install the command line tool in its own environment instead of steps 1 and 2. No release is tagged yet, so the formula builds the current <code>main</code> branch.</p>
+<pre><code>brew tap zachshallbetter/cuda-compatibility https://github.com/zachshallbetter/cuda-compatibility
+brew install --HEAD cuda-legacy
+export CUDA_COMPAT_PYTHON=/path/to/your-env/bin/python
+cuda-legacy doctor --llvm-root /path/to/LLVM-23.1.4</code></pre>
+<div class="note"><h3 style="font-size:16px">Point it at your PyTorch environment</h3><p style="margin:0;font-size:15px">Homebrew installs <code>cuda-legacy</code> with its own Python, which does not contain PyTorch. Set <code>CUDA_COMPAT_PYTHON</code>, or pass <code>--python</code> to <code>doctor</code> and <code>run</code>, with the interpreter of the environment that holds the CUDA-enabled PyTorch wheel. The formula is Linux-only, and its install has not yet been run on the reference host.</p></div>
+</div>
+
 <div id="tested" style="display:flex;flex-direction:column;gap:20px">
-<div class="sec"><span class="cut" aria-hidden="true">C</span><h2 class="h2">Tested configuration</h2><span class="plane" aria-hidden="true"></span></div>
+<div class="sec"><span class="cut" aria-hidden="true">D</span><h2 class="h2">Tested configuration</h2><span class="plane" aria-hidden="true"></span></div>
 <div class="tb">
 <div><span>System</span><span>Linux x86_64</span></div>
 <div><span>Python</span><span>3.10.12</span></div>

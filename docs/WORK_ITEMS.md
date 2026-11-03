@@ -507,6 +507,23 @@ The first work item is being executed under the user's explicit request to creat
 - **Progress (2026-11-01):** Rewrote all 10 canonical page descriptions to be page-specific and 140–180 characters; added static checks for length and uniqueness. `make check` passed and `make test` passed 44/44. Commit `958388599dcad117b63470c31f3f584e1aa03c3f` was pushed to `codex/cuda-compat-publication` after exact ACP ALLOWs and deployed successfully in Pages run `41312924116`. The live audit fetched all 10 sitemap pages and six discovery assets/endpoints (16/16 HTTP 200); all 10 descriptions were unique and within range. Evidence: `CLC-028-bing-short-descriptions-recommendation`, `CLC-028-pages-release`, and `CLC-028-live-route-audit`. No ranking, traffic, or indexing effect is claimed.
 - **Disposition (2026-11-01):** Bing feedback has been addressed in the published site. Checks enforce the description bounds and uniqueness; the exact deployed revision returned HTTP 200 for all 16 audited routes/assets, with all 10 page descriptions between 140 and 180 characters. Search performance effects remain unobserved.
 
+## CLC-032 — Align the site and install paths with the Digital Presence Protocol
+
+- **Intent:** Make the project's public surfaces meet the pinned DPP 0.3.0 discovery, representation and accessibility guidance, and give Linux users a Homebrew install path.
+- **Parent:** CLC-024 DPP discovery controls; CLC-029 site redesign; CLC-030 canonical domain.
+- **Status:** In review
+- **Objective:** Close the gaps found by a DPP audit: WCAG 2.2 AA contrast and target size, visible breadcrumbs matching structured data, accessible table names, truthful sitemap `lastmod`, a current social card, a `noindex` error page, security headers, a full-text agent index, an IndexNow key, a `--python` interpreter option, and a Homebrew formula.
+- **Scope:** `site/**`; `scripts/site_checks.py`; `scripts/build_llms_full.py`; `scripts/indexnow.py`; `src/cuda_legacy_compat/cli.py`; `src/cuda_legacy_compat/launch.py`; `tests/**`; `Formula/cuda-legacy.rb`; `README.md`; `docs/DPP_IMPLEMENTATION.md`; `docs/WORK_ITEMS.md`; `records/evidence.jsonl`; generated context.
+- **Exclusions:** Submitting URLs to IndexNow or search consoles; tagging a release; changing crawler training policy; screen-reader sessions; compiler or runtime behaviour.
+- **Acceptance:** No rendered text below WCAG 2.2 AA contrast and no standalone target under 24 px on any page; breadcrumbs visible and equal to `BreadcrumbList`; every table named; `llms-full.txt` current and enforced; 404 `noindex` enforced; `--python` selects the interpreter for `doctor` and `run` and fails closed; formula passes `brew style`; `make check` and `make test` pass.
+- **Evidence required:** Rendered contrast and target-size measurements; check and test output; virtualenv install trace for the formula's install path; ACP decisions; live route audit after deploy.
+- **Evaluator:** Project owner, static checker, project tests, rendered measurements.
+- **Permissions:** E1 local changes; E2 push and E3 merge and deploy only after exact ACP `ALLOW`.
+- **Target:** `https://cudacompat.com/`; repository `zachshallbetter/cuda-compatibility`.
+- **Budget:** No spend.
+- **Stop conditions:** ACP refuses an external effect; a project gate fails; a change would alter a verified support claim.
+- **Progress (2026-11-03):** Implemented and checked locally. Contrast pass: 1,943 rendered text nodes, none below AA; all standalone targets ≥24 px; no horizontal scroll at 320/375/768 px. `make check` passes and `make test` passes 52/52. The formula's install path (fresh virtualenv plus pip install of this checkout) ran on macOS with `profiles list`, `doctor --python` and a fail-closed `run --python`; `brew install` itself has not run on Linux. Evidence: `CLC-032-rendered-accessibility`, `CLC-032-homebrew-install-path`.
+
 ## CLC-031 — Instrument site components and configure the GA4 property
 
 - **Intent:** Measure how visitors use the install path and project links, with the GA4 property configured to match the published privacy statement.

@@ -5,8 +5,8 @@
 <meta name="color-scheme" content="only light"><meta name="theme-color" content="#000000"><meta name="description" content="Learn the cuda-legacy command-line tool: environment checks, compatibility profiles, install and run options, output formats, exit codes, and troubleshooting."><link rel="icon" type="image/svg+xml" href="../favicon.svg"><title>cuda-legacy command reference | CUDA Compatibility</title><link rel="canonical" href="https://cudacompat.com/docs/cli.html">
 <meta name="author" content="Zach Shallbetter">
 <meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1">
-<meta property="og:type" content="article"><meta property="og:site_name" content="CUDA Compatibility"><meta property="og:url" content="https://cudacompat.com/docs/cli.html"><meta property="og:title" content="cuda-legacy command reference"><meta property="og:description" content="Reference for cuda-legacy commands, options, output, exit codes, and troubleshooting."><meta property="og:locale" content="en_US"><meta property="og:image" content="https://cudacompat.com/assets/social-card.png"><meta property="og:image:type" content="image/png"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630"><meta property="og:image:alt" content="CUDA Compatibility: CUDA 13, older GPUs, and truthful sm_52 support"><meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="cuda-legacy command reference"><meta name="twitter:description" content="Reference for cuda-legacy commands, options, output, exit codes, and troubleshooting."><meta name="twitter:image" content="https://cudacompat.com/assets/social-card.png"><meta name="twitter:image:alt" content="CUDA Compatibility social preview card">
-<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@context":"https://schema.org","@type":"TechArticle","headline":"cuda-legacy command reference","description":"Reference for cuda-legacy commands, options, output, exit codes, and troubleshooting.","url":"https://cudacompat.com/docs/cli.html","inLanguage":"en","dateModified":"2026-11-02","author":{"@type":"Person","@id":"https://cudacompat.com/#author","name":"Zach Shallbetter","url":"https://zachshallbetter.com/"},"isPartOf":{"@type":"WebSite","@id":"https://cudacompat.com/#website","name":"CUDA Compatibility","url":"https://cudacompat.com/"},"mainEntityOfPage":"https://cudacompat.com/docs/cli.html","@id":"https://cudacompat.com/docs/cli.html#article"},{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://cudacompat.com/"},{"@type":"ListItem","position":2,"name":"Documentation","item":"https://cudacompat.com/docs/"},{"@type":"ListItem","position":3,"name":"cuda-legacy command reference","item":"https://cudacompat.com/docs/cli.html"}]}]}</script>
+<meta property="og:type" content="article"><meta property="og:site_name" content="CUDA Compatibility"><meta property="og:url" content="https://cudacompat.com/docs/cli.html"><meta property="og:title" content="cuda-legacy command reference"><meta property="og:description" content="Reference for cuda-legacy commands, options, output, exit codes, and troubleshooting."><meta property="og:locale" content="en_US"><meta property="og:image" content="https://cudacompat.com/assets/social-card.png"><meta property="og:image:type" content="image/png"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630"><meta property="og:image:alt" content="Newer CUDA. Older GPUs. CUDA Compatibility, cudacompat.com, beside a wireframe of a GM200 reference graphics card"><meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="cuda-legacy command reference"><meta name="twitter:description" content="Reference for cuda-legacy commands, options, output, exit codes, and troubleshooting."><meta name="twitter:image" content="https://cudacompat.com/assets/social-card.png"><meta name="twitter:image:alt" content="Newer CUDA. Older GPUs. CUDA Compatibility, cudacompat.com, beside a wireframe of a GM200 reference graphics card">
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@context":"https://schema.org","@type":"TechArticle","headline":"cuda-legacy command reference","description":"Reference for cuda-legacy commands, options, output, exit codes, and troubleshooting.","url":"https://cudacompat.com/docs/cli.html","inLanguage":"en","dateModified":"2026-11-02","author":{"@type":"Person","@id":"https://cudacompat.com/#author","name":"Zach Shallbetter","url":"https://zachshallbetter.com/"},"isPartOf":{"@type":"WebSite","@id":"https://cudacompat.com/#website","name":"CUDA Compatibility","url":"https://cudacompat.com/"},"mainEntityOfPage":"https://cudacompat.com/docs/cli.html","@id":"https://cudacompat.com/docs/cli.html#article"},{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://cudacompat.com/"},{"@type":"ListItem","position":2,"name":"Documentation","item":"https://cudacompat.com/docs/"},{"@type":"ListItem","position":3,"name":"Command line","item":"https://cudacompat.com/docs/cli.html"}]}]}</script>
 <link rel="stylesheet" href="../styles.css">
 <link rel="stylesheet" href="../docs.css">
 <style>
@@ -29,7 +29,7 @@ td.cmd code{font-size:13px;background:none;padding:0;font-weight:500}
 <a href="../index.html#stack">How it works</a>
 <a href="../index.html#hardware">Hardware</a>
 <a href="../index.html#install">Install</a>
-<a href="../docs/index.html" style="color:var(--link)">Docs</a>
+<a href="index.html" aria-current="true" style="color:var(--link)">Docs</a>
 <a href="https://github.com/zachshallbetter/cuda-compatibility/releases">Releases</a>
 </nav>
 <a class="repo" href="https://github.com/zachshallbetter/cuda-compatibility">Repository<svg aria-hidden="true" width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 10 10 2M4 2h6v6"></path></svg></a>
@@ -39,7 +39,7 @@ td.cmd code{font-size:13px;background:none;padding:0;font-weight:500}
 
 <section class="band">
 <div class="wrap" style="padding-top:56px;padding-bottom:56px;display:flex;flex-direction:column;gap:18px">
-<p class="sheet" style="margin:0;opacity:0.6">Documentation, sheet 06 / 10</p>
+<nav aria-label="Breadcrumb" class="crumbs"><ol><li><a href="../index.html">Home</a></li><li><a href="index.html">Documentation</a></li><li aria-current="page">Command line, sheet 06 / 10</li></ol></nav>
 <h1 class="disp" style="font-size:clamp(40px,4.6vw,64px);max-width:16ch"><code style="background:none;padding:0;font-size:0.9em;color:var(--yellow)">cuda-legacy</code> command reference</h1>
 <p style="margin:0;font-size:20px;line-height:1.4;max-width:56ch;font-weight:500"><code style="background:#222220;color:#FFFFFF">cuda-legacy</code> is the preferred terminal command. Install it into the same Python environment as the CUDA-enabled PyTorch package. The previous <code style="background:#222220;color:#FFFFFF">cuda-legacy-compat</code> command remains an alias.</p>
 </div>
@@ -72,7 +72,7 @@ td.cmd code{font-size:13px;background:none;padding:0;font-weight:500}
 <div id="commands" style="display:flex;flex-direction:column;gap:20px">
 <div class="sec"><span class="cut" aria-hidden="true">A</span><h2 class="h2">Commands</h2><span class="plane" aria-hidden="true"></span></div>
 <div style="overflow-x:auto">
-<table>
+<table aria-label="Commands">
 <thead><tr><th scope="col">Command</th><th scope="col">Purpose</th></tr></thead>
 <tbody>
 <tr><td class="cmd"><code>cuda-legacy --help</code></td><td>List commands and example use.</td></tr>
@@ -81,7 +81,7 @@ td.cmd code{font-size:13px;background:none;padding:0;font-weight:500}
 <tr><td class="cmd"><code>cuda-legacy inspect [--json]</code></td><td>Report visible GPU and compiler inventory as JSON.</td></tr>
 <tr><td class="cmd"><code>cuda-legacy profiles list [--json]</code></td><td>List bundled versioned compatibility profiles.</td></tr>
 <tr><td class="cmd"><code>cuda-legacy profiles show PROFILE [--json]</code></td><td>Explain a profile’s source and requirements.</td></tr>
-<tr><td class="cmd"><code>cuda-legacy doctor [--llvm-root PATH] [--cuda-root PATH] [--json]</code></td><td>Check prerequisites for the experimental launcher.</td></tr>
+<tr><td class="cmd"><code>cuda-legacy doctor [--llvm-root PATH] [--cuda-root PATH] [--python PATH] [--json]</code></td><td>Check prerequisites for the experimental launcher.</td></tr>
 <tr><td class="cmd"><code>cuda-legacy audit PROFILE [--json]</code></td><td>Compare available machine facts against a target profile.</td></tr>
 <tr><td class="cmd" style="border-bottom-width:3px"><code>cuda-legacy run [options] -- SCRIPT [args...]</code></td><td style="border-bottom-width:3px">Start a Python script with the opt-in adapter.</td></tr>
 </tbody>
@@ -94,8 +94,9 @@ td.cmd code{font-size:13px;background:none;padding:0;font-weight:500}
 <pre><code>cuda-legacy run \
   --llvm-root /path/to/LLVM-23.1.4 \
   --cuda-root /usr/local/cuda-12.4 \
+  --python /path/to/your-env/bin/python \
   -- path/to/app.py --application-option value</code></pre>
-<p class="soft" style="margin:0;font-size:16px;max-width:72ch">You can set <code>CUDA_COMPAT_LLVM_ROOT</code> and <code>CUDA_COMPAT_CUDA_ROOT</code> instead of passing the corresponding path options. The script and its arguments go after the <code>--</code> separator.</p>
+<p class="soft" style="margin:0;font-size:16px;max-width:72ch">You can set <code>CUDA_COMPAT_LLVM_ROOT</code>, <code>CUDA_COMPAT_CUDA_ROOT</code> and <code>CUDA_COMPAT_PYTHON</code> instead of passing the corresponding options. <code>--python</code> selects the interpreter that runs the script and that <code>doctor</code> inspects for PyTorch; it defaults to the interpreter running <code>cuda-legacy</code>, and a missing or non-executable path stops the launch before anything is built. The script and its arguments go after the <code>--</code> separator.</p>
 </div>
 
 <div id="exit" style="display:flex;flex-direction:column;gap:20px">

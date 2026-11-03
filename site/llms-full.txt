@@ -1,0 +1,982 @@
+# CUDA Compatibility — full text
+
+> The readable text of every page listed in https://cudacompat.com/sitemap.xml, in sitemap order, generated from the published HTML. Each page's canonical URL precedes its text. This is a convenience copy for people and automated agents; the HTML pages are the source of truth, and this file is not a crawler directive.
+
+A successful CUDA version query, import, or profile audit does not prove workload compatibility. Do not infer support for unlisted operators, APIs, libraries, data types, devices, training, or performance.
+
+---
+
+Source: https://cudacompat.com/
+
+Open compatibility research, Linux, NVIDIA
+
+# Newer CUDA. Older GPUs.
+
+Selected CUDA 13 PyTorch operations running on Maxwell cards NVIDIA stopped compiling for. The real device identity is never touched.
+
+See what works Get the project
+
+GM200 reference card, compute capability 5.2. The only hardware tested so far. Experimental, process-local, workload-specific.
+
+- **Reference cards** 3
+
+- **Native operations** 6
+
+- **Claims of universal support** 0
+
+## Get it running
+
+Two commands from a checkout, inside the Python environment that already holds the CUDA 13 PyTorch wheel. Linux x86_64, visible sm_52 GPUs only. No PyPI package yet; Homebrew on Linux builds from the main branch.
+
+Full install sheet Releases Download zip
+
+1 · clone git clone https://github.com/zachshallbetter/cuda-compatibility.git
+
+2 · install cd cuda-compatibility && python -m pip install .
+
+3 · check cuda-legacy doctor --llvm-root /path/to/LLVM-23.1.4
+
+GPU GM200 Maxwell, 3 cards
+
+PyTorch 2.14.0, CUDA 13.0 wheel
+
+Driver NVIDIA 580.178.04
+
+Compiler LLVM/Clang 23.1.4
+
+Host Linux x86_64, Python 3.10.12, CUDA 12.4 headers
+
+## What works today
+Sheet 01 / 10
+
+Hardware and profile diagnostics are in place. The CUDA 13 launch path is experimental: a handful of native Maxwell kernels plus bounded CPU fallbacks, each with explicit limits. Every figure below was measured on the configuration above.
+
+Reproduced, tested Listed cases only Contradicted, kept Unverified or unknown Every mark names its record
+
+Available
+
+### GPU inventory and profile checks
+
+Inspect visible NVIDIA devices and compiler tools, review bundled compatibility profiles, and compare a machine’s reported hardware against a target’s published requirements. Unknown facts stay unknown; a profile match is not a workload certification.
+
+Commands: inspect, profiles, audit, doctor
+
+CLC-001-target-inventory-audit CLC-014-installed-cli-workflow
+
+Command line
+
+Experimental
+
+### CUDA 13 process launcher
+
+Launch a Python application in a child process with a process-local CUDA Runtime version facade and a PyTorch adapter. The runtime query reports CUDA 13.0; the GPU name and compute capability stay intact. Nothing on the system is changed.
+
+Exercised with PyTorch 2.14 and the official CUDA 13 wheel.
+
+CLC-005-runtime-version-facade CLC-010-packaged-launcher-sm52
+
+Child process
+
+Experimental
+
+### Native Maxwell operator kernels
+
+Selected PyTorch operations use LLVM-generated PTX compiled for the real sm_52 device and launched through the CUDA Driver API: add, arange, embedding, layer norm, matmul, and ReLU. Float16 add, strided matmul, and an SGD step are verified on GPUs 1 and 2.
+
+CLC-007-pytorch-aten-add-sm52 CLC-009-pytorch-fp32-mlp-sm52 CLC-025-sm52-operator-training
+
+GPU, sm_52
+
+Experimental
+
+### CPU fallback and a training slice
+
+Selected CPU fallbacks preserve first-order gradients for a tested linear → ReLU → sum path. A small SGD update runs through a native float32 in-place add kernel. Each fallback is limited to 64 MiB of inputs and 64 MiB of outputs.
+
+- **Training evidence** 2×2 linear, 7 SGD steps, GPUs 1 and 2
+- **Median step latency** 2.360 ms on GPU 2, 7.296 ms on GPU 1
+- **Peak allocated memory** 67,180,032 bytes
+- **Broader training** Not verified
+
+CLC-025-sm52-operator-training
+
+Bounded autograd
+
+Contradicted
+
+### Stock kernels on the official wheel
+
+Without the adapter, stock float32 mm fails in cuBLAS with CUBLAS_STATUS_ARCH_MISMATCH and stock ReLU reports no kernel image for sm_52. Both observations are kept as negative results and reopen only if a future wheel passes the same probes.
+
+CLC-009-stock-mm-cublas-arch-mismatch CLC-009-stock-relu-no-kernel-image
+
+Why the adapter exists
+
+## Operator support
+Sheet 01 / 10
+
+### Runs on the GPU
+Native sm_52 kernel
+
+Operation / limits as registered
+
+- Tensor addition Contiguous float32 (up to 1,048,576 values) and int32 tensors (up to 2,147,483,647); same shape and device, alpha=1.
+- Float16 addition Same-shape contiguous float16 tensors, alpha=1, up to 1,048,576 values; edge values checked exactly.
+- Float32 in-place addition Same-shape contiguous float32 tensors, up to 1,048,576 values; supports the scaled updates used by the tested SGD step.
+- Range creation CUDA int64 arange, up to 1,048,576 values.
+- Embedding Inference with float32 weights and int64 indices; 1D or 2D indices, up to 1,048,576 output values.
+- Layer normalization Inference on contiguous float32 input over the last dimension with float32 weight and bias; up to 1,048,576 values.
+- Matrix multiplication 2D float32 matrices with nonnegative strides; each dimension up to 256, at most 16,777,216 multiply-accumulate steps.
+- ReLU Contiguous float32 tensors, up to 1,048,576 values.
+
+Native forward kernels are not differentiable. Grad-enabled calls on these operations use differentiable CPU transfers instead.
+
+### Runs through CPU fallback
+Bounded autograd
+
+Operation / CPU implementation
+
+- Linear algebra linear, bmm
+- Attention and activations softmax, scaled_dot_product_attention, GELU
+- Arithmetic add, multiply, divide
+- Reductions sum, clamp_min
+- Layout concatenate, contiguous
+
+These use PyTorch’s CPU implementation with differentiable host and device transfers on selected first-order gradient paths. The dispatcher can also retry eligible out-of-place operations after recognized missing-image, architecture-mismatch, or cuDNN no-engine errors.
+
+Fallback requires one CUDA device. Training evidence is limited to linear → ReLU → sum with float32 SGD (foreach=False); other autograd and optimizer paths are unverified.
+
+### Scope
+
+The launcher is a workload adapter for a narrow PyTorch subset, not a universal CUDA 13 runtime. It requires Linux x86_64 and homogeneous visible sm_52 GPUs. It interposes one runtime-version query and does not replace the CUDA 13 API surface or implement general cuDNN, cuBLAS, NCCL, or Triton compatibility. Other devices, operations, optimizers, dtypes, layouts, and library paths need their own implementations and evidence.
+
+## Compat­ibility is a stack
+Sheet 01 / 10
+
+A version number can be adapted at one boundary. Useful results require every layer beneath it to have a real implementation. The path a supported operation takes today:
+
+Compatibility path, one supported operation
+
+Application PyTorch 2.14, official CUDA 13 wheel
+
+Selected operations
+
+Interposition CUDA Compatibility opt-in launcher, CUDA Runtime 13.0 version facade
+
+Route by operator
+
+Maxwell kernel LLVM to PTX, launched on the real sm_52 device
+
+CPU fallback Inference, bounded to 64 MiB in and out
+
+Result returned
+
+Real device stays visible GM200 Maxwell, compute capability 5.2. No hardware identity spoofing.
+
+Layers and their state
+
+### Application contract
+
+PyTorch 2.14, CUDA 13 wheel
+
+The published PyTorch CUDA 13 profile starts at compute capability 7.5. The adapter’s experimental gate is sm_52; missing kernels and library paths still need real solutions.
+
+Target
+
+### Process interposition
+
+Opt-in Python launcher
+
+Prepare a child process with a CUDA Runtime 13.0 version facade and a PyTorch operator adapter. The host driver, system CUDA install, and parent process are not touched.
+
+Built
+
+### Kernel and fallback routing
+
+Operator registry, LLVM to PTX, CPU
+
+Supported operations run on Maxwell kernels. A narrow set falls back to CPU within explicit size and semantic limits. There is no general binary translator.
+
+Partial
+
+### Runtime, libraries, hardware
+
+Driver, cuDNN, cuBLAS, device ISA
+
+Every API, library path, dtype, synchronization rule, and instruction must be supported, translated, or replaced. Spoofing a version string fixes none of it.
+
+Open work
+
+### Why this project exists
+
+NVIDIA’s CUDA 13 release notes say offline compilation and library support for Maxwell, Pascal, and Volta were removed from the toolkit. This project measures how much useful application behavior can be recovered with a compiler path, adapters, and faithful fallbacks, without hiding the real device.
+CUDA 13 release notes
+
+## Cards to test next
+Sheet 01 / 10
+
+These models share NVIDIA-listed sm_52 capability with the reference GM200 cards. The reference cards are the only hardware tested so far. An architecture match is not a certification: each board, driver, memory configuration, and workload still needs a run.
+
+Candidate models, same NVIDIA-listed compute capability as the reference target
+
+| Item | GPU family | NVIDIA-listed compute capability | Project status |
+| --- | --- | --- | --- |
+| D1 | GeForce GTX 980 Ti, 980, 970, 960, 950 | 5.2 | Unverified candidate |
+| D2 | GeForce GTX 980M, 970M, 965M, 910M | 5.2 | Unverified candidate |
+| D3 | GM200 Maxwell reference GPU Three physical cards; not every workload tested on each | 5.2 | Reference device CLC-001-gm200-baseline CLC-025-sm52-operator-training |
+| D4 | Tesla M40, M60 | 5.2 | Unverified candidate |
+| D5 | Quadro M6000 (including 24GB), M5000, M4000, M2000 | 5.2 | Unverified candidate |
+| D6 | Quadro M5500M, M2200, M620 | 5.2 | Unverified candidate |
+
+Only models NVIDIA maps to compute capability 5.2 are listed. Other Maxwell variants (5.0, 5.3), Pascal, and newer families are outside the launcher’s exact- sm_52 gate. Browse the full legacy GPU catalog for every compute-capability tier.
+NVIDIA legacy GPU capability list
+
+## Try the prototype
+Sheet 01 / 10
+
+Install into the same Python environment that already holds the official CUDA 13 PyTorch wheel. The package installs no NVIDIA components and changes nothing system-wide.
+
+The command lands in that environment’s bin/. For a user-site install, find the scripts path with python3 -m site --user-base and add /bin to PATH. The Python used for that install must already contain PyTorch. Python Packaging User Guide
+
+### Trusted scripts only
+
+The launcher uses LD_PRELOAD and Python startup customization. Start with the probes in the repository and compare every result with a CPU reference.
+
+1
+
+### Install into the PyTorch environment
+
+```
+# from the project checkout, in the target PyTorch environment
+python -m pip install .
+```
+
+2
+
+### Check the host and target
+
+```
+cuda-legacy inspect
+cuda-legacy doctor
+cuda-legacy profiles show pytorch-2.14-cu130
+```
+
+3
+
+### Launch one trusted script
+
+```
+cuda-legacy run \
+--llvm-root /path/to/LLVM-23.1.4 \
+--cuda-root /usr/local/cuda-12.4 \
+-- app.py
+```
+
+Other versions and cards may work but have not been validated.
+PyTorch installation guide
+
+## What full support would mean
+Sheet 01 / 10
+
+The destination is machine-wide practical compatibility. Each layer earns its support claim through tested behavior, not by assertion.
+
+| Item | Description | State |
+| --- | --- | --- |
+| F1 | Truthful discovery Report actual GPU identity and compute capability; diagnose host prerequisites and target profiles. | In place |
+| F2 | Grow the operator set Implement or adapt common PyTorch operations with stream, dtype, shape, and error behavior tested. | In progress |
+| F3 | Broaden libraries and training A small float32 SGD and autograd path is verified; broaden optimizer, gradient, and proprietary-library coverage. | Partial |
+| F4 | Qualify cards and workloads Run representative models and edge cases on each claimed GPU; publish limits, speed, and memory costs. | Not verified |
+
+A version facade cannot supply a missing kernel.
+
+---
+
+Source: https://cudacompat.com/gpu-catalog.html
+
+## Three different questions
+
+The original NVIDIA page maps device models to compute capability. This companion adds interpretation and separates that hardware fact from software and project qualification.
+
+### What is the hardware level?
+
+The number such as 5.2 identifies the GPU architecture’s published capability. Similar numbers often group devices from the same generation, but exact features still vary by chip.
+
+### Will a CUDA release support it?
+
+That is a separate toolkit, compiler, driver, and library policy. NVIDIA’s CUDA 13 notes removed toolkit offline compilation and library support for Maxwell, Pascal, and Volta; a listed capability alone does not restore that support.
+
+### Has this project tested it?
+
+Only exact configurations with recorded runs count as verified. Today’s experimental launcher accepts sm_52; that is a narrow gate, not certification for every card at that level.
+
+## NVIDIA-listed legacy tiers
+
+Every tier in NVIDIA’s legacy table appears below. Model names are representative examples, not a substitute for NVIDIA’s complete model list. “Unverified” means this project has no recorded qualification for that tier.
+
+Capability, context, and project status, highest tier first
+
+| CC | Tier | Context | Examples | Project status |
+| --- | --- | --- | --- | --- |
+| 7.2 | Volta-derived embedded GPUs | A 7.x capability generation for embedded Xavier systems. These devices have their own system, driver, and software packaging constraints; desktop Linux results do not transfer automatically. | Jetson AGX Xavier, Jetson Xavier NX | Unverified, outside gate |
+| 7.0 | Volta | Data-center and workstation GPUs from NVIDIA’s Volta generation. The capability is substantially newer than Maxwell, but CUDA 13’s published legacy-support change still matters for toolkit and library paths. | NVIDIA V100, Quadro GV100 | Unverified, outside gate |
+| 6.2 | Pascal embedded | An embedded Pascal tier. Board image, operating-system release, and JetPack/BSP support are part of the compatibility problem in addition to CUDA APIs. | Jetson TX2 | Unverified, outside gate |
+| 6.1 | Pascal | Pascal data-center, workstation, and consumer GPUs. CUDA 13 support removal is a software-toolchain boundary, not proof that the silicon cannot perform useful computation. | Tesla P40/P4, Quadro P6000/P5000/P4000, GeForce GTX 1080/1070/1060/1050 | Unverified, outside gate |
+| 6.0 | Pascal compute | A Pascal data-center and workstation capability tier. The model name and exact product configuration should be checked against NVIDIA’s source table. | Tesla P100, Quadro GP100 | Unverified, outside gate |
+| 5.3 | Maxwell embedded | Maxwell’s embedded 5.3 tier. It shares a broad generation name with other Maxwell GPUs, but the current adapter requires exact capability 5.2 and does not accept 5.3. | Jetson Nano | Unverified, outside gate |
+| 5.2 | Maxwell GM200 and related devices | This is the only capability accepted by the current adapter. Native kernel and selected PyTorch probes have run on three GM200 reference cards; model-level validation covers only one selected card. Candidate models at 5.2 remain unverified. | Tesla M40/M60, Quadro M6000/M5000/M4000/M2000, GeForce GTX 980 Ti/980/970/960/950 | Experimental, reference configuration |
+| 5.0 | Maxwell GM107-class devices | Another Maxwell tier, found across workstation, consumer, and mobile products. Similar generation does not mean the adapter can target it: current launcher validation is exact sm_52. | Quadro K2200/K1200/K620, GeForce GTX 750 Ti/750, GeForce GTX 850M/840M/830M | Unverified, outside gate |
+| 3.7 | Kepler data center | A Kepler compute tier. It predates Maxwell and has distinct hardware and software constraints; a Maxwell code path cannot be assumed to work here. | Tesla K80 | Unverified, outside gate |
+| 3.5 | Kepler GK110-class | A Kepler tier covering data-center and workstation boards along with consumer products. It requires its own kernel and library qualification. | Tesla K40/K20, Quadro K6000/K5200, GeForce GTX 780 Ti/780 | Unverified, outside gate |
+| 3.2 | Kepler embedded | Embedded Kepler systems have platform-specific software stacks and are not interchangeable with desktop cards at similar generations. | Tegra K1, Jetson TK1 | Unverified, outside gate |
+| 3.0 | Kepler GK10x-class | Kepler consumer and workstation devices from an earlier tier than 3.5. Application support depends on available binaries, driver support, and library behavior. | Tesla K10, Quadro K5000/K4000/K2000, GeForce GTX 770/680/660 | Unverified, outside gate |
+| 2.1 | Fermi refresh | A Fermi-generation capability used by workstation and consumer GPUs. Modern CUDA libraries and frameworks may have removed both prebuilt images and the ability to compile for it. | Quadro 2000/600, GeForce GTX 560 Ti/460, GeForce GT 520 | Unverified, outside gate |
+| 2.0 | Fermi | Early Tesla, workstation, and consumer compute GPUs. A driver recognizing the board does not imply a modern framework ships usable kernels for it. | Tesla M2090/C2070, Quadro 6000/5000, GeForce GTX 580/480 | Unverified, outside gate |
+| 1.3 | Tesla generation, compute 1.3 | Early CUDA-capable data-center and workstation GPUs. This tier is included for historical reference; it is far outside the project’s current adapter target. | Tesla C1060/S1070, Quadro FX 5800/4800, GeForce GTX 285/280 | Unverified, outside gate |
+| 1.2 | Tesla generation, compute 1.2 | An early CUDA capability tier represented mainly by workstation and mobile products in NVIDIA’s legacy table. | Quadro FX 380 Low Profile, NVS 300, GeForce GT 240/220 | Unverified, outside gate |
+| 1.1 | Tesla generation, compute 1.1 | Early workstation, mobile, and consumer GPUs. Current project tooling has no implementation or qualification for this hardware. | Quadro FX 3700/1800/580, GeForce 9800 GTX/8800 GT/8400 GS | Unverified, outside gate |
+| 1.0 | First-generation CUDA capability | The earliest tier in NVIDIA’s legacy CUDA listing. Inclusion here documents the hardware map only; it does not imply current driver, compiler, framework, or library support. | Tesla C870/D870/S870, Quadro FX 5600/4600, GeForce 8800 GTX/Ultra | Unverified, outside gate |
+
+## What “listed” means for this project
+
+A model in NVIDIA’s table has a published compute capability. That fact alone cannot supply a missing PyTorch kernel, translate an unsupported instruction, or replace a library that rejects the GPU. Our support status is based on reproducible operation and workload results. At present, the experimental path is limited to Linux x86_64, PyTorch CUDA 13, and sm_52, with selected operations and bounded CPU fallbacks.
+
+## Sources and definitions
+
+- NVIDIA legacy CUDA GPU compute capability list, original capability-to-model reference; consult for exact model coverage
+- NVIDIA CUDA Toolkit 13.0 release notes, toolkit compiler and library support changes
+- CUDA Programming Guide: compute capability, meaning of hardware capability levels
+
+General notes, all sheets
+
+- Marks: filled is reproduced on the reference configuration; hatched is reproduced for the listed cases only; crossed is contradicted with the observation kept; outline is unverified or unknown. Every mark names its record.
+- Unverified means no record exists and is not refutation. Unknown means the fact was not observable in the recorded environment.
+- Commands are shown and copyable. Nothing runs from a sheet; selected is not executed.
+- Yellow marks attention and is always bounded by an ink line. Blue marks a reproduced state. No meaning is carried by colour alone; each state has a mark shape and a text label.
+
+---
+
+Source: https://cudacompat.com/docs/
+
+## Where to start
+Index
+
+### Install and run
+
+Prepare the Python environment, verify prerequisites, and launch one application process.
+Getting started
+
+### Support matrix
+
+Check native GPU kernels, CPU fallback paths, GPU scope, and unsupported cases.
+Review compatibility
+
+### How it works
+
+Follow the runtime facade, compiler, driver bridge, PyTorch dispatcher, and fallback routes.
+Read the architecture
+
+### Command line
+
+Look up commands, options, exit codes, and common setup errors.
+Open the CLI reference
+
+### Research and tests
+
+Inspect what was tested, how results were compared, and what remains unknown.
+Review the evidence
+
+### Legacy GPU catalog
+
+Browse NVIDIA compute-capability tiers and see the project’s current hardware gate.
+Explore GPU families
+
+### Search and AI discovery
+
+See how crawl access, sitemap, and agent index work, and what remains unobserved.
+Review discovery status
+
+### Privacy and measurement
+
+How optional analytics work, what is measured, and how search measurement is connected.
+Read the privacy guide
+
+## Before you install
+
+### Tested run path
+
+Linux x86_64, Python 3.10.12, PyTorch 2.14.0 with CUDA 13.0, LLVM/Clang 23.1.4, CUDA 12.4 development headers, a working NVIDIA driver, and only visible sm_52 GPUs. Other setups are not yet qualified.
+
+### Read the documentation as a support contract
+
+“Available,” “experimental,” “contradicted,” “unverified,” and “unknown” are separate evidence states, each backed by a named record or by the absence of one. Unverified means no record; unknown means the fact was not observable in the recorded environment. A profile match or a successful CUDA version query does not certify an application. Check the exact operation, dtype, shape, library path, and device before relying on a result.
+
+## Search and assistant access
+
+The site publishes crawler preferences and a page sitemap. Search and user-requested retrieval crawlers are allowed; selected model-training crawlers are disallowed. Robots rules are voluntary crawler instructions, not access control, and they do not guarantee fetching, indexing, or citations. See the OpenAI crawler guidance, Anthropic crawler guidance, and Perplexity crawler guidance.
+
+## Asking for support
+
+Include the tool version, OS, Python, PyTorch, and CUDA versions, GPU compute capability, the failing operation, and a small reproducer. Do not attach model weights, secrets, or private input data.
+
+Agent-readable documentation index Page sitemap Privacy and measurement Source repository
+
+General notes, all sheets
+
+- Marks: filled is reproduced on the reference configuration; hatched is reproduced for the listed cases only; crossed is contradicted with the observation kept; outline is unverified or unknown. Every mark names its record.
+- Unverified means no record exists and is not refutation. Unknown means the fact was not observable in the recorded environment.
+- Commands are shown and copyable. Nothing runs from a sheet; selected is not executed.
+- Yellow marks attention and is always bounded by an ink line. Blue marks a reproduced state. No meaning is carried by colour alone; each state has a mark shape and a text label.
+
+---
+
+Source: https://cudacompat.com/docs/getting-started.html
+
+## Requirements
+
+- Linux x86_64.
+- All visible GPUs must report compute capability 5.2.
+- Python 3.10 or newer; the tested environment uses Python 3.10.12.
+- Official PyTorch 2.14.0 CUDA 13.0 wheel in the active environment.
+- LLVM/Clang 23.1.4 with NVPTX support.
+- CUDA 12.4 development headers, a working driver interface, g++, and C++ headers.
+
+The package bundles no NVIDIA toolkit files, runtime libraries, headers, or drivers. The current launcher uses user-installed CUDA 12.4 development headers with the existing driver stack.
+
+## Four steps
+
+1
+
+### Clone the project and create an environment
+
+```
+git clone https://github.com/zachshallbetter/cuda-compatibility.git
+cd cuda-compatibility
+python3 -m venv .venv
+. .venv/bin/activate
+```
+
+If you already have a dedicated environment containing the target PyTorch wheel, activate it instead. The command must use that same interpreter.
+
+2
+
+### Install the package
+
+```
+python -m pip install .
+```
+
+For development, use python -m pip install -e .. In a virtual or Conda environment, the command is installed into that environment’s bin/ directory. Avoid system-wide sudo pip installs.
+
+### Distribution status
+
+No CUDA Compatibility package is currently published on PyPI. Install from the GitHub checkout using the steps above; pip install cuda-legacy-compat is not a supported installation command.
+
+3
+
+### Check the machine
+
+```
+cuda-legacy inspect
+cuda-legacy profiles show pytorch-2.14-cu130
+cuda-legacy doctor --llvm-root /path/to/LLVM-23.1.4
+```
+
+doctor checks prerequisites; “ready” is not a workload certification. Pass --cuda-root when development headers are not under /usr/local/cuda-12.4.
+
+4
+
+### Launch a script
+
+```
+cuda-legacy run \
+--llvm-root /path/to/LLVM-23.1.4 \
+--cuda-root /usr/local/cuda-12.4 \
+-- path/to/app.py --your-option value
+```
+
+### Trusted scripts only
+
+The adapter is opt-in and affects only the child Python process. It sets LD_PRELOAD and a Python startup hook, builds temporary bridge and kernel files, and removes those files when the child exits. Use the launcher only with scripts you trust.
+
+## Homebrew on Linux
+Head build
+
+Homebrew on Linux can install the command line tool in its own environment instead of steps 1 and 2. No release is tagged yet, so the formula builds the current main branch.
+
+```
+brew tap zachshallbetter/cuda-compatibility https://github.com/zachshallbetter/cuda-compatibility
+brew install --HEAD cuda-legacy
+export CUDA_COMPAT_PYTHON=/path/to/your-env/bin/python
+cuda-legacy doctor --llvm-root /path/to/LLVM-23.1.4
+```
+
+### Point it at your PyTorch environment
+
+Homebrew installs cuda-legacy with its own Python, which does not contain PyTorch. Set CUDA_COMPAT_PYTHON, or pass --python to doctor and run, with the interpreter of the environment that holds the CUDA-enabled PyTorch wheel. The formula is Linux-only, and its install has not yet been run on the reference host.
+
+## Tested configuration
+
+System Linux x86_64
+
+Python 3.10.12
+
+PyTorch 2.14.0 with CUDA 13.0
+
+Driver NVIDIA R580
+
+GPU GM200 Maxwell, sm_52
+
+Compiler LLVM/Clang 23.1.4
+
+Headers CUDA 12.4 development files
+
+Hardware and workload claims are described on the support matrix. This configuration is the one recorded in CLC-025-sm52-operator-training; “ready” from doctor is a prerequisite check, not a certification.
+
+General notes, all sheets
+
+- Marks: filled is reproduced on the reference configuration; hatched is reproduced for the listed cases only; crossed is contradicted with the observation kept; outline is unverified or unknown. Every mark names its record.
+- Unverified means no record exists and is not refutation. Unknown means the fact was not observable in the recorded environment.
+- Commands are shown and copyable. Nothing runs from a sheet; selected is not executed.
+- Yellow marks attention and is always bounded by an ink line. Blue marks a reproduced state. No meaning is carried by colour alone; each state has a mark shape and a text label.
+
+---
+
+Source: https://cudacompat.com/docs/compatibility.html
+
+## Native GPU implementations
+sm_52 kernel
+
+These registered operations run through LLVM-generated PTX targeting the real Maxwell device and the CUDA Driver API bridge.
+
+| No. | Operation | Supported case |
+| --- | --- | --- |
+| 01 | Tensor addition | Same-device, same-shape contiguous float32 (up to 1,048,576 values) or int32 (up to 2,147,483,647 elements), with alpha=1. |
+| 02 | Float16 tensor addition | Same-device, same-shape contiguous float16 up to 1,048,576 values, with alpha=1; edge values match exactly. |
+| 03 | Float32 in-place addition | Same-shape contiguous float32 CUDA tensors up to 1,048,576 values; scaled updates are used by the verified SGD case. |
+| 04 | Range creation | CUDA int64 arange, up to 1,048,576 values. |
+| 05 | Embedding | Inference only. Contiguous float32 weight, int64 CUDA indices in 1D or 2D, and up to 1,048,576 output values. |
+| 06 | Layer normalization | Inference only. Contiguous float32 input normalized over the last dimension with contiguous float32 weight and bias; up to 1,048,576 values. |
+| 07 | Matrix multiplication | 2D float32 matrices with nonnegative strides; each dimension at most 256 and at most 16,777,216 multiply-accumulate steps. |
+| 08 | ReLU | Contiguous float32 tensors up to 1,048,576 values. |
+
+Native forward kernels do not record autograd formulas. For grad-enabled inputs, eligible operations use the differentiable CPU transfer path; unsupported backward operators still fail explicitly.
+
+## Registered CPU fallback operations
+Bounded autograd
+
+These calls use PyTorch’s CPU implementation and copy results back to the original CUDA device:
+
+- linear and bmm
+- softmax and scaled_dot_product_attention
+- GELU
+- addition, multiplication, and division
+- sum and clamp_min
+- concatenation and contiguous copies
+
+Limits
+
+- First-order gradient and SGD training are experimentally verified only for a small float32 linear → ReLU → sum workload, with foreach=False, on GPUs 1 and 2.
+- Seven steps measured 2.360 ms median latency on GPU 2 and 7.296 ms on GPU 1, with 67,180,032 bytes peak allocated on each; timing includes CPU fallback and synchronization and is not representative performance.
+- One CUDA device per fallback operation.
+- Maximum 64 MiB of CUDA input transfers and 64 MiB of output per operation.
+- Mutating and alias-returning operators fail closed except the registered float32 add_ path.
+
+The dispatcher may retry eligible out-of-place operations after recognized missing-image, architecture-mismatch, cuDNN no-engine, or missing CUDA-kernel errors. A fallback is rejected if it cannot preserve the operator’s semantics.
+
+## Framework and hardware profiles
+
+| Target | Published package architecture floor | Project status |
+| --- | --- | --- |
+| PyTorch 2.14 CUDA 13 | CUDA 13 package matrix starts at sm_75. | Experimental Selected operators have experimental sm_52 replacements. The official wheel’s other kernels remain unsupported. |
+| PyTorch 2.14 CUDA 12.6 | Published matrix includes Maxwell starting at sm_50. | Comparison only Useful architecture comparison. It does not prove every operator or library path works. |
+
+Three GM200 sm_52 reference cards have run selected baseline operator checks. The float16, strided matrix, cross-stream lifetime, and training cases have been verified on broker-selected GPUs 1 and 2; the library-map probe ran on GPU 2. Candidate cards in the legacy GPU catalog are unverified unless explicitly labeled as reference devices. Compute-capability matches alone are not certification.
+
+## Not supported or not verified
+Not established
+
+Contradicted on the reference hardware, kept as negative results
+
+D1 Stock float32 torch.mm on the official 2.14.0+cu130 wheel fails in cuBLAS with CUBLAS_STATUS_ARCH_MISMATCH. Reopens when a future wheel or compatible cuBLAS runs the same probe on sm_52 without the adapter. Contradicted
+
+CLC-009-stock-mm-cublas-arch-mismatch
+
+D2 Stock float32 torch.relu on the same wheel reports no kernel image for the device. Reopens when a future wheel ships a ReLU image executable on sm_52. Contradicted
+
+CLC-009-stock-relu-no-kernel-image
+
+General CUDA 13 APIs, arbitrary prebuilt binaries, broad cuDNN, cuBLAS, NCCL, or Triton coverage, arbitrary models or optimizers, higher-order gradients, AMP, mixed visible architectures, other compute capabilities, performance parity, and machine-wide interposition are not established. Only the documented first-order training slice has been validated, on broker-selected GPUs 1 and 2.
+
+Sources: PyTorch 2.14 release matrix, CUDA 13 release notes, project architecture record.
+
+General notes, all sheets
+
+- Marks: filled is reproduced on the reference configuration; hatched is reproduced for the listed cases only; crossed is contradicted with the observation kept; outline is unverified or unknown. Every mark names its record.
+- Unverified means no record exists and is not refutation. Unknown means the fact was not observable in the recorded environment.
+- Commands are shown and copyable. Nothing runs from a sheet; selected is not executed.
+- Yellow marks attention and is always bounded by an ink line. Blue marks a reproduced state. No meaning is carried by colour alone; each state has a mark shape and a text label.
+
+---
+
+Source: https://cudacompat.com/docs/architecture.html
+
+## Compatibility path
+
+One supported operation
+
+Application PyTorch 2.14, official CUDA 13 wheel, dynamically linked
+
+Selected operations
+
+Interposition Preload answers cudaRuntimeGetVersion with 13000; everything else forwards
+
+Route by operator
+
+Native kernel LLVM/Clang to PTX for sm_52, launched through the Driver API bridge on PyTorch’s current stream
+
+CPU fallback PyTorch CPU implementation, differentiable transfers, 64 MiB in and out
+
+Result returned
+
+Real device stays visible Driver API version, device name, compute capability, and driver release all remain real
+
+Driver API calls the bridge makes
+
+- cuCtxGetCurrent
+- cuModuleLoad
+- cuModuleGetFunction
+- cuLaunchKernel
+- cuMemcpyDtoH
+
+The launcher interposes only cudaRuntimeGetVersion; other runtime calls are forwarded. Build outputs are temporary and removed when the child exits.
+
+## Four boundaries
+
+### Runtime version facade
+
+The preload interposes only cudaRuntimeGetVersion. With the launcher’s opt-in setting, that call returns CUDA Runtime version integer 13000. Other runtime calls forward to the installed runtime. The CUDA Driver API version, physical device name, compute capability, and installed driver release remain real.
+
+This changes one compatibility check. It does not add CUDA 13 runtime APIs, newer instructions, or missing library kernels. Dynamically linked applications are required for this preload path.
+
+### Compiler and native kernels
+
+The launcher invokes LLVM/Clang 23.1.4 to compile packaged CUDA source into PTX targeting sm_52. A small CUDA Driver API bridge loads the module once per CUDA context and launches selected kernels on PyTorch’s current stream. Build outputs are temporary and removed when the child exits.
+
+Native operator registrations cover selected addition, range creation, embedding, layer normalization, matrix multiplication, and ReLU cases. Each has explicit dtype, layout, size, and inference constraints on the support matrix.
+
+### CPU fallback and training
+
+For selected operations, PyTorch executes on CPU after a known compatibility failure or a direct fallback registration. Grad-enabled tensors use differentiable framework transfers, and the verified first-order backward path computes the small linear workload on CPU. A separate float32 in-place Maxwell add implements the tested SGD update.
+
+Fallback requires one CUDA device and the 64 MiB input and output limits. Mutating and alias-returning operations fail closed except the bounded float32 add_ route. Training evidence is limited to a 2×2 linear → ReLU → sum model and seven SGD steps on GPUs 1 and 2; arbitrary backward graphs and optimizers remain unverified.
+
+### CUDA API and library boundaries
+
+On the official CUDA 13 wheel, stock matrix multiplication was observed to fail in cuBLAS initialization with CUBLAS_STATUS_ARCH_MISMATCH, while stock ReLU failed with a missing kernel image. A bounded process-map probe observed CUDA Runtime, cuBLAS/cuBLASLt, NVRTC, cuDNN, NCCL, PyTorch CUDA, and the R580 driver libraries in the wheel and system locations recorded in the research log.
+
+A mapped library does not establish that all its APIs are compatible; the project has no complete runtime symbol trace.
+
+## What remains outside the layer
+Not in scope
+
+- No system driver, kernel module, CUDA installation, or PyTorch wheel is replaced.
+- No CUDA capability is spoofed; the actual compute capability remains visible.
+- No general binary translator or machine-wide interceptor exists.
+- Proprietary library paths are not broadly reimplemented; cuDNN and cuBLAS failures require operation-specific alternatives.
+
+Implementation record: architecture.md, runtime facade experiment.
+
+General notes, all sheets
+
+- Marks: filled is reproduced on the reference configuration; hatched is reproduced for the listed cases only; crossed is contradicted with the observation kept; outline is unverified or unknown. Every mark names its record.
+- Unverified means no record exists and is not refutation. Unknown means the fact was not observable in the recorded environment.
+- Commands are shown and copyable. Nothing runs from a sheet; selected is not executed.
+- Yellow marks attention and is always bounded by an ink line. Blue marks a reproduced state. No meaning is carried by colour alone; each state has a mark shape and a text label.
+
+---
+
+Source: https://cudacompat.com/docs/cli.html
+
+## Commands
+
+| Command | Purpose |
+| --- | --- |
+| cuda-legacy --help | List commands and example use. |
+| cuda-legacy help <command> | Show command-specific guidance. |
+| cuda-legacy --version | Print the installed package version. |
+| cuda-legacy inspect [--json] | Report visible GPU and compiler inventory as JSON. |
+| cuda-legacy profiles list [--json] | List bundled versioned compatibility profiles. |
+| cuda-legacy profiles show PROFILE [--json] | Explain a profile’s source and requirements. |
+| cuda-legacy doctor [--llvm-root PATH] [--cuda-root PATH] [--python PATH] [--json] | Check prerequisites for the experimental launcher. |
+| cuda-legacy audit PROFILE [--json] | Compare available machine facts against a target profile. |
+| cuda-legacy run [options] -- SCRIPT [args...] | Start a Python script with the opt-in adapter. |
+
+## Launch options
+
+```
+cuda-legacy run \
+--llvm-root /path/to/LLVM-23.1.4 \
+--cuda-root /usr/local/cuda-12.4 \
+--python /path/to/your-env/bin/python \
+-- path/to/app.py --application-option value
+```
+
+You can set CUDA_COMPAT_LLVM_ROOT, CUDA_COMPAT_CUDA_ROOT and CUDA_COMPAT_PYTHON instead of passing the corresponding options. --python selects the interpreter that runs the script and that doctor inspects for PyTorch; it defaults to the interpreter running cuda-legacy, and a missing or non-executable path stops the launch before anything is built. The script and its arguments go after the -- separator.
+
+## Exit codes
+
+doctor 0 when checked prerequisites are ready; 1 when setup needs attention.
+
+audit 0 compatible against recorded profile fields; 1 incompatible; 2 invalid or unreadable profile; 3 required facts unknown.
+
+profiles 0 on success; 2 when a profile cannot be read or resolved.
+
+run Returns the child application’s exit code; launcher preflight or build errors return 2.
+
+“Compatible” and “ready” refer only to fields each command checks. Neither is an operator or workload certification.
+
+## Common setup errors
+
+- Missing GPU inventory means nvidia-smi is unavailable; the package does not install drivers.
+- LLVM must be version 23.1.4 and include bin/clang++ with NVPTX support.
+- CUDA headers must include cuda.h and cuda_runtime.h.
+- The current adapter accepts only visible sm_52 devices. Numeric CUDA_VISIBLE_DEVICES selections can restrict a mixed host.
+- “No kernel image” means the wheel lacks an image for that operation and no registered replacement path handled it.
+
+See the support matrix before treating a preflight pass as application support.
+
+General notes, all sheets
+
+- Marks: filled is reproduced on the reference configuration; hatched is reproduced for the listed cases only; crossed is contradicted with the observation kept; outline is unverified or unknown. Every mark names its record.
+- Unverified means no record exists and is not refutation. Unknown means the fact was not observable in the recorded environment.
+- Commands are shown and copyable. Nothing runs from a sheet; selected is not executed.
+- Yellow marks attention and is always bounded by an ink line. Blue marks a reproduced state. No meaning is carried by colour alone; each state has a mark shape and a text label.
+
+---
+
+Source: https://cudacompat.com/docs/research.html
+
+## Reproduced on reference hardware
+
+Every mark names the record that backs it. Marks are the weakest claim the record supports; a missing record is a missing mark, never a zero.
+
+Reproduced tested Observed, listed cases only implemented Contradicted, observation kept documented Not established documented or unknown
+
+R1 A native CUDA 12.4 vector-add baseline passed on three GM200 Maxwell cards at compute capability 5.2. Passed, 3 cards CLC-001-gm200-baseline
+
+R2 LLVM/Clang 23.1.4 emitted PTX 8.4 targeting sm_52; the Driver API bridge loaded and launched the tested kernels. Passed CLC-004-llvm-nvptx-sm52
+
+R3 The process-local facade returned Runtime version 13000 while driver and device queries continued to report the installed NVIDIA stack. Passed CLC-005-runtime-version-facade
+
+R4 The official PyTorch 2.14 CUDA 13 wheel imported, initialized CUDA, enumerated the real devices, allocated tensors, and copied data to the GPU. Seen in a recorded run; not re-executed. Observed CLC-006-pytorch-cu130-maxwell
+
+R5 On the same wheel, stock float32 mm failed in cuBLAS with CUBLAS_STATUS_ARCH_MISMATCH and stock ReLU reported no kernel image for sm_52. The stock path is contradicted on this hardware; the adapter exists because of these two records, and they reopen if a future wheel passes the same probes. Contradicted CLC-009-stock-mm-cublas-arch-mismatch CLC-009-stock-relu-no-kernel-image
+
+R6 Selected native operators and a synthetic MLP passed the original three-card suite. New float16, strided matrix, cross-stream lifetime, and small SGD and autograd evidence passed on GPUs 1 and 2; GPU 0 remains untested in this increment because it is below the test free-memory floor. Passed, GPUs 1 and 2 CLC-009-pytorch-fp32-mlp-sm52 CLC-025-sm52-operator-training
+
+## Method and provenance
+
+Correctness checks compare adapter outputs with CPU PyTorch references and exercise selected edge cases, stream ordering, bounds, and explicit unsupported errors. Test cases and commands are maintained in the source repository. A successful run proves only its named operation, arguments, GPU, driver, and software combination.
+
+Records in the repository
+
+- Native Maxwell baseline and reproduction procedure
+- PyTorch CUDA 13 adapter experiments
+- CUDA library path probe source
+- Runtime-version facade experiment
+- Framework profiles and primary sources
+
+## Limits and open questions
+Not established
+
+- No general CUDA 13 runtime or API replacement or binary translator.
+- Only one small first-order float32 linear → ReLU → sum workload with seven non-foreach SGD steps is verified on GPUs 1 and 2; arbitrary autograd graphs and optimizers remain unverified.
+- CUDA Runtime, cuBLAS/cuBLASLt, NVRTC, cuDNN, NCCL, PyTorch CUDA, the Driver API, and R580 library paths were observed in a bounded process-map probe; broad symbol and API compatibility is not established.
+- The seven-step diagnostic measured 2.360 ms median end-to-end latency on GPU 2 and 7.296 ms on GPU 1, with 67,180,032 bytes peak allocated on each; this tiny workload does not predict application performance.
+- Candidate GPU models remain unverified unless specifically identified as reference hardware.
+- The routes and assets on cudacompat.com returned HTTP 200 in a 2026-11-03 audit; crawler use, indexing, search visibility, social-card rendering, and AI retrieval remain unobserved.
+
+## Negative results, kept
+
+A hypothesis that was held and disproven stays on the sheet. Each entry names the attempt, what happened, and the condition that would reopen it. These are the records most likely to be re-proposed later.
+
+N1 Clang for sm_52 without explicit host libstdc++ include paths. Compilation failed: <climits> not found inside the CUDA runtime wrapper. Reopens when: A reference host has a different C++ library layout, or the pinned LLVM build finds its headers itself. Kept CLC-004-llvm-host-cxx-headers
+
+N2 Extract the LLVM release archive with default zstd settings. Zstandard rejected the frame: a 1 GiB window exceeds the 128 MiB default. Reopens when: A different release archive or decoder no longer needs the long-window option. Kept CLC-004-llvm-release-zstd-window
+
+N3 Preload the facade under NVCC's default (static) runtime linkage. The probe kept reporting runtime version 12040; nothing to interpose. Reopens when: A statically linked target is chosen and a safe rebuild or instrumentation path exists. Kept CLC-005-runtime-static-link-interposition
+
+N4 Mask the runtime version and run stock tensor addition on the CUDA 13 wheel. No kernel image for sm_52; version masking cannot supply a missing Maxwell kernel. Reopens when: A Maxwell-targeted kernel or software path for the operator is connected. Kept CLC-006-pytorch-cu130-sm52-kernel-image
+
+N5 Stock float32 torch.mm on the official 2.14.0+cu130 wheel. Failed in cuBLAS with CUBLAS_STATUS_ARCH_MISMATCH. Reopens when: A future wheel or compatible cuBLAS runs the same probe on sm_52 without the adapter. Kept CLC-009-stock-mm-cublas-arch-mismatch
+
+N6 Stock float32 torch.relu on the official wheel. No kernel image is available for execution on the device. Reopens when: A future wheel ships a ReLU kernel image executable on sm_52. Kept CLC-009-stock-relu-no-kernel-image
+
+## Registered hypotheses
+
+Registered in the research program before the work, each with the observation that would falsify it. None is graded on this sheet. Site-level predictions about this redesign are registered the same way in records/predictions.jsonl (PRED-SITE-001 to 003).
+
+H1 Selected CUDA 13-era PyTorch operations can execute correctly on GM200 without application source changes. Fails if: output mismatch, unreported fallback, or no device execution. Open
+
+H2 A reusable Maxwell primitive library reduces per-application adapter work. Fails if: implementation stays framework-specific or correctness fails. Open
+
+H3 Modern-facing library adapters can preserve bounded semantics using legacy implementations. Fails if: ABI, stream, precision, or resource contract mismatch. Open
+
+H4 Preflight plus runtime evidence predicts support more reliably than toolkit-version gates. Fails if: a false supported status on a mandatory operation. Open
+
+H5 Architecture-neutral operation contracts can be implemented on Pascal and beyond. Fails if: the semantic contract needs Maxwell-only assumptions. Open
+
+H6 GPU-native paths offer a meaningful benefit over explicit CPU fallback. Fails if: transfer or dispatch cost dominates, or the workload objective fails. Open
+
+## Digital presence and discovery evidence
+
+The project records its public claims, source mappings, crawler surfaces, query-intent hypotheses, measurement definitions, and unresolved reach states in the Digital Presence implementation record. The record applies DPP guidance but makes no DPP conformance or search visibility claim.
+
+CLC-026-final-live-publication-audit CLC-028-live-route-audit CLC-027-bing-sitemap-success CLC-027-google-url-inspection CLC-027-ga4-consented-event CLC-027-live-consent-rejection
+
+## Claim status
+
+Established The source tree includes research logs and local verification records. The site is live at cudacompat.com. Bing ownership and sitemap receipts cover only the previous GitHub Pages address.
+
+Receipt only The consent-gated GA4 tag is deployed; one explicitly accepted test visit produced page_view, first_visit, and session_start in Realtime, after which test consent was withdrawn. An event-receipt check, not an audience outcome. Google Search Console verified its property.
+
+Not claimed A successful HTTP fetch or valid sitemap does not prove indexing or ranking. Google’s sitemap report still says “Couldn’t fetch,” and URL Inspection says the homepage is unknown to the index even though the live test says it is available and can be indexed. No indexing, citation, or external distribution outcome is claimed.
+
+General notes, all sheets
+
+- Marks: filled is reproduced on the reference configuration; hatched is reproduced for the listed cases only; crossed is contradicted with the observation kept; outline is unverified or unknown. Every mark names its record.
+- Unverified means no record exists and is not refutation. Unknown means the fact was not observable in the recorded environment.
+- Commands are shown and copyable. Nothing runs from a sheet; selected is not executed.
+- Yellow marks attention and is always bounded by an ink line. Blue marks a reproduced state. No meaning is carried by colour alone; each state has a mark shape and a text label.
+
+---
+
+Source: https://cudacompat.com/docs/discovery.html
+
+## What can be requested
+
+| Surface | Purpose | Evidence boundary |
+| --- | --- | --- |
+| HTML pages | Human-readable project overview, install steps, operation limits, hardware catalog, and research records. | Local page rendering proves only that the current files render in the tested browser. |
+| robots.txt | Declares crawler preferences. Search and user-requested retrieval agents are allowed; selected model-training agents are disallowed. | Robots rules are voluntary crawler guidance, not authentication or access control. |
+| sitemap.xml | Lists the intended canonical HTML URLs. | A sitemap entry is not a crawl, index, ranking, or reach receipt. |
+| llms.txt | Provides a concise navigation map for humans and automated readers. | It is an informal index, not a standardized retrieval interface or an instruction source. |
+| llms-full.txt | Carries the text of every sitemap page as Markdown, generated from the published HTML and checked for staleness before release. | A convenience copy; the HTML pages remain the source of truth, and its presence does not cause retrieval or citation. |
+
+## Current observation state
+
+Verified Public accessibility The site is served by Vercel at cudacompat.com; www.cudacompat.com redirects there. A route audit on 2026-11-03 fetched all 10 sitemap pages, sitemap.xml, robots.txt, llms.txt, favicon.svg, the social card, and the page styles, scripts, fonts and wireframe model with HTTP 200. Point-in-time HTTP checks establish availability, not search indexing or audience reach.
+
+Unverified Bing Webmaster Tools Ownership verification and the sitemap Success report (10 URLs, zero errors or warnings) cover the previous GitHub Pages address. No Bing receipt is recorded for cudacompat.com.
+
+Unverified Google Search Console The URL-prefix property verified on 2026-11-01 covers the previous GitHub Pages address. The cudacompat.com address needs its own property; no verification, sitemap submission, or indexing receipt is recorded for it.
+
+Receipt only Analytics The consent-gated GA4 tag is deployed. One explicitly accepted test visit produced page_view, first_visit, and session_start in GA4 Realtime; test consent was withdrawn afterward. This single test is not audience coverage.
+
+Unmeasured Discovery and engagement These vendor reports describe distinct processing states. No search impressions, indexed-page sample, AI retrieval trace, answer citation, or referral outcome is claimed. Public accessibility is verified; discovery and engagement remain unmeasured.
+
+## How AI references are evaluated
+
+A visible answer that names this project is an answer mention. A linked citation is evidence that the answer referenced a URL. Neither proves the system retrieved that page; verified retrieval requires a direct trace from an instrumented system. A citation also does not prove that the answer represented the source accurately.
+
+For any future sample, the project records the product and model version when available, date, locale, exact query, answer, cited URLs, source snapshot, scoring rubric, and limitations. One answer is not a census, and changing metadata or llms.txt alone does not prove an effect.
+
+## Connect search measurement
+
+The project owns cudacompat.com, and https://cudacompat.com/ is the canonical address. Add a URL-prefix property for https://cudacompat.com/, or a Domain property for cudacompat.com verified by a DNS record. In Search Console, use the exact verification method and token provided for that property. For HTML-tag verification, add its meta tag to the homepage head and keep it there; never invent or reuse a token. Then submit the sitemap and inspect the homepage and key docs URLs.
+
+After Search Console verification, Bing Webmaster Tools can import the verified site and sitemap. This requires signing into the Google account and granting Bing access during the import flow. Alternatively, use Bing’s offered XML-file or meta-tag verification, then submit the same sitemap and review submission status, last-read date, and processing errors.
+
+Report each platform, property prefix, observation window, extraction date, and missing data separately. Search Console or Bing reporting does not guarantee indexing or ranking. Official guides: Search Console properties, ownership verification, Bing site import, Bing sitemap processing.
+
+Optional first-party analytics is configured with a GA4 measurement ID and requires affirmative visitor consent before contacting Google measurement services. It records only the documented page-view and allowlisted link events. Read the privacy and measurement guide for current settings and limitations.
+
+## Support claims have their own evidence
+
+Search visibility does not establish CUDA compatibility. For hardware and workload support, use the operation-by-operation support matrix and the reproduction records. A GPU name, compute capability, profile match, version query, search result, or AI recommendation is not a workload certification.
+
+Discovery policy: robots.txt, sitemap, agent index, privacy and measurement.
+
+General notes, all sheets
+
+- Marks: filled is reproduced on the reference configuration; hatched is reproduced for the listed cases only; crossed is contradicted with the observation kept; outline is unverified or unknown. Every mark names its record.
+- Unverified means no record exists and is not refutation. Unknown means the fact was not observable in the recorded environment.
+- Commands are shown and copyable. Nothing runs from a sheet; selected is not executed.
+- Yellow marks attention and is always bounded by an ink line. Blue marks a reproduced state. No meaning is carried by colour alone; each state has a mark shape and a text label.
+
+---
+
+Source: https://cudacompat.com/docs/privacy.html
+
+## What the site measures
+
+After opt-in, the site sends a page view using the page path, static page title, and referrer origin. It records clicks on a short list of installation, support matrix, GPU catalog, repository, source download, evidence, discovery guide, and external reference links, with the page area of the link (header, footer, sheet index, or content). External link events include only the destination host. It also records a successful press of a command copy button, naming only the step (clone, install, or check), and a press of the hero replay button. Paths omit query strings and fragments. The event code does not collect form values, model inputs, free text, or the full destination URL.
+
+Named events after opt-in
+
+page_view installation_guide_click support_matrix_click gpu_catalog_click project_repository_click evidence_page_click discovery_page_click external_reference_click
+
+GA4 also automatically records first_visit, session_start, and user_engagement after consent. The site downloads its Archivo and Martian Mono font files from its own origin and does not request font files from Google or another font host.
+
+Google Analytics may receive browser and device information and an IP address, use the address to infer approximate location, and set first-party cookies to distinguish browsers and sessions. Google says GA4 uses IP addresses at collection time and discards them before data is logged. Advertising storage, advertising user data, and personalization signals are denied by the site tag. Google Signals, user-provided data collection, ads personalization, and Enhanced Measurement are also off in the Analytics property. This is a data-minimization design, not a legal-compliance certification.
+
+Withdrawing consent blocks this site’s named events, updates Google’s consent state to denied, and attempts to remove GA cookies on the current host before reloading. Google may still process a consent update or limited signals. This control cannot delete data already sent to Google; deletion must be requested through the Analytics property.
+
+Google’s documentation on Analytics data handling, automatically collected events, and data retention.
+
+## Consent and settings
+
+Visitors see an optional choice before the site loads the Google tag. Accepting stores the choice in this browser and loads the tag; rejecting stores a local preference and does not load it. If browser storage is unavailable, analytics stays off. The project does not receive or store this consent choice. Requests to Google measurement services begin only after opt-in.
+
+Google’s documentation describes the Analytics consent types, the GA4 event model, and data retention settings.
+
+## Configure analytics
+
+- The project GA4 property and web stream are configured.
+- Enhanced Measurement is off so the property does not add automatic scroll, form, or outbound-click events.
+- Event-level retention is two months. Email redaction is on, and URL redaction covers email, token, access_token, and code parameters. Google Signals, user-provided data collection, and ads personalization are off at the property level; advertising signals are denied by the site tag.
+- The stream Measurement ID is configured in analytics.js; the consent-gated tag is deployed.
+- A consented setup test on 2026-11-01 produced page_view, first_visit, and session_start in GA4 Realtime. Test consent was then withdrawn. This one test confirms event receipt only, not audience coverage or outcomes.
+
+## Connect Google Search Console
+Verified, not indexed
+
+1 Publish the site at https://cudacompat.com/ and confirm it returns public pages over HTTPS.
+
+2 In Google Search Console, add a URL-prefix property for that exact site address.
+
+3 Choose HTML-tag verification, copy the verification value, and add the provided google-site-verification meta tag to the homepage head. Keep Google’s exact token unchanged.
+
+4 After verification, submit sitemap.xml in the Sitemaps report.
+
+5 Use URL Inspection for the homepage and key documentation pages. A crawl or indexing request is not a guarantee of indexing, ranking, or timing.
+
+The sitemap and crawler policy are available at sitemap.xml and robots.txt. Google verified a URL-prefix property for the previous GitHub Pages address on 2026-11-01. The cudacompat.com address has no verified property, sitemap submission, or indexing receipt yet; indexing is not confirmed.
+
+Google’s guidance on requesting a crawl and submitting a sitemap.
+
+## Connect Bing Webmaster Tools
+Unverified for cudacompat.com
+
+1 Open Bing Webmaster Tools and choose Import from Google Search Console after the URL-prefix property above is verified. Review the account-access request before granting it.
+
+2 If you do not want to import, add this exact site prefix in Bing and complete the verification method Bing offers, such as its XML file or meta tag. Keep the supplied verification artifact in the published site; do not invent a token.
+
+3 Submit sitemap.xml in the Sitemaps section.
+
+4 Check submission status, last-read time, and reported processing errors. Record the date and property prefix with any result; submission alone does not show that pages were indexed.
+
+Bing verified ownership by meta tag and reported sitemap Success (10 URLs, zero errors, zero warnings) for the previous GitHub Pages address. No Bing verification or sitemap receipt is recorded for cudacompat.com; neither would confirm that the URLs are indexed.
+
+Bing documents importing verified Search Console properties, site verification methods, and sitemap submission and processing.
+
+## Measurement is not proof of reach
+
+Analytics can describe measured visits and link clicks. Search Console reports search impressions, clicks, and indexing signals. Neither proves a visitor found the site through a particular recommendation, nor guarantees search visibility. The project will report each metric with its observation window and data source.
+
+General notes, all sheets
+
+- Marks: filled is reproduced on the reference configuration; hatched is reproduced for the listed cases only; crossed is contradicted with the observation kept; outline is unverified or unknown. Every mark names its record.
+- Unverified means no record exists and is not refutation. Unknown means the fact was not observable in the recorded environment.
+- Commands are shown and copyable. Nothing runs from a sheet; selected is not executed.
+- Yellow marks attention and is always bounded by an ink line. Blue marks a reproduced state. No meaning is carried by colour alone; each state has a mark shape and a text label.

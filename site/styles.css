@@ -18,3 +18,16 @@ html{scroll-behavior:smooth;color-scheme:only light}
 .analytics-actions button:focus-visible,.analytics-actions a:focus-visible{outline:3px solid #FFD400;outline-offset:3px}
 .analytics-actions a{color:#FFFFFF;font-weight:600;font-size:14px}
 @media (max-width:640px){.analytics-banner{grid-template-columns:1fr}.analytics-actions button{flex:1 1 auto}}
+/* Accessibility corrections shared by every page */
+body .inv .exp{color:#000000}
+body .inv .open{color:var(--inv-mute)}
+body .ev a{min-height:24px;box-sizing:border-box;display:inline-flex;align-items:center;opacity:1}
+.crumbs ol{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;gap:4px 0;font-size:12px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:#B8B8B2}
+.crumbs li+li::before{content:"/";padding:0 10px;color:#B8B8B2}
+.crumbs a{color:#FFFFFF;text-decoration:underline;text-underline-offset:0.2em}
+.crumbs a:hover{color:#FFD400}
+.crumbs [aria-current]{color:#FFFFFF}
+:focus-visible{outline:3px solid #1F3DFF;outline-offset:2px}
+.inv :focus-visible,.band :focus-visible,.foot :focus-visible{outline-color:#FFD400}
+body .nav a{min-height:24px;display:inline-flex;align-items:center}
+body div[style*="display:flex"] > a:not(.btn):not(.repo){min-height:24px;display:inline-flex;align-items:center}

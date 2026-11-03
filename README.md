@@ -22,7 +22,17 @@ python3 -m venv .venv
 python -m pip install .
 ```
 
-For development from a source checkout, use `python -m pip install -e .` instead. To use `run`, install this package into the **same Python environment** that contains the target PyTorch CUDA 13 wheel; the launcher starts the script with that environment's `sys.executable`. The repository does not currently provide a system-wide installer or a standalone binary.
+For development from a source checkout, use `python -m pip install -e .` instead. To use `run`, install this package into the **same Python environment** that contains the target PyTorch CUDA 13 wheel; the launcher starts the script with that environment's `sys.executable` unless `--python` (or `CUDA_COMPAT_PYTHON`) names another interpreter.
+
+On Linux, Homebrew can install the CLI in its own environment. No release is tagged yet, so the formula builds `main`:
+
+```sh
+brew tap zachshallbetter/cuda-compatibility https://github.com/zachshallbetter/cuda-compatibility
+brew install --HEAD cuda-legacy
+export CUDA_COMPAT_PYTHON=/path/to/your-env/bin/python   # the environment that holds PyTorch
+```
+
+The formula is in `Formula/cuda-legacy.rb`; its install has not yet been run on the reference host. There is no standalone binary.
 
 The `inspect` and `audit` commands require Python 3.10 or newer and no GPU. `run` has only been tested with this configuration:
 

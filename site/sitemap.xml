@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url><loc>https://cudacompat.com/</loc></url>
-  <url><loc>https://cudacompat.com/gpu-catalog.html</loc></url>
-  <url><loc>https://cudacompat.com/docs/</loc></url>
-  <url><loc>https://cudacompat.com/docs/getting-started.html</loc></url>
-  <url><loc>https://cudacompat.com/docs/compatibility.html</loc></url>
-  <url><loc>https://cudacompat.com/docs/architecture.html</loc></url>
-  <url><loc>https://cudacompat.com/docs/cli.html</loc></url>
-  <url><loc>https://cudacompat.com/docs/research.html</loc></url>
-  <url><loc>https://cudacompat.com/docs/discovery.html</loc></url>
-  <url><loc>https://cudacompat.com/docs/privacy.html</loc></url>
+  <url><loc>https://cudacompat.com/</loc><lastmod>2026-11-03</lastmod></url>
+  <url><loc>https://cudacompat.com/gpu-catalog.html</loc><lastmod>2026-11-03</lastmod></url>
+  <url><loc>https://cudacompat.com/docs/</loc><lastmod>2026-11-03</lastmod></url>
+  <url><loc>https://cudacompat.com/docs/getting-started.html</loc><lastmod>2026-11-03</lastmod></url>
+  <url><loc>https://cudacompat.com/docs/compatibility.html</loc><lastmod>2026-11-03</lastmod></url>
+  <url><loc>https://cudacompat.com/docs/architecture.html</loc><lastmod>2026-11-03</lastmod></url>
+  <url><loc>https://cudacompat.com/docs/cli.html</loc><lastmod>2026-11-03</lastmod></url>
+  <url><loc>https://cudacompat.com/docs/research.html</loc><lastmod>2026-11-03</lastmod></url>
+  <url><loc>https://cudacompat.com/docs/discovery.html</loc><lastmod>2026-11-03</lastmod></url>
+  <url><loc>https://cudacompat.com/docs/privacy.html</loc><lastmod>2026-11-03</lastmod></url>
 </urlset>

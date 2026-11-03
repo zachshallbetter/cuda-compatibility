@@ -58,6 +58,20 @@ class SiteDiscoveryChecksTests(unittest.TestCase):
             self.assertTrue(any("never emitted: hero_replay" in error for error in errors))
             self.assertTrue(any("not allowlisted: hero_restart" in error for error in errors))
 
+    def test_rejects_indexable_error_page(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            site = self.copy_site(directory)
+            page = site / "404.html"
+            page.write_text(page.read_text(encoding="utf-8").replace('content="noindex"', 'content="index"'), encoding="utf-8")
+            self.assertTrue(any("404.html: the error page must declare noindex" in error for error in audit_site(site)))
+
+    def test_rejects_stale_full_text_index(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            site = self.copy_site(directory)
+            page = site / "docs" / "cli.html"
+            page.write_text(page.read_text(encoding="utf-8").replace("List commands and example use.", "List every command.", 1), encoding="utf-8")
+            self.assertTrue(any("llms-full.txt is stale" in error for error in audit_site(site)))
+
     def test_rejects_missing_webmaster_verification_tags(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             site = self.copy_site(directory)
@@ -121,7 +135,7 @@ class SiteDiscoveryChecksTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as directory:
             site = self.copy_site(directory)
             sitemap = site / "sitemap.xml"
-            sitemap.write_text(sitemap.read_text(encoding="utf-8").replace("  <url><loc>https://cudacompat.com/docs/privacy.html</loc></url>\n", ""), encoding="utf-8")
+            sitemap.write_text(sitemap.read_text(encoding="utf-8").replace("  <url><loc>https://cudacompat.com/docs/privacy.html</loc><lastmod>2026-11-03</lastmod></url>\n", ""), encoding="utf-8")
             self.assertTrue(any("sitemap URLs" in error for error in audit_site(site)))
 
     def test_rejects_duplicate_meta_descriptions(self) -> None:

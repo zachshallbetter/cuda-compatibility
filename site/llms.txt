@@ -16,6 +16,11 @@ This is a convenience index for people and automated agents. It is not a standar
 - [Search and AI discovery](https://cudacompat.com/docs/discovery.html): crawler access, sitemap and agent index, and the limits of current visibility evidence.
 - [Legacy GPU catalog](https://cudacompat.com/gpu-catalog.html): NVIDIA compute-capability tiers and project hardware status.
 
+## Machine-readable files
+- Full text of every page, as Markdown: https://cudacompat.com/llms-full.txt
+- Canonical page list: https://cudacompat.com/sitemap.xml
+- Crawler preferences: https://cudacompat.com/robots.txt
+
 ## Project identity
 - Project repository: https://github.com/zachshallbetter/cuda-compatibility
 - Author: Zach Shallbetter (https://zachshallbetter.com/)

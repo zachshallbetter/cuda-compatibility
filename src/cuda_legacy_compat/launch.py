@@ -108,10 +108,14 @@ def launch(
     llvm_root: Path,
     cuda_root: Path,
     environ: Mapping[str, str] | None = None,
+    python: str | None = None,
 ) -> int:
     script = script.resolve()
     if not script.is_file():
         raise LaunchError(f"Python script not found: {script}")
+    interpreter = sys.executable if python is None else shutil.which(python)
+    if not interpreter or not os.access(interpreter, os.X_OK):
+        raise LaunchError(f"Python interpreter not found or not executable: {python}")
     env = dict(os.environ if environ is None else environ)
     with tempfile.TemporaryDirectory(prefix="cuda-legacy-compat-") as temporary:
         ptx, bridge, facade = build_adapter(llvm_root, cuda_root, Path(temporary))
@@ -128,7 +132,7 @@ def launch(
         env["PYTHONPATH"] = ":".join(filter(None, [str(_RESOURCE_DIR), env.get("PYTHONPATH", "")]))
         try:
             return subprocess.run(
-                [sys.executable, str(script), *script_args], env=env, check=False
+                [interpreter, str(script), *script_args], env=env, check=False
             ).returncode
         except OSError as exc:
             raise LaunchError(f"could not start Python: {exc}") from exc
