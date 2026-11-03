@@ -5,8 +5,8 @@
   "validityBasis": "aggregate-source-digest",
   "selectedPaths": [],
   "sourceSelection": {
-    "includedCount": 239,
-    "includedBytes": 2288311,
+    "includedCount": 250,
+    "includedBytes": 2541340,
     "excludedCounts": {
       "extension": 54,
       "generated-or-transient-file": 2
@@ -18,14 +18,14 @@
     "repositories": [
       {
         "path": ".",
-        "commit": "53a814e9c897de85d59a0d87c8b7a78b2a1663f7",
-        "branch": "docs/site-protocol",
+        "commit": "6a88c7cdcc08bd03a9eb0e43b802fbef1ea979b5",
+        "branch": "site/excerpts-and-papers",
         "dirty": true,
         "remote": "https://github.com/zachshallbetter/cuda-compatibility.git"
       }
     ]
   },
-  "aggregateSourceDigest": "7269884ba35b726f6ea48ecba46e726c7314e6e7f7d4d0283d04b289f9f40169",
+  "aggregateSourceDigest": "27e372ef12ee76464dd3b282000e3f7cdf73c1ad2438a099bdd477225a357eee",
   "sources": [
     {
       "path": ".agents/acp/README.md",
@@ -708,9 +708,14 @@
       "sha256": "6f78a9d3794af25f59a238f6ec60c6f5f5292d4ba1cf937531c63dba512fe63c"
     },
     {
+      "path": "content/pages.json",
+      "bytes": 10139,
+      "sha256": "22865baf7685eafe715b93c2739d5c0c08468952d783a7a8d07987ae6a6d57f0"
+    },
+    {
       "path": "docs/DPP_IMPLEMENTATION.md",
-      "bytes": 34118,
-      "sha256": "0d2b40879329cd2e1ea3c307a75693c2a7792d808bed43edeed665deeee7fb5d"
+      "bytes": 34560,
+      "sha256": "2ff8402122d7c6db481ac8eb72c3f11d285b6e5159ef024e56b5f379a8564283"
     },
     {
       "path": "docs/PROJECT_MILESTONES.md",
@@ -719,8 +724,8 @@
     },
     {
       "path": "docs/SITE_PROTOCOL.md",
-      "bytes": 12394,
-      "sha256": "1789c80599d59b8f1a7e0c9ca909048c54d3b416b1c6378700cd15acffe4b2cf"
+      "bytes": 13981,
+      "sha256": "ebf56f4cd0982e9324634f918b31c1b130af075e127576c85eb1d75e9757532e"
     },
     {
       "path": "docs/WORK_ITEMS.md",
@@ -988,9 +993,14 @@
       "sha256": "4cd934f025e9ab51e07cedc9e3ad3a2e65cf1411ad3ee2cd19d4c07a3233c623"
     },
     {
+      "path": "scripts/build_site_meta.py",
+      "bytes": 26571,
+      "sha256": "c336ae5beab8f3d0c791014e3f5123e1a13ca3e714322b7b00d7d5f8d187b7f3"
+    },
+    {
       "path": "scripts/build_social_cards.py",
-      "bytes": 10271,
-      "sha256": "ea427fd22e3f2ca63cd35db797518372d76f789831d4e643d369368234cf90c4"
+      "bytes": 9561,
+      "sha256": "796612271df9e12fa3d832ebb3af0bbba654b2105a14160ba97aa85ee557b886"
     },
     {
       "path": "scripts/dpp_measurement.py",
@@ -1004,8 +1014,8 @@
     },
     {
       "path": "scripts/site_checks.py",
-      "bytes": 26085,
-      "sha256": "307fc8fee8ef21c38b5914769adba8531df43995e9f2b32b81d2287ad0489a6c"
+      "bytes": 26173,
+      "sha256": "d95a69f201ff355877c02ffd849ad6c18fb4ae63ad14ec30416bb7d1c741fe44"
     },
     {
       "path": "scripts/site_live_audit.py",
@@ -1049,53 +1059,53 @@
     },
     {
       "path": "site/docs.css",
-      "bytes": 9056,
-      "sha256": "cf58b188e297b6279e6bb7c587caffd3ae788822336611e72ca49fd5c79e5407"
+      "bytes": 9905,
+      "sha256": "d8484edb34098f4d75a808f0a105eb693c1c9e5f602af9b4f6257e6ce5c7d6db"
     },
     {
       "path": "site/docs/architecture.html",
-      "bytes": 23445,
-      "sha256": "b47a08310275b19bfb1e30b943d70805ace39055e26ede7bd25d6a84741c9fba"
+      "bytes": 23657,
+      "sha256": "30fa6e1fd3d653a9e94bed4aa1629b4df287255f657875ff67f3f6a8eb44d3c1"
     },
     {
       "path": "site/docs/cli.html",
-      "bytes": 20195,
-      "sha256": "c184f34e1050363bf0d6e5f0cbcddc10e327f7385f8d126e49fc4174d5624ba6"
+      "bytes": 20364,
+      "sha256": "fde120e9517abae596235c6a3f7c758c0dd59fe9d65d6fdf43ac5bbd3ba021bb"
     },
     {
       "path": "site/docs/compatibility.html",
-      "bytes": 25707,
-      "sha256": "3feb384be6323beef13284ad8dbdd3f38ec06522eb2ae59f9c051d331775b142"
+      "bytes": 26064,
+      "sha256": "7241da2c92d63ad2720d17f449f912057d93daf072f3072bf9b22c8e640caf6f"
     },
     {
       "path": "site/docs/discovery.html",
-      "bytes": 24671,
-      "sha256": "054fe71b42ecbbe5754a73be0db1905e058780648193ebecaa265e286df3fdbb"
+      "bytes": 25069,
+      "sha256": "e4550f68b18b6ee53c8736d20325d30ee1a04f8a723689679be4718dd92eaf6a"
     },
     {
       "path": "site/docs/getting-started.html",
-      "bytes": 21907,
-      "sha256": "37e150b6ea811e769231a9a316043c553194a247ad3e4e1794ceeffec38d10fe"
+      "bytes": 22176,
+      "sha256": "d375327b2e17ba58b50c47f068d9e4cfab0bf63c4bd0ddbf488bfa156be918b6"
     },
     {
       "path": "site/docs/index.html",
-      "bytes": 20261,
-      "sha256": "b4910bca93922a80db205dbd9072efa728c340fa9116abcedc044630c40c0683"
+      "bytes": 20581,
+      "sha256": "78828d7e1e504ff33323328e123916f51b1e677673e9fd3f05cd3bef463dc22d"
     },
     {
       "path": "site/docs/privacy.html",
-      "bytes": 26330,
-      "sha256": "8d341e421975f307b72cddd94f72ff0c236d1cf5c9da1544cd5e491af1c35909"
+      "bytes": 26557,
+      "sha256": "7f0a2e0403591a07599d47d7a56b33a8679056cab0ff6e2fe41dea94e840d2bf"
     },
     {
       "path": "site/docs/research.html",
-      "bytes": 33494,
-      "sha256": "10aa7c946d03efb001e8764f663e73010e195858e834dbaeb175220ce534d632"
+      "bytes": 36695,
+      "sha256": "7c9bcf7edaff3583c2d284c8b193697bb99fb29ab42deaf153f956e975220d24"
     },
     {
       "path": "site/gpu-catalog.html",
-      "bytes": 28101,
-      "sha256": "54667dcbdff026010c1d73d73a59056961e5400c6642a5385dad70781b580d39"
+      "bytes": 28416,
+      "sha256": "e3d21d6716c179c9c250324b8b7206b164f2bd34d03c5e0dd34a213e8f717de0"
     },
     {
       "path": "site/home.css",
@@ -1109,8 +1119,48 @@
     },
     {
       "path": "site/index.html",
-      "bytes": 53749,
-      "sha256": "cb86cb078096ad423fd8606717d523ca8016fc5ea2dafd6c4500b2dd20d534fe"
+      "bytes": 54047,
+      "sha256": "836dd09e0f9501ae656c61a69050eb5eeb68b4d00b79e902cacb374878ebf24a"
+    },
+    {
+      "path": "site/research/attribution-pilot.html",
+      "bytes": 26999,
+      "sha256": "4754b8349101cd9e0a2f8fc53662532c002ff9900b73045db4ae7e28f0234a34"
+    },
+    {
+      "path": "site/research/cuda-12-9-to-13-0-changes.html",
+      "bytes": 27273,
+      "sha256": "721cf9ce36c774e1c4f45201e9c6c38d721221f72b1c512a5821f384a178d6d5"
+    },
+    {
+      "path": "site/research/implementation-gap-audit-2026-11.html",
+      "bytes": 30210,
+      "sha256": "87a3f9e8d048c26d5c0425e4b3a0640a2c9661db4f75a9ae0a383c0458117132"
+    },
+    {
+      "path": "site/research/llvm-nvptx.html",
+      "bytes": 19761,
+      "sha256": "29e2202a0296f22bed503ad3b6d77e49e10e96b8b30c6e263fb8d08b8131d6ae"
+    },
+    {
+      "path": "site/research/maxwell-baseline.html",
+      "bytes": 20897,
+      "sha256": "a5e78ce6ff075c95e1b72a8192f6e157562e1dcd1d5a5f96a49ee5d2b78598bb"
+    },
+    {
+      "path": "site/research/pytorch-cu130-maxwell.html",
+      "bytes": 34898,
+      "sha256": "b1cdb032ebef65b8f48c41dcc214040121b571bc7381e08d07c291d2b24f6efe"
+    },
+    {
+      "path": "site/research/research-program.html",
+      "bytes": 25127,
+      "sha256": "e4bd7012ea9d40fdc380c686f9a9b746d7ce4678ad86672da7f91e46e1aa61a2"
+    },
+    {
+      "path": "site/research/runtime-version-facade.html",
+      "bytes": 20211,
+      "sha256": "7999ac67e151088b546fbc1069f60e8d9a33268378f3e6b931785f2de96a27a6"
     },
     {
       "path": "site/robots.txt",
@@ -1214,13 +1264,18 @@
     },
     {
       "path": "tests/test_site_checks.py",
-      "bytes": 14863,
-      "sha256": "59094182877b9d17ec0ff13d7391d864c53b78cc39d397439654f57ff0bc2164"
+      "bytes": 14684,
+      "sha256": "ea9838a5abef4fd6496430bf95cf1226330e6a5da8eb1b997e90282c5e5bbc8b"
     },
     {
       "path": "tests/test_site_live_audit.py",
       "bytes": 2431,
       "sha256": "6a31be868873c2c061623933ca8226cc00aa11b5758e776ad184462d918a66e6"
+    },
+    {
+      "path": "tests/test_site_meta.py",
+      "bytes": 3100,
+      "sha256": "65e5f63c6da44218a75ae46c97957cfeab621a951120c76668c9888eb9e59c3b"
     }
   ]
 }

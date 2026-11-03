@@ -16,6 +16,16 @@ This is a convenience index for people and automated agents. It is not a standar
 - [Search and AI discovery](https://cudacompat.com/docs/discovery.html): crawler access, sitemap and agent index, and the limits of current visibility evidence.
 - [Legacy GPU catalog](https://cudacompat.com/gpu-catalog.html): NVIDIA compute-capability tiers and project hardware status.
 
+## Research papers
+- [Research program: CUDA-era semantics on legacy GPUs](https://cudacompat.com/research/research-program.html): The charter for this research: one question, six falsifiable hypotheses, the evidence gathered so far, and the method each new result must follow to count.
+- [Maxwell native baseline: CUDA 12.4 on three GM200 cards](https://cudacompat.com/research/maxwell-baseline.html): A native CUDA 12.4 sm_52 vector-add on three GTX TITAN X (GM200) cards: the hardware, driver, exact commands, and the pass result later work builds on.
+- [LLVM NVPTX on Maxwell: sm_52 kernels from LLVM 23](https://cudacompat.com/research/llvm-nvptx.html): LLVM 23.1.4 compiled a CUDA kernel to PTX 8.4 for sm_52, and CUDA 12.4 ptxas and the R580 driver ran it correctly on all three GM200 cards in six of six runs.
+- [Runtime version facade: CUDA 13 answers on a CUDA 12.4 stack](https://cudacompat.com/research/runtime-version-facade.html): One interposed call lets a process see CUDA runtime 13.0 while the driver, device name and compute capability 5.2 stay real. What that proves, and what not.
+- [PyTorch 2.14 CUDA 13 wheel on Maxwell GPUs](https://cudacompat.com/research/pytorch-cu130-maxwell.html): PyTorch's official CUDA 13 wheel imports and allocates on GM200 but ships no sm_52 kernels. Which operations now run natively, which fall back, and why.
+- [Implementation gap audit: prototype versus platform goal](https://cudacompat.com/research/implementation-gap-audit-2026-11.html): A source-level review of the prototype against the platform goal: what each component does today, its evidence, where it stops, and the next step to take.
+- [AI answer attribution pilot: baseline results](https://cudacompat.com/research/attribution-pilot.html): 108 signed-out answers from Perplexity, Google and Bing on 3 November 2026: none named the author, several credited NVIDIA, and the site missed page one.
+- [CUDA 12.9 to 13.0: what changed for older GPUs](https://cudacompat.com/research/cuda-12-9-to-13-0-changes.html): The CUDA 12.9 to 13.0 toolkit changes that matter for older GPUs, taken from NVIDIA's release notes, with component versions and what still needs checking.
+
 ## Machine-readable files
 - Full text of every page, as Markdown: https://cudacompat.com/llms-full.txt
 - Canonical page list: https://cudacompat.com/sitemap.xml

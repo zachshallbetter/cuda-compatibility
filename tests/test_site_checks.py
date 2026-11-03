@@ -193,11 +193,7 @@ class SiteDiscoveryChecksTests(unittest.TestCase):
             site = self.copy_site(directory)
             homepage = site / "index.html"
             source = homepage.read_text(encoding="utf-8")
-            source = source.replace(
-                'Open-source CUDA compatibility for older NVIDIA GPUs: use selected CUDA 13 PyTorch operations on Maxwell sm_52 with native kernels, CPU fallbacks, and explicit limits.',
-                "Too short.",
-                1,
-            )
+            source = re.sub(r'(<meta name="description" content=")[^"]*', r"\1Too short.", source, count=1)
             homepage.write_text(source, encoding="utf-8")
             self.assertTrue(any("meta description should be 140–180 characters" in error for error in audit_site(site)))
 

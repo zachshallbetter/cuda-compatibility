@@ -1,0 +1,157 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="only light"><meta name="theme-color" content="#F2F2EE"><meta name="description" content="The charter for this research: one question, six falsifiable hypotheses, the evidence gathered so far, and the method each new result must follow to count.">
+<link rel="icon" href="../favicon.ico" sizes="32x32">
+<link rel="icon" type="image/svg+xml" href="../favicon.svg">
+<link rel="apple-touch-icon" href="../apple-touch-icon.png">
+<link rel="mask-icon" href="../mask-icon.svg" color="#000000">
+<link rel="manifest" href="../manifest.webmanifest">
+<link rel="alternate" type="application/atom+xml" title="CUDA Compatibility sheets" href="../feed.xml">
+<link rel="next" href="maxwell-baseline.html">
+<link rel="author" href="../humans.txt">
+<link rel="license" href="https://github.com/zachshallbetter/cuda-compatibility/blob/main/LICENSE-MIT">
+<meta name="application-name" content="CUDA Compatibility">
+<meta name="apple-mobile-web-app-title" content="CUDA Compat">
+<meta name="format-detection" content="telephone=no">
+<title>Research program for CUDA Compatibility | CUDA Compatibility</title>
+<link rel="canonical" href="https://cudacompat.com/research/research-program.html">
+<meta name="author" content="Zach Shallbetter">
+<meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1">
+<meta name="citation_title" content="Official research program: CUDA Compatibility">
+<meta name="citation_author" content="Shallbetter, Zach">
+<meta name="citation_publication_date" content="2026/11/01">
+<meta name="citation_online_date" content="2026/11/03">
+<meta name="citation_publisher" content="CUDA Compatibility">
+<meta name="citation_public_url" content="https://cudacompat.com/research/research-program.html">
+<meta property="og:type" content="article">
+<meta property="article:published_time" content="2026-11-01T10:41:01-08:00">
+<meta property="article:modified_time" content="2026-11-03T03:57:44-08:00">
+<meta property="article:author" content="https://zachshallbetter.com/">
+<meta property="article:section" content="Research">
+<meta property="og:site_name" content="CUDA Compatibility">
+<meta property="og:url" content="https://cudacompat.com/research/research-program.html">
+<meta property="og:locale" content="en_US">
+<meta property="og:title" content="Research program: CUDA-era semantics on legacy GPUs">
+<meta property="og:description" content="The charter for this research: one question, six falsifiable hypotheses, the evidence gathered so far, and the method each new result must follow to count.">
+<meta property="og:image" content="https://cudacompat.com/assets/social/research-program.png">
+<meta property="og:image:type" content="image/png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Share card: Research program: CUDA-era semantics on legacy GPUs. Research paper, Paper 01 of 08, CUDA Compatibility, cudacompat.com, beside a wireframe of a GM200 graphics card">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Research program: CUDA-era semantics on legacy GPUs">
+<meta name="twitter:description" content="The charter for this research: one question, six falsifiable hypotheses, the evidence gathered so far, and the method each new result must follow to count.">
+<meta name="twitter:image" content="https://cudacompat.com/assets/social/research-program.png">
+<meta name="twitter:image:alt" content="Share card: Research program: CUDA-era semantics on legacy GPUs. Research paper, Paper 01 of 08, CUDA Compatibility, cudacompat.com, beside a wireframe of a GM200 graphics card">
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"WebSite","@id":"https://cudacompat.com/#website","url":"https://cudacompat.com/","name":"CUDA Compatibility","alternateName":"cudacompat.com","inLanguage":"en","publisher":{"@id":"https://cudacompat.com/#author"},"copyrightHolder":{"@id":"https://cudacompat.com/#author"},"license":"https://github.com/zachshallbetter/cuda-compatibility/blob/main/LICENSE-MIT"},{"@type":"Person","@id":"https://cudacompat.com/#author","name":"Zach Shallbetter","url":"https://zachshallbetter.com/","sameAs":["https://github.com/zachshallbetter"],"jobTitle":"Systems engineer and independent researcher","description":"Zach Shallbetter is a systems engineer and independent researcher based in Spokane, Washington. His work spans applied AI, computer vision, embedded systems, and developer tooling. Through Snack Studio, he builds software that connects modern workflows with existing hardware, with an emphasis on compatibility, performance, and keeping useful systems operational.","homeLocation":{"@type":"Place","name":"Spokane, Washington"},"worksFor":{"@id":"https://cudacompat.com/#org"}},{"@type":"Organization","@id":"https://cudacompat.com/#org","name":"Snack Studio","url":"https://snackstud.io/","founder":{"@id":"https://cudacompat.com/#author"}},{"@type":"SoftwareApplication","@id":"https://cudacompat.com/#software","name":"CUDA Compatibility","url":"https://cudacompat.com/"},{"@type":"WebPage","@id":"https://cudacompat.com/research/research-program.html","url":"https://cudacompat.com/research/research-program.html","name":"Research program: CUDA-era semantics on legacy GPUs","description":"The charter for this research: one question, six falsifiable hypotheses, the evidence gathered so far, and the method each new result must follow to count.","inLanguage":"en","isPartOf":{"@id":"https://cudacompat.com/#website"},"breadcrumb":{"@id":"https://cudacompat.com/research/research-program.html#breadcrumb"},"primaryImageOfPage":{"@id":"https://cudacompat.com/assets/social/research-program.png"},"mainEntity":{"@id":"https://cudacompat.com/research/research-program.html#article"},"datePublished":"2026-11-01T10:41:01-08:00","dateModified":"2026-11-03T03:57:44-08:00"},{"@type":"ImageObject","@id":"https://cudacompat.com/assets/social/research-program.png","url":"https://cudacompat.com/assets/social/research-program.png","contentUrl":"https://cudacompat.com/assets/social/research-program.png","width":1200,"height":630,"caption":"Share card: Research program: CUDA-era semantics on legacy GPUs. Research paper, Paper 01 of 08, CUDA Compatibility, cudacompat.com, beside a wireframe of a GM200 graphics card","encodingFormat":"image/png"},{"@type":"ScholarlyArticle","@id":"https://cudacompat.com/research/research-program.html#article","headline":"Official research program: CUDA Compatibility","name":"Research program: CUDA-era semantics on legacy GPUs","abstract":"The charter for this research: one question, six falsifiable hypotheses, the evidence gathered so far, and the method each new result must follow to count.","description":"The charter for this research: one question, six falsifiable hypotheses, the evidence gathered so far, and the method each new result must follow to count.","url":"https://cudacompat.com/research/research-program.html","mainEntityOfPage":{"@id":"https://cudacompat.com/research/research-program.html"},"image":{"@id":"https://cudacompat.com/assets/social/research-program.png"},"inLanguage":"en","datePublished":"2026-11-01T10:41:01-08:00","dateModified":"2026-11-03T03:57:44-08:00","author":{"@id":"https://cudacompat.com/#author"},"publisher":{"@id":"https://cudacompat.com/#author"},"copyrightHolder":{"@id":"https://cudacompat.com/#author"},"copyrightYear":2026,"license":"https://github.com/zachshallbetter/cuda-compatibility/blob/main/LICENSE-MIT","isAccessibleForFree":true,"isPartOf":{"@id":"https://cudacompat.com/#website"},"about":{"@id":"https://cudacompat.com/#software"},"isBasedOn":"https://github.com/zachshallbetter/cuda-compatibility/blob/main/docs/research/RESEARCH_PROGRAM.md","articleSection":"Research","position":1,"creativeWorkStatus":"Published","genre":"Research record"},{"@type":"BreadcrumbList","@id":"https://cudacompat.com/research/research-program.html#breadcrumb","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://cudacompat.com/"},{"@type":"ListItem","position":2,"name":"Research and evidence","item":"https://cudacompat.com/docs/research.html"},{"@type":"ListItem","position":3,"name":"Research program: CUDA-era semantics on legacy GPUs","item":"https://cudacompat.com/research/research-program.html"}]}]}</script>
+<link rel="stylesheet" href="../styles.css">
+<link rel="stylesheet" href="../docs.css">
+</head>
+<body>
+<div style="display:flex;flex-direction:column;min-height:100%">
+<a class="skip-link" href="#main">Skip to content</a>
+<header style="border-bottom:1px solid currentColor">
+<svg class="reg l" aria-hidden="true" viewBox="0 0 16 16"><circle cx="8" cy="8" r="5" fill="none" stroke="currentColor" stroke-width="1.2"/><path d="M8 0v16M0 8h16" stroke="currentColor" stroke-width="1.2"/></svg><svg class="reg r" aria-hidden="true" viewBox="0 0 16 16"><circle cx="8" cy="8" r="5" fill="none" stroke="currentColor" stroke-width="1.2"/><path d="M8 0v16M0 8h16" stroke="currentColor" stroke-width="1.2"/></svg>
+<div class="wrap" style="padding-top:18px;padding-bottom:18px;display:flex;justify-content:space-between;align-items:center;gap:24px;flex-wrap:wrap">
+<a href="../index.html" style="text-decoration:none;color:inherit;font-stretch:110%;font-weight:800;font-size:17px;letter-spacing:-0.02em;display:inline-flex;align-items:center;gap:12px"><svg aria-hidden="true" width="26" height="26" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="3"><rect x="5" y="5" width="22" height="22"></rect><rect x="12" y="12" width="8" height="8" fill="currentColor" stroke="none"></rect></svg>CUDA Compatibility</a>
+<div style="display:flex;align-items:center;gap:32px;flex-wrap:wrap">
+<nav class="nav" aria-label="Main navigation">
+<a href="../index.html#works">What works</a>
+<a href="../index.html#stack">How it works</a>
+<a href="../index.html#hardware">Hardware</a>
+<a href="../index.html#install">Install</a>
+<a href="../docs/index.html" aria-current="true" style="color:var(--link)">Docs</a>
+<a href="https://github.com/zachshallbetter/cuda-compatibility/releases">Releases</a>
+</nav>
+<a class="repo" href="https://github.com/zachshallbetter/cuda-compatibility">Repository<svg aria-hidden="true" width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 10 10 2M4 2h6v6"></path></svg></a>
+</div>
+</div>
+</header>
+
+<main id="main">
+<article id="article" aria-labelledby="title">
+<header class="band">
+<div class="wrap" style="padding-top:56px;padding-bottom:56px;display:flex;flex-direction:column;gap:18px">
+<nav aria-label="Breadcrumb" class="crumbs"><ol><li><a href="../index.html">Home</a></li><li><a href="../docs/research.html">Research and evidence</a></li><li aria-current="page">Paper 01 / 08</li></ol></nav>
+<p class="sheet" style="margin:0">Research paper</p>
+<h1 id="title" class="disp" style="font-size:clamp(36px,4.2vw,58px);max-width:22ch">Official research program: CUDA Compatibility</h1>
+<p class="excerpt" style="margin:0;font-size:20px;line-height:1.45;max-width:60ch;font-weight:500">The charter for this research: one question, six falsifiable hypotheses, the evidence gathered so far, and the method each new result must follow to count.</p>
+<p class="byline">By <a rel="author" href="https://zachshallbetter.com/">Zach Shallbetter</a> · Paper 01 of 08 · First recorded <time datetime="2026-11-01">1 November 2026</time> · Updated <time datetime="2026-11-03">3 November 2026</time></p>
+</div>
+</header>
+<div class="wrap body" style="padding-top:56px;padding-bottom:96px">
+<nav aria-label="Documentation" style="display:flex;flex-direction:column;gap:12px">
+<p class="sheet" style="margin:0">Sheets</p>
+<ul class="side">
+<li><a href="../docs/index.html"><i>02</i>Documentation home</a></li>
+<li><a href="../docs/getting-started.html"><i>03</i>Install and run</a></li>
+<li><a href="../docs/compatibility.html"><i>04</i>Support matrix</a></li>
+<li><a href="../docs/architecture.html"><i>05</i>How it works</a></li>
+<li><a href="../docs/cli.html"><i>06</i>Command line</a></li>
+<li><a class="current" aria-current="true" href="../docs/research.html"><i>07</i>Research and evidence</a></li>
+<li><a href="../gpu-catalog.html"><i>08</i>Legacy GPU catalog</a></li>
+<li><a href="../docs/discovery.html"><i>09</i>Search and AI discovery</a></li>
+<li><a href="../docs/privacy.html"><i>10</i>Privacy and measurement</a></li>
+</ul>
+<p class="sheet" style="margin:12px 0 0">Papers</p>
+<ul class="side" style="border-top-width:1px"><li><a class="current" aria-current="page" href="research-program.html"><i>01</i>Research program: CUDA-era semantics on legacy GPUs</a></li><li><a href="maxwell-baseline.html"><i>02</i>Maxwell native baseline: CUDA 12.4 on three GM200 cards</a></li><li><a href="llvm-nvptx.html"><i>03</i>LLVM NVPTX on Maxwell: sm_52 kernels from LLVM 23</a></li><li><a href="runtime-version-facade.html"><i>04</i>Runtime version facade: CUDA 13 answers on a CUDA 12.4 stack</a></li><li><a href="pytorch-cu130-maxwell.html"><i>05</i>PyTorch 2.14 CUDA 13 wheel on Maxwell GPUs</a></li><li><a href="implementation-gap-audit-2026-11.html"><i>06</i>Implementation gap audit: prototype versus platform goal</a></li><li><a href="attribution-pilot.html"><i>07</i>AI answer attribution pilot: baseline results</a></li><li><a href="cuda-12-9-to-13-0-changes.html"><i>08</i>CUDA 12.9 to 13.0: what changed for older GPUs</a></li></ul>
+<p class="sheet" style="margin:12px 0 0">On this paper</p>
+<ul class="side" style="border-top-width:1px"><li><a href="#research-question"><i>A</i>Research question</a></li><li><a href="#hypotheses-and-falsification"><i>B</i>Hypotheses and falsification</a></li><li><a href="#existing-evidence-not-newly-executed-here"><i>C</i>Existing evidence (not newly executed here)</a></li><li><a href="#method-and-reproducibility-requirements"><i>D</i>Method and reproducibility requirements</a></li><li><a href="#workstreams"><i>E</i>Workstreams</a></li><li><a href="#research-outputs"><i>F</i>Research outputs</a></li><li><a href="#publication-gate"><i>G</i>Publication gate</a></li></ul>
+</nav>
+<div class="prose" style="display:flex;flex-direction:column;gap:20px;min-width:0">
+<p><strong>Status:</strong> canonical research charter and publication index. <strong>Established:</strong> 2026-11-01. This is project-maintained research, not an NVIDIA-endorsed or peer-reviewed publication.</p>
+<h2 id="research-question">Research question</h2>
+<p>To what extent can modern CUDA-era computational semantics be preserved on GPUs whose architecture is no longer targeted by contemporary NVIDIA toolchains and libraries, using verifiable adapters, architecture-specific kernels and explicit capability negotiation?</p>
+<h2 id="hypotheses-and-falsification">Hypotheses and falsification</h2>
+<div class="scroll" role="region" aria-label="Hypotheses and falsification (scrolls sideways)" tabindex="0" style="overflow-x:auto"><table aria-label="Hypotheses and falsification"><thead><tr><th scope="col">ID</th><th scope="col">Hypothesis</th><th scope="col">Experiment</th><th scope="col">Failure criterion</th></tr></thead><tbody><tr><td>H1</td><td>Selected CUDA 13-era PyTorch operations can execute correctly on GM200 without application source changes</td><td>pinned wheel, scoped launcher, native PTX, CPU oracle</td><td>output mismatch, unreported fallback, no device execution</td></tr><tr><td>H2</td><td>A reusable Maxwell primitive library reduces per-application adapter work</td><td>BLAS/image/data/AI operator families</td><td>implementation remains framework-specific or correctness fails</td></tr><tr><td>H3</td><td>Modern-facing library adapters can preserve bounded semantics using legacy implementations</td><td>cuBLAS/FFT/NPP compatibility probes</td><td>ABI, stream, precision or resource contract mismatch</td></tr><tr><td>H4</td><td>Preflight + runtime evidence predicts support more reliably than toolkit-version gates</td><td>workload inspection vs measured traces</td><td>false supported status on mandatory operation</td></tr><tr><td>H5</td><td>Architecture-neutral operation contracts can be implemented on Pascal and beyond</td><td>second physical GPU validation</td><td>semantic contract requires Maxwell-only assumptions</td></tr><tr><td>H6</td><td>GPU-native paths offer meaningful benefit over explicit CPU fallback</td><td>cold/warm, transfer, kernel and end-to-end benchmarks</td><td>transfer/dispatch cost dominates or fails workload objective</td></tr></tbody></table></div>
+<h2 id="existing-evidence-not-newly-executed-here">Existing evidence (not newly executed here)</h2>
+<div class="scroll" role="region" aria-label="Existing evidence (not newly executed here) (scrolls sideways)" tabindex="0" style="overflow-x:auto"><table aria-label="Existing evidence (not newly executed here)"><thead><tr><th scope="col">Evidence</th><th scope="col">Observation</th><th scope="col">Limit</th></tr></thead><tbody><tr><td><a href="maxwell-baseline.html">Maxwell baseline</a></td><td>native CUDA 12.4 vector-add on three GM200 devices</td><td>not CUDA 12.9 or 13 kernel compiler support</td></tr><tr><td><a href="llvm-nvptx.html">LLVM NVPTX experiment</a></td><td>LLVM 23.1.4 PTX targeting sm_52, assembly/JIT and per-card run</td><td>bounded kernel, not universal compilation</td></tr><tr><td><a href="pytorch-cu130-maxwell.html">PyTorch CUDA 13 on Maxwell</a></td><td>official 2.14.0+cu130 wheel, selected native operations, bounded fallbacks, small model/training probes</td><td>no general cuBLAS/cuDNN or arbitrary app support</td></tr><tr><td><a href="implementation-gap-audit-2026-11.html">Implementation gap audit</a></td><td>source-level review of CLI, launcher, bridge, dispatch and evidence</td><td>no new hardware execution</td></tr><tr><td><a href="cuda-12-9-to-13-0-changes.html">CUDA release comparison</a></td><td>release-note-based version/change register</td><td>header, symbol and binary diff still pending</td></tr></tbody></table></div>
+<h2 id="method-and-reproducibility-requirements">Method and reproducibility requirements</h2>
+<ol class="list"><li><strong>Provenance:</strong> exact toolkit and component versions, wheel hashes, driver, GPU UUID, SM, OS, compiler, library paths and source commit.</li><li><strong>Classification:</strong> documented (primary-source), observed (raw output), inferred (reasoned), proposed (untested), unsupported (tested negative).</li><li><strong>Controls:</strong> native legacy GPU kernel; stock modern application failure; CPU reference; adapted execution; negative controls.</li><li><strong>Correctness:</strong> shape/stride/dtype/aliasing/stream semantics, numerical tolerances, NaN/Inf, gradients where claimed, seeded cases and failure minimization.</li><li><strong>Performance:</strong> separate compile/cold-start, warm execution, H2D/D2H, kernel time, end-to-end time, memory and multi-GPU topology.</li><li><strong>Evidence integrity:</strong> preserve logs/hashes, link exact commands, redact host secrets, never redistribute NVIDIA binaries in violation of licenses.</li><li><strong>Claim scope:</strong> no universal CUDA 13 compatibility, native BF16/tensor cores, contiguous pooled VRAM, or NVIDIA affiliation.</li></ol>
+<pre aria-label="mermaid code"><code>flowchart LR
+    Question[Research question] --&gt; Source[Versioned source facts]
+    Source --&gt; Artifact[Hashed headers, binaries, or runtime inputs]
+    Artifact --&gt; Probe[Reproducible probe]
+    Probe --&gt; Result{Outcome}
+    Result --&gt;|Correctness passes| Supported[Bounded supported result]
+    Result --&gt;|Failure reproduces| Gap[Classified blocker]
+    Result --&gt;|Insufficient evidence| Unknown[Untested or inconclusive]
+    Supported --&gt; Report[Publish scope, provenance, and limits]
+    Gap --&gt; Report
+    Unknown --&gt; Report</code></pre>
+<h2 id="workstreams">Workstreams</h2>
+<div class="scroll" role="region" aria-label="Workstreams (scrolls sideways)" tabindex="0" style="overflow-x:auto"><table aria-label="Workstreams"><thead><tr><th scope="col">Workstream</th><th scope="col">Questions</th><th scope="col">Tickets</th></tr></thead><tbody><tr><td>W1 Release/API/ABI archaeology</td><td>What changed between 12.9 and 13.0?</td><td>#32, #37</td></tr><tr><td>W2 Compiler and binary execution</td><td>Which representations can be recompiled/lowered for sm_52?</td><td>#9, #29–#31</td></tr><tr><td>W3 Library compatibility</td><td>Which cuBLAS/cuFFT/cuDNN/NPP contracts can be adapted?</td><td>#33, #47</td></tr><tr><td>W4 Computational primitives</td><td>Which operations are reusable across domains?</td><td>#10, #27, #28, #34</td></tr><tr><td>W5 Instrumentation and validation</td><td>How can we prove correctness, GPU execution and cost?</td><td>#13, #38–#41</td></tr><tr><td>W6 Architecture portability</td><td>Does the model generalize to Pascal and beyond?</td><td>#7, #14–#17, #35</td></tr><tr><td>W7 Product and upstream adoption</td><td>Can ordinary users install, diagnose and run safely?</td><td>#42–#46</td></tr></tbody></table></div>
+<h2 id="research-outputs">Research outputs</h2>
+<ul class="list"><li><strong>Research notes:</strong> <code>docs/research/</code> with date, method, environment, claims and limitations.</li><li><strong>Raw evidence:</strong> <code>.agents/records/evidence.jsonl</code>, <code>.agents/records/negative-results.jsonl</code> and reproducible scripts.</li><li><strong>Specifications:</strong> <code>docs/architecture/</code>, <code>docs/compatibility/</code> and <code>docs/product/</code>.</li><li><strong>Publication candidates:</strong> research papers, benchmark datasets, technical reports and upstream issues/PRs only after source and evidence review.</li><li><strong>Tracking:</strong> existing GitHub project board #44 and milestone plan in <a href="https://github.com/zachshallbetter/cuda-compatibility/blob/main/docs/PROJECT_MILESTONES.md">PROJECT_MILESTONES.md</a>. This file does not assert GitHub milestone objects exist.</li></ul>
+<h2 id="publication-gate">Publication gate</h2>
+<p>A research result is publication-ready only when the exact commit, artifacts, independent rerun instructions, baseline, numerical/behavioral tests, limitations and reviewer sign-off are available. Distinguish original project findings from NVIDIA documentation and independent upstream work.</p>
+<aside class="note" aria-label="Source and citation"><p style="margin:0;font-size:15px">Source record: <a href="https://github.com/zachshallbetter/cuda-compatibility/blob/main/docs/research/RESEARCH_PROGRAM.md">docs/research/RESEARCH_PROGRAM.md</a>. Cite as: Shallbetter, Z. (2026). Official research program: CUDA Compatibility. CUDA Compatibility. https://cudacompat.com/research/research-program.html. Project-maintained research, not peer reviewed or endorsed by NVIDIA.</p></aside>
+<nav class="pager" aria-label="Papers, previous and next"><span></span><a rel="next" href="maxwell-baseline.html"><span class="sheet">Next · paper 02</span><span class="pager-title">Maxwell native baseline: CUDA 12.4 on three GM200 cards</span></a></nav>
+</div>
+</div>
+</article>
+</main>
+
+<footer class="foot">
+<div class="wrap" style="padding-top:40px;padding-bottom:40px;display:flex;flex-direction:column;gap:20px;font-size:15px">
+<div class="tb" role="group" aria-label="Title block">
+<div><span>Project</span><span>CUDA Compatibility</span></div>
+<div><span>Drawn by</span><span><a href="https://zachshallbetter.com/">Zach Shallbetter</a></span></div>
+<div><span>Project version</span><span>0.1.0</span></div>
+<div><span>License</span><span>MIT or Apache-2.0</span></div>
+<div><span>Status</span><span>Active research</span></div>
+<div><span>Paper</span><span>01 / 08, Research program: CUDA-era semantics on legacy GPUs</span></div>
+<div><span>Correct this paper</span><span><a href="https://github.com/zachshallbetter/cuda-compatibility/issues/new?title=Correction%3A%20paper%2001%20research-program">Open an issue naming the record</a></span></div>
+</div>
+<table class="rev" aria-label="Revision table"><thead><tr><th scope="col">Rev</th><th scope="col">Date</th><th scope="col">Change</th><th scope="col">By</th></tr></thead><tbody><tr><td>A</td><td>2026-11-01</td><td>First recorded</td><td>ZS</td></tr><tr><td>B</td><td>2026-11-03</td><td>Latest revision of the source record</td><td>ZS</td></tr></tbody></table>
+<div style="display:flex;justify-content:space-between;gap:24px;flex-wrap:wrap"><span>Independent research, not affiliated with NVIDIA. Hardware identity stays real.</span><div style="display:flex;gap:20px;flex-wrap:wrap"><a href="https://github.com/zachshallbetter">GitHub</a><a href="https://linkedin.com/in/zachshallbetter">LinkedIn</a><a href="../docs/privacy.html">Privacy and analytics</a></div></div>
+</div>
+</footer>
+
+</div>
+<script src="../site.js" defer></script>
+<script src="../analytics.js" defer></script>
+</body>
+</html>
