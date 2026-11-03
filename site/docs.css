@@ -103,4 +103,4 @@ header{position:relative}
 @media (max-width:480px){.wrap{padding-left:16px;padding-right:16px}}
 @media (max-width:860px){p code,li code,td code,span code{white-space:normal;overflow-wrap:anywhere}}
 table.rev{min-width:0}
-@media (max-width:480px){.sheet{white-space:normal}.band h1.disp{font-size:34px!important;hyphens:auto}}
+@media (max-width:480px){.sheet{white-space:normal}.band h1.disp{font-size:32px!important}}

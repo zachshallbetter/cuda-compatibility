@@ -48,7 +48,8 @@
       for (let k = start; k < parts[part]; k++) isFan[k] = 1;
     }
     const ctx = canvas.getContext("2d");
-    const yaw0 = 0.62, pitch0 = -0.5, f = 3.2, buildMs = 14000, ox = 0.67, oy = 0.44, buckets = 7;
+    const yaw0 = 0.62, pitch0 = -0.5, f = 3.2, buildMs = 14000, buckets = 7;
+    let ox = 0.67, oy = 0.44;
     const P = new Float32Array(n * 6);
     const tmp = [0, 0, 0];
     const labels = [
@@ -87,7 +88,11 @@
       }
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
       ctx.clearRect(0, 0, w, h);
-      const k = Math.min(w * 2.0, h * 3.3) * 0.95;
+      // Narrow screens stack the hero text, so the card sits centred in the space below the buttons.
+      const narrow = w < 860;
+      ox = narrow ? 0.5 : 0.67;
+      oy = narrow ? 0.6 : 0.44;
+      const k = narrow ? w * 1.6 : Math.min(w * 2.0, h * 3.3) * 0.95;
       for (let i = 0; i < count; i++) {
         const b = i * 6;
         let x1 = e[b] / q, y1 = e[b + 1] / q, z1 = e[b + 2] / q, x2 = e[b + 3] / q, y2 = e[b + 4] / q, z2 = e[b + 5] / q;

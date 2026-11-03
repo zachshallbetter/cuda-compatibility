@@ -6,7 +6,7 @@
   "selectedPaths": [],
   "sourceSelection": {
     "includedCount": 208,
-    "includedBytes": 1818973,
+    "includedBytes": 1820442,
     "excludedCounts": {
       "extension": 47,
       "generated-or-transient-file": 2
@@ -18,14 +18,14 @@
     "repositories": [
       {
         "path": ".",
-        "commit": "1aedbe594f67da4f159f20ca68c0b7cb4d2aba9e",
-        "branch": "chore/bootstrap-0.7.3",
+        "commit": "6ed302e96538b96d26cb2995d41651ad012cb56a",
+        "branch": null,
         "dirty": true,
         "remote": "https://github.com/zachshallbetter/cuda-compatibility.git"
       }
     ]
   },
-  "aggregateSourceDigest": "6ead8aa10977e9f92665da2bfb9121e35b0c009da317887eba78ea65afa85984",
+  "aggregateSourceDigest": "59ef76906e7305058fa92622b55887b6e59deeeed8c088fb493df23a0f019a9b",
   "sources": [
     {
       "path": ".agents/acp/README.md",
@@ -914,63 +914,63 @@
     },
     {
       "path": "site/docs.css",
-      "bytes": 9201,
-      "sha256": "00d01f0ef87658184c0eba9b18319f238b658447b4ac264106ba5fbbe4878b44"
+      "bytes": 9188,
+      "sha256": "5dbc779d1ccc90a91e5ab41d87c8d23d72e9b1de821c80eb3cecb0d2ed0cfe62"
     },
     {
       "path": "site/docs/architecture.html",
-      "bytes": 19384,
-      "sha256": "4330b6cc0a0d8acd0e21b5bfb107be61282582abe8dc487878acad97b34aa5c8"
+      "bytes": 19252,
+      "sha256": "c86d08a7a8d247bc803eb1cb3f778d1ee439d02a1f7f65cb3f19de688bafe338"
     },
     {
       "path": "site/docs/cli.html",
-      "bytes": 15992,
-      "sha256": "b3f782efc7db2739ed92c62a7451548e667dbf18e932597721d743b22678c27b"
+      "bytes": 15862,
+      "sha256": "a5a31b499c781ac0147e5c979919ee7ee73fcf9dc4d6b2e02f0e97982f652bb6"
     },
     {
       "path": "site/docs/compatibility.html",
-      "bytes": 21163,
-      "sha256": "a77f1777b5a592bfd06a67fd46d0b3d1d9cf82695e2cca171d3a3c146d4198fd"
+      "bytes": 21033,
+      "sha256": "dee03ad025034fa98d94793760da6454ce75286813ac0468a85275274322ed0c"
     },
     {
       "path": "site/docs/discovery.html",
-      "bytes": 20300,
-      "sha256": "7b08c30f20a5f83d7f54c56430a7f67dbb0851dbbc5b51a02655619180d1d6ef"
+      "bytes": 20173,
+      "sha256": "166243e7ef42288552df357e40c93b85faf0ba0c45e00d55ccd0871204f60d06"
     },
     {
       "path": "site/docs/getting-started.html",
-      "bytes": 17296,
-      "sha256": "723fdb1e11717717467f1bd7f716c7ce71c6304f59eea84653f6377a9dd84c88"
+      "bytes": 17162,
+      "sha256": "c5b95a29249c60d952b8808d364315d20ac945d9a6a6258f2ae86a1ad07059dc"
     },
     {
       "path": "site/docs/index.html",
-      "bytes": 16508,
-      "sha256": "79238bc052d71ae8f306c4d7d27dbba9ceca8b6a67317331e5c9d1cfc9ca403f"
+      "bytes": 16378,
+      "sha256": "70846f2fadb67e2c3f1ffd04d0a14f2219deac3a21af26fb1401b2ec6100b10f"
     },
     {
       "path": "site/docs/privacy.html",
-      "bytes": 22076,
-      "sha256": "9757b0d23b012872c7ca350c6e4312a3563a253ecd51c75a47c20f3a0798f975"
+      "bytes": 21942,
+      "sha256": "82a23be2a0b4aaa7dae023eab8fc63b32dabda97121e87f974b6c49564e0b6d2"
     },
     {
       "path": "site/docs/research.html",
-      "bytes": 29577,
-      "sha256": "94fe2010c25b5ba13aad9f57eaabe954562df84998194c7669b859198bde6c42"
+      "bytes": 29363,
+      "sha256": "27adbb6c53e9e0b02aa79f3972fdbaf84ecf8caae91de3e0856f636c7f4e12e6"
     },
     {
       "path": "site/gpu-catalog.html",
-      "bytes": 23255,
-      "sha256": "279895c295b56e799608b80e21f4f0afdd2ac36af4a02f4e401fa63850f7525d"
+      "bytes": 23125,
+      "sha256": "625be4e88ddf2e34527431e8daf1d7cffbbad36d64e156f891b99f4df5b6ffe1"
     },
     {
       "path": "site/home.css",
-      "bytes": 13787,
-      "sha256": "965c1d78bd82beb0ae39845c01913388e8af38624f05fe75dec80bdf79d28b59"
+      "bytes": 14850,
+      "sha256": "ab1746963623e6d4ff5672821a311c022a541aa921f64ad569938124f67a09c6"
     },
     {
       "path": "site/index.html",
-      "bytes": 49223,
-      "sha256": "663f6eef71da98230a27cf408f55ff210ff3b8573b216d3ca16dbcb39230646f"
+      "bytes": 47998,
+      "sha256": "6e1aafef848a40cbcf03fb8d2d8df9e0a45be10faeec801eea0b09cc9ea89165"
     },
     {
       "path": "site/robots.txt",
@@ -979,13 +979,13 @@
     },
     {
       "path": "site/site.js",
-      "bytes": 8158,
-      "sha256": "ea9672f555bb52679cbcc49d056251b549554c867ba1ce221478faa66659699c"
+      "bytes": 8381,
+      "sha256": "e1d9049cd152e94cba5ab8c29d3f94aa6460142a8a7f87d490be3d78932b4c18"
     },
     {
       "path": "site/styles.css",
-      "bytes": 2988,
-      "sha256": "cfcf2abedca49e54d85df33a885ae47b5a5e1818c08607b2ebe3308653d3ca43"
+      "bytes": 5670,
+      "sha256": "41878908235103bbf30452e32f7f7669754189e66259545b3e7f1e4e5870dbb8"
     },
     {
       "path": "site/vercel.json",

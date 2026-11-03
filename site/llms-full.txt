@@ -36,15 +36,15 @@ Full install sheet Releases Download zip
 
 3 · check cuda-legacy doctor --llvm-root /path/to/LLVM-23.1.4
 
-GPU GM200 Maxwell, 3 cards
+- **GPU** GM200 Maxwell, 3 cards
 
-PyTorch 2.14.0, CUDA 13.0 wheel
+- **PyTorch** 2.14.0, CUDA 13.0 wheel
 
-Driver NVIDIA 580.178.04
+- **Driver** NVIDIA 580.178.04
 
-Compiler LLVM/Clang 23.1.4
+- **Compiler** LLVM/Clang 23.1.4
 
-Host Linux x86_64, Python 3.10.12, CUDA 12.4 headers
+- **Host** Linux x86_64, Python 3.10.12, CUDA 12.4 headers
 
 ## What works today
 Sheet 01 / 10

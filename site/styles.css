@@ -31,3 +31,35 @@ body .ev a{min-height:24px;box-sizing:border-box;display:inline-flex;align-items
 .inv :focus-visible,.band :focus-visible,.foot :focus-visible{outline-color:#FFD400}
 body .nav a{min-height:24px;display:inline-flex;align-items:center}
 body div[style*="display:flex"] > a:not(.btn):not(.repo){min-height:24px;display:inline-flex;align-items:center}
+/* Title blocks: every row fills the width, so a short last row never leaves a half-ruled gap */
+body .tb{display:flex;flex-wrap:wrap;overflow:hidden}
+body .tb>div{flex:1 1 180px;margin:0 -1px -1px 0}
+/* Numbered lists: the number sits in the gutter so inline code flows with the sentence instead of becoming a grid cell */
+body .list li,body .gn li{display:block;position:relative;padding-left:46px}
+body .gn li{padding-left:44px}
+body .list li::before{position:absolute;left:0;top:12px}
+body .gn li::before{position:absolute;left:0;top:10px}
+/* Evidence records: on phones the status badge drops under the text instead of squeezing it */
+@media (max-width:560px){body .rec{grid-template-columns:40px minmax(0,1fr)}body .rec>.state{grid-column:2;justify-self:start}}
+@media (max-width:560px){body .nav{gap:0 18px}body .nav a{font-size:14px}}
+@media (max-width:860px){body .side{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));column-gap:16px}}
+@media (min-width:561px) and (max-width:860px){body .nav{gap:4px 22px}}
+@media (max-width:560px){
+body article[style*="grid-template-columns:48px minmax(0,1fr) auto"]{grid-template-columns:40px minmax(0,1fr)!important}
+body article[style*="grid-template-columns:48px minmax(0,1fr) auto"]>.state{grid-column:2;justify-self:start}
+body main table.rev thead{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+body main table.rev tr{display:grid;grid-template-columns:40px minmax(0,1fr);gap:8px 12px;padding:16px 0;border-bottom:1px solid currentColor}
+body main table.rev td{display:block;padding:0;border:0;width:auto}
+body main table.rev td:nth-child(3){grid-column:2}
+}
+/* Long inline identifiers wrap only when they would otherwise overflow */
+body p code,body li code,body td code,body span code,body dd code{white-space:normal;overflow-wrap:anywhere}
+@media (max-width:560px){body .con-row{grid-template-columns:40px minmax(0,1fr)}body .con-row>.state{grid-column:2;justify-self:start}}
+@media (max-width:480px){
+body .note.y[style*="grid-template-columns:36px"]{grid-template-columns:minmax(0,1fr)!important}
+body .note.y[style*="grid-template-columns:36px"]>svg{grid-row:auto!important}
+body div[style*="grid-template-columns:96px minmax(0,1fr)"]{grid-template-columns:minmax(0,1fr)!important}
+}
+/* Bordered claim panels: rows always fill the width (same treatment as title blocks) */
+body div[style*="grid-template-columns:repeat(auto-fit,minmax(min(300px,100%),1fr));gap:0;border:2px solid"]{display:flex!important;flex-wrap:wrap;overflow:hidden}
+body div[style*="grid-template-columns:repeat(auto-fit,minmax(min(300px,100%),1fr));gap:0;border:2px solid"]>*{flex:1 1 300px;margin:0 -1px -1px 0}
