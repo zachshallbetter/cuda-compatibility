@@ -120,6 +120,53 @@ def _expected_url(relative: Path, origin: str, prefix: str) -> str:
     return f"{origin}{prefix}{suffix}"
 
 
+def _adapter_registry(source: Path) -> tuple[set[str], set[str]] | None:
+    """Return (native operation families, CPU fallback routes) registered by the PyTorch adapter."""
+    try:
+        code = source.read_text(encoding="utf-8")
+    except OSError:
+        return None
+    native: set[str] = set()
+    fallback: set[str] = set()
+    for name, handler in re.findall(r'_library\.impl\(\s*"([^"]+)",\s*(_cpu_fallback\(|_[a-z0-9_]+)', code):
+        if handler == "_cpu_fallback(":
+            fallback.add(name)
+            continue
+        body = re.search(rf"\ndef {handler}\(.*?(?=\ndef |\Z)", code, re.S)
+        text = body.group(0) if body else ""
+        if 'last_path = "llvm-sm52' in text:
+            native.add(name.split(".")[0].rstrip("_"))
+        elif "cpu-fallback" in text:
+            fallback.add(name)
+    return native, fallback
+
+
+def _audit_support_counts(site_root: Path) -> list[str]:
+    """Published support counts must agree with the adapter's registrations; no count is hardcoded here."""
+    registry = _adapter_registry(site_root.parent / "src" / "cuda_legacy_compat" / "torch_adapter.py")
+    if registry is None:
+        return []
+    families, fallbacks = len(registry[0]), len(registry[1])
+    errors: list[str] = []
+    try:
+        home = (site_root / "index.html").read_text(encoding="utf-8")
+        matrix = (site_root / "docs" / "compatibility.html").read_text(encoding="utf-8")
+    except OSError as exc:
+        return [f"support count sources are unreadable: {exc}"]
+    stat = re.search(r"<dt[^>]*>Native operation families</dt><dd[^>]*>(\d+)</dd>", home)
+    if not stat or int(stat.group(1)) != families:
+        errors.append(f"index.html: native operation families must read {families} (adapter registrations)")
+    cases = re.search(r"These (\d+) registered cases cover (\d+) operation families", matrix)
+    table = re.search(r'<table aria-label="Native GPU implementations">(.*?)</table>', matrix, re.S)
+    rows = len(re.findall(r"<tr>", table.group(1).split("</thead>")[-1])) if table else -1
+    if not cases or int(cases.group(2)) != families or int(cases.group(1)) != rows:
+        errors.append(f"docs/compatibility.html: native summary must state {rows} cases across {families} families")
+    routes = re.search(r"These (\d+) registered fallback routes", matrix)
+    if not routes or int(routes.group(1)) != fallbacks:
+        errors.append(f"docs/compatibility.html: fallback summary must state {fallbacks} registered routes")
+    return errors
+
+
 def _png_size(path: Path) -> tuple[int, int] | None:
     try:
         header = path.read_bytes()[:24]
@@ -182,6 +229,7 @@ def audit_site(site_root: Path) -> list[str]:
         errors.append("analytics.js: visitors without a saved choice must receive a consent prompt")
 
     errors.extend(_audit_event_allowlist(analytics_source, site_root / "site.js"))
+    errors.extend(_audit_support_counts(site_root))
 
     if not_found.is_file():
         not_found_meta = _parse(not_found)[0].meta

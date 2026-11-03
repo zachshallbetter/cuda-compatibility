@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from pathlib import Path
+import re
 import shutil
 import tempfile
 import unittest
@@ -86,6 +87,24 @@ class SiteDiscoveryChecksTests(unittest.TestCase):
             source = page.read_text(encoding="utf-8")
             page.write_text(source.replace('<link rel="apple-touch-icon" href="../apple-touch-icon.png">\n', ""), encoding="utf-8")
             self.assertTrue(any("docs/cli.html: missing apple-touch-icon link" in error for error in audit_site(site)))
+
+    def test_support_counts_follow_adapter_registrations(self) -> None:
+        from scripts.site_checks import _adapter_registry
+        registry = _adapter_registry(PROJECT_ROOT / "src" / "cuda_legacy_compat" / "torch_adapter.py")
+        self.assertIsNotNone(registry)
+        native, fallback = registry
+        self.assertIn("mm", native)
+        self.assertIn("bmm", fallback)
+        self.assertNotIn("contiguous", native)
+
+    def test_rejects_home_count_that_drifts_from_adapter(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            site = self.copy_site(directory)
+            shutil.copytree(PROJECT_ROOT / "src", Path(directory) / "src")
+            home = site / "index.html"
+            source = home.read_text(encoding="utf-8")
+            home.write_text(re.sub(r"(Native operation families</dt><dd[^>]*>)\d+", r"\g<1>99", source), encoding="utf-8")
+            self.assertTrue(any("native operation families must read" in error for error in audit_site(site)))
 
     def test_rejects_missing_webmaster_verification_tags(self) -> None:
         with tempfile.TemporaryDirectory() as directory:

@@ -6,7 +6,7 @@
   "selectedPaths": [],
   "sourceSelection": {
     "includedCount": 208,
-    "includedBytes": 1820442,
+    "includedBytes": 1824409,
     "excludedCounts": {
       "extension": 47,
       "generated-or-transient-file": 2
@@ -18,14 +18,14 @@
     "repositories": [
       {
         "path": ".",
-        "commit": "6ed302e96538b96d26cb2995d41651ad012cb56a",
-        "branch": null,
+        "commit": "98e2fa175f0503bf09c80138b545b9ae6b56d834",
+        "branch": "docs-reconcile-operator-counts",
         "dirty": true,
         "remote": "https://github.com/zachshallbetter/cuda-compatibility.git"
       }
     ]
   },
-  "aggregateSourceDigest": "59ef76906e7305058fa92622b55887b6e59deeeed8c088fb493df23a0f019a9b",
+  "aggregateSourceDigest": "ec1ffad9ffcf7c5077053e7714a04a85a43e986ca902897a8c55ad614df337a0",
   "sources": [
     {
       "path": ".agents/acp/README.md",
@@ -694,8 +694,8 @@
     },
     {
       "path": "docs/DPP_IMPLEMENTATION.md",
-      "bytes": 28625,
-      "sha256": "b79933c98ac23acb62a4fd97383fbea10b769a7c5faaa8fa470c48771897cfd4"
+      "bytes": 28647,
+      "sha256": "31f20ee3b4d56bd42f89518577a0b5a585864d8252ad73379ccf1687ea71e2ac"
     },
     {
       "path": "docs/PROJECT_MILESTONES.md",
@@ -879,8 +879,8 @@
     },
     {
       "path": "scripts/site_checks.py",
-      "bytes": 21435,
-      "sha256": "f3e287ccf6bb9a229cc132069ecd794cb076167285111a8fcb9c175dbe41e145"
+      "bytes": 23994,
+      "sha256": "d33ff6abb53d2e7cbacf3b5a8c7d516d0ace37452abe57375228574999016f59"
     },
     {
       "path": "site/03dd79a90f0607e442d7c5e89bd241ee.txt",
@@ -929,8 +929,8 @@
     },
     {
       "path": "site/docs/compatibility.html",
-      "bytes": 21033,
-      "sha256": "dee03ad025034fa98d94793760da6454ce75286813ac0468a85275274322ed0c"
+      "bytes": 21319,
+      "sha256": "27f3d7a28dc830f226dafabc2ec3b1a2cf825dbd1302f8fbd1dd5b72521e3287"
     },
     {
       "path": "site/docs/discovery.html",
@@ -969,8 +969,8 @@
     },
     {
       "path": "site/index.html",
-      "bytes": 47998,
-      "sha256": "6e1aafef848a40cbcf03fb8d2d8df9e0a45be10faeec801eea0b09cc9ea89165"
+      "bytes": 48080,
+      "sha256": "9506d9ac8aac01758b8ea49592a360d1e9a6662ba50b2153ccbe2153ed2ce6b4"
     },
     {
       "path": "site/robots.txt",
@@ -1064,8 +1064,8 @@
     },
     {
       "path": "tests/test_site_checks.py",
-      "bytes": 11753,
-      "sha256": "19060a13b3e89b82a11090f95252965ee4d418b49e16b0f4ac25d45c3ff2c0fb"
+      "bytes": 12771,
+      "sha256": "d210f816686880186de551bf2780fea729c11c6fa0c95206c3fae8fb1da8994f"
     }
   ]
 }

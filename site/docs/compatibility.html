@@ -85,7 +85,7 @@ td.n{font-family:"Martian Mono",monospace;font-size:12px;color:var(--mute);width
 <div style="display:flex;flex-direction:column;gap:56px">
 <div id="native" style="display:flex;flex-direction:column;gap:20px">
 <div class="sec"><span class="cut" aria-hidden="true">A</span><h2 class="h2">Native GPU implementations</h2><span class="plane" aria-hidden="true"></span><span class="state ok"><i class="sw full" aria-hidden="true" style="border-color:#FFFFFF;background:#FFFFFF"></i>sm_52 kernel</span></div>
-<p class="soft" style="margin:0;font-size:16px;max-width:72ch">These registered operations run through LLVM-generated PTX targeting the real Maxwell device and the CUDA Driver API bridge.</p>
+<p class="soft" style="margin:0;font-size:16px;max-width:72ch">These 8 registered cases cover 6 operation families (addition, range creation, embedding, layer normalization, matrix multiplication and ReLU). They run through LLVM-generated PTX targeting the real Maxwell device and the CUDA Driver API bridge; cases outside these limits take the CPU fallback below or fail explicitly.</p>
 <div style="overflow-x:auto">
 <table aria-label="Native GPU implementations">
 <thead><tr><th scope="col" style="width:32px">No.</th><th scope="col">Operation</th><th scope="col">Supported case</th></tr></thead>
@@ -106,7 +106,7 @@ td.n{font-family:"Martian Mono",monospace;font-size:12px;color:var(--mute);width
 
 <div id="fallback" style="display:flex;flex-direction:column;gap:20px">
 <div class="sec"><span class="cut" aria-hidden="true">B</span><h2 class="h2">Registered CPU fallback operations</h2><span class="plane" aria-hidden="true"></span><span class="state exp"><i class="sw half" aria-hidden="true"></i>Bounded autograd</span></div>
-<p class="soft" style="margin:0;font-size:16px;max-width:72ch">These calls use PyTorch’s CPU implementation and copy results back to the original CUDA device:</p>
+<p class="soft" style="margin:0;font-size:16px;max-width:72ch">These 11 registered fallback routes, plus the CPU path that addition takes outside its native limits, use PyTorch’s CPU implementation and copy results back to the original CUDA device:</p>
 <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(360px,100%),1fr));gap:48px;align-items:start">
 <ul class="list">
 <li><code>linear</code> and <code>bmm</code></li>

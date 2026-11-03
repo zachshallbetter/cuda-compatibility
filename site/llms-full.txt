@@ -20,7 +20,7 @@ GM200 reference card, compute capability 5.2. The only hardware tested so far. E
 
 - **Reference cards** 3
 
-- **Native operations** 6
+- **Native operation families** 6
 
 - **Claims of universal support** 0
 
@@ -81,7 +81,7 @@ Experimental
 
 ### Native Maxwell operator kernels
 
-Selected PyTorch operations use LLVM-generated PTX compiled for the real sm_52 device and launched through the CUDA Driver API: add, arange, embedding, layer norm, matmul, and ReLU. Float16 add, strided matmul, and an SGD step are verified on GPUs 1 and 2.
+Selected PyTorch operations use LLVM-generated PTX compiled for the real sm_52 device and launched through the CUDA Driver API: add, arange, embedding, layer norm, matmul, and ReLU. Float16 add, strided matmul, and seven SGD steps of a 2×2 linear → ReLU → sum model are verified on GPUs 1 and 2.
 
 CLC-007-pytorch-aten-add-sm52 CLC-009-pytorch-fp32-mlp-sm52 CLC-025-sm52-operator-training
 
@@ -118,7 +118,7 @@ Sheet 01 / 10
 ### Runs on the GPU
 Native sm_52 kernel
 
-Operation / limits as registered
+8 registered cases, 6 operation families
 
 - Tensor addition Contiguous float32 (up to 1,048,576 values) and int32 tensors (up to 2,147,483,647); same shape and device, alpha=1.
 - Float16 addition Same-shape contiguous float16 tensors, alpha=1, up to 1,048,576 values; edge values checked exactly.
@@ -546,7 +546,7 @@ Source: https://cudacompat.com/docs/compatibility.html
 ## Native GPU implementations
 sm_52 kernel
 
-These registered operations run through LLVM-generated PTX targeting the real Maxwell device and the CUDA Driver API bridge.
+These 8 registered cases cover 6 operation families (addition, range creation, embedding, layer normalization, matrix multiplication and ReLU). They run through LLVM-generated PTX targeting the real Maxwell device and the CUDA Driver API bridge; cases outside these limits take the CPU fallback below or fail explicitly.
 
 | No. | Operation | Supported case |
 | --- | --- | --- |
@@ -564,7 +564,7 @@ Native forward kernels do not record autograd formulas. For grad-enabled inputs,
 ## Registered CPU fallback operations
 Bounded autograd
 
-These calls use PyTorch’s CPU implementation and copy results back to the original CUDA device:
+These 11 registered fallback routes, plus the CPU path that addition takes outside its native limits, use PyTorch’s CPU implementation and copy results back to the original CUDA device:
 
 - linear and bmm
 - softmax and scaled_dot_product_attention
