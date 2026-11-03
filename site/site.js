@@ -87,7 +87,7 @@
       }
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
       ctx.clearRect(0, 0, w, h);
-      const k = Math.min(w * 2.0, h * 3.3);
+      const k = Math.min(w * 2.0, h * 3.3) * 0.95;
       for (let i = 0; i < count; i++) {
         const b = i * 6;
         let x1 = e[b] / q, y1 = e[b + 1] / q, z1 = e[b + 2] / q, x2 = e[b + 3] / q, y2 = e[b + 4] / q, z2 = e[b + 5] / q;

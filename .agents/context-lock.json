@@ -6,7 +6,7 @@
   "selectedPaths": [],
   "sourceSelection": {
     "includedCount": 180,
-    "includedBytes": 1610539,
+    "includedBytes": 1610546,
     "excludedCounts": {
       "excluded-directory": 1,
       "excluded-path": 1,
@@ -20,14 +20,14 @@
     "repositories": [
       {
         "path": ".",
-        "commit": "28cd261dab8ab0832db42864fd6f2d426eb5bcf8",
-        "branch": "site-dpp-alignment",
+        "commit": "2cd06214e14864443283851e9949e4730547b796",
+        "branch": "site-hero-size",
         "dirty": true,
         "remote": "https://github.com/zachshallbetter/cuda-compatibility.git"
       }
     ]
   },
-  "aggregateSourceDigest": "81491a34f21ac5fb94860d89d1f32f3c2ddc6bc7217642a166e736ddb2165e92",
+  "aggregateSourceDigest": "c6a47b655e2461983b67f27daa37c44612adb49f6597b1cbd6061b59dca8a213",
   "sources": [
     {
       "path": ".agents/rules/ci.md",
@@ -832,7 +832,7 @@
     {
       "path": "site/index.html",
       "bytes": 48886,
-      "sha256": "5194d86deb20d1f672245501605db2e3c3c932e880d9206014a93b1db8129c54"
+      "sha256": "3d5abc2476f030aa967717ce1404f52d4aeeab1514732dd805f6f32bbfb80686"
     },
     {
       "path": "site/robots.txt",
@@ -841,8 +841,8 @@
     },
     {
       "path": "site/site.js",
-      "bytes": 8151,
-      "sha256": "831238a1bd2d6b6bb0931da3584364db27d60c4f6d83b3933a0e73432fdf5f2e"
+      "bytes": 8158,
+      "sha256": "ea9672f555bb52679cbcc49d056251b549554c867ba1ce221478faa66659699c"
     },
     {
       "path": "site/styles.css",
