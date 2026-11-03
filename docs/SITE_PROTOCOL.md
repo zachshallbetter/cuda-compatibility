@@ -130,9 +130,9 @@ For a removed or renamed URL, add a redirect in `vercel.json`. The retired `zach
 | 6.3 | Live audit | `make live-audit` after the merge | Every deploy |
 | 6.4 | Rendering | A local server (a temporary `.claude/launch.json` entry, reverted afterwards) and the browser at 375 and 1280 px. A copy with scripts stripped and `<noscript>` unwrapped shows the no-JS view. Print with headless Chrome `--print-to-pdf` and read the PDF | Every visible change |
 | 6.5 | Accessibility | The browser's accessibility tree (`read_page`) for landmark order and names. A script that focuses every control and checks for a visible focus style. Heading levels. Duplicate link names. A rendered contrast pass when colours change | Every structural or colour change |
-| 6.6 | Share previews | [LinkedIn Post Inspector](https://www.linkedin.com/post-inspector/) for every changed page. It must show the page's own card, title, author and date, with no warnings. [Facebook Sharing Debugger](https://developers.facebook.com/tools/debug/) when a Meta developer account is signed in. For X there is no preview short of a real post, which needs the owner's approval | Title, description or card changes |
+| 6.6 | Share previews | [LinkedIn Post Inspector](https://www.linkedin.com/post-inspector/) for every changed page. It must show the page's own card, title, author and date, with no warnings. Facebook's [Batch Invalidator](https://developers.facebook.com/tools/debug/sharing/batch/) with every changed URL; each must report No Issues. For X there is no preview short of a real post, which needs the owner's approval | Title, description or card changes |
 | 6.7 | Screen reader | VoiceOver (macOS or iOS) or NVDA, read by a person: skip link, landmarks, one sheet top to bottom, a table, the previous/next links | Before a release, and after structural changes |
-| 6.8 | Search | Google Search Console and Bing Webmaster Tools: sitemap state, indexed pages, enhancement reports. Google's Rich Results Test on one sheet and the home page | Monthly, and after schema changes |
+| 6.8 | Search | Google Search Console and Bing Webmaster Tools: sitemap state, indexed pages, enhancement reports. Resubmit the sitemap after new pages, and request indexing for each new page (about four to ten a day). Google's [Rich Results Test](https://search.google.com/test/rich-results) on the home page, one sheet and one paper; all items must be valid | Monthly, after new pages, and after schema changes |
 
 ## 7. Records
 
@@ -157,7 +157,7 @@ After a change ships:
 These are known and not yet done. Close each one by doing it and recording evidence (§7).
 
 1. **Screen-reader session (6.7).** Not yet run. The accessibility tree and focus pass were checked, but announcements were never heard.
-2. **Facebook and X previews.** The Sharing Debugger needs a signed-in Meta developer account. X has no card validator: its web composer doesn't render link cards before posting (checked 2026-11-03), and the developer console doesn't preview them. The only check is a real post, ideally from a protected account, and it needs the owner's approval each time.
-3. **Rich Results Test (6.8).** Not yet run on the new graph.
+2. **X card layout.** X lays the page title over the bottom-left of the share image, covering the card's URL line (checked 2026-11-03 with a real post). Facebook (Batch Invalidator: all 18 pages, no issues) and LinkedIn (all 18, no warnings) are done. Facebook's only note is the optional `fb:app_id`, which needs a Meta app.
+3. **Indexing requests.** Google's daily quota ran out after four of the eight papers (2026-11-03). Request indexing for `runtime-version-facade`, `implementation-gap-audit-2026-11`, `attribution-pilot` and `cuda-12-9-to-13-0-changes` in Search Console. The resubmitted sitemap already lists all 18 pages.
 4. **Full contrast re-measure.** The 1,943-node pass predates the dark-on-light change. Colours were judged per section since then.
 5. **The generator branch.** `feat/generated-site` holds an unpushed site generator from before CLC-035. Either port today's page contract into it or retire it. Until then, pages are edited by hand under this protocol.
