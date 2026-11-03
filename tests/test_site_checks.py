@@ -36,12 +36,27 @@ class SiteDiscoveryChecksTests(unittest.TestCase):
             site = self.copy_site(directory)
             analytics = site / "analytics.js"
             source = analytics.read_text(encoding="utf-8").replace(
-                'if (!hasConsent() || !initialized) return;',
+                'if (!hasConsent() || !initialized || !allowedEvents.has(name)) return;',
                 'if (!initialized) return;',
                 1,
             )
             analytics.write_text(source, encoding="utf-8")
-            self.assertTrue(any("link events must require affirmative consent" in error for error in audit_site(site)))
+            self.assertTrue(any("events must require affirmative consent" in error for error in audit_site(site)))
+
+    def test_rejects_dead_or_unlisted_analytics_events(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            site = self.copy_site(directory)
+            analytics = site / "analytics.js"
+            analytics.write_text(
+                analytics.read_text(encoding="utf-8").replace('"hero_replay",', '"hero_replay",\n    "retired_event",', 1),
+                encoding="utf-8",
+            )
+            script = site / "site.js"
+            script.write_text(script.read_text(encoding="utf-8").replace('track("hero_replay")', 'track("hero_restart")', 1), encoding="utf-8")
+            errors = audit_site(site)
+            self.assertTrue(any("never emitted: retired_event" in error for error in errors))
+            self.assertTrue(any("never emitted: hero_replay" in error for error in errors))
+            self.assertTrue(any("not allowlisted: hero_restart" in error for error in errors))
 
     def test_rejects_missing_webmaster_verification_tags(self) -> None:
         with tempfile.TemporaryDirectory() as directory:

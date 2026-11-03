@@ -119,6 +119,23 @@ def _expected_url(relative: Path, origin: str, prefix: str) -> str:
     return f"{origin}{prefix}{suffix}"
 
 
+def _audit_event_allowlist(analytics_source: str, site_script: Path) -> list[str]:
+    """Allowlisted analytics events and events the site can emit must match exactly."""
+    allowlist = re.search(r"allowedEvents = new Set\(\[(.*?)\]\)", analytics_source, re.S)
+    classifier = re.search(r"const classifyLink = .*?\n  \};", analytics_source, re.S)
+    if not allowlist or not classifier:
+        return ["analytics.js: expected an allowedEvents set and a classifyLink function"]
+    allowed = set(re.findall(r'"([a-z_]+)"', allowlist.group(1)))
+    emitted = set(re.findall(r'return "([a-z_]+)";', classifier.group(0)))
+    try:
+        emitted |= set(re.findall(r'track\("([a-z_]+)"', site_script.read_text(encoding="utf-8")))
+    except OSError as exc:
+        return [f"site.js is missing or unreadable: {exc}"]
+    errors = [f"analytics.js: allowlisted event is never emitted: {name}" for name in sorted(allowed - emitted)]
+    errors += [f"analytics event is emitted but not allowlisted: {name}" for name in sorted(emitted - allowed)]
+    return errors
+
+
 def audit_site(site_root: Path) -> list[str]:
     site_root = site_root.resolve()
     errors: list[str] = []
@@ -140,10 +157,12 @@ def audit_site(site_root: Path) -> list[str]:
         errors.append("analytics.js: expected a configured GA4 measurement ID")
     if 'if (choice === "accepted") loadAnalytics();' not in analytics_source:
         errors.append("analytics.js: existing analytics consent must be required before loading")
-    if 'if (!hasConsent() || !initialized) return;' not in analytics_source:
-        errors.append("analytics.js: link events must require affirmative consent")
+    if 'if (!hasConsent() || !initialized || !allowedEvents.has(name)) return;' not in analytics_source:
+        errors.append("analytics.js: events must require affirmative consent and an allowlisted name")
     if 'else if (choice !== "rejected") showBanner();' not in analytics_source:
         errors.append("analytics.js: visitors without a saved choice must receive a consent prompt")
+
+    errors.extend(_audit_event_allowlist(analytics_source, site_root / "site.js"))
 
     homepage_meta = parsed[home][0].meta
     for name in ("google-site-verification", "msvalidate.01"):

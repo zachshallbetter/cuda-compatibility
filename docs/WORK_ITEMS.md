@@ -507,6 +507,23 @@ The first work item is being executed under the user's explicit request to creat
 - **Progress (2026-11-01):** Rewrote all 10 canonical page descriptions to be page-specific and 140–180 characters; added static checks for length and uniqueness. `make check` passed and `make test` passed 44/44. Commit `958388599dcad117b63470c31f3f584e1aa03c3f` was pushed to `codex/cuda-compat-publication` after exact ACP ALLOWs and deployed successfully in Pages run `41312924116`. The live audit fetched all 10 sitemap pages and six discovery assets/endpoints (16/16 HTTP 200); all 10 descriptions were unique and within range. Evidence: `CLC-028-bing-short-descriptions-recommendation`, `CLC-028-pages-release`, and `CLC-028-live-route-audit`. No ranking, traffic, or indexing effect is claimed.
 - **Disposition (2026-11-01):** Bing feedback has been addressed in the published site. Checks enforce the description bounds and uniqueness; the exact deployed revision returned HTTP 200 for all 16 audited routes/assets, with all 10 page descriptions between 140 and 180 characters. Search performance effects remain unobserved.
 
+## CLC-031 — Instrument site components and configure the GA4 property
+
+- **Intent:** Measure how visitors use the install path and project links, with the GA4 property configured to match the published privacy statement.
+- **Parent:** CLC-030 GA4 stream; CLC-027 consented analytics.
+- **Status:** In review
+- **Objective:** Route every analytics event through one consent-gated `track()` API in `site/analytics.js`; report link clicks with their page area, source downloads, successful command copies and hero replays; configure GA4 property `562082064` (stream `16261288778`) for minimal collection and owner-traffic exclusion.
+- **Scope:** `site/analytics.js`; `site/site.js`; `site/index.html`; `site/docs/privacy.html`; `scripts/site_checks.py`; `tests/test_site_checks.py`; `docs/WORK_ITEMS.md`; `records/evidence.jsonl`; generated context; GA4 property settings.
+- **Exclusions:** Loading the tag before consent; Search Console or Ads links; account-level data-sharing settings, which also govern the owner's other properties in account `40096025`.
+- **Acceptance:** Each allowlisted event fires only after consent and stops after withdrawal; the allowlist and emitted events match (enforced by `make check`); GA4 has enhanced measurement, automatic event detection, user-provided data, Google signals and ads personalisation off, two-month retention, email and query redaction, three event-scoped custom dimensions, and an active internal-traffic filter for the owner's addresses.
+- **Evidence required:** Browser event trace; GA4 settings observation; check and test output; ACP decisions.
+- **Evaluator:** Project owner, static checker, project tests, browser trace.
+- **Permissions:** E1 local changes; owner-requested GA4 property settings; E2 push only after exact ACP `ALLOW`. Merge and deploy need the owner's go-ahead and ACP.
+- **Target:** `https://www.cudacompat.com/`; GA4 property `562082064`.
+- **Budget:** No spend.
+- **Stop conditions:** ACP refuses an external effect; a project gate fails; an event would need to carry personal data or full URLs.
+- **Progress (2026-11-03):** GA4 configured as above; key events wait for each event's first arrival (GA4 offers no pre-registration in this property's UI). Local browser trace confirmed all 11 events, `tt=internal` on collect requests from the owner's connection, and complete withdrawal. Evidence: `CLC-031-ga4-property-configuration`, `CLC-031-browser-event-trace`.
+
 ## CLC-030 — Move the site to cudacompat.com and the new GA4 stream
 
 - **Intent:** Serve the project site from its own domain and measure it with the owner's new GA4 stream, keeping the consent gate.

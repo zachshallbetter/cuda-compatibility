@@ -1,5 +1,6 @@
 /* Progressive enhancement: hero wireframe build, copy buttons. The site reads fully without it. */
 (() => {
+  const track = (name, params) => window.cudaCompatAnalytics?.track(name, params);
   const reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
   document.querySelectorAll("button[data-copy]").forEach((button) => {
@@ -19,7 +20,10 @@
       }, 1800);
     };
     button.addEventListener("click", () => {
-      navigator.clipboard.writeText(code.textContent).then(() => show(true), () => show(false));
+      navigator.clipboard.writeText(code.textContent).then(() => {
+        show(true);
+        track("copy_command", { command_step: button.dataset.copy || "unknown" });
+      }, () => show(false));
     });
   });
 
@@ -169,6 +173,7 @@
     if (replay && !reduce) {
       replay.hidden = false;
       replay.addEventListener("click", () => {
+        track("hero_replay");
         cancelAnimationFrame(raf);
         start = null;
         built = false;

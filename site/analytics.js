@@ -10,10 +10,13 @@
     "evidence_page_click",
     "discovery_page_click",
     "external_reference_click",
+    "source_download_click",
+    "copy_command",
+    "hero_replay",
   ]);
 
   if (!/^G-[A-Z0-9]+$/.test(measurementId)) {
-    document.querySelectorAll("[data-analytics-settings], [data-analytics-revoke]").forEach((button) => {
+    document.querySelectorAll("[data-analytics-settings]").forEach((button) => {
       button.hidden = true;
     });
     return;
@@ -25,7 +28,7 @@
   banner.hidden = true;
   banner.setAttribute("role", "region");
   banner.setAttribute("aria-labelledby", "analytics-banner-title");
-  banner.innerHTML = `<div><strong id="analytics-banner-title">Optional site analytics</strong><p>Allow Google Analytics to measure page visits and clicks on key project links. No analytics tag loads unless you accept. You can change this choice from the privacy page.</p></div><div class="analytics-actions"><button type="button" data-analytics-choice="accept">Allow analytics</button><button type="button" data-analytics-choice="reject">Reject</button><a href="${privacyPath}">Details</a></div>`;
+  banner.innerHTML = `<div><strong id="analytics-banner-title">Optional site analytics</strong><p>Allow Google Analytics to measure page visits, clicks on key project links, and use of the copy and replay buttons. No analytics tag loads unless you accept. You can change this choice from the privacy page.</p></div><div class="analytics-actions"><button type="button" data-analytics-choice="accept">Allow analytics</button><button type="button" data-analytics-choice="reject">Reject</button><a href="${privacyPath}">Details</a></div>`;
   document.body.append(banner);
 
   const settings = document.querySelectorAll("[data-analytics-settings]");
@@ -121,6 +124,7 @@
   const classifyLink = (link) => {
     const url = new URL(link.href, location.href);
     const path = url.pathname.toLowerCase();
+    if (url.hostname === "github.com" && /^\/zachshallbetter\/cuda-compatibility\/(archive|releases)(\/|$)/.test(path)) return "source_download_click";
     if (url.hostname === "github.com" && path === "/zachshallbetter/cuda-compatibility") return "project_repository_click";
     if (path.endsWith("/getting-started.html")) return "installation_guide_click";
     if (path.endsWith("/compatibility.html")) return "support_matrix_click";
@@ -131,22 +135,32 @@
     return null;
   };
 
+  // Components report through this; it drops anything not allowlisted or sent before consent.
+  const track = (name, params = {}) => {
+    if (!hasConsent() || !initialized || !allowedEvents.has(name)) return;
+    window.gtag("event", name, { page_path: location.pathname, ...params });
+  };
+  window.cudaCompatAnalytics = { track };
+
+  const linkArea = (link) => {
+    if (link.closest("header")) return "header";
+    if (link.closest("footer")) return "footer";
+    if (link.closest('nav[aria-label="Documentation"]')) return "sidebar";
+    return "content";
+  };
+
   document.addEventListener("click", (event) => {
-    if (!hasConsent() || !initialized) return;
     const target = event.target instanceof Element ? event.target : event.target.parentElement;
     const link = target?.closest("a[href]");
     if (!link) return;
     const name = classifyLink(link);
-    if (!allowedEvents.has(name)) return;
+    if (!name) return;
     const url = new URL(link.href, location.href);
-    window.gtag("event", name, {
-      page_path: location.pathname,
+    track(name, {
+      link_area: linkArea(link),
       ...(url.origin !== location.origin ? { link_domain: url.hostname } : {}),
     });
   });
-
-  const revoke = () => setConsent("rejected");
-  document.querySelectorAll("[data-analytics-revoke]").forEach((button) => button.addEventListener("click", revoke));
 
   let choice = "";
   try {

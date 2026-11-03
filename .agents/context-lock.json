@@ -6,7 +6,7 @@
   "selectedPaths": [],
   "sourceSelection": {
     "includedCount": 175,
-    "includedBytes": 1574305,
+    "includedBytes": 1579917,
     "excludedCounts": {
       "excluded-directory": 1,
       "excluded-path": 1,
@@ -20,14 +20,14 @@
     "repositories": [
       {
         "path": ".",
-        "commit": "ec8c427fe81592cda833b4c6db6a4d558168535d",
-        "branch": "site-cudacompat-domain",
+        "commit": "a5190ffa824c6c62a300c07568e20ecd8655c8f4",
+        "branch": "site-analytics-events",
         "dirty": true,
         "remote": "https://github.com/zachshallbetter/cuda-compatibility.git"
       }
     ]
   },
-  "aggregateSourceDigest": "9c65b773a9fc89f3c9b1501b157fcf61a23329ee32e690042f321ee6d388eb88",
+  "aggregateSourceDigest": "540a1043a914b81a22cabf9d396fbc1fb7bc3a29b00027385b09fe61a10278f1",
   "sources": [
     {
       "path": ".agents/rules/ci.md",
@@ -411,8 +411,8 @@
     },
     {
       "path": "docs/WORK_ITEMS.md",
-      "bytes": 99377,
-      "sha256": "238c4187315e918cbbf4f34436074162fb68161c9452362b8ffa7b786c6dc147"
+      "bytes": 101822,
+      "sha256": "a90510b4002a4b083ac2ab97250d64ffb033e046631ecb9149956ceeef639ea2"
     },
     {
       "path": "docs/architecture.md",
@@ -696,8 +696,8 @@
     },
     {
       "path": "scripts/site_checks.py",
-      "bytes": 17252,
-      "sha256": "1b5724bc1e7f4e35fc389bbba462b2a0980f5e222e99f7aa84a3b5978176e993"
+      "bytes": 18444,
+      "sha256": "420f836ee4b8eaa34adce8ce730cdf4cea6cee46ba0391b5affbae6b58aec042"
     },
     {
       "path": "scripts/upgrade-project.py",
@@ -736,8 +736,8 @@
     },
     {
       "path": "site/analytics.js",
-      "bytes": 6290,
-      "sha256": "69393b8c0d8e213921f4ad55a3afd8d6dccc9b91f70a5f57f6b3b6f02faf72f8"
+      "bytes": 6840,
+      "sha256": "1d99f07d4647ace127bf695ca34372ebc057fe0cd959c458e63a8a83c8a907cc"
     },
     {
       "path": "site/assets/fonts/OFL-Archivo.txt",
@@ -791,8 +791,8 @@
     },
     {
       "path": "site/docs/privacy.html",
-      "bytes": 21415,
-      "sha256": "74f60ae1e62d35ac10b73e524fb09e8fa9d8edf2209f88c0c3b0bad1c7c6e402"
+      "bytes": 21650,
+      "sha256": "2664e85c04f4b1fb401dfabffa123c4c10ff59db7553860b990a5391c93964d0"
     },
     {
       "path": "site/docs/research.html",
@@ -811,8 +811,8 @@
     },
     {
       "path": "site/index.html",
-      "bytes": 48822,
-      "sha256": "0346c04cc8e43bb9a3488147f2926cdc7aa1c9d3621fc04f019475302cf4cbad"
+      "bytes": 48848,
+      "sha256": "f1a85da1aec2851a22dbfa302ff1625ddf6a70c508bcca6a5d51bfb16774ca90"
     },
     {
       "path": "site/robots.txt",
@@ -821,8 +821,8 @@
     },
     {
       "path": "site/site.js",
-      "bytes": 7936,
-      "sha256": "24f9f6f07f24af0101c290336ba5d6416a56839b1b40a6559ab578f356965b3f"
+      "bytes": 8151,
+      "sha256": "831238a1bd2d6b6bb0931da3584364db27d60c4f6d83b3933a0e73432fdf5f2e"
     },
     {
       "path": "site/styles.css",
@@ -901,8 +901,8 @@
     },
     {
       "path": "tests/test_site_checks.py",
-      "bytes": 8933,
-      "sha256": "822695de21ce1000f8cdb892185486bdacc8e383fcda1c8798ec3ebdf8a707ed"
+      "bytes": 9882,
+      "sha256": "a64815c63ba6aa1706a500f7814d7025bb73c212eaff2d611b58dea11cbd556b"
     }
   ]
 }
