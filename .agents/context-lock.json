@@ -5,8 +5,8 @@
   "validityBasis": "aggregate-source-digest",
   "selectedPaths": [],
   "sourceSelection": {
-    "includedCount": 224,
-    "includedBytes": 1903904,
+    "includedCount": 230,
+    "includedBytes": 2193691,
     "excludedCounts": {
       "extension": 47,
       "generated-or-transient-file": 2
@@ -18,14 +18,14 @@
     "repositories": [
       {
         "path": ".",
-        "commit": "34feca57c42fb3c9b8502ec5141bbcc51a4941cd",
-        "branch": "site/light-hero-code",
+        "commit": "8c14ad0b69b238c32568c2ca63b212417d08b6a3",
+        "branch": "attribution-pilot",
         "dirty": true,
         "remote": "https://github.com/zachshallbetter/cuda-compatibility.git"
       }
     ]
   },
-  "aggregateSourceDigest": "dea871bfe25edf625fc5402a8fc25255fb0746e3f09c07bf90d7d2ad681d8669",
+  "aggregateSourceDigest": "5ac9b4918ebe7c18d78de4d914d28b4e2c9f8ac4b771ffd0bd6d6878de0b582b",
   "sources": [
     {
       "path": ".agents/acp/README.md",
@@ -699,8 +699,8 @@
     },
     {
       "path": "docs/DPP_IMPLEMENTATION.md",
-      "bytes": 30846,
-      "sha256": "585438e3c5bcf2b953666fbbd29b84f3448d86f5950f366be9122d414245ad5f"
+      "bytes": 31608,
+      "sha256": "110a4c1a411b70dfbce220203a81f33d290f386879f5f149f279d312e4858310"
     },
     {
       "path": "docs/PROJECT_MILESTONES.md",
@@ -786,6 +786,36 @@
       "path": "docs/research/RESEARCH_PROGRAM.md",
       "bytes": 6083,
       "sha256": "343c623b9e5236b248774bf7047c7f6b2c8226108f3478a7f66b5270c0126994"
+    },
+    {
+      "path": "docs/research/attribution-pilot/PROTOCOL.md",
+      "bytes": 5970,
+      "sha256": "68b413d13232185338512ab959095ee4398face49bf495dc1634081ee3ca600b"
+    },
+    {
+      "path": "docs/research/attribution-pilot/RESULTS.md",
+      "bytes": 7092,
+      "sha256": "1fd35704272b3762a1424ab9e494c982f50205a8a2ef2ead9a74f837d093c78b"
+    },
+    {
+      "path": "docs/research/attribution-pilot/TEMPLATE.md",
+      "bytes": 437,
+      "sha256": "749c1e472ba5bd15a12db83e6ba48c8f431bba6185b53bf0ad74ea450ee862ea"
+    },
+    {
+      "path": "docs/research/attribution-pilot/raw/bing.md",
+      "bytes": 118931,
+      "sha256": "3ebb2ca2e8861375d06e532342b4b5d10d598c35a663c9c359f427635e895d15"
+    },
+    {
+      "path": "docs/research/attribution-pilot/raw/google.md",
+      "bytes": 130416,
+      "sha256": "364d44b4a180ddeb8ac2166636bc8a8f4929005d3cdcb57a186e4a73d6e2231c"
+    },
+    {
+      "path": "docs/research/attribution-pilot/raw/perplexity.md",
+      "bytes": 26179,
+      "sha256": "958416d31e6862cd3efcaf96f5f2bf686f8ffcd17b3614dbcc06ef0dcf3d8fb9"
     },
     {
       "path": "docs/research/implementation-gap-audit-2026-11-01.md",
