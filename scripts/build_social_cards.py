@@ -156,7 +156,13 @@ def shoot(chrome: str, html: str, out: Path, size: tuple[int, int], transparent:
                 f"--window-size={size[0]},{size[1]}", "--virtual-time-budget=8000", f"--screenshot={shot}"]
         if transparent:
             args.append("--default-background-color=00000000")
-        subprocess.run(args + [page.as_uri()], check=True, capture_output=True, timeout=120)
+        # Headless Chrome on macOS sometimes exits early under load; a clean retry is enough.
+        for attempt in range(3):
+            done = subprocess.run(args + [page.as_uri()], capture_output=True, text=True, timeout=120)
+            if done.returncode == 0 and shot.is_file():
+                break
+        else:
+            raise SystemExit(f"Chrome could not render {out.name}: {done.stderr[-500:]}")
         shutil.copyfile(shot, out)
 
 

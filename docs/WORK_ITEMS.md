@@ -507,6 +507,23 @@ The first work item is being executed under the user's explicit request to creat
 - **Progress (2026-11-01):** Rewrote all 10 canonical page descriptions to be page-specific and 140–180 characters; added static checks for length and uniqueness. `make check` passed and `make test` passed 44/44. Commit `958388599dcad117b63470c31f3f584e1aa03c3f` was pushed to `codex/cuda-compat-publication` after exact ACP ALLOWs and deployed successfully in Pages run `41312924116`. The live audit fetched all 10 sitemap pages and six discovery assets/endpoints (16/16 HTTP 200); all 10 descriptions were unique and within range. Evidence: `CLC-028-bing-short-descriptions-recommendation`, `CLC-028-pages-release`, and `CLC-028-live-route-audit`. No ranking, traffic, or indexing effect is claimed.
 - **Disposition (2026-11-01):** Bing feedback has been addressed in the published site. Checks enforce the description bounds and uniqueness; the exact deployed revision returned HTTP 200 for all 16 audited routes/assets, with all 10 page descriptions between 140 and 180 characters. Search performance effects remain unobserved.
 
+## CLC-035 — Make every sheet readable and self-describing on its own
+
+- **Intent:** Any single page that is visited, printed, read aloud or shared should say what it is, who wrote it, when it changed and where it sits, without the rest of the site.
+- **Parent:** CLC-032 DPP alignment; CLC-024 DPP discovery controls.
+- **Status:** Done
+- **Objective:** Remove the analytics prompt; set every dark section as dark on light; put each sheet's title inside `main` as its article header with a byline, updated date and previous/next links; give every page a complete schema.org graph and article metadata; redraw the share cards ink on paper; add the feed, `humans.txt`, `security.txt`, `SECURITY.md` and `CITATION.cff`; notify IndexNow automatically after each deploy.
+- **Scope:** `site/**`; `scripts/site_checks.py`; `scripts/indexnow.py`; `scripts/build_llms_full.py`; `scripts/build_social_cards.py`; `.github/workflows/indexnow.yml`; `tests/**`; `SECURITY.md`; `CITATION.cff`; `docs/DPP_IMPLEMENTATION.md`; `docs/WORK_ITEMS.md`; `.agents/records/evidence.jsonl`; generated context.
+- **Exclusions:** Compiler or runtime behaviour; support claims; crawler training policy; paid or partner distribution.
+- **Acceptance:** `make check` and `make test` pass; the h1 sits inside `main` on every page; scroll regions are focusable and labelled; feed entries equal the canonical pages; `security.txt` unexpired; LinkedIn Post Inspector reads each page's own title, image, author and date with no warnings; keyboard focus is visible on every control.
+- **Evidence required:** Check and test output; rendered pages at 375 and 1280 px with and without JavaScript; a print PDF; LinkedIn Post Inspector results; the accessibility tree and focus pass; the first automatic IndexNow run.
+- **Evaluator:** Project owner, static checker, project tests, platform preview tools.
+- **Permissions:** E1 local changes; merges to `main` deploy production through Vercel.
+- **Target:** `https://cudacompat.com/`; repository `zachshallbetter/cuda-compatibility`.
+- **Budget:** No spend.
+- **Stop conditions:** A project gate fails; a change would alter a verified support claim.
+- **Progress (2026-11-03):** Shipped in PRs #75, #76, #77, #78, #81, #82 and the records PR. LinkedIn Post Inspector read the five pages checked with each page's own card, title, author and date; three descriptions under its 100-character minimum were lengthened. The first automatic IndexNow run (Actions run 41732061145) got HTTP 200 for 10 URLs. Evidence: `CLC-035-dark-on-light`, `CLC-035-indexnow-after-deploy`, `CLC-035-self-describing-sheets`, `CLC-035-share-previews`, `CLC-035-accessibility-tree`. A session with a real screen reader (VoiceOver or NVDA) has not been run.
+
 ## CLC-034 — Prepare the evidence-led launch and distribution workflow
 
 - **Intent:** GitHub issue #53; publish around one reproducible result without inflating it.
