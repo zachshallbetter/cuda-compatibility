@@ -15,8 +15,8 @@ pre code{background:none;padding:0;color:inherit;font-size:inherit}
 .nav a:hover{color:var(--link)}
 a.repo{display:inline-flex;align-items:center;gap:8px;min-height:40px;padding:0 14px;border:2px solid currentColor;text-decoration:none;color:var(--fg);font-size:14px;font-weight:700;line-height:1}
 a.repo:hover{background:var(--yellow);color:#000000;border-color:var(--yellow)}
-.band{background:#000000;color:#FFFFFF}
-.band .mute{color:#B8B8B2}
+.band{background:#F2F2EE;color:#111111;border-bottom:3px solid #000000}
+.band .mute{color:#3A3A36}
 .mute{color:var(--mute)}
 .soft{color:var(--soft)}
 .sheet{font-size:12px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;opacity:0.5;white-space:nowrap}
@@ -76,7 +76,7 @@ code{white-space:nowrap}
 pre code{white-space:pre}
 p,li,dd{text-wrap:pretty}
 .sheet{opacity:1;color:var(--mute)}
-.band .sheet{color:#B8B8B2}
+.band .sheet{color:#4A4A46;opacity:1}
 .dim{opacity:1;color:var(--mute)}
 .tb>div>span:first-child{opacity:1;color:var(--mute)}
 .foot .tb>div>span:first-child{color:#B8B8B2}
