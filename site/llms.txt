@@ -23,7 +23,7 @@ This is a convenience index for people and automated agents. It is not a standar
 
 ## Project identity
 - Project repository: https://github.com/zachshallbetter/cuda-compatibility
-- Author: Zach Shallbetter (https://zachshallbetter.com/)
+- Author: Zach Shallbetter (https://zachshallbetter.com/), systems engineer and independent researcher in Spokane, Washington; builds software through Snack Studio. Biography: https://cudacompat.com/#author
 - Project is independent and not affiliated with NVIDIA.
 
 ## Claim boundary
