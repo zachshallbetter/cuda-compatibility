@@ -108,8 +108,8 @@ Project code is dual-licensed under **MIT OR Apache-2.0**. NVIDIA drivers, heade
 ```sh
 make check
 make test
-python3 scripts/gen-context.py --check
-python3 scripts/validate-bootstrap.py --check-context
+python3 .agents/bootstrap/scripts/gen-context.py --check
+python3 .agents/bootstrap/scripts/validate-bootstrap.py --check-context
 ```
 
-See [the architecture](docs/architecture.md), [target profiles](docs/compatibility-targets.md), and [roadmap](docs/roadmap.md). Project authority and operating rules are in `PROJECT_INTENT.md` and `AGENTS.md`.
+See [the architecture](docs/architecture.md), [target profiles](docs/compatibility-targets.md), and [roadmap](docs/roadmap.md). Project authority and operating rules are in `.agents/project/intent.md` and `AGENTS.md`.

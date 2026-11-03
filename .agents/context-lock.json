@@ -6,7 +6,7 @@
   "selectedPaths": [],
   "sourceSelection": {
     "includedCount": 208,
-    "includedBytes": 1817988,
+    "includedBytes": 1818973,
     "excludedCounts": {
       "extension": 47,
       "generated-or-transient-file": 2
@@ -18,14 +18,14 @@
     "repositories": [
       {
         "path": ".",
-        "commit": "cbb9483571fa39530bec6da44fcb8c110aeee1aa",
+        "commit": "1aedbe594f67da4f159f20ca68c0b7cb4d2aba9e",
         "branch": "chore/bootstrap-0.7.3",
         "dirty": true,
         "remote": "https://github.com/zachshallbetter/cuda-compatibility.git"
       }
     ]
   },
-  "aggregateSourceDigest": "5cde4a0eb010d15c773d8f4ce73ea34ea41e18b4b27824214499a93ed54ea44f",
+  "aggregateSourceDigest": "6ead8aa10977e9f92665da2bfb9121e35b0c009da317887eba78ea65afa85984",
   "sources": [
     {
       "path": ".agents/acp/README.md",
@@ -689,13 +689,13 @@
     },
     {
       "path": "README.md",
-      "bytes": 9722,
-      "sha256": "1ff14ff314c8a10f5a4a07703c9ffad9221f5210ec299177f91e5af551102886"
+      "bytes": 9766,
+      "sha256": "bb08fd68287e9fb133beabeee266ea33025fda11b1af274cfb701754187a403a"
     },
     {
       "path": "docs/DPP_IMPLEMENTATION.md",
-      "bytes": 28553,
-      "sha256": "b382a1883ffd860b3243db802ed178e3e68c3e47ee51046b43579f19028d3886"
+      "bytes": 28625,
+      "sha256": "b79933c98ac23acb62a4fd97383fbea10b769a7c5faaa8fa470c48771897cfd4"
     },
     {
       "path": "docs/PROJECT_MILESTONES.md",
@@ -704,8 +704,8 @@
     },
     {
       "path": "docs/WORK_ITEMS.md",
-      "bytes": 105006,
-      "sha256": "5ca216e14eb9129a23d28184652896a074dd57eada0e9a6bd2f1590c146b9a34"
+      "bytes": 105545,
+      "sha256": "9512267d0184c94de1e6b4256cb801651c5d78f3708ce157a308eecd36f659d9"
     },
     {
       "path": "docs/architecture.md",
@@ -749,8 +749,8 @@
     },
     {
       "path": "docs/research/RESEARCH_PROGRAM.md",
-      "bytes": 6067,
-      "sha256": "4fa31e959da4115081e64bad92622d8bedc9ac69d86bc0202a93eebfa96e97cb"
+      "bytes": 6083,
+      "sha256": "343c623b9e5236b248774bf7047c7f6b2c8226108f3478a7f66b5270c0126994"
     },
     {
       "path": "docs/research/implementation-gap-audit-2026-11-01.md",
@@ -779,8 +779,8 @@
     },
     {
       "path": "docs/roadmap.md",
-      "bytes": 5250,
-      "sha256": "acf9bdc96eec0f6d9af5f855047f15772a7d9fa45678b1094874e135a6ce95bb"
+      "bytes": 5258,
+      "sha256": "e2dff4fbd52ddd7657476e2a9ac4d751b479dba1e83cef1b6842bdd892282a13"
     },
     {
       "path": "docs/strategy/upstream-contributions.md",
@@ -929,8 +929,8 @@
     },
     {
       "path": "site/docs/compatibility.html",
-      "bytes": 21147,
-      "sha256": "ada3f089927e12b48909b69478fe76c55c63ddb7a32e1e908444e58f06cd96ec"
+      "bytes": 21163,
+      "sha256": "a77f1777b5a592bfd06a67fd46d0b3d1d9cf82695e2cca171d3a3c146d4198fd"
     },
     {
       "path": "site/docs/discovery.html",
@@ -939,8 +939,8 @@
     },
     {
       "path": "site/docs/getting-started.html",
-      "bytes": 17288,
-      "sha256": "fff0e41aaa4c994b18e43ee260bff09885735a45d36d13393fea70f5e536d189"
+      "bytes": 17296,
+      "sha256": "723fdb1e11717717467f1bd7f716c7ce71c6304f59eea84653f6377a9dd84c88"
     },
     {
       "path": "site/docs/index.html",
@@ -954,8 +954,8 @@
     },
     {
       "path": "site/docs/research.html",
-      "bytes": 29417,
-      "sha256": "3d023de3dd9fed748d2be1283cf82cb4f452fdd727f67c5a19e0c7c37135e215"
+      "bytes": 29577,
+      "sha256": "94fe2010c25b5ba13aad9f57eaabe954562df84998194c7669b859198bde6c42"
     },
     {
       "path": "site/gpu-catalog.html",
@@ -969,8 +969,8 @@
     },
     {
       "path": "site/index.html",
-      "bytes": 49127,
-      "sha256": "367019bf13e44b49838177b49c2c1d54a38787d0e20fdf99a43e3c89d90293e5"
+      "bytes": 49223,
+      "sha256": "663f6eef71da98230a27cf408f55ff210ff3b8573b216d3ca16dbcb39230646f"
     },
     {
       "path": "site/robots.txt",
@@ -1044,8 +1044,8 @@
     },
     {
       "path": "tests/test_context_generation.py",
-      "bytes": 1618,
-      "sha256": "9ac6a625f2df1b59b0651e160dc45a6408cb7e406a891db402cba809139aec63"
+      "bytes": 1644,
+      "sha256": "8c15710e5dc925647eede4137d67ed45772887db5db9102543c79f712e5340a8"
     },
     {
       "path": "tests/test_inventory.py",

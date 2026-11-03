@@ -130,7 +130,7 @@
 <h3 style="font-size:26px">GPU inventory and profile checks</h3>
 <p style="margin:0">Inspect visible NVIDIA devices and compiler tools, review bundled compatibility profiles, and compare a machine’s reported hardware against a target’s published requirements. Unknown facts stay unknown; a profile match is not a workload certification.</p>
 <p style="margin:0" class="mute">Commands: <code>inspect</code>, <code>profiles</code>, <code>audit</code>, <code>doctor</code></p>
-<div class="ev"><a href="https://github.com/zachshallbetter/cuda-compatibility/blob/main/records/evidence.jsonl">CLC-001-target-inventory-audit</a><a href="https://github.com/zachshallbetter/cuda-compatibility/blob/main/records/evidence.jsonl">CLC-014-installed-cli-workflow</a></div>
+<div class="ev"><a href="https://github.com/zachshallbetter/cuda-compatibility/blob/main/.agents/records/evidence.jsonl">CLC-001-target-inventory-audit</a><a href="https://github.com/zachshallbetter/cuda-compatibility/blob/main/.agents/records/evidence.jsonl">CLC-014-installed-cli-workflow</a></div>
 </div>
 <span class="mute" style="font-size:14px;font-weight:600">Command line</span>
 </article>
@@ -141,7 +141,7 @@
 <h3 style="font-size:26px">CUDA 13 process launcher</h3>
 <p style="margin:0">Launch a Python application in a child process with a process-local CUDA Runtime version facade and a PyTorch adapter. The runtime query reports CUDA 13.0; the GPU name and compute capability stay intact. Nothing on the system is changed.</p>
 <p style="margin:0" class="mute">Exercised with PyTorch 2.14 and the official CUDA 13 wheel.</p>
-<div class="ev"><a href="https://github.com/zachshallbetter/cuda-compatibility/blob/main/records/evidence.jsonl">CLC-005-runtime-version-facade</a><a href="https://github.com/zachshallbetter/cuda-compatibility/blob/main/records/evidence.jsonl">CLC-010-packaged-launcher-sm52</a></div>
+<div class="ev"><a href="https://github.com/zachshallbetter/cuda-compatibility/blob/main/.agents/records/evidence.jsonl">CLC-005-runtime-version-facade</a><a href="https://github.com/zachshallbetter/cuda-compatibility/blob/main/.agents/records/evidence.jsonl">CLC-010-packaged-launcher-sm52</a></div>
 </div>
 <span class="mute" style="font-size:14px;font-weight:600">Child process</span>
 </article>
@@ -151,7 +151,7 @@
 <div style="display:flex;flex-direction:column;gap:10px">
 <h3 style="font-size:26px">Native Maxwell operator kernels</h3>
 <p style="margin:0">Selected PyTorch operations use LLVM-generated PTX compiled for the real <code>sm_52</code> device and launched through the CUDA Driver API: add, arange, embedding, layer norm, matmul, and ReLU. Float16 add, strided matmul, and an SGD step are verified on GPUs 1 and 2.</p>
-<div class="ev"><a href="https://github.com/zachshallbetter/cuda-compatibility/blob/main/records/evidence.jsonl">CLC-007-pytorch-aten-add-sm52</a><a href="https://github.com/zachshallbetter/cuda-compatibility/blob/main/records/evidence.jsonl">CLC-009-pytorch-fp32-mlp-sm52</a><a href="https://github.com/zachshallbetter/cuda-compatibility/blob/main/records/evidence.jsonl">CLC-025-sm52-operator-training</a></div>
+<div class="ev"><a href="https://github.com/zachshallbetter/cuda-compatibility/blob/main/.agents/records/evidence.jsonl">CLC-007-pytorch-aten-add-sm52</a><a href="https://github.com/zachshallbetter/cuda-compatibility/blob/main/.agents/records/evidence.jsonl">CLC-009-pytorch-fp32-mlp-sm52</a><a href="https://github.com/zachshallbetter/cuda-compatibility/blob/main/.agents/records/evidence.jsonl">CLC-025-sm52-operator-training</a></div>
 </div>
 <span class="mute" style="font-size:14px;font-weight:600">GPU, sm_52</span>
 </article>
@@ -167,7 +167,7 @@
 <dt class="mute">Peak allocated memory</dt><dd>67,180,032 bytes</dd>
 <dt class="mute">Broader training</dt><dd>Not verified</dd>
 </dl>
-<div class="ev"><a href="https://github.com/zachshallbetter/cuda-compatibility/blob/main/records/evidence.jsonl">CLC-025-sm52-operator-training</a></div>
+<div class="ev"><a href="https://github.com/zachshallbetter/cuda-compatibility/blob/main/.agents/records/evidence.jsonl">CLC-025-sm52-operator-training</a></div>
 </div>
 <span class="mute" style="font-size:14px;font-weight:600">Bounded autograd</span>
 </article>
@@ -177,7 +177,7 @@
 <div style="display:flex;flex-direction:column;gap:10px">
 <h3 style="font-size:26px">Stock kernels on the official wheel</h3>
 <p style="margin:0">Without the adapter, stock float32 <code>mm</code> fails in cuBLAS with <code>CUBLAS_STATUS_ARCH_MISMATCH</code> and stock ReLU reports no kernel image for <code>sm_52</code>. Both observations are kept as negative results and reopen only if a future wheel passes the same probes.</p>
-<div class="ev"><a href="https://github.com/zachshallbetter/cuda-compatibility/blob/main/records/negative-results.jsonl">CLC-009-stock-mm-cublas-arch-mismatch</a><a href="https://github.com/zachshallbetter/cuda-compatibility/blob/main/records/negative-results.jsonl">CLC-009-stock-relu-no-kernel-image</a></div>
+<div class="ev"><a href="https://github.com/zachshallbetter/cuda-compatibility/blob/main/.agents/records/negative-results.jsonl">CLC-009-stock-mm-cublas-arch-mismatch</a><a href="https://github.com/zachshallbetter/cuda-compatibility/blob/main/.agents/records/negative-results.jsonl">CLC-009-stock-relu-no-kernel-image</a></div>
 </div>
 <span class="mute" style="font-size:14px;font-weight:600">Why the adapter exists</span>
 </article>
@@ -297,7 +297,7 @@
 <tbody>
 <tr><td><strong style="font-weight:800">D1</strong></td><td><strong style="font-weight:800;font-size:18px">GeForce GTX 980 Ti, 980, 970, 960, 950</strong></td><td style="font-weight:600">5.2</td><td><span class="state open"><i class="sw" aria-hidden="true" style="width:10px;height:10px;margin-right:7px"></i>Unverified candidate</span></td></tr>
 <tr><td><strong style="font-weight:800">D2</strong></td><td><strong style="font-weight:800;font-size:18px">GeForce GTX 980M, 970M, 965M, 910M</strong></td><td style="font-weight:600">5.2</td><td><span class="state open"><i class="sw" aria-hidden="true" style="width:10px;height:10px;margin-right:7px"></i>Unverified candidate</span></td></tr>
-<tr class="y" style="box-shadow:inset 0 2px 0 #000000,inset 0 -2px 0 #000000"><td style="padding-left:12px;border-bottom-color:#000000"><strong style="font-weight:800">D3</strong></td><td style="padding-left:12px;border-bottom-color:#000000"><strong style="font-weight:800;font-size:18px">GM200 Maxwell reference GPU</strong><br><span style="font-size:14px">Three physical cards; not every workload tested on each</span></td><td style="font-weight:600;border-bottom-color:#000000">5.2</td><td style="border-bottom-color:#000000"><span class="state ok"><i class="sw full" aria-hidden="true" style="border-color:#FFFFFF;background:#FFFFFF;width:10px;height:10px;margin-right:7px"></i>Reference device</span><div class="ev" style="margin-top:8px"><a href="https://github.com/zachshallbetter/cuda-compatibility/blob/main/records/evidence.jsonl">CLC-001-gm200-baseline</a><a href="https://github.com/zachshallbetter/cuda-compatibility/blob/main/records/evidence.jsonl">CLC-025-sm52-operator-training</a></div></td></tr>
+<tr class="y" style="box-shadow:inset 0 2px 0 #000000,inset 0 -2px 0 #000000"><td style="padding-left:12px;border-bottom-color:#000000"><strong style="font-weight:800">D3</strong></td><td style="padding-left:12px;border-bottom-color:#000000"><strong style="font-weight:800;font-size:18px">GM200 Maxwell reference GPU</strong><br><span style="font-size:14px">Three physical cards; not every workload tested on each</span></td><td style="font-weight:600;border-bottom-color:#000000">5.2</td><td style="border-bottom-color:#000000"><span class="state ok"><i class="sw full" aria-hidden="true" style="border-color:#FFFFFF;background:#FFFFFF;width:10px;height:10px;margin-right:7px"></i>Reference device</span><div class="ev" style="margin-top:8px"><a href="https://github.com/zachshallbetter/cuda-compatibility/blob/main/.agents/records/evidence.jsonl">CLC-001-gm200-baseline</a><a href="https://github.com/zachshallbetter/cuda-compatibility/blob/main/.agents/records/evidence.jsonl">CLC-025-sm52-operator-training</a></div></td></tr>
 <tr><td><strong style="font-weight:800">D4</strong></td><td><strong style="font-weight:800;font-size:18px">Tesla M40, M60</strong></td><td style="font-weight:600">5.2</td><td><span class="state open"><i class="sw" aria-hidden="true" style="width:10px;height:10px;margin-right:7px"></i>Unverified candidate</span></td></tr>
 <tr><td><strong style="font-weight:800">D5</strong></td><td><strong style="font-weight:800;font-size:18px">Quadro M6000 (including 24GB), M5000, M4000, M2000</strong></td><td style="font-weight:600">5.2</td><td><span class="state open"><i class="sw" aria-hidden="true" style="width:10px;height:10px;margin-right:7px"></i>Unverified candidate</span></td></tr>
 <tr><td style="border-bottom-width:3px"><strong style="font-weight:800">D6</strong></td><td style="border-bottom-width:3px"><strong style="font-weight:800;font-size:18px">Quadro M5500M, M2200, M620</strong></td><td style="border-bottom-width:3px;font-weight:600">5.2</td><td style="border-bottom-width:3px"><span class="state open"><i class="sw" aria-hidden="true" style="width:10px;height:10px;margin-right:7px"></i>Unverified candidate</span></td></tr>

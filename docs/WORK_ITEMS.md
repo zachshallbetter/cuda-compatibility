@@ -4,10 +4,10 @@ The project is bound to GitHub repository `zachshallbetter/cuda-compatibility` a
 
 ## CLC-001 — Establish the public project and first executable compatibility probe
 
-- **Intent:** `PROJECT_INTENT.md`
+- **Intent:** `.agents/project/intent.md`
 - **Status:** Done
 - **Objective:** Create the standalone CUDA Compatibility project, preserve the verified GM200 baseline, define evidence-backed application profiles, and implement a read-only host inspection/audit CLI.
-- **Scope:** `README.md`, `PROJECT_INTENT.md`, `PROJECT_PROFILE.json`, `FORMAL_RESOURCE_MANIFEST.json`, `bindings/PROJECT_BINDINGS.yaml`, `docs/**`, `experiments/maxwell/**`, `profiles/**`, `src/**`, `tests/**`, `pyproject.toml`, `Makefile`, `.gitignore`, `AGENTS.md`, and `LICENSE-*`.
+- **Scope:** `README.md`, `.agents/project/intent.md`, `.agents/project/profile.json`, `.agents/project/formal-resources.json`, `.agents/project/bindings.yaml`, `docs/**`, `experiments/maxwell/**`, `profiles/**`, `src/**`, `tests/**`, `pyproject.toml`, `Makefile`, `.gitignore`, `AGENTS.md`, and `LICENSE-*`.
 - **Exclusions:** Driver/toolkit installation or mutation; GPU identity spoofing; exporting fake compute capability; CUDA binary translation; distributing NVIDIA files; remote GitHub/ACP operations; performance claims.
 - **Dependencies:** Existing verified CUDA 12.4 `sm_52` vector-add run on all three TITAN X cards; source-backed CUDA 12.9/13 and framework requirements.
 - **Acceptance:** Bootstrap and project context validators pass; the Python CLI emits deterministic machine-readable inspection/audit results and gives nonzero exit for unmet profile requirements; unit checks cover success/failure paths; the native CUDA baseline is reproducible from the project; documents distinguish version gates from hardware limits and retain exact experiment evidence.
@@ -20,14 +20,14 @@ The project is bound to GitHub repository `zachshallbetter/cuda-compatibility` a
 
 The first work item is being executed under the user's explicit request to create and build out this dedicated local project. After the local frontier is connected to an authorized provider, future work will be tracked there.
 
-**Disposition:** Done for the stated first slice. Evidence is recorded in `records/evidence.jsonl`. CUDA 13 compilation/lowering, runtime emulation, application execution, and performance measurements are later work items; this completion does not claim those capabilities.
+**Disposition:** Done for the stated first slice. Evidence is recorded in `.agents/records/evidence.jsonl`. CUDA 13 compilation/lowering, runtime emulation, application execution, and performance measurements are later work items; this completion does not claim those capabilities.
 
 ## CLC-002 — Establish PyTorch Maxwell comparison and LLVM toolchain gate
 
-- **Intent:** `PROJECT_INTENT.md`
+- **Intent:** `.agents/project/intent.md`
 - **Status:** Done
 - **Objective:** Make the PyTorch CUDA 13 target measurable against the official Maxwell-supported CUDA 12.6.3 build and record whether the current development/target environments can execute the planned LLVM NVPTX experiment.
-- **Scope:** `profiles/pytorch-2.14-cu126.json`, `profiles/pytorch-2.14-cu130.json`, `README.md`, `docs/compatibility-targets.md`, `docs/roadmap.md`, and `records/evidence.jsonl`.
+- **Scope:** `profiles/pytorch-2.14-cu126.json`, `profiles/pytorch-2.14-cu130.json`, `README.md`, `docs/compatibility-targets.md`, `docs/roadmap.md`, and `.agents/records/evidence.jsonl`.
 - **Exclusions:** Installing compilers or toolkits; changing target host; claiming that the full PyTorch package is operational on Maxwell; runtime interception, API emulation, CUDA 13 binary compatibility, performance claims, remote repository/release actions.
 - **Dependencies:** Official PyTorch 2.14 release matrix; current local compiler and reference-host tool inventory.
 - **Acceptance:** Both PyTorch profiles distinguish the published CUDA build and architecture gate; the packaged profiles resolve by ID; project checks pass; compiler availability is recorded accurately; roadmap states the evidence needed before a user-space CUDA 13 profile can be claimed.
@@ -42,10 +42,10 @@ The first work item is being executed under the user's explicit request to creat
 
 ## CLC-003 — Expand feature-restoration goal and harden packaged profile lookup
 
-- **Intent:** `PROJECT_INTENT.md`; owner clarification recorded in `records/deviations.jsonl`.
+- **Intent:** `.agents/project/intent.md`; owner clarification recorded in `.agents/records/deviations.jsonl`.
 - **Status:** Done
 - **Objective:** Make software emulation an explicit first-class route for restoring newer CUDA feature semantics and support profile discovery from both standard and `pip --target` installations.
-- **Scope:** `PROJECT_INTENT.md`, `docs/architecture.md`, `src/cuda_legacy_compat/cli.py`, `tests/test_cli.py`, `records/deviations.jsonl`, and this work item.
+- **Scope:** `.agents/project/intent.md`, `docs/architecture.md`, `src/cuda_legacy_compat/cli.py`, `tests/test_cli.py`, `.agents/records/deviations.jsonl`, and this work item.
 - **Exclusions:** Claims of universal compatibility; compute-capability spoofing; unimplemented runtime/compiler emulation; driver/toolkit installation; external publication.
 - **Dependencies:** Active owner instruction; Python standard library; local isolated package install.
 - **Acceptance:** Project intent says deprecation alone does not exclude a feature and preserves evidence requirements; installed profile resolution works for standard venv and `pip --target` layouts; project checks and tests pass.
@@ -60,10 +60,10 @@ The first work item is being executed under the user's explicit request to creat
 
 ## CLC-004 — Run an isolated LLVM NVPTX Maxwell compile experiment
 
-- **Intent:** `PROJECT_INTENT.md`; compiler-independence milestone M1 in `docs/roadmap.md`.
+- **Intent:** `.agents/project/intent.md`; compiler-independence milestone M1 in `docs/roadmap.md`.
 - **Status:** Done
 - **Objective:** Test whether a pinned upstream LLVM release can compile the existing vector-add CUDA source to Maxwell PTX, whether CUDA 12.4 `ptxas` accepts it, and whether the result executes correctly on each GM200 card.
-- **Scope:** Temporary verified LLVM 23.1.4 toolchain under `/tmp` on `reference GPU host`; `experiments/llvm-nvptx/**`; `docs/research/llvm-nvptx.md`; `docs/roadmap.md`; `docs/WORK_ITEMS.md`; `records/evidence.jsonl`.
+- **Scope:** Temporary verified LLVM 23.1.4 toolchain under `/tmp` on `reference GPU host`; `experiments/llvm-nvptx/**`; `docs/research/llvm-nvptx.md`; `docs/roadmap.md`; `docs/WORK_ITEMS.md`; `.agents/records/evidence.jsonl`.
 - **Exclusions:** System package install; changes to NVIDIA driver, kernel, or system CUDA; proprietary file redistribution; replacing NVCC globally; CUDA 13 facade/API claims; performance parity claims; remote repository or release operations.
 - **Dependencies:** Upstream LLVM 23.1.4 Linux x86_64 release asset and its verification bundle; target host existing CUDA 12.4.131 headers, `ptxas`, and R580 driver; existing Maxwell baseline.
 - **Acceptance:** Verify the upstream toolchain artifact; confirm its NVPTX target; compile source for `sm_52`; capture PTX version/target; assemble with CUDA 12.4 `ptxas`; run the kernel and compare all outputs on each GPU; clean temporary downloaded/extracted artifacts.
@@ -78,10 +78,10 @@ The first work item is being executed under the user's explicit request to creat
 
 ## CLC-005 — Prototype opt-in CUDA 13 runtime-version spoof
 
-- **Intent:** `PROJECT_INTENT.md`; version/API facade milestone M3 in `docs/roadmap.md`.
+- **Intent:** `.agents/project/intent.md`; version/API facade milestone M3 in `docs/roadmap.md`.
 - **Status:** Done
 - **Objective:** Demonstrate an application-visible CUDA 13.0 runtime-version response while forwarding ordinary CUDA 12.4 runtime and driver behavior to the installed NVIDIA stack, with truthful physical device capability.
-- **Scope:** `src/native/**`, `experiments/runtime-facade/**`, `docs/research/runtime-version-facade.md`, `docs/roadmap.md`, `docs/WORK_ITEMS.md`, `README.md`, and `records/evidence.jsonl`.
+- **Scope:** `src/native/**`, `experiments/runtime-facade/**`, `docs/research/runtime-version-facade.md`, `docs/roadmap.md`, `docs/WORK_ITEMS.md`, `README.md`, and `.agents/records/evidence.jsonl`.
 - **Exclusions:** Spoofing GPU model or compute capability; claiming CUDA 13 APIs or libraries are implemented; intercepting arbitrary applications; system-wide `LD_PRELOAD`; driver/toolkit changes; public release artifacts containing NVIDIA files.
 - **Dependencies:** Reference host CUDA 12.4.131 headers/runtime/compiler and R580 driver.
 - **Acceptance:** An opt-in process-local preload makes a dynamically linked probe observe runtime version 13000, leaves driver version and `sm_52` properties truthful, and successfully performs a CUDA allocation, launch, synchronization, and copy using the real installed runtime. Without the opt-in environment variable, the probe reports the actual runtime version; unsupported virtual versions fail closed.
@@ -96,10 +96,10 @@ The first work item is being executed under the user's explicit request to creat
 
 ## CLC-007 — Restore PyTorch tensor addition on Maxwell
 
-- **Intent:** `PROJECT_INTENT.md`; first application workload target is PyTorch CUDA 13.
+- **Intent:** `.agents/project/intent.md`; first application workload target is PyTorch CUDA 13.
 - **Status:** Done
 - **Objective:** Make bounded `torch.add(Tensor, Tensor)` cases work on the official CUDA 13 PyTorch wheel on GM200 by routing contiguous int32 addition through an LLVM-generated `sm_52` kernel, using a PyTorch CPU fallback for contiguous int64 addition, and failing closed for other cases.
-- **Scope:** Temporary verified LLVM 23.1.4 toolchain under `/tmp` on `reference GPU host`; `experiments/pytorch-cu130/**`; `src/native/**`; `docs/research/pytorch-cu130-maxwell.md`; `docs/WORK_ITEMS.md`; `records/evidence.jsonl`; `records/negative-results.jsonl`.
+- **Scope:** Temporary verified LLVM 23.1.4 toolchain under `/tmp` on `reference GPU host`; `experiments/pytorch-cu130/**`; `src/native/**`; `docs/research/pytorch-cu130-maxwell.md`; `docs/WORK_ITEMS.md`; `.agents/records/evidence.jsonl`; `.agents/records/negative-results.jsonl`.
 - **Exclusions:** Modifying the official wheel; spoofing compute capability; changing PyTorch operators other than `aten::add.Tensor`; claiming CUDA 13 feature or library completeness; performance parity; changing system CUDA or driver.
 - **Dependencies:** Verified official LLVM 23.1.4 Linux release; CLC-006 official PyTorch 2.14.0+cu130 wheel in `/tmp/cuda-compat-pytorch-cu130-venv`; target R580 host and physical `sm_52` devices.
 - **Acceptance:** An explicitly installed process-local adapter runs contiguous int32 `torch.add` via PTX generated for `sm_52`; contiguous int64 addition uses CPU fallback and returns a CUDA tensor; unsupported dtype/layout/alpha fails explicitly; numerical equivalence passes on all three GPUs; native device identity remains 5.2; all temporary toolchain/package files are removed afterward.
@@ -114,10 +114,10 @@ The first work item is being executed under the user's explicit request to creat
 
 ## CLC-006 — Run the official PyTorch CUDA 13 wheel on Maxwell
 
-- **Intent:** `PROJECT_INTENT.md`; PyTorch CUDA 13 target in `docs/compatibility-targets.md`.
+- **Intent:** `.agents/project/intent.md`; PyTorch CUDA 13 target in `docs/compatibility-targets.md`.
 - **Status:** Done
 - **Objective:** Install the official PyTorch 2.14.0 CUDA 13.0 wheel into an isolated Python 3.10 environment on `reference GPU host`, observe its unmodified behavior on the three GM200 GPUs, then test the same package with the process-local runtime-version facade and a minimal CUDA tensor operation.
-- **Scope:** Temporary Python environment and package files under `/tmp` on `reference GPU host`; `experiments/pytorch-cu130/**`; `docs/research/pytorch-cu130-maxwell.md`; `docs/WORK_ITEMS.md`; `records/evidence.jsonl`; `records/negative-results.jsonl`.
+- **Scope:** Temporary Python environment and package files under `/tmp` on `reference GPU host`; `experiments/pytorch-cu130/**`; `docs/research/pytorch-cu130-maxwell.md`; `docs/WORK_ITEMS.md`; `.agents/records/evidence.jsonl`; `.agents/records/negative-results.jsonl`.
 - **Exclusions:** Changes to system Python/packages, NVIDIA driver, kernel, or CUDA installation; GPU model/compute-capability spoofing; modifying PyTorch wheel contents; claiming success from package import or version query alone; public redistribution of PyTorch or NVIDIA files.
 - **Dependencies:** Official PyTorch 2.14.0 CUDA 13.0 wheel/index; Python 3.10.12; R580 driver and existing three GM200 GPUs; CLC-005 process-local runtime-version facade.
 - **Acceptance:** Record install result, `torch.__version__`, runtime/driver versions, device visibility and real capabilities, then execute a small device tensor operation without and with the facade; capture exact failure boundary if either run fails; remove the temporary environment and packages.
@@ -132,11 +132,11 @@ The first work item is being executed under the user's explicit request to creat
 
 ## CLC-008 — Preserve asynchronous stream semantics in the PyTorch Maxwell adapter
 
-- **Intent:** `PROJECT_INTENT.md`; PyTorch CUDA 13 adapter in milestone M4 of `docs/roadmap.md`.
+- **Intent:** `.agents/project/intent.md`; PyTorch CUDA 13 adapter in milestone M4 of `docs/roadmap.md`.
 - **Parent:** CLC-007.
 - **Status:** Done
 - **Objective:** Remove per-call PTX module load/unload and forced stream synchronization from the int32 `aten::add.Tensor` bridge while preserving correct execution on PyTorch's current CUDA stream.
-- **Scope:** `experiments/pytorch-cu130/driver_add_bridge.cpp`; `experiments/pytorch-cu130/aten_compat.py`; `experiments/pytorch-cu130/operator_probe.py`; `experiments/pytorch-cu130/run_operator_adapter.sh`; `docs/research/pytorch-cu130-maxwell.md`; `docs/WORK_ITEMS.md`; `records/evidence.jsonl`; `records/negative-results.jsonl`.
+- **Scope:** `experiments/pytorch-cu130/driver_add_bridge.cpp`; `experiments/pytorch-cu130/aten_compat.py`; `experiments/pytorch-cu130/operator_probe.py`; `experiments/pytorch-cu130/run_operator_adapter.sh`; `docs/research/pytorch-cu130-maxwell.md`; `docs/WORK_ITEMS.md`; `.agents/records/evidence.jsonl`; `.agents/records/negative-results.jsonl`.
 - **Exclusions:** Adding operator/dtype coverage; packaging a public Python distribution; changing the CUDA runtime-version facade; modifying the PyTorch wheel, NVIDIA driver, kernel, or system CUDA; claiming broad CUDA 13 compatibility; commit, push, or release.
 - **Dependencies:** Verified LLVM 23.1.4 artifact identity from CLC-004; official PyTorch 2.14.0+cu130 probe environment from CLC-006; reference host `resource` broker and three GM200 `sm_52` devices.
 - **Acceptance:** Cache the one PTX module/function per live CUDA context for the process lifetime; reject a different PTX path for an already cached context; launch on PyTorch's current stream without synchronizing or unloading after each call; reject element counts that exceed the kernel ABI's signed 32-bit limit; pass repeated and non-default-stream int32 correctness checks on all three physical cards; preserve the int64 fallback and explicit unsupported-case behavior; keep physical device reporting truthful.
@@ -152,11 +152,11 @@ The first work item is being executed under the user's explicit request to creat
 
 ## CLC-009 — Run a float32 PyTorch inference slice through Maxwell kernels
 
-- **Intent:** `PROJECT_INTENT.md`; PyTorch CUDA 13 framework adapter in M4 of `docs/roadmap.md`.
+- **Intent:** `.agents/project/intent.md`; PyTorch CUDA 13 framework adapter in M4 of `docs/roadmap.md`.
 - **Parent:** CLC-007; follow-on hardening CLC-008.
 - **Status:** Done
 - **Objective:** Extend the opt-in `aten` dispatcher adapter with bounded contiguous float32 matrix multiplication and ReLU kernels for `sm_52`, then run a deterministic two-layer MLP inference slice on the official PyTorch CUDA 13 wheel.
-- **Scope:** `experiments/pytorch-cu130/compat_kernels.cu`; `experiments/pytorch-cu130/driver_add_bridge.cpp`; `experiments/pytorch-cu130/aten_compat.py`; `experiments/pytorch-cu130/operator_probe.py`; `experiments/pytorch-cu130/run_operator_adapter.sh`; new stock-wheel baseline probe under `experiments/pytorch-cu130/`; `README.md`; `docs/roadmap.md`; `docs/research/pytorch-cu130-maxwell.md`; `docs/WORK_ITEMS.md`; `records/evidence.jsonl`; `records/negative-results.jsonl`.
+- **Scope:** `experiments/pytorch-cu130/compat_kernels.cu`; `experiments/pytorch-cu130/driver_add_bridge.cpp`; `experiments/pytorch-cu130/aten_compat.py`; `experiments/pytorch-cu130/operator_probe.py`; `experiments/pytorch-cu130/run_operator_adapter.sh`; new stock-wheel baseline probe under `experiments/pytorch-cu130/`; `README.md`; `docs/roadmap.md`; `docs/research/pytorch-cu130-maxwell.md`; `docs/WORK_ITEMS.md`; `.agents/records/evidence.jsonl`; `.agents/records/negative-results.jsonl`.
 - **Exclusions:** Arbitrary model support; convolution, attention, optimizer, autograd, half precision, non-contiguous matrices, large-matrix performance; expanding runtime API interception; modifying the official wheel, NVIDIA driver, kernel, or system CUDA; commit, push, or release.
 - **Dependencies:** CLC-008 cached asynchronous bridge; CLC-006 official `torch 2.14.0+cu130` environment and reference host host; CLC-004 attestation-verified LLVM 23.1.4 artifact identity.
 - **Acceptance:** A stock-wheel probe records the exact `sm_52` outcome for built-in `mm` and `relu`; opt-in replacements compile into one `sm_52` PTX module and pass direct operator comparisons against CPU PyTorch; a deterministic `mm → relu → mm` inference slice matches its CPU reference within documented float32 tolerances; non-default-stream execution passes; zero/empty inner/output dimensions have defined correct behavior; unsupported layouts and autograd fail explicitly; all three physical GPUs pass both ordinary and facade runtime modes with real CC 5.2 reporting; task-created remote files are cleaned.
@@ -172,11 +172,11 @@ The first work item is being executed under the user's explicit request to creat
 
 ## CLC-010 — Package and launch the opt-in PyTorch compatibility layer
 
-- **Intent:** `PROJECT_INTENT.md`; public CUDA compatibility layer goal and PyTorch CUDA 13 target.
+- **Intent:** `.agents/project/intent.md`; public CUDA compatibility layer goal and PyTorch CUDA 13 target.
 - **Parent:** CLC-007; depends on CLC-008 and CLC-009.
 - **Status:** Done
 - **Objective:** Turn the tested PyTorch operator adapter into an installable, opt-in `cuda-legacy-compat run` path that builds its `sm_52` PTX and native bridge in a temporary directory, initializes dispatch before the user's Python program, and enables the tested runtime-version facade without modifying the PyTorch wheel or system CUDA installation.
-- **Scope:** `src/cuda_legacy_compat/**`; package resource files for PyTorch adapter, kernel source, bridge, and startup bootstrap; `pyproject.toml`; `tests/**`; `experiments/pytorch-cu130/**` only for developer-runner integration; `README.md`; `docs/architecture.md`; `docs/roadmap.md`; `docs/research/pytorch-cu130-maxwell.md`; `docs/WORK_ITEMS.md`; `records/evidence.jsonl`; `records/negative-results.jsonl`.
+- **Scope:** `src/cuda_legacy_compat/**`; package resource files for PyTorch adapter, kernel source, bridge, and startup bootstrap; `pyproject.toml`; `tests/**`; `experiments/pytorch-cu130/**` only for developer-runner integration; `README.md`; `docs/architecture.md`; `docs/roadmap.md`; `docs/research/pytorch-cu130-maxwell.md`; `docs/WORK_ITEMS.md`; `.agents/records/evidence.jsonl`; `.agents/records/negative-results.jsonl`.
 - **Exclusions:** Wider operator support; system-wide `LD_PRELOAD`; modifying PyTorch/NVIDIA files; downloading or installing toolchains into persistent system paths; auto-detecting and masking unknown hardware; arbitrary static binaries; commit, push, or public release.
 - **Dependencies:** CLC-009 verified `aten::add.Tensor`, `aten::mm`, and `aten::relu` implementations; package profile/audit CLI; official PyTorch 2.14.0+cu130 wheel; reference host `resource` broker; CUDA 12.4 headers/driver library and verified LLVM 23.1.4.
 - **Acceptance:** A built wheel contains the adapter and compile resources without bundling PyTorch/NVIDIA binaries; `cuda-legacy-compat run -- <python-script> [args...]` validates the target and required toolchain, compiles PTX/bridge/facade into a bounded temporary directory, initializes the opt-in dispatcher before the script, sets process-local runtime facade variables, forwards arguments/stdio/exit status, and removes generated artifacts; CPU-only import and CLI checks pass without importing PyTorch; all existing operator and MLP GPU assertions pass through the installed launcher on physical GPUs 0, 1, and 2; unsupported operations still fail explicitly and actual CC remains 5.2.
@@ -193,11 +193,11 @@ The first work item is being executed under the user's explicit request to creat
 
 ## CLC-011 — Evaluate one owner-supplied inference checkpoint
 
-- **Intent:** `PROJECT_INTENT.md`; practical PyTorch CUDA 13 use on older NVIDIA GPUs.
+- **Intent:** `.agents/project/intent.md`; practical PyTorch CUDA 13 use on older NVIDIA GPUs.
 - **Parent:** CLC-010 packaged launcher.
 - **Status:** In progress
 - **Objective:** Evaluate one owner-supplied transformer checkpoint through the CUDA 13 wheel and `cuda-legacy-compat run` on `sm_52`, adding only the operator or library coverage the workload requires. Compare returned tensors with a CPU reference across bounded batch and sequence shapes, retain honest device reporting, and measure peak GPU memory and latency/throughput.
-- **Scope:** The adapter and launcher under `src/cuda_legacy_compat/**`; the local-only workload probe (excluded from the public source snapshot); integration checks under `tests/**`; this work item, `docs/roadmap.md`, `docs/research/pytorch-cu130-maxwell.md`, and `records/evidence.jsonl`.
+- **Scope:** The adapter and launcher under `src/cuda_legacy_compat/**`; the local-only workload probe (excluded from the public source snapshot); integration checks under `tests/**`; this work item, `docs/roadmap.md`, `docs/research/pytorch-cu130-maxwell.md`, and `.agents/records/evidence.jsonl`.
 - **Exclusions:** Publishing the checkpoint, model source, tokenizer, project paths, configuration identifiers, or artifact hashes; modifying the external model or its training data; training or fine-tuning; claiming general PyTorch support from one workload; changing the NVIDIA driver, system CUDA installation, or official wheel.
 - **Dependencies:** CLC-010 launcher; official PyTorch 2.14.0+cu130 wheel; reference GPU host; verified LLVM 23.1.4 and installed CUDA 12.4 driver headers.
 - **Acceptance:** Capture the unmodified wheel's first failing operator/library boundary; run the checkpoint in evaluation/inference mode through the packaged launcher; compare returned tensors with CPU output using documented tolerances; verify truthful device reporting; reject unsupported cases clearly; report workload-level memory and latency methodology; clean task-created temporary dependencies and build files.
@@ -213,11 +213,11 @@ The first work item is being executed under the user's explicit request to creat
 
 ## CLC-012 — Validate a convolutional PyTorch CUDA 13 inference path
 
-- **Intent:** `PROJECT_INTENT.md`; practical PyTorch CUDA 13 use on older NVIDIA GPUs.
+- **Intent:** `.agents/project/intent.md`; practical PyTorch CUDA 13 use on older NVIDIA GPUs.
 - **Parent:** CLC-010 packaged launcher; related workload validation CLC-011.
 - **Status:** Verified
 - **Objective:** Determine whether a small convolutional inference graph can run through the official CUDA 13 wheel on `sm_52`, and add only the narrowly evidenced fallback needed to preserve the graph's output.
-- **Scope:** `src/cuda_legacy_compat/torch_adapter.py`; `experiments/pytorch-cu130/cnn_probe.py`; `docs/WORK_ITEMS.md`; `docs/roadmap.md`; `docs/research/pytorch-cu130-maxwell.md`; `README.md`; `records/evidence.jsonl`.
+- **Scope:** `src/cuda_legacy_compat/torch_adapter.py`; `experiments/pytorch-cu130/cnn_probe.py`; `docs/WORK_ITEMS.md`; `docs/roadmap.md`; `docs/research/pytorch-cu130-maxwell.md`; `README.md`; `.agents/records/evidence.jsonl`.
 - **Exclusions:** Claiming general cuDNN/convolution compatibility; training, autograd, performance parity, or extra shapes; changing the PyTorch wheel, NVIDIA driver, system CUDA, or reference host workloads; commit, push, or release.
 - **Dependencies:** CLC-010 launcher; official PyTorch 2.14.0+cu130 isolated environment; reference host `resource` broker; verified LLVM 23.1.4 and CUDA 12.4 driver headers.
 - **Acceptance:** Reproduce the convolutional stock-path failure; add a precisely matched inference-only fallback signal while preserving fail-closed mutation and alias rules; run the packaged launcher via the resource broker and compare final output to CPU at documented tolerance; verify true device capability remains 5.2.
@@ -233,11 +233,11 @@ The first work item is being executed under the user's explicit request to creat
 
 ## CLC-013 — Align installation, CLI, and public compatibility claims
 
-- **Intent:** `PROJECT_INTENT.md`; host-level CUDA 13+ compatibility end state and truthful implementation status.
+- **Intent:** `.agents/project/intent.md`; host-level CUDA 13+ compatibility end state and truthful implementation status.
 - **Parent:** CLC-010 packaged launcher; public documentation and CLI quality.
 - **Status:** Verified
 - **Objective:** Make the package installation path, CLI behavior, tested environment, architecture description, and published research claims reproducible and consistent with the current implementation, while clearly distinguishing the process-local prototype from the desired machine-level product.
-- **Scope:** `PROJECT_INTENT.md`; `README.md`; `src/cuda_legacy_compat/cli.py`; `tests/test_cli.py`; `docs/architecture.md`; `docs/roadmap.md`; `docs/research/pytorch-cu130-maxwell.md`; `docs/research/runtime-version-facade.md`; `docs/WORK_ITEMS.md`; `records/evidence.jsonl`; generated context lock.
+- **Scope:** `.agents/project/intent.md`; `README.md`; `src/cuda_legacy_compat/cli.py`; `tests/test_cli.py`; `docs/architecture.md`; `docs/roadmap.md`; `docs/research/pytorch-cu130-maxwell.md`; `docs/research/runtime-version-facade.md`; `docs/WORK_ITEMS.md`; `.agents/records/evidence.jsonl`; generated context lock.
 - **Exclusions:** A machine-wide installer or interposer; changes to the NVIDIA driver, toolkit, or CUDA wheel; broader operator/library support; public repository creation, package publication, commit, or push.
 - **Dependencies:** CLC-010 package and launcher; current PyTorch CUDA 13 evidence; local Python package build tooling.
 - **Acceptance:** Document regular and development installs, same-environment requirements, tested GPU launch dependencies, CLI commands and exit semantics, truthful process-only boundaries, and current evidence; provide a CLI version flag; successfully install the built package into a clean virtual environment, resolve an installed profile, and verify unknown hardware reports `unknown`; pass repository checks and tests.
@@ -253,11 +253,11 @@ The first work item is being executed under the user's explicit request to creat
 
 ## CLC-014 — Improve CLI guidance and user documentation
 
-- **Intent:** `PROJECT_INTENT.md`; host-level CUDA 13+ compatibility end state with evidence-backed support claims.
+- **Intent:** `.agents/project/intent.md`; host-level CUDA 13+ compatibility end state with evidence-backed support claims.
 - **Parent:** CLC-013 public installation and CLI quality review.
 - **Status:** Verified
 - **Objective:** Make common user tasks discoverable from the CLI and provide a practical guide to installing, diagnosing, auditing, launching, and understanding the current compatibility tool.
-- **Scope:** `src/cuda_legacy_compat/cli.py`; `src/cuda_legacy_compat/launch.py` only if shared read-only prerequisite checks are needed; `tests/test_cli.py`; new `docs/user-guide.md`; `README.md`; `docs/WORK_ITEMS.md`; `records/evidence.jsonl`; generated context lock.
+- **Scope:** `src/cuda_legacy_compat/cli.py`; `src/cuda_legacy_compat/launch.py` only if shared read-only prerequisite checks are needed; `tests/test_cli.py`; new `docs/user-guide.md`; `README.md`; `docs/WORK_ITEMS.md`; `.agents/records/evidence.jsonl`; generated context lock.
 - **Exclusions:** Machine-wide installation or loader injection; expanding CUDA operator/library behavior; downloading toolchains automatically; changing the NVIDIA driver, toolkit, or PyTorch wheel; public repository creation, package publication, commit, or push.
 - **Dependencies:** CLC-010 packaged CLI; CLC-013 install verification; current profile and PyTorch CUDA 13 research records.
 - **Acceptance:** Provide clear root and command help; list and show installed/source profiles in human and JSON forms; add read-only actionable prerequisite diagnostics; preserve truthful compatibility/audit semantics and exit codes; document user workflows, known limits, and troubleshooting; install the package in an isolated environment and exercise documented CLI paths; pass repository checks and tests.
@@ -273,11 +273,11 @@ The first work item is being executed under the user's explicit request to creat
 
 ## CLC-015 — Build a public-facing GitHub Pages project site
 
-- **Intent:** `PROJECT_INTENT.md`; explain and advance practical PyTorch CUDA 13 use on older GPUs with evidence-backed claims.
+- **Intent:** `.agents/project/intent.md`; explain and advance practical PyTorch CUDA 13 use on older GPUs with evidence-backed claims.
 - **Parent:** CLC-013/014 public documentation and installation quality.
 - **Status:** Verified
 - **Objective:** Create a comprehensive, accessible, responsive GitHub Pages-ready site that explains the project, its actual state and limitations, validated workloads, installation path, and architecture-matched but unverified GPU candidates; credit Zach Shallbetter with verified personal site and GitHub profile links.
-- **Scope:** `site/**`; `.github/workflows/pages.yml`; `README.md`; `docs/WORK_ITEMS.md`; `records/evidence.jsonl`; generated context.
+- **Scope:** `site/**`; `.github/workflows/pages.yml`; `README.md`; `docs/WORK_ITEMS.md`; `.agents/records/evidence.jsonl`; generated context.
 - **Exclusions:** Creating a GitHub repository, configuring custom domains or repository settings, pushing code, publishing/deploying the site, claiming broad CUDA 13+ support, or expanding GPU/operator compatibility.
 - **Dependencies:** Current README, CLI guide, research records, NVIDIA CUDA 13 release notes and legacy compute-capability listing, verified owner links.
 - **Acceptance:** The site distinguishes verified, experimental, and unverified states; explains the process-local adapter and CPU fallback honestly; lists same-`sm_52` candidate cards as unverified per-card and per-workload; gives a useful current install/run path; cites primary sources; includes accessible mobile-ready navigation and identity links; deploy workflow packages only `site/` and requires a manual dispatch; static site serves successfully and local project gates pass.
@@ -295,11 +295,11 @@ The first work item is being executed under the user's explicit request to creat
 
 ## CLC-016 — Add a short command and an explained legacy GPU catalog
 
-- **Intent:** `PROJECT_INTENT.md`; public, practical CUDA 13 compatibility for older GPUs with honest hardware and workload claims.
+- **Intent:** `.agents/project/intent.md`; public, practical CUDA 13 compatibility for older GPUs with honest hardware and workload claims.
 - **Parent:** CLC-015 GitHub Pages project site; CLC-014 CLI guidance.
 - **Status:** Done
 - **Objective:** Add an intuitive short command alongside the existing CLI name; document correct Python install locations for the current same-environment launcher; and expand the site from the current `sm_52` candidates to an explained catalog of NVIDIA's legacy compute-capability tiers and representative device models.
-- **Scope:** `pyproject.toml`; `src/cuda_legacy_compat/cli.py`; `tests/test_cli.py`; `README.md`; `docs/user-guide.md`; `site/index.html`; `site/gpu-catalog.html`; `site/styles.css`; `docs/WORK_ITEMS.md`; `records/evidence.jsonl`; generated context.
+- **Scope:** `pyproject.toml`; `src/cuda_legacy_compat/cli.py`; `tests/test_cli.py`; `README.md`; `docs/user-guide.md`; `site/index.html`; `site/gpu-catalog.html`; `site/styles.css`; `docs/WORK_ITEMS.md`; `.agents/records/evidence.jsonl`; generated context.
 - **Exclusions:** Removing the existing command; changing launcher behavior or adding a system-wide installer; claiming the catalog means CUDA 13 compatibility; expanding GPU support; creating a GitHub repository, pushing, or deploying the site.
 - **Dependencies:** Current package entry point and same-environment launcher contract; Python Packaging User Guide install-location documentation; NVIDIA legacy compute-capability listing; CUDA 13 architecture notes.
 - **Acceptance:** Both short and existing commands work and print their invoked name in help/version output; common virtual-environment and user-site command locations are explained without recommending isolated `pipx` for the current GPU run path; site covers NVIDIA legacy CC 1.0–7.2 tiers with original explanatory context, model examples, and clear project/PyTorch status; all unverified cards remain clearly labeled; local page links and assets resolve; project checks pass.
@@ -320,7 +320,7 @@ The first work item is being executed under the user's explicit request to creat
 - **Parent:** CLC-015 public project site.
 - **Status:** Done
 - **Objective:** Replace the top-bar author-profile link with the supplied project repository URL while retaining author-profile links in the attribution section.
-- **Scope:** `site/index.html`; `docs/WORK_ITEMS.md`; `records/evidence.jsonl`; generated context.
+- **Scope:** `site/index.html`; `docs/WORK_ITEMS.md`; `.agents/records/evidence.jsonl`; generated context.
 - **Exclusions:** Changing repository settings, configuring a Git remote, publishing, or pushing changes.
 - **Evidence required:** Confirm the top-bar anchor and label, validate page markup, and pass `make check`.
 - **Permissions:** E1 local site, work-item, and evidence updates.
@@ -335,7 +335,7 @@ The first work item is being executed under the user's explicit request to creat
 - **Parent:** CLC-015 public project site.
 - **Status:** Done
 - **Objective:** Replace local model/classifier result cards with a feature-oriented view of inventory/profile checks, the process-local CUDA 13 launcher, native `sm_52` operator kernels, and bounded CPU fallback.
-- **Scope:** `site/index.html`; `site/styles.css`; `docs/WORK_ITEMS.md`; `records/evidence.jsonl`; generated context.
+- **Scope:** `site/index.html`; `site/styles.css`; `docs/WORK_ITEMS.md`; `.agents/records/evidence.jsonl`; generated context.
 - **Exclusions:** Removing reproducibility details from the research log or changing feature implementation/support claims.
 - **Evidence required:** Check visible copy for local project/model names, validate capability claims against the user guide/research record, preview desktop and mobile layout, and pass `make check`.
 - **Permissions:** E1 local site, work-item, and evidence edits; local preview only.
@@ -350,7 +350,7 @@ The first work item is being executed under the user's explicit request to creat
 - **Parent:** CLC-015 public project site; CLC-018 tool-feature status section.
 - **Status:** Done
 - **Objective:** List native GPU operators, CPU fallback registrations, version-facade behavior, host/device constraints, and unsupported boundaries on the project site.
-- **Scope:** `site/index.html`; `site/styles.css`; `docs/WORK_ITEMS.md`; `records/evidence.jsonl`; generated context.
+- **Scope:** `site/index.html`; `site/styles.css`; `docs/WORK_ITEMS.md`; `.agents/records/evidence.jsonl`; generated context.
 - **Exclusions:** Claiming general CUDA 13 API/library compatibility or broadening code support.
 - **Dependencies:** `src/cuda_legacy_compat/torch_adapter.py`; `docs/architecture.md`; `docs/research/pytorch-cu130-maxwell.md`; `docs/research/runtime-version-facade.md`.
 - **Acceptance:** Public site describes all explicitly registered native and CPU operator paths, exact documented shape/dtype/memory/inference limits, one-query process-local runtime facade, and unsupported general runtime/library/training scope; feature wording does not present private model workloads as product features; responsive layout and local links remain valid.
@@ -366,7 +366,7 @@ The first work item is being executed under the user's explicit request to creat
 - **Parent:** CLC-015 public project site; CLC-019 operator/runtime coverage inventory.
 - **Status:** Done
 - **Objective:** Apply pinned DPP and RPP guidance to the site, create linked user documentation pages, and keep navigation, crawler metadata, social previews, and agent entry points consistent.
-- **Scope:** `site/index.html`; `site/gpu-catalog.html`; `site/docs/`; `site/styles.css`; `site/robots.txt`; `site/sitemap.xml`; `site/llms.txt`; `site/assets/social-card.*`; `docs/FORMAL_RESOURCES.md`; `FORMAL_RESOURCE_MANIFEST.json`; `docs/WORK_ITEMS.md`; `records/evidence.jsonl`; generated context.
+- **Scope:** `site/index.html`; `site/gpu-catalog.html`; `site/docs/`; `site/styles.css`; `site/robots.txt`; `site/sitemap.xml`; `site/llms.txt`; `site/assets/social-card.*`; `.agents/bootstrap/docs/FORMAL_RESOURCES.md`; `.agents/project/formal-resources.json`; `docs/WORK_ITEMS.md`; `.agents/records/evidence.jsonl`; generated context.
 - **Exclusions:** Claiming DPP conformance or empirical discovery; submitting an RPP publication/archive; analytics or tracking; repository settings changes, push, or deployment.
 - **Dependencies:** DPP 0.3.0 Working Draft and RPP 1.0.0 Normative Candidate pinned to protocols repository revision `38eb016986731bed3eaa7aecfc6ba14f3fbc8ccd`; actual project implementation, support inventory, and recorded evidence.
 - **Acceptance:** Homepage, catalog, and docs share the same primary navigation; documentation provides setup, support matrix, architecture, CLI, and evidence pages with secondary navigation; each page has canonical and social metadata; structured data, sitemap, robots policy, social card, and agent-readable index resolve; public claims match implementation and preserve explicit limits; local links and responsive rendering work; project checks pass. Live crawl/index/retrieval outcomes remain explicitly unverified.
@@ -382,7 +382,7 @@ The first work item is being executed under the user's explicit request to creat
 - **Parent:** CLC-020 DPP/RPP site and documentation.
 - **Status:** In progress
 - **Objective:** Add consent-gated Google Analytics 4 page and named link events, a clear privacy/settings page, and instructions for Google Search Console and sitemap submission. Preserve existing SEO/social/agent metadata and keep analytics inactive until a site owner supplies a valid GA4 measurement ID.
-- **Scope:** `site/**`; `docs/WORK_ITEMS.md`; `records/evidence.jsonl`; generated context.
+- **Scope:** `site/**`; `docs/WORK_ITEMS.md`; `.agents/records/evidence.jsonl`; generated context.
 - **Exclusions:** Creating or modifying Google properties, processing real visitor data, legal-compliance certification, adding advertising/personalization, supplying a measurement ID or Search Console token, configuring repository settings, publishing, or deployment.
 - **Dependencies:** DPP 0.3.0 measurement/privacy requirements and current site page inventory.
 - **Acceptance:** No Google tag or analytics request loads before affirmative analytics consent; missing measurement ID disables the banner and tracking; rejection persists and can be changed later; withdrawal blocks future manually named project events, updates consent to denied, and clears current-host GA cookies where possible; page paths/referrers exclude query and fragment data; manually named events use a documented allowlist and never carry arbitrary URLs or user input; GA4 automatic events and possible consent signals are documented; privacy, retention, and Search Console setup are documented; every public page links to the policy; existing canonical, sitemap, robots, structured data, social previews, and agent index remain consistent.
@@ -399,7 +399,7 @@ The first work item is being executed under the user's explicit request to creat
 - **Parent:** CLC-015 public site; CLC-020 DPP/RPP docs; owner request to publish the repository.
 - **Status:** Done
 - **Objective:** Review and commit the complete local project candidate, connect it to the owner-confirmed `zachshallbetter/cuda-compatibility` repository, push the intended branch, and publish the site through the existing GitHub Pages workflow when project authorization permits.
-- **Scope:** Current project source, documentation, tests, research/evidence, `site/**`, `.github/workflows/pages.yml`, repository-local Git configuration, `docs/WORK_ITEMS.md`, `records/evidence.jsonl`, and generated context.
+- **Scope:** Current project source, documentation, tests, research/evidence, `site/**`, `.github/workflows/pages.yml`, repository-local Git configuration, `docs/WORK_ITEMS.md`, `.agents/records/evidence.jsonl`, and generated context.
 - **Exclusions:** Creating a different repository, changing project claims, configuring analytics or Search Console credentials, changing GitHub security/branch policies, modifying the NVIDIA driver/toolkit, publishing a software release/package, or promoting unverified GPU/workload claims.
 - **Dependencies:** Existing public repository identity confirmed by owner; local candidate review; CUDA Compatibility GitHub Project board #44; an ACP policy registered for this repository; valid ACP authorization for protected push and Pages deployment.
 - **Acceptance:** No secrets or private local artifacts enter the public commit; the reviewed project candidate has a root commit on the intended branch; the public repository contains that commit; GitHub Pages deployment succeeds at the canonical URL; the published site and repository are fetched and checked; deployment and search indexing outcomes are reported separately.
@@ -410,9 +410,9 @@ The first work item is being executed under the user's explicit request to creat
 - **Budget:** No spend; one bounded first-publication pass.
 - **Stop conditions:** ACP is unavailable, has no policy registered for this repository, or refuses the exact push/deploy; remote identity/state differs from the confirmed repository; a secret/private artifact is found; or repository policy prevents safe deployment.
 
-**Initial progress (2026-11-01; superseded by the verification below):** The signed candidate commit `97354d2f04ae752251523b040cb0c433ab57c5f7` was first pushed to the public `codex/cuda-compat-publication` branch. The initial ACP SHA mismatch and denied `main` ref requests are retained in `records/evidence.jsonl`; no `main` ref was created. At that earlier point Pages was unavailable and publication was incomplete.
+**Initial progress (2026-11-01; superseded by the verification below):** The signed candidate commit `97354d2f04ae752251523b040cb0c433ab57c5f7` was first pushed to the public `codex/cuda-compat-publication` branch. The initial ACP SHA mismatch and denied `main` ref requests are retained in `.agents/records/evidence.jsonl`; no `main` ref was created. At that earlier point Pages was unavailable and publication was incomplete.
 
-**Verification (2026-11-01):** The public repository default branch `codex/cuda-compat-publication` resolved to `b46c42bb4209842cea3825874c12225e6f2e3f50`. The exact branch update from `22667016a0473178f8eea37fcaa8bb876f3c3a67` to that commit received ACP `ALLOW` request `7d837ae7ae30e83a`. GitHub Pages workflow run [41309056623](https://github.com/zachshallbetter/cuda-compatibility/actions/runs/41309056623) completed successfully at that exact SHA after production-deploy ACP `ALLOW` request `606588308982667e`. All 10 sitemap pages, `robots.txt`, `llms.txt`, and both social-card assets returned HTTP 200. Nine project source links found on published documentation pages returned HTTP 200. The live site includes canonical, Open Graph, Twitter, and structured-data fields. Search indexing remains unobserved; GA4 has no measurement ID, and no Search Console/Bing property receipt or public announcement is recorded. Full route evidence is in `records/evidence.jsonl`.
+**Verification (2026-11-01):** The public repository default branch `codex/cuda-compat-publication` resolved to `b46c42bb4209842cea3825874c12225e6f2e3f50`. The exact branch update from `22667016a0473178f8eea37fcaa8bb876f3c3a67` to that commit received ACP `ALLOW` request `7d837ae7ae30e83a`. GitHub Pages workflow run [41309056623](https://github.com/zachshallbetter/cuda-compatibility/actions/runs/41309056623) completed successfully at that exact SHA after production-deploy ACP `ALLOW` request `606588308982667e`. All 10 sitemap pages, `robots.txt`, `llms.txt`, and both social-card assets returned HTTP 200. Nine project source links found on published documentation pages returned HTTP 200. The live site includes canonical, Open Graph, Twitter, and structured-data fields. Search indexing remains unobserved; GA4 has no measurement ID, and no Search Console/Bing property receipt or public announcement is recorded. Full route evidence is in `.agents/records/evidence.jsonl`.
 
 **Latest site deployment and source-branch update (2026-11-01):** GitHub Pages run [41313898493](https://github.com/zachshallbetter/cuda-compatibility/actions/runs/41313898493) completed successfully for deployed site commit `bbcb5f74b55f183f9e5dd702352341f26a7b65b4`, following exact push and deploy `ALLOW` decisions with verified capabilities. The post-deploy HTTPS audit returned HTTP 200 for all 10 sitemap pages, the sitemap, `robots.txt`, `llms.txt`, and three supporting assets; all 10 descriptions were unique and 141–167 characters. A source update from `f31d06e79439353a0da42a5f50c7f02e85d13579` to `5f54600c54f1a131101e1232e069ad7943c9f117` received exact ACP `ALLOW` request `404c5e16d4a5859f`, passed capability verification, and was observed on the remote. It published the merged research charter, product contract, milestone plan, and reconciled release record. The source-only update changes no site files, so the latest site deployment remains `bbcb5f7`. Google still reports the homepage unknown to its index and sitemap fetch failure; Bing reports sitemap Success with 10 URLs. No indexing or search-performance outcome is inferred. Evidence: `CLC-027-google-url-inspection`, `CLC-027-bing-sitemap-success`, `CLC-027-pages-release`, `CLC-027-live-route-audit`, `CLC-022-push-ref-moved`, `CLC-022-source-push-53da246`, `CLC-022-source-tip-f31d06e`, `CLC-022-source-push-5f54600`.
 
@@ -423,7 +423,7 @@ The first work item is being executed under the user's explicit request to creat
 - **Parent:** CLC-020 DPP/RPP site and documentation; CLC-021 privacy and measurement.
 - **Status:** Done
 - **Objective:** Replace externally hosted Google Fonts with system font stacks and accurately disclose the page-load behavior in the privacy documentation.
-- **Scope:** `site/*.html`; `site/docs/*.html`; `site/styles.css`; `site/docs/privacy.html`; `docs/WORK_ITEMS.md`; `records/evidence.jsonl`; generated context.
+- **Scope:** `site/*.html`; `site/docs/*.html`; `site/styles.css`; `site/docs/privacy.html`; `docs/WORK_ITEMS.md`; `.agents/records/evidence.jsonl`; generated context.
 - **Exclusions:** Adding analytics identifiers, making external account changes, changing page claims, or publishing/deploying the site.
 - **Acceptance:** No page references Google Fonts or another third-party font host; system font stacks retain readable hierarchy; the privacy page says font assets are not requested from third parties; existing canonical, social metadata, navigation, and local page links remain intact.
 - **Evidence required:** Static external-font scan; local HTTP preview of the homepage; canonical/navigation/link audit; `make check` and `make test`.
@@ -439,7 +439,7 @@ The first work item is being executed under the user's explicit request to creat
 - **Parent:** CLC-020 DPP/RPP site and documentation; CLC-021 privacy and measurement; CLC-022 publication candidate.
 - **Status:** Done
 - **Objective:** Maintain a versioned project presence ledger, publish direct discovery guidance, and add deterministic local release checks for canonical pages, metadata, navigation, links, sitemap, robots, and the agent index.
-- **Scope:** `docs/DPP_IMPLEMENTATION.md`; `docs/FORMAL_RESOURCES.md`; `site/docs/**`; `site/analytics.js`; `site/llms.txt`; `site/sitemap.xml`; `scripts/site_checks.py`; `tests/test_site_checks.py`; `Makefile`; `docs/WORK_ITEMS.md`; `records/evidence.jsonl`; generated context.
+- **Scope:** `docs/DPP_IMPLEMENTATION.md`; `.agents/bootstrap/docs/FORMAL_RESOURCES.md`; `site/docs/**`; `site/analytics.js`; `site/llms.txt`; `site/sitemap.xml`; `scripts/site_checks.py`; `tests/test_site_checks.py`; `Makefile`; `docs/WORK_ITEMS.md`; `.agents/records/evidence.jsonl`; generated context.
 - **Exclusions:** Declaring DPP conformance; submitting or changing search/analytics properties; live crawler probing, outreach, social publication, or AI prompt sampling without an authorized, preregistered run; claiming measured search or AI performance.
 - **Dependencies:** DPP 0.3.0 pinned revision; current implementation and evidence records; repository and Pages publication remain subject to CLC-022 ACP authorization.
 - **Acceptance:** Stable project/author/site identity and material claims map to sources; owned surfaces and access states distinguish represented/locally tested from publicly observed; seed query intents are labeled as hypotheses rather than trend data; metrics have denominators, source, and missingness rules; distribution and correction authority are recorded; user-facing discovery guidance explains robots/sitemap/agent-index limits; internal directory links use explicit index pages for file previews; automated checks detect canonical, metadata, link, navigation, sitemap, robots, and agent-index drift; all local release checks pass.
@@ -457,7 +457,7 @@ The first work item is being executed under the user's explicit request to creat
 - **Parent:** CLC-020 site documentation; CLC-021 analytics/privacy; CLC-022 publication; CLC-024 DPP discovery checks.
 - **Status:** In progress
 - **Objective:** Replace stale public-site status copy with the verified deployment state, add actionable Google Search Console and Bing Webmaster Tools setup for this GitHub Pages path, clarify the source-checkout installation path, and make these facts regression-tested before the next site deployment.
-- **Scope:** `site/docs/discovery.html`; `site/docs/privacy.html`; `site/docs/getting-started.html`; `site/llms.txt`; `scripts/site_checks.py`; `tests/test_site_checks.py`; `docs/DPP_IMPLEMENTATION.md`; `docs/WORK_ITEMS.md`; `records/evidence.jsonl`; generated context.
+- **Scope:** `site/docs/discovery.html`; `site/docs/privacy.html`; `site/docs/getting-started.html`; `site/llms.txt`; `scripts/site_checks.py`; `tests/test_site_checks.py`; `docs/DPP_IMPLEMENTATION.md`; `docs/WORK_ITEMS.md`; `.agents/records/evidence.jsonl`; generated context.
 - **Exclusions:** Creating or changing Google/Bing properties; adding verification tokens or a GA4 measurement ID; sending real analytics events; social posts or outreach; claiming search indexing or AI retrieval; PyPI/Zenodo publication or license selection.
 - **Dependencies:** Verified Pages deployment and route audit in CLC-022; DPP 0.3.0; official Google/Bing verification and sitemap documentation.
 - **Acceptance:** Discovery copy accurately separates live HTTP availability from indexing and retrieval; instructions use the exact URL-prefix property for this GitHub Pages subpath, cover Google and Bing ownership/sitemap steps, and clearly state the current source installation path; automated checks reject stale publication claims and missing Bing/property guidance; project checks pass; public deployment and source links are verified after the exact ACP-authorized push/deploy.
@@ -475,7 +475,7 @@ The first work item is being executed under the user's explicit request to creat
 - **Parent:** CLC-021 analytics/privacy; CLC-024 DPP discovery checks; CLC-026 publication and live search guidance.
 - **Status:** Done
 - **Objective:** Configure first-party project analytics and webmaster properties, connect the site through privacy-preserving, documented settings, and distinguish verified configuration from observed data and indexing outcomes.
-- **Scope:** GA4 property/stream settings; `site/analytics.js`; `site/index.html`; `site/docs/{privacy,discovery,research}.html`; `scripts/site_checks.py`; `tests/test_site_checks.py`; `docs/DPP_IMPLEMENTATION.md`; `docs/WORK_ITEMS.md`; `records/evidence.jsonl`; project context; Search Console and Bing Webmaster verification/submission using exact official tokens.
+- **Scope:** GA4 property/stream settings; `site/analytics.js`; `site/index.html`; `site/docs/{privacy,discovery,research}.html`; `scripts/site_checks.py`; `tests/test_site_checks.py`; `docs/DPP_IMPLEMENTATION.md`; `docs/WORK_ITEMS.md`; `.agents/records/evidence.jsonl`; project context; Search Console and Bing Webmaster verification/submission using exact official tokens.
 - **Exclusions:** Public posts/outreach; changing data retention beyond the documented two-month event setting; enabling advertising, Google Signals, enhanced measurement, or user-provided data; claiming indexing, live audience outcomes, or legal compliance; inventing verification tokens.
 - **Dependencies:** Owner authorization for external setup; configured GA4 property and stream; published revision for real event receipt; Search Console/Bing access and exact verification artifacts.
 - **Acceptance:** Analytics loads only after consent; GA4 redaction/retention and property settings are accurately documented; local regression checks enforce the consent gate and configured ID; Search Console/Bing setup uses exact official tokens and sitemap receipts if completed; DPP tracks configuration, live data receipt, and search visibility as separate evidence states; project checks pass; any source push/deploy has fresh exact ACP authorization.
@@ -494,7 +494,7 @@ The first work item is being executed under the user's explicit request to creat
 - **Parent:** CLC-024 DPP discovery controls; CLC-027 verified webmaster properties and sitemap submissions.
 - **Status:** Done
 - **Objective:** Address Bing Webmaster Tools’ observed recommendation that many page meta descriptions are too short and prevent future descriptions from becoming empty, duplicate, or excessively short/long.
-- **Scope:** `site/index.html`; `site/gpu-catalog.html`; `site/docs/*.html`; `scripts/site_checks.py`; `tests/test_site_checks.py`; `docs/DPP_IMPLEMENTATION.md`; `docs/WORK_ITEMS.md`; `records/evidence.jsonl`; generated context.
+- **Scope:** `site/index.html`; `site/gpu-catalog.html`; `site/docs/*.html`; `scripts/site_checks.py`; `tests/test_site_checks.py`; `docs/DPP_IMPLEMENTATION.md`; `docs/WORK_ITEMS.md`; `.agents/records/evidence.jsonl`; generated context.
 - **Exclusions:** Claiming improved rankings, clicks, indexing, or traffic; keyword stuffing; changing verified hardware/support claims; paid SEO or external outreach.
 - **Dependencies:** Current page content and compatibility evidence; Bing recommendation surfaced for the verified project property.
 - **Acceptance:** Every indexed HTML page has one unique 140–180 character description that accurately summarizes that page; checks reject descriptions outside that range or duplicates; all documented local checks pass; published pages and webmaster observations are reconciled without claiming a ranking effect.
@@ -513,7 +513,7 @@ The first work item is being executed under the user's explicit request to creat
 - **Parent:** CLC-024 DPP discovery controls; CLC-029 site redesign; CLC-030 canonical domain.
 - **Status:** In review
 - **Objective:** Close the gaps found by a DPP audit: WCAG 2.2 AA contrast and target size, visible breadcrumbs matching structured data, accessible table names, truthful sitemap `lastmod`, a current social card, a `noindex` error page, security headers, a full-text agent index, an IndexNow key, a `--python` interpreter option, and a Homebrew formula.
-- **Scope:** `site/**`; `scripts/site_checks.py`; `scripts/build_llms_full.py`; `scripts/indexnow.py`; `src/cuda_legacy_compat/cli.py`; `src/cuda_legacy_compat/launch.py`; `tests/**`; `Formula/cuda-legacy.rb`; `README.md`; `docs/DPP_IMPLEMENTATION.md`; `docs/WORK_ITEMS.md`; `records/evidence.jsonl`; generated context.
+- **Scope:** `site/**`; `scripts/site_checks.py`; `scripts/build_llms_full.py`; `scripts/indexnow.py`; `src/cuda_legacy_compat/cli.py`; `src/cuda_legacy_compat/launch.py`; `tests/**`; `Formula/cuda-legacy.rb`; `README.md`; `docs/DPP_IMPLEMENTATION.md`; `docs/WORK_ITEMS.md`; `.agents/records/evidence.jsonl`; generated context.
 - **Exclusions:** Submitting URLs to IndexNow or search consoles; tagging a release; changing crawler training policy; screen-reader sessions; compiler or runtime behaviour.
 - **Acceptance:** No rendered text below WCAG 2.2 AA contrast and no standalone target under 24 px on any page; breadcrumbs visible and equal to `BreadcrumbList`; every table named; `llms-full.txt` current and enforced; 404 `noindex` enforced; `--python` selects the interpreter for `doctor` and `run` and fails closed; formula passes `brew style`; `make check` and `make test` pass.
 - **Evidence required:** Rendered contrast and target-size measurements; check and test output; virtualenv install trace for the formula's install path; ACP decisions; live route audit after deploy.
@@ -530,7 +530,7 @@ The first work item is being executed under the user's explicit request to creat
 - **Parent:** CLC-030 GA4 stream; CLC-027 consented analytics.
 - **Status:** In review
 - **Objective:** Route every analytics event through one consent-gated `track()` API in `site/analytics.js`; report link clicks with their page area, source downloads, successful command copies and hero replays; configure GA4 property `562082064` (stream `16261288778`) for minimal collection and owner-traffic exclusion.
-- **Scope:** `site/analytics.js`; `site/site.js`; `site/index.html`; `site/docs/privacy.html`; `scripts/site_checks.py`; `tests/test_site_checks.py`; `docs/WORK_ITEMS.md`; `records/evidence.jsonl`; generated context; GA4 property settings.
+- **Scope:** `site/analytics.js`; `site/site.js`; `site/index.html`; `site/docs/privacy.html`; `scripts/site_checks.py`; `tests/test_site_checks.py`; `docs/WORK_ITEMS.md`; `.agents/records/evidence.jsonl`; generated context; GA4 property settings.
 - **Exclusions:** Loading the tag before consent; Search Console or Ads links; account-level data-sharing settings, which also govern the owner's other properties in account `40096025`.
 - **Acceptance:** Each allowlisted event fires only after consent and stops after withdrawal; the allowlist and emitted events match (enforced by `make check`); GA4 has enhanced measurement, automatic event detection, user-provided data, Google signals and ads personalisation off, two-month retention, email and query redaction, three event-scoped custom dimensions, and an active internal-traffic filter for the owner's addresses.
 - **Evidence required:** Browser event trace; GA4 settings observation; check and test output; ACP decisions.
@@ -547,7 +547,7 @@ The first work item is being executed under the user's explicit request to creat
 - **Parent:** CLC-029 Vercel hosting; CLC-027 consented analytics.
 - **Status:** In progress
 - **Objective:** Make `https://www.cudacompat.com/` the canonical origin (owner purchased `cudacompat.com` and attached it to the Vercel project; the apex redirects to `www`), redirect `cuda-compatibility.vercel.app`, and switch `site/analytics.js` to measurement ID `G-Q7C82JK9GM`.
-- **Scope:** `site/**`; `README.md`; `tests/test_site_checks.py`; `docs/WORK_ITEMS.md`; `records/evidence.jsonl`; generated context; Vercel project domain redirect.
+- **Scope:** `site/**`; `README.md`; `tests/test_site_checks.py`; `docs/WORK_ITEMS.md`; `.agents/records/evidence.jsonl`; generated context; Vercel project domain redirect.
 - **Exclusions:** Loading the Google tag before consent; Search Console, Bing or GA4 property settings (owner actions); DNS changes.
 - **Dependencies:** Owner-provided GA4 tag; Vercel domain configuration; ACP decisions for push, `main` update and production deploy.
 - **Acceptance:** Canonical URLs, sitemap, robots.txt, llms.txt and JSON-LD name `https://www.cudacompat.com/`; analytics uses `G-Q7C82JK9GM` only after consent; `make check` and `make test` pass; every sitemap page and discovery asset returns HTTP 200 on the new origin after deploy; the old Vercel and apex addresses redirect.
@@ -565,7 +565,7 @@ The first work item is being executed under the user's explicit request to creat
 - **Parent:** CLC-015 public project site; CLC-024 DPP discovery controls; CLC-027 consented analytics.
 - **Status:** Done
 - **Objective:** Implement the "CUDA Compatibility site redesign" design canvas (home, documentation sheets 02–10, components, phone layouts) as the static `site/`, keep the existing page URLs, metadata, consent-gated analytics and discovery files, and publish it as a Vercel project.
-- **Scope:** `site/**`; `vercel.json`; `.vercelignore`; `.github/workflows/pages.yml`; `scripts/site_checks.py`; `tests/test_site_checks.py`; `README.md`; `docs/WORK_ITEMS.md`; `records/evidence.jsonl`; generated context.
+- **Scope:** `site/**`; `vercel.json`; `.vercelignore`; `.github/workflows/pages.yml`; `scripts/site_checks.py`; `tests/test_site_checks.py`; `README.md`; `docs/WORK_ITEMS.md`; `.agents/records/evidence.jsonl`; generated context.
 - **Exclusions:** New support, performance, or indexing claims; external font or script hosts at page load; redistributing NVIDIA components; custom domain or DNS changes; disabling the GitHub Pages site (owner action).
 - **Dependencies:** Design canvas `https://claude.ai/code/artifact/3857f1fe-4cb9-4338-a6c9-981bf9eeb801`; authenticated Vercel CLI; ACP decisions for push and production deploy.
 - **Acceptance:** All 10 canonical pages render the new design; canonical URLs, sitemap, robots.txt and llms.txt name the Vercel production origin; `make check` and `make test` pass; the Vercel production deployment returns HTTP 200 for every sitemap page and discovery asset.
@@ -580,11 +580,11 @@ The first work item is being executed under the user's explicit request to creat
 
 ## CLC-025 — Extend PyTorch CUDA 13 behavior on Maxwell with qualified operator and training coverage
 
-- **Intent:** `PROJECT_INTENT.md`; practical PyTorch CUDA 13 use on older NVIDIA GPUs.
+- **Intent:** `.agents/project/intent.md`; practical PyTorch CUDA 13 use on older NVIDIA GPUs.
 - **Parent:** CLC-008 stream/module lifecycle; CLC-009 native operator slice; CLC-010 packaged launcher; CLC-019 public coverage inventory.
 - **Status:** In progress
 - **Objective:** Systematically strengthen the PyTorch CUDA 13 adapter on real `sm_52` devices: qualify current stream and allocation-lifetime behavior for every registered route, expand native operation/dtype/layout coverage, implement autograd/training only where gradient semantics can be preserved, map the runtime/library boundaries used by supported workloads, and publish bounded correctness/resource/performance evidence.
-- **Scope:** `src/cuda_legacy_compat/torch_adapter.py`; `src/cuda_legacy_compat/compat/**`; `experiments/pytorch-cu130/**`; relevant unit/integration probes; `docs/architecture.md`; `docs/research/pytorch-cu130-maxwell.md`; `docs/roadmap.md`; `docs/WORK_ITEMS.md`; `README.md`; site compatibility/support statements; `records/evidence.jsonl`.
+- **Scope:** `src/cuda_legacy_compat/torch_adapter.py`; `src/cuda_legacy_compat/compat/**`; `experiments/pytorch-cu130/**`; relevant unit/integration probes; `docs/architecture.md`; `docs/research/pytorch-cu130-maxwell.md`; `docs/roadmap.md`; `docs/WORK_ITEMS.md`; `README.md`; site compatibility/support statements; `.agents/records/evidence.jsonl`.
 - **Exclusions:** Hardware identity spoofing; changing the NVIDIA driver, kernel, system CUDA installation, or official PyTorch wheel; redistributing proprietary NVIDIA components; claiming CUDA-wide or arbitrary-application compatibility; using private model inputs/configuration as public evidence; commit, push, deployment, or other protected external effects.
 - **Dependencies:** Official PyTorch 2.14.0+cu130 environment; verified LLVM/NVPTX and CUDA driver headers; Titan resource broker; actual GTX TITAN X GM200 `sm_52` devices; CPU reference results and current adapter contracts.
 - **Acceptance:** (1) For every existing native-kernel and CPU-fallback registration, record supported inputs, output semantics, stream dependencies, tensor lifetime, asynchronous error behavior, and explicit rejection cases; reproduce correctness on all three reference GPUs. (2) Add native Maxwell implementations and dtype/layout cases only when CPU/PyTorch-reference equivalence, edge cases, non-default streams, allocator churn/lifetime, and failure paths pass. (3) Implement forward/backward and optimizer/training paths only for declared operations with verified gradient semantics; unsupported autograd paths fail explicitly. (4) Inventory runtime API and proprietary-library boundaries encountered by selected workloads, then implement replacements only for bounded, identified behaviors. (5) Publish reproducible per-workload correctness, peak memory, latency, throughput, GPU, software-version, and fallback-path evidence with limits.

@@ -6,7 +6,7 @@ from pathlib import Path
 from unittest.mock import patch
 
 
-SCRIPT = Path(__file__).resolve().parents[1] / "scripts" / "gen-context.py"
+SCRIPT = Path(__file__).resolve().parents[1] / ".agents" / "bootstrap" / "scripts" / "gen-context.py"
 SPEC = importlib.util.spec_from_file_location("gen_context", SCRIPT)
 GEN_CONTEXT = importlib.util.module_from_spec(SPEC)
 SPEC.loader.exec_module(GEN_CONTEXT)

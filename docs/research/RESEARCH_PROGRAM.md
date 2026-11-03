@@ -63,7 +63,7 @@ flowchart LR
 
 ## Research outputs
 - **Research notes:** `docs/research/` with date, method, environment, claims and limitations.
-- **Raw evidence:** `records/evidence.jsonl`, `records/negative-results.jsonl` and reproducible scripts.
+- **Raw evidence:** `.agents/records/evidence.jsonl`, `.agents/records/negative-results.jsonl` and reproducible scripts.
 - **Specifications:** `docs/architecture/`, `docs/compatibility/` and `docs/product/`.
 - **Publication candidates:** research papers, benchmark datasets, technical reports and upstream issues/PRs only after source and evidence review.
 - **Tracking:** existing GitHub project board #44 and milestone plan in [PROJECT_MILESTONES.md](../PROJECT_MILESTONES.md). This file does not assert GitHub milestone objects exist.

@@ -2,7 +2,7 @@
 
 ## M0 — Reproducible project and native baseline
 
-Project operating substrate, source-linked target records, deterministic inspector, and the CUDA 12.4 per-card correctness baseline. Status: complete for the initial slice; see `records/evidence.jsonl`.
+Project operating substrate, source-linked target records, deterministic inspector, and the CUDA 12.4 per-card correctness baseline. Status: complete for the initial slice; see `.agents/records/evidence.jsonl`.
 
 ## M1 — Compiler independence
 
