@@ -19,7 +19,7 @@
     "repositories": [
       {
         "path": ".",
-        "commit": "850ccad2328512c390b52377835c13fabc885fcb",
+        "commit": "877f781b952d278ee32fb6dea0ea95724175a9d1",
         "branch": "design-vercel-setup-19d77a",
         "dirty": true,
         "remote": "https://github.com/zachshallbetter/cuda-compatibility.git"
