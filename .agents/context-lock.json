@@ -5,8 +5,8 @@
   "validityBasis": "aggregate-source-digest",
   "selectedPaths": [],
   "sourceSelection": {
-    "includedCount": 230,
-    "includedBytes": 2194160,
+    "includedCount": 232,
+    "includedBytes": 2201018,
     "excludedCounts": {
       "extension": 51,
       "generated-or-transient-file": 2
@@ -18,14 +18,14 @@
     "repositories": [
       {
         "path": ".",
-        "commit": "55bbecda8818f05809e3521b04dd618e63501cd9",
-        "branch": "attribution-pilot",
+        "commit": "30503f555ad9ef346c07d4cfafec38cf3705f95e",
+        "branch": "ci/indexnow-after-deploy",
         "dirty": true,
         "remote": "https://github.com/zachshallbetter/cuda-compatibility.git"
       }
     ]
   },
-  "aggregateSourceDigest": "679775ce90876755f977a27ff48bb37e2552a4e534e349cf3806de70242d5912",
+  "aggregateSourceDigest": "a508273c5eba91cd06b03e4d6d17eec1c7b8e53d27aa209bc6159ae4e32696af",
   "sources": [
     {
       "path": ".agents/acp/README.md",
@@ -683,6 +683,11 @@
       "sha256": "642de9b2d50df8a1b44b2de5ec0f4d5213c8d3e483dc68dac6344d322f80ac65"
     },
     {
+      "path": ".github/workflows/indexnow.yml",
+      "bytes": 802,
+      "sha256": "d5418aff52918a121ca7ac5565583314a9e4becaf9c0bbf82f0d109ad43ba2ca"
+    },
+    {
       "path": ".github/workflows/verify.yml",
       "bytes": 633,
       "sha256": "520d93c6c0bbd33a317df3a147c51598188cccc98d18bb987c56b3d783f16e4b"
@@ -979,8 +984,8 @@
     },
     {
       "path": "scripts/indexnow.py",
-      "bytes": 1590,
-      "sha256": "2e0e8ba08b9f24df84c7abdf617f72a7725a5626b66c598247de158e93296993"
+      "bytes": 4675,
+      "sha256": "a7c521160e736dfca1a06105ef4c0f1a9bd72fb9e0a5b0036cd1940f85b30c21"
     },
     {
       "path": "scripts/site_checks.py",
@@ -1156,6 +1161,11 @@
       "path": "tests/test_dpp_measurement.py",
       "bytes": 6953,
       "sha256": "797d259f20b6f46c70a117a38ad3fb3231d7251213b946f51792ce0da6c42bec"
+    },
+    {
+      "path": "tests/test_indexnow.py",
+      "bytes": 2971,
+      "sha256": "fd47dcd5c52d702bfa2311eff717c9e4ff4396f78ba893c94e396b7b72b12a39"
     },
     {
       "path": "tests/test_inventory.py",
