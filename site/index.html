@@ -229,7 +229,7 @@
 </div>
 </section>
 
-<section id="stack" class="inv">
+<section id="stack">
 <div class="wrap" style="padding-top:88px;padding-bottom:96px;display:flex;flex-direction:column;gap:40px">
 <div style="display:flex;flex-direction:column;gap:24px">
 <div class="sec"><span class="cut" aria-hidden="true">C</span><h2 class="h2" style="font-size:44px">Compat­ibility is a stack</h2><span class="plane" aria-hidden="true"></span><span class="sheet">Sheet 01 / 10</span></div>
@@ -241,11 +241,11 @@
 <div style="height:16px"></div>
 <div style="border:2px solid currentColor;padding:14px 18px;display:grid;grid-template-columns:30px minmax(0,1fr);gap:4px 14px;align-items:center"><span class="balloon" aria-hidden="true" style="grid-row:1 / span 2">1</span><strong style="font-size:17px;font-weight:800">Application</strong><span class="mute" style="font-size:14px;grid-column:2">PyTorch 2.14, official CUDA 13 wheel</span></div>
 <div style="display:flex;align-items:center;gap:12px;padding:0 0 0 14px"><span aria-hidden="true" style="width:0;height:28px;border-left:1px dashed currentColor;position:relative"><i style="position:absolute;left:-5px;bottom:-1px;width:0;height:0;border-left:5px solid transparent;border-right:5px solid transparent;border-top:8px solid currentColor;display:block"></i></span><span class="sheet">Selected operations</span></div>
-<div style="border:2px solid currentColor;padding:14px 18px;display:grid;grid-template-columns:30px minmax(0,1fr);gap:4px 14px;align-items:center;border-color:var(--yellow)"><span class="balloon" aria-hidden="true" style="grid-row:1 / span 2">2</span><strong style="font-size:17px;font-weight:800">Interposition</strong><span class="mute" style="font-size:14px;grid-column:2">CUDA Compatibility opt-in launcher, CUDA Runtime 13.0 version facade</span></div>
+<div style="border:2px solid currentColor;padding:14px 18px;display:grid;grid-template-columns:30px minmax(0,1fr);gap:4px 14px;align-items:center;border-color:#000000"><span class="balloon" aria-hidden="true" style="grid-row:1 / span 2">2</span><strong style="font-size:17px;font-weight:800">Interposition</strong><span class="mute" style="font-size:14px;grid-column:2">CUDA Compatibility opt-in launcher, CUDA Runtime 13.0 version facade</span></div>
 <div style="display:flex;align-items:center;gap:12px;padding:0 0 0 14px"><span aria-hidden="true" style="width:0;height:28px;border-left:1px dashed currentColor;position:relative"><i style="position:absolute;left:-5px;bottom:-1px;width:0;height:0;border-left:5px solid transparent;border-right:5px solid transparent;border-top:8px solid currentColor;display:block"></i></span><span class="sheet">Route by operator</span></div>
 <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(200px,100%),1fr));gap:12px">
 <div style="border:2px solid var(--blue);padding:14px 18px;display:flex;flex-direction:column;gap:4px"><span class="state ok"><i class="sw full" aria-hidden="true" style="border-color:#FFFFFF;background:#FFFFFF;width:10px;height:10px;margin-right:7px"></i>Maxwell kernel</span><span class="mute" style="font-size:14px">LLVM to PTX, launched on the real sm_52 device</span></div>
-<div style="border:2px solid var(--yellow);padding:14px 18px;display:flex;flex-direction:column;gap:4px"><span class="state exp"><i class="sw half" aria-hidden="true" style="width:10px;height:10px;margin-right:7px;"></i>CPU fallback</span><span class="mute" style="font-size:14px">Inference, bounded to 64 MiB in and out</span></div>
+<div style="border:2px solid #000000;padding:14px 18px;display:flex;flex-direction:column;gap:4px"><span class="state exp"><i class="sw half" aria-hidden="true" style="width:10px;height:10px;margin-right:7px;"></i>CPU fallback</span><span class="mute" style="font-size:14px">Inference, bounded to 64 MiB in and out</span></div>
 </div>
 <div style="display:flex;align-items:center;gap:12px;padding:0 0 0 14px"><span aria-hidden="true" style="width:0;height:28px;border-left:1px dashed currentColor;position:relative"><i style="position:absolute;left:-5px;bottom:-1px;width:0;height:0;border-left:5px solid transparent;border-right:5px solid transparent;border-top:8px solid currentColor;display:block"></i></span><span class="sheet">Result returned</span></div>
 <div style="border:2px solid currentColor;padding:14px 18px;display:grid;grid-template-columns:30px minmax(0,1fr);gap:4px 14px;align-items:center"><span class="balloon" aria-hidden="true" style="grid-row:1 / span 2">4</span><strong style="font-size:17px;font-weight:800">Real device stays visible</strong><span class="mute" style="font-size:14px;grid-column:2">GM200 Maxwell, compute capability 5.2. No hardware identity spoofing.</span></div>
@@ -274,12 +274,12 @@
 </article>
 </div>
 </div>
-<div style="display:grid;grid-template-columns:96px minmax(0,1fr);gap:24px;align-items:start;border:2px solid var(--yellow);padding:24px 28px">
-<span aria-hidden="true" style="width:96px;height:96px;border:2px solid var(--yellow);border-radius:50%;display:grid;place-items:center;font-stretch:110%;font-weight:800;font-size:40px;color:var(--yellow)">13</span>
+<div style="display:grid;grid-template-columns:96px minmax(0,1fr);gap:24px;align-items:start;border:2px solid #000000;padding:24px 28px">
+<span aria-hidden="true" style="width:96px;height:96px;border:2px solid #000000;border-radius:50%;display:grid;place-items:center;font-stretch:110%;font-weight:800;font-size:40px;color:#000000">13</span>
 <div style="display:flex;flex-direction:column;gap:8px">
 <h3 style="font-size:20px">Why this project exists</h3>
 <p class="soft" style="margin:0;font-size:16px;max-width:70ch">NVIDIA’s CUDA 13 release notes say offline compilation and library support for Maxwell, Pascal, and Volta were removed from the toolkit. This project measures how much useful application behavior can be recovered with a compiler path, adapters, and faithful fallbacks, without hiding the real device.</p>
-<a href="https://docs.nvidia.com/cuda/archive/13.0.0/cuda-toolkit-release-notes/index.html#deprecated-or-dropped-features" style="font-size:16px;color:var(--yellow)">CUDA 13 release notes</a>
+<a href="https://docs.nvidia.com/cuda/archive/13.0.0/cuda-toolkit-release-notes/index.html#deprecated-or-dropped-features" style="font-size:16px;color:#000000">CUDA 13 release notes</a>
 </div>
 </div>
 </div>
