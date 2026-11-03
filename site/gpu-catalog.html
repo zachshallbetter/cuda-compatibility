@@ -9,15 +9,28 @@
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <link rel="mask-icon" href="mask-icon.svg" color="#000000">
 <link rel="manifest" href="manifest.webmanifest">
-<meta name="theme-color" content="#000000">
+<link rel="alternate" type="application/atom+xml" title="CUDA Compatibility sheets" href="feed.xml">
+<link rel="prev" href="docs/research.html">
+<link rel="next" href="docs/discovery.html">
+<link rel="author" href="humans.txt">
+<link rel="license" href="https://github.com/zachshallbetter/cuda-compatibility/blob/main/LICENSE-MIT">
+<meta name="application-name" content="CUDA Compatibility">
+<meta name="apple-mobile-web-app-title" content="CUDA Compat">
+<meta name="format-detection" content="telephone=no">
+<meta name="theme-color" content="#F2F2EE">
 <meta name="description" content="Explore NVIDIA legacy CUDA compute-capability tiers, real GPU models, verified Maxwell cards, expected compatibility, and unverified project candidates.">
 <title>Legacy NVIDIA GPU Compute Capability Guide | CUDA Compatibility</title>
 <link rel="canonical" href="https://cudacompat.com/gpu-catalog.html">
 <meta name="author" content="Zach Shallbetter">
 <meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1">
-<meta property="og:type" content="article"><meta property="og:site_name" content="CUDA Compatibility"><meta property="og:url" content="https://cudacompat.com/gpu-catalog.html"><meta property="og:title" content="Legacy NVIDIA GPU Compute Capability Guide"><meta property="og:description" content="Understand NVIDIA legacy CUDA compute-capability tiers, representative GPU models, and the compatibility project’s verified and unverified hardware scope."><meta property="og:locale" content="en_US"><meta property="og:image" content="https://cudacompat.com/assets/social/gpu-catalog.png"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630"><meta property="og:image:alt" content="Legacy GPU compute capability: CUDA Compatibility hardware reference sheet 08 of 10, cudacompat.com"><meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="Legacy NVIDIA GPU Compute Capability Guide"><meta name="twitter:description" content="All legacy compute-capability tiers, explained with honest project status."><meta name="twitter:image" content="https://cudacompat.com/assets/social/gpu-catalog.png">
+<meta property="og:type" content="article">
+<meta property="article:published_time" content="2026-11-01">
+<meta property="article:modified_time" content="2026-11-03">
+<meta property="article:author" content="https://zachshallbetter.com/">
+<meta property="article:section" content="Documentation"><meta property="og:site_name" content="CUDA Compatibility"><meta property="og:url" content="https://cudacompat.com/gpu-catalog.html"><meta property="og:title" content="Legacy NVIDIA GPU Compute Capability Guide"><meta property="og:description" content="Understand NVIDIA legacy CUDA compute-capability tiers, representative GPU models, and the compatibility project’s verified and unverified hardware scope."><meta property="og:locale" content="en_US"><meta property="og:image" content="https://cudacompat.com/assets/social/gpu-catalog.png">
+<meta property="og:image:type" content="image/png"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630"><meta property="og:image:alt" content="Legacy GPU compute capability: CUDA Compatibility hardware reference sheet 08 of 10, cudacompat.com"><meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="Legacy NVIDIA GPU Compute Capability Guide"><meta name="twitter:description" content="All legacy compute-capability tiers, explained with honest project status."><meta name="twitter:image" content="https://cudacompat.com/assets/social/gpu-catalog.png">
 <meta name="twitter:image:alt" content="Legacy GPU compute capability: CUDA Compatibility hardware reference sheet 08 of 10, cudacompat.com">
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"Legacy NVIDIA GPU Compute Capability Guide","description":"A guide to NVIDIA legacy compute-capability tiers, device examples, and CUDA Compatibility project status.","url":"https://cudacompat.com/gpu-catalog.html","inLanguage":"en","author":{"@type":"Person","name":"Zach Shallbetter","url":"https://zachshallbetter.com/","@id":"https://cudacompat.com/#author"},"isPartOf":{"@type":"WebSite","name":"CUDA Compatibility","url":"https://cudacompat.com/","@id":"https://cudacompat.com/#website"},"@id":"https://cudacompat.com/gpu-catalog.html#article","mainEntityOfPage":"https://cudacompat.com/gpu-catalog.html","image":"https://cudacompat.com/assets/social/gpu-catalog.png"}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"WebSite","@id":"https://cudacompat.com/#website","url":"https://cudacompat.com/","name":"CUDA Compatibility","alternateName":"cudacompat.com","inLanguage":"en","publisher":{"@id":"https://cudacompat.com/#author"},"copyrightHolder":{"@id":"https://cudacompat.com/#author"},"license":"https://github.com/zachshallbetter/cuda-compatibility/blob/main/LICENSE-MIT"},{"@type":"Person","@id":"https://cudacompat.com/#author","name":"Zach Shallbetter","url":"https://zachshallbetter.com/","sameAs":["https://github.com/zachshallbetter"],"jobTitle":"Systems engineer and independent researcher","description":"Zach Shallbetter is a systems engineer and independent researcher based in Spokane, Washington. His work spans applied AI, computer vision, embedded systems, and developer tooling. Through Snack Studio, he builds software that connects modern workflows with existing hardware, with an emphasis on compatibility, performance, and keeping useful systems operational.","homeLocation":{"@type":"Place","name":"Spokane, Washington"},"worksFor":{"@id":"https://cudacompat.com/#org"}},{"@type":"Organization","@id":"https://cudacompat.com/#org","name":"Snack Studio","url":"https://snackstud.io/","founder":{"@id":"https://cudacompat.com/#author"}},{"@type":"SoftwareApplication","@id":"https://cudacompat.com/#software","name":"CUDA Compatibility","url":"https://cudacompat.com/"},{"@type":"WebPage","@id":"https://cudacompat.com/gpu-catalog.html","url":"https://cudacompat.com/gpu-catalog.html","name":"Legacy NVIDIA GPU Compute Capability Guide","description":"Explore NVIDIA legacy CUDA compute-capability tiers, real GPU models, verified Maxwell cards, expected compatibility, and unverified project candidates.","inLanguage":"en","isPartOf":{"@id":"https://cudacompat.com/#website"},"breadcrumb":{"@id":"https://cudacompat.com/gpu-catalog.html#breadcrumb"},"primaryImageOfPage":{"@id":"https://cudacompat.com/assets/social/gpu-catalog.png"},"mainEntity":{"@id":"https://cudacompat.com/gpu-catalog.html#article"},"datePublished":"2026-11-01","dateModified":"2026-11-03"},{"@type":"ImageObject","@id":"https://cudacompat.com/assets/social/gpu-catalog.png","url":"https://cudacompat.com/assets/social/gpu-catalog.png","contentUrl":"https://cudacompat.com/assets/social/gpu-catalog.png","width":1200,"height":630,"caption":"Legacy GPU compute capability: CUDA Compatibility hardware reference sheet 08 of 10, cudacompat.com","encodingFormat":"image/png"},{"@type":"TechArticle","@id":"https://cudacompat.com/gpu-catalog.html#article","headline":"Legacy GPU compute capability","name":"Legacy NVIDIA GPU Compute Capability Guide","description":"Explore NVIDIA legacy CUDA compute-capability tiers, real GPU models, verified Maxwell cards, expected compatibility, and unverified project candidates.","url":"https://cudacompat.com/gpu-catalog.html","mainEntityOfPage":{"@id":"https://cudacompat.com/gpu-catalog.html"},"image":{"@id":"https://cudacompat.com/assets/social/gpu-catalog.png"},"inLanguage":"en","datePublished":"2026-11-01","dateModified":"2026-11-03","author":{"@id":"https://cudacompat.com/#author"},"publisher":{"@id":"https://cudacompat.com/#author"},"copyrightHolder":{"@id":"https://cudacompat.com/#author"},"copyrightYear":2026,"license":"https://github.com/zachshallbetter/cuda-compatibility/blob/main/LICENSE-MIT","isAccessibleForFree":true,"isPartOf":{"@id":"https://cudacompat.com/#website"},"about":{"@id":"https://cudacompat.com/#software"},"articleSection":"Documentation","position":8,"proficiencyLevel":"Expert"},{"@type":"BreadcrumbList","@id":"https://cudacompat.com/gpu-catalog.html#breadcrumb","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://cudacompat.com/"},{"@type":"ListItem","position":2,"name":"Documentation","item":"https://cudacompat.com/docs/"},{"@type":"ListItem","position":3,"name":"Legacy GPU catalog","item":"https://cudacompat.com/gpu-catalog.html"}]}]}</script>
 <link rel="stylesheet" href="styles.css">
 <link rel="stylesheet" href="docs.css">
 <style>
@@ -54,16 +67,20 @@ tr.ref td:first-child{padding-left:12px}
 </div>
 </header>
 
-<section class="band">
+<main id="main">
+<article id="article" aria-labelledby="title">
+<header class="band">
 <div class="wrap" style="padding-top:56px;padding-bottom:56px;display:flex;flex-direction:column;gap:18px">
-<p class="sheet" style="margin:0">Hardware reference, sheet 08 / 10</p>
-<h1 class="disp" style="font-size:clamp(40px,4.6vw,64px);max-width:16ch">Legacy GPU compute capability</h1>
+<nav aria-label="Breadcrumb" class="crumbs"><ol><li><a href="index.html">Home</a></li><li><a href="docs/index.html">Documentation</a></li><li aria-current="page">Legacy GPU catalog, sheet 08 / 10</li></ol></nav>
+<p class="sheet" style="margin:0">Hardware reference</p>
+<h1 id="title" class="disp" style="font-size:clamp(40px,4.6vw,64px);max-width:16ch">Legacy GPU compute capability</h1>
 <p style="margin:0;font-size:20px;line-height:1.4;max-width:56ch;font-weight:500">A guide to the older GPU generations in NVIDIA’s legacy CUDA list, with plain-language context and an honest view of what this project has tested.</p>
 <p class="mute" style="margin:0;font-size:16px;max-width:64ch">Read this before choosing a card: compute capability describes a GPU’s hardware feature and instruction level. It is not a CUDA Toolkit version, driver version, performance score, or promise that a current software package supports the GPU.</p>
+<p class="byline">By <a rel="author" href="https://zachshallbetter.com/">Zach Shallbetter</a> · Sheet 08 of 10 · Updated <time datetime="2026-11-03">3 November 2026</time></p>
 </div>
-</section>
+</header>
 
-<main id="main" class="wrap body" style="padding-top:56px;padding-bottom:96px">
+<div class="wrap body" style="padding-top:56px;padding-bottom:96px">
 <nav aria-label="Documentation" style="display:flex;flex-direction:column;gap:12px">
 <p class="sheet" style="margin:0">Sheets</p>
 <ul class="side">
@@ -101,7 +118,7 @@ tr.ref td:first-child{padding-left:12px}
 <div class="sec"><span class="cut" aria-hidden="true">B</span><h2 class="h2">NVIDIA-listed legacy tiers</h2><span class="plane" aria-hidden="true"></span></div>
 <p class="soft" style="margin:0;font-size:16px;max-width:72ch">Every tier in NVIDIA’s legacy table appears below. Model names are representative examples, not a substitute for NVIDIA’s complete model list. “Unverified” means this project has no recorded qualification for that tier.</p>
 <div class="dim"><span>Capability, context, and project status, highest tier first</span></div>
-<div style="overflow-x:auto">
+<div class="scroll" role="region" aria-label="NVIDIA-listed legacy tiers (scrolls sideways)" tabindex="0" style="overflow-x:auto">
 <table aria-label="NVIDIA-listed legacy tiers">
 <thead><tr><th scope="col">CC</th><th scope="col" style="width: 154px">Tier</th><th scope="col">Context</th><th scope="col">Examples</th><th scope="col">Project status</th></tr></thead>
 <tbody>
@@ -152,7 +169,10 @@ tr.ref td:first-child{padding-left:12px}
 <li>Yellow marks attention and is always bounded by an ink line. Blue marks a reproduced state. No meaning is carried by colour alone; each state has a mark shape and a text label.</li>
 </ol>
 </div>
+<nav class="pager" aria-label="Sheets, previous and next"><a rel="previous" href="docs/research.html"><span class="sheet">Previous · sheet 07</span><span class="pager-title">Research and evidence</span></a><a rel="next" href="docs/discovery.html"><span class="sheet">Next · sheet 09</span><span class="pager-title">Search and AI discovery</span></a></nav>
 </div>
+</div>
+</article>
 </main>
 
 <footer class="foot">
@@ -160,7 +180,7 @@ tr.ref td:first-child{padding-left:12px}
 <div class="tb" role="group" aria-label="Title block">
 <div><span>Project</span><span>CUDA Compatibility</span></div>
 <div><span>Drawn by</span><span><a href="https://zachshallbetter.com/">Zach Shallbetter</a></span></div>
-<div><span>Project version</span><span>0.6.0</span></div>
+<div><span>Project version</span><span>0.1.0</span></div>
 <div><span>License</span><span>MIT or Apache-2.0</span></div>
 <div><span>Status</span><span>Active research</span></div>
 <div><span>Sheet</span><span>08 / 10, legacy GPU catalog</span></div>

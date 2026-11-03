@@ -169,7 +169,10 @@ class SiteDiscoveryChecksTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as directory:
             site = self.copy_site(directory)
             sitemap = site / "sitemap.xml"
-            sitemap.write_text(sitemap.read_text(encoding="utf-8").replace("  <url><loc>https://cudacompat.com/docs/privacy.html</loc><lastmod>2026-11-03</lastmod></url>\n", ""), encoding="utf-8")
+            lines = sitemap.read_text(encoding="utf-8").splitlines(keepends=True)
+            kept = [line for line in lines if "<loc>https://cudacompat.com/docs/privacy.html</loc>" not in line]
+            self.assertEqual(len(kept), len(lines) - 1)
+            sitemap.write_text("".join(kept), encoding="utf-8")
             self.assertTrue(any("sitemap URLs" in error for error in audit_site(site)))
 
     def test_rejects_duplicate_meta_descriptions(self) -> None:
@@ -224,10 +227,40 @@ class SiteDiscoveryChecksTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as directory:
             site = self.copy_site(directory)
             page = site / "docs" / "discovery.html"
-            source = page.read_text(encoding="utf-8").replace("/#author\"", "/#different-author\"", 1)
+            source = page.read_text(encoding="utf-8").replace(
+                '"author":{"@id":"https://cudacompat.com/#author"}', '"author":{"@id":"https://cudacompat.com/#different-author"}', 1
+            )
             page.write_text(source, encoding="utf-8")
             self.assertTrue(any("canonical #author id" in error for error in audit_site(site)))
 
+    def test_rejects_title_outside_main(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            site = self.copy_site(directory)
+            page = site / "docs" / "cli.html"
+            source = page.read_text(encoding="utf-8").replace("<main id=\"main\">\n", "", 1).replace('<div class="wrap body"', '<main id="main" class="wrap body"', 1)
+            page.write_text(source, encoding="utf-8")
+            self.assertTrue(any("h1 must sit inside main" in error for error in audit_site(site)))
+
+    def test_rejects_unfocusable_scroll_region(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            site = self.copy_site(directory)
+            page = site / "docs" / "cli.html"
+            page.write_text(page.read_text(encoding="utf-8").replace(' tabindex="0"', "", 1), encoding="utf-8")
+            self.assertTrue(any("sideways-scrolling region" in error for error in audit_site(site)))
+
+    def test_rejects_feed_missing_a_page(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            site = self.copy_site(directory)
+            feed = site / "feed.xml"
+            feed.write_text(feed.read_text(encoding="utf-8").replace("https://cudacompat.com/docs/cli.html\"", "https://cudacompat.com/docs/missing.html\"", 1), encoding="utf-8")
+            self.assertTrue(any("feed.xml entries" in error for error in audit_site(site)))
+
+    def test_rejects_expired_security_txt(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            site = self.copy_site(directory)
+            security = site / ".well-known" / "security.txt"
+            security.write_text(re.sub(r"Expires: \S+", "Expires: 2020-01-01T00:00:00.000Z", security.read_text(encoding="utf-8")), encoding="utf-8")
+            self.assertTrue(any("has expired" in error for error in audit_site(site)))
 
 if __name__ == "__main__":
     unittest.main()

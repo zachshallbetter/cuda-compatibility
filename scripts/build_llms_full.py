@@ -144,7 +144,7 @@ def _page_path(site_root: Path, url: str, prefix: str) -> Path:
 
 def render(site_root: Path) -> str:
     sitemap = ElementTree.parse(site_root / "sitemap.xml").getroot()
-    urls = [node.text or "" for node in sitemap.findall(".//{*}loc")]
+    urls = [node.text or "" for node in sitemap.findall("{*}url/{*}loc")]
     origin = urls[0]
     prefix = urlsplit(origin).path
     sections = [HEADER.format(sitemap=origin + "sitemap.xml")]

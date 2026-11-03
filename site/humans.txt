@@ -1,0 +1,27 @@
+/* TEAM */
+Author: Zach Shallbetter
+Role: Systems engineer and independent researcher
+Site: https://zachshallbetter.com/
+GitHub: https://github.com/zachshallbetter
+Studio: Snack Studio, https://snackstud.io/
+From: Spokane, Washington, USA
+
+/* PROJECT */
+Name: CUDA Compatibility
+Site: https://cudacompat.com/
+Source: https://github.com/zachshallbetter/cuda-compatibility
+License: MIT or Apache-2.0, at your option
+Status: Independent, experimental research. Not affiliated with or endorsed by NVIDIA.
+Cite: https://github.com/zachshallbetter/cuda-compatibility/blob/main/CITATION.cff
+Corrections: https://github.com/zachshallbetter/cuda-compatibility/issues
+
+/* THANKS */
+Archivo typeface: The Archivo Project Authors (Omnibus-Type), SIL Open Font License 1.1
+Martian Mono typeface: The Martian Mono Project Authors (Evil Martians), SIL Open Font License 1.1
+
+/* SITE */
+Last update: 2026-11-03
+Language: English
+Standards: HTML, CSS, schema.org JSON-LD, Atom, WCAG 2.2 AA target
+Components: Hand-written static pages, no framework, no third-party page-load resources
+Software: Python build and check scripts, Vercel hosting

@@ -24,7 +24,7 @@ ENDPOINT = "https://api.indexnow.org/indexnow"
 
 
 def sitemap_urls(site: Path = SITE) -> list[str]:
-    return [node.text or "" for node in ElementTree.parse(site / "sitemap.xml").getroot().findall(".//{*}loc")]
+    return [node.text or "" for node in ElementTree.parse(site / "sitemap.xml").getroot().findall("{*}url/{*}loc")]
 
 
 def key_file(site: Path = SITE) -> Path:

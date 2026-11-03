@@ -62,10 +62,10 @@ td{padding:14px 16px 14px 0;border-bottom:1px solid currentColor;vertical-align:
 .body>nav{flex:1 1 220px;max-width:260px}
 .body>div{flex:999 1 560px;min-width:0}
 @media (max-width:860px){.h2{font-size:28px}.sec{flex-wrap:wrap}.plane{display:none}.body{gap:32px}.body>nav{max-width:none;flex-basis:100%}.band h1{font-size:36px}table{font-size:14px}th,td{padding-right:10px}.tb{font-size:13px}}
-html{scrollbar-width:thin;scrollbar-color:#000000 #F0F0EC}
-*::-webkit-scrollbar{width:10px;height:10px}
-*::-webkit-scrollbar-track{background:#F0F0EC}
-*::-webkit-scrollbar-thumb{background:#000000;border:2px solid #F0F0EC}
+
+
+
+
 a:focus-visible,button:focus-visible{outline:3px solid #FFD400;outline-offset:3px}
 .skip-link{position:absolute;left:-999px;top:8px;background:#FFD400;color:#000000;padding:10px 14px;font-weight:700;z-index:10}
 .skip-link:focus{left:16px}
@@ -104,3 +104,4 @@ header{position:relative}
 @media (max-width:860px){p code,li code,td code,span code{white-space:normal;overflow-wrap:anywhere}}
 table.rev{min-width:0}
 @media (max-width:480px){.sheet{white-space:normal}.band h1.disp{font-size:32px!important}}
+@media (max-width:720px){.reg{display:none}}

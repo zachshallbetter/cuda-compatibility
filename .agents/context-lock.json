@@ -5,8 +5,8 @@
   "validityBasis": "aggregate-source-digest",
   "selectedPaths": [],
   "sourceSelection": {
-    "includedCount": 232,
-    "includedBytes": 2201018,
+    "includedCount": 236,
+    "includedBytes": 2261428,
     "excludedCounts": {
       "extension": 51,
       "generated-or-transient-file": 2
@@ -18,14 +18,14 @@
     "repositories": [
       {
         "path": ".",
-        "commit": "30503f555ad9ef346c07d4cfafec38cf3705f95e",
-        "branch": "ci/indexnow-after-deploy",
+        "commit": "eba922d2dc7f04faa004f30b13d12eabe2bd2b8e",
+        "branch": "site/metadata-audit",
         "dirty": true,
         "remote": "https://github.com/zachshallbetter/cuda-compatibility.git"
       }
     ]
   },
-  "aggregateSourceDigest": "a508273c5eba91cd06b03e4d6d17eec1c7b8e53d27aa209bc6159ae4e32696af",
+  "aggregateSourceDigest": "186e8bacb27030e38378d1bab2a6cbd02e2c8631f05d2060f5cfdea2ef459d70",
   "sources": [
     {
       "path": ".agents/acp/README.md",
@@ -703,6 +703,11 @@
       "sha256": "6eef597a64e8880f362aee8fbd13995201ea22e96a6ea5801ddee3f50c48be42"
     },
     {
+      "path": "SECURITY.md",
+      "bytes": 854,
+      "sha256": "6f78a9d3794af25f59a238f6ec60c6f5f5292d4ba1cf937531c63dba512fe63c"
+    },
+    {
       "path": "docs/DPP_IMPLEMENTATION.md",
       "bytes": 31608,
       "sha256": "110a4c1a411b70dfbce220203a81f33d290f386879f5f149f279d312e4858310"
@@ -974,8 +979,13 @@
     },
     {
       "path": "scripts/build_llms_full.py",
-      "bytes": 6254,
-      "sha256": "e4ff2d59a94507c2e3b104621e12c5fe791c99344bb4f29fca3b0334a0c4bbe4"
+      "bytes": 6258,
+      "sha256": "4cd934f025e9ab51e07cedc9e3ad3a2e65cf1411ad3ee2cd19d4c07a3233c623"
+    },
+    {
+      "path": "scripts/build_social_cards.py",
+      "bytes": 9952,
+      "sha256": "e6b0e2e412367c3154b1af785886eddd92aada18b929f44438434c9e7ecb20a9"
     },
     {
       "path": "scripts/dpp_measurement.py",
@@ -984,13 +994,18 @@
     },
     {
       "path": "scripts/indexnow.py",
-      "bytes": 4675,
-      "sha256": "a7c521160e736dfca1a06105ef4c0f1a9bd72fb9e0a5b0036cd1940f85b30c21"
+      "bytes": 4679,
+      "sha256": "ba050c1c8f28d272e63791a8725a649f90ae459052d2709d2f7501ce5559bbbf"
     },
     {
       "path": "scripts/site_checks.py",
-      "bytes": 24136,
-      "sha256": "67056009c3498632f4edd180969202c60e72b78616b2478d29f57f36ec0a62e0"
+      "bytes": 26085,
+      "sha256": "307fc8fee8ef21c38b5914769adba8531df43995e9f2b32b81d2287ad0489a6c"
+    },
+    {
+      "path": "site/.well-known/security.txt",
+      "bytes": 288,
+      "sha256": "8f314ea790a0c399fef38ce1133c282ab523bbd01adcb8c30979629b1e136392"
     },
     {
       "path": "site/03dd79a90f0607e442d7c5e89bd241ee.txt",
@@ -999,8 +1014,8 @@
     },
     {
       "path": "site/404.html",
-      "bytes": 3663,
-      "sha256": "8858ff382e6e7a140a45b36f99a69dadb9bfec578ee644072d91bb6d653b539a"
+      "bytes": 3924,
+      "sha256": "add6d5787d9ccdfcf26986ffa1f93fcd7eebdd5e46e32e019320008554686888"
     },
     {
       "path": "site/analytics.js",
@@ -1024,53 +1039,53 @@
     },
     {
       "path": "site/docs.css",
-      "bytes": 9230,
-      "sha256": "9c56ca53720f1c50fb6cfec00f6562d49623d1fb1be6f8c2f8139e3192977909"
+      "bytes": 9056,
+      "sha256": "cf58b188e297b6279e6bb7c587caffd3ae788822336611e72ca49fd5c79e5407"
     },
     {
       "path": "site/docs/architecture.html",
-      "bytes": 19230,
-      "sha256": "09d43c377a55b4c963fc4d64e76711045bdea5a5e984df2ff04ed85f312039eb"
+      "bytes": 23415,
+      "sha256": "e3abcb8e7e3f1d897acb798c0bd08d054dc1c51e71b179067a14d7673b6f95b7"
     },
     {
       "path": "site/docs/cli.html",
-      "bytes": 15859,
-      "sha256": "897b6a146fb9edfb2ad2777cd35c9141024cbfce5d1d68241ad0738469dc6fd9"
+      "bytes": 20071,
+      "sha256": "6dec18e7b97e3fa59830665578420efd139e40b4de0715b2a18a343ad3f62f58"
     },
     {
       "path": "site/docs/compatibility.html",
-      "bytes": 21297,
-      "sha256": "8a282e423603876f96bcc656feae6a80d68179353c933b634dff4c8abd6b4b76"
+      "bytes": 25677,
+      "sha256": "29e431c7a018e88ce5a82136dc070a9e9197e40ac175cf590b8cdfeae62a2f6b"
     },
     {
       "path": "site/docs/discovery.html",
-      "bytes": 20335,
-      "sha256": "d551a32ecce6c0feba574e9b8e639d2af7c5d8b1b62c943e36e01dcf3e0f59eb"
+      "bytes": 24641,
+      "sha256": "15e112574f1778ea49004e9bb7c1871a10e465b7e75d5b3228f363662e586628"
     },
     {
       "path": "site/docs/getting-started.html",
-      "bytes": 17642,
-      "sha256": "0c84ddaceb0cc3f783e9bdcbcc73641f2eb0bb79eadf09a6a690d0b01eadd7a0"
+      "bytes": 21877,
+      "sha256": "270759915978d3f4999f9cf194ef37fcc6416b1f440fc8cc40e555cdef4ef33a"
     },
     {
       "path": "site/docs/index.html",
-      "bytes": 16363,
-      "sha256": "5c6593207e37f59de732a0c265b5168480706e3399596ff52cdadb628120af1f"
+      "bytes": 20231,
+      "sha256": "ac4b19407a8f534e05977ac7a1602328f0722660f9506d6f6d5bbe042b17c982"
     },
     {
       "path": "site/docs/privacy.html",
-      "bytes": 22123,
-      "sha256": "e927704290f189f7ccbe7d14f00eee7fcf2a0c1751e4e809a19b2027f8c8f352"
+      "bytes": 26220,
+      "sha256": "0463524ee331f600b54e7a7914bfbf9c8e45f0b26e9b333fd1cb616f338fc7e2"
     },
     {
       "path": "site/docs/research.html",
-      "bytes": 29354,
-      "sha256": "6220ea0c5d3587c8b291a8de66b862d3ee2e7b52c0420888ccdc99cf178ed7b6"
+      "bytes": 33464,
+      "sha256": "6347cb6fbeb45997259981974a8e055bbbf6ab9910919fdd1ca7d3aa85b30769"
     },
     {
       "path": "site/gpu-catalog.html",
-      "bytes": 23103,
-      "sha256": "721e28ad2481a639391242e6e20638da17fab6858e869ef56a31d21c6fd44a28"
+      "bytes": 28071,
+      "sha256": "31d97ace756c4181ce77b57a5059e1bf7f857226a54646e233618b2aa7c75977"
     },
     {
       "path": "site/home.css",
@@ -1078,9 +1093,14 @@
       "sha256": "b5651a0d64dad81ecf01b0c96d79ff23232dee726ed40e6912cd45109a384e35"
     },
     {
+      "path": "site/humans.txt",
+      "bytes": 1125,
+      "sha256": "226cc0423828ba91f9902a76680d06db07fa2f3d7416623c8579b9b865fdbdce"
+    },
+    {
       "path": "site/index.html",
-      "bytes": 50439,
-      "sha256": "db14b70e34a90531aea97998d7f52151076530e7d318150a31a6bc23acfefb1e"
+      "bytes": 53659,
+      "sha256": "6e9599e41d34fd8c8ce94bfc88bb88ed5c76f2562cfacb992399872c82fa2149"
     },
     {
       "path": "site/robots.txt",
@@ -1094,13 +1114,13 @@
     },
     {
       "path": "site/styles.css",
-      "bytes": 5322,
-      "sha256": "0a4c92c200e0913b251b83036be6bf6c73d94b618098e62e8aaf7b1fd6ad5d57"
+      "bytes": 7413,
+      "sha256": "2e9a3ef81b02c5980a539ae73991b986bf0cb8f0aeb2390c9833c3058b09bedb"
     },
     {
       "path": "site/vercel.json",
-      "bytes": 1248,
-      "sha256": "ff83bdbe948d6b6a33b90116a051fb28800a7d192047a4aa8e795ed539b673ab"
+      "bytes": 1625,
+      "sha256": "a8b504b5d9e9d9078d746b90bd0481e62b3bf267bcb927ba6c757ae64a747fb0"
     },
     {
       "path": "src/cuda_legacy_compat/__init__.py",
@@ -1184,8 +1204,8 @@
     },
     {
       "path": "tests/test_site_checks.py",
-      "bytes": 12765,
-      "sha256": "1f4bfdac680143da3567570df452505898eb93d4331bbaf31c79267accf4f4be"
+      "bytes": 14863,
+      "sha256": "59094182877b9d17ec0ff13d7391d864c53b78cc39d397439654f57ff0bc2164"
     }
   ]
 }

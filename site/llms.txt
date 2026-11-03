@@ -20,6 +20,10 @@ This is a convenience index for people and automated agents. It is not a standar
 - Full text of every page, as Markdown: https://cudacompat.com/llms-full.txt
 - Canonical page list: https://cudacompat.com/sitemap.xml
 - Crawler preferences: https://cudacompat.com/robots.txt
+- Revision feed (Atom): https://cudacompat.com/feed.xml
+- People and credits: https://cudacompat.com/humans.txt
+- Security contact: https://cudacompat.com/.well-known/security.txt
+- How to cite: https://github.com/zachshallbetter/cuda-compatibility/blob/main/CITATION.cff
 
 ## Project identity
 - Project repository: https://github.com/zachshallbetter/cuda-compatibility
