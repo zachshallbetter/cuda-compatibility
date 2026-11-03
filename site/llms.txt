@@ -5,16 +5,16 @@
 This is a convenience index for people and automated agents. It is not a standardized crawler directive and does not guarantee discovery, retrieval, citation, or model training.
 
 ## Start here
-- [Project overview](https://www.cudacompat.com/): purpose, current features, limitations, and installation path.
-- [Documentation index](https://www.cudacompat.com/docs/): user guides and technical references.
-- [Getting started](https://www.cudacompat.com/docs/getting-started.html): requirements, install, diagnose, and run.
-- [Compatibility matrix](https://www.cudacompat.com/docs/compatibility.html): native kernels, CPU fallback routes, and supported cases.
-- [Architecture](https://www.cudacompat.com/docs/architecture.html): version facade, compiler, driver bridge, and dispatch routing.
-- [CLI reference](https://www.cudacompat.com/docs/cli.html): command syntax and exit codes.
-- [Research and evidence](https://www.cudacompat.com/docs/research.html): scope, methods, reproducible records, and known gaps.
-- [Privacy and measurement](https://www.cudacompat.com/docs/privacy.html): analytics scope, consent behavior, Google Search Console, and Bing Webmaster setup.
-- [Search and AI discovery](https://www.cudacompat.com/docs/discovery.html): crawler access, sitemap and agent index, and the limits of current visibility evidence.
-- [Legacy GPU catalog](https://www.cudacompat.com/gpu-catalog.html): NVIDIA compute-capability tiers and project hardware status.
+- [Project overview](https://cudacompat.com/): purpose, current features, limitations, and installation path.
+- [Documentation index](https://cudacompat.com/docs/): user guides and technical references.
+- [Getting started](https://cudacompat.com/docs/getting-started.html): requirements, install, diagnose, and run.
+- [Compatibility matrix](https://cudacompat.com/docs/compatibility.html): native kernels, CPU fallback routes, and supported cases.
+- [Architecture](https://cudacompat.com/docs/architecture.html): version facade, compiler, driver bridge, and dispatch routing.
+- [CLI reference](https://cudacompat.com/docs/cli.html): command syntax and exit codes.
+- [Research and evidence](https://cudacompat.com/docs/research.html): scope, methods, reproducible records, and known gaps.
+- [Privacy and measurement](https://cudacompat.com/docs/privacy.html): analytics scope, consent behavior, Google Search Console, and Bing Webmaster setup.
+- [Search and AI discovery](https://cudacompat.com/docs/discovery.html): crawler access, sitemap and agent index, and the limits of current visibility evidence.
+- [Legacy GPU catalog](https://cudacompat.com/gpu-catalog.html): NVIDIA compute-capability tiers and project hardware status.
 
 ## Project identity
 - Project repository: https://github.com/zachshallbetter/cuda-compatibility

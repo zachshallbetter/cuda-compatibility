@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url><loc>https://www.cudacompat.com/</loc></url>
-  <url><loc>https://www.cudacompat.com/gpu-catalog.html</loc></url>
-  <url><loc>https://www.cudacompat.com/docs/</loc></url>
-  <url><loc>https://www.cudacompat.com/docs/getting-started.html</loc></url>
-  <url><loc>https://www.cudacompat.com/docs/compatibility.html</loc></url>
-  <url><loc>https://www.cudacompat.com/docs/architecture.html</loc></url>
-  <url><loc>https://www.cudacompat.com/docs/cli.html</loc></url>
-  <url><loc>https://www.cudacompat.com/docs/research.html</loc></url>
-  <url><loc>https://www.cudacompat.com/docs/discovery.html</loc></url>
-  <url><loc>https://www.cudacompat.com/docs/privacy.html</loc></url>
+  <url><loc>https://cudacompat.com/</loc></url>
+  <url><loc>https://cudacompat.com/gpu-catalog.html</loc></url>
+  <url><loc>https://cudacompat.com/docs/</loc></url>
+  <url><loc>https://cudacompat.com/docs/getting-started.html</loc></url>
+  <url><loc>https://cudacompat.com/docs/compatibility.html</loc></url>
+  <url><loc>https://cudacompat.com/docs/architecture.html</loc></url>
+  <url><loc>https://cudacompat.com/docs/cli.html</loc></url>
+  <url><loc>https://cudacompat.com/docs/research.html</loc></url>
+  <url><loc>https://cudacompat.com/docs/discovery.html</loc></url>
+  <url><loc>https://cudacompat.com/docs/privacy.html</loc></url>
 </urlset>

@@ -2,9 +2,9 @@
 
 **Run supported newer CUDA workloads on older NVIDIA GPUs.**
 
-**Project site:** [CUDA Compatibility](https://www.cudacompat.com/) · [Zach Shallbetter](https://zachshallbetter.com/) · [GitHub profile](https://github.com/zachshallbetter)
+**Project site:** [CUDA Compatibility](https://cudacompat.com/) · [Zach Shallbetter](https://zachshallbetter.com/) · [GitHub profile](https://github.com/zachshallbetter)
 
-The static project site is in `site/` and is served at https://www.cudacompat.com/ by the Vercel project `cuda-compatibility` (`cudacompat.com` and `cuda-compatibility.vercel.app` redirect there), whose Root Directory is `site` and which has no build step. Pull requests run the project checks and test suite and receive a Vercel preview deployment; merging to `main` deploys production. Fonts, scripts and the hero wireframe are served from `site/` itself, so a page load makes no third-party request before analytics consent.
+The static project site is in `site/` and is served at https://cudacompat.com/ by the Vercel project `cuda-compatibility` (`www.cudacompat.com` redirects there), whose Root Directory is `site` and which has no build step. Pull requests run the project checks and test suite and receive a Vercel preview deployment; merging to `main` deploys production. Fonts, scripts and the hero wireframe are served from `site/` itself, so a page load makes no third-party request before analytics consent.
 
 This independent research and implementation project targets software whose toolkit, compiler, or library requirements have moved beyond older cards. The end goal is to install a compatibility toolset on a host and run CUDA 13+ applications on its older GPUs with correct results. PyTorch CUDA 13 is the first target. The current prototype is an opt-in, per-process Python launcher; it is not yet a machine-wide installer and does not make arbitrary CUDA 13 applications compatible.
 

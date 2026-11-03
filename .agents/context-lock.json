@@ -6,7 +6,7 @@
   "selectedPaths": [],
   "sourceSelection": {
     "includedCount": 175,
-    "includedBytes": 1579917,
+    "includedBytes": 1579715,
     "excludedCounts": {
       "excluded-directory": 1,
       "excluded-path": 1,
@@ -20,14 +20,14 @@
     "repositories": [
       {
         "path": ".",
-        "commit": "a5190ffa824c6c62a300c07568e20ecd8655c8f4",
-        "branch": "site-analytics-events",
+        "commit": "de8f54e4b786704c9865dbcb8b9acd95e52c6e55",
+        "branch": "site-apex-canonical",
         "dirty": true,
         "remote": "https://github.com/zachshallbetter/cuda-compatibility.git"
       }
     ]
   },
-  "aggregateSourceDigest": "540a1043a914b81a22cabf9d396fbc1fb7bc3a29b00027385b09fe61a10278f1",
+  "aggregateSourceDigest": "fdc851068fdc6926eff467ba1c3e4913d055c7a30206a43b60565fb51812e0e3",
   "sources": [
     {
       "path": ".agents/rules/ci.md",
@@ -266,8 +266,8 @@
     },
     {
       "path": "README.md",
-      "bytes": 9203,
-      "sha256": "bcd8815772eaf69af1d3a51c3cd43b45ee349c0370a9fb18a9baaed3d36a13e4"
+      "bytes": 9164,
+      "sha256": "f2ab32e97d8c66357e9d79e6e4cd5c5636172d93aadb992114e2832c2fa2a9ab"
     },
     {
       "path": "VERSION",
@@ -411,8 +411,8 @@
     },
     {
       "path": "docs/WORK_ITEMS.md",
-      "bytes": 101822,
-      "sha256": "a90510b4002a4b083ac2ab97250d64ffb033e046631ecb9149956ceeef639ea2"
+      "bytes": 102243,
+      "sha256": "cf164732b2e73959006e4d0c6957db16f97e59d8dc92a23af96fe574c5b300e9"
     },
     {
       "path": "docs/architecture.md",
@@ -761,48 +761,48 @@
     },
     {
       "path": "site/docs/architecture.html",
-      "bytes": 18935,
-      "sha256": "15a0e7283d81c1b7a51452288df7e27932d7f8db4e1691530bcde6f9c6d7a3cf"
+      "bytes": 18883,
+      "sha256": "7d020db5e00048a7de4b6f20c93e243bc06a51203ad90985b86a46c97a17d8ae"
     },
     {
       "path": "site/docs/cli.html",
-      "bytes": 15186,
-      "sha256": "47cd3a4c09edb269491b051b42e04de092f178512f060adc630a184ea617b0b2"
+      "bytes": 15134,
+      "sha256": "714ce95cec10d96f9dd4e62289dbbda10c469a4f9d68c73355bf742cc537c2d2"
     },
     {
       "path": "site/docs/compatibility.html",
-      "bytes": 20627,
-      "sha256": "a40ca696206a7bea90cb5eef6aaba50e1e6c4ac80a2253fd4e96408f8d3e4876"
+      "bytes": 20575,
+      "sha256": "7516085748ee35211900a74e5e01717a6251073730aaab4d89579c759ff50ee0"
     },
     {
       "path": "site/docs/discovery.html",
-      "bytes": 19488,
-      "sha256": "6f2cae39f01d40a069e81981ad815158d87bba95458421d5bc8c39aa8fb1410b"
+      "bytes": 19404,
+      "sha256": "56ae9c84f522fd8f10dd8fec1716afb793b31d745c8f5071dff81d7e7f618870"
     },
     {
       "path": "site/docs/getting-started.html",
-      "bytes": 15276,
-      "sha256": "44c2150d1db8a4fd18d545b9974490cedda85bd3461a234a2c127cc132b1d795"
+      "bytes": 15224,
+      "sha256": "a6cd0db4d64570381f606b5d910f3c9aceb0fd66728a607d0ac8215432c6b9b9"
     },
     {
       "path": "site/docs/index.html",
-      "bytes": 16265,
-      "sha256": "a136f081d8505355fe44acace19c569851184639515184b5b39163ecfe35b26e"
+      "bytes": 16193,
+      "sha256": "a294a06764aa7ca0de258acf0ec0b1dac73605faa878a38b1f52a138c3fc121e"
     },
     {
       "path": "site/docs/privacy.html",
-      "bytes": 21650,
-      "sha256": "2664e85c04f4b1fb401dfabffa123c4c10ff59db7553860b990a5391c93964d0"
+      "bytes": 21586,
+      "sha256": "61e76f68bd4d7493bb2a038db6370f223c9071dfec7e68935841f1288ba3e0f7"
     },
     {
       "path": "site/docs/research.html",
-      "bytes": 28984,
-      "sha256": "b46d60c9a994fa7f11817d7fdeb6a2eaec62e8be89256e1363dcae2d5ac65068"
+      "bytes": 28924,
+      "sha256": "c9ac8ffc9f6271ece30931e31c5f059c8b49543e1125b94bb73371738051edda"
     },
     {
       "path": "site/gpu-catalog.html",
-      "bytes": 22739,
-      "sha256": "92dc0dc8730dd1c707f7fe1e50ffa0df99f1922278eb0b3a9ae8c6006614ece8"
+      "bytes": 22699,
+      "sha256": "281208eaeb5282fc6499e3e04f3e3ab1481d69e8cbb56d37799a1f1930beaf78"
     },
     {
       "path": "site/home.css",
@@ -811,13 +811,13 @@
     },
     {
       "path": "site/index.html",
-      "bytes": 48848,
-      "sha256": "f1a85da1aec2851a22dbfa302ff1625ddf6a70c508bcca6a5d51bfb16774ca90"
+      "bytes": 48800,
+      "sha256": "4d1afe7c74f6a74b5e1b4abd14106f6a202f1c95feb4eae62de311f43505f8d7"
     },
     {
       "path": "site/robots.txt",
-      "bytes": 442,
-      "sha256": "20fbd232827d33917d44586769e53381ec25f1ae913462b1f72f77822f8d0e80"
+      "bytes": 438,
+      "sha256": "39f6b59196267eeedc9440628a42d813abb438ee50c0d77a207506626fd6fcb3"
     },
     {
       "path": "site/site.js",
@@ -901,8 +901,8 @@
     },
     {
       "path": "tests/test_site_checks.py",
-      "bytes": 9882,
-      "sha256": "a64815c63ba6aa1706a500f7814d7025bb73c212eaff2d611b58dea11cbd556b"
+      "bytes": 9878,
+      "sha256": "9b03f01e4a94c882070e4249a1d5bd4bc6b6bfbaff156a9153aaefe205c38deb"
     }
   ]
 }

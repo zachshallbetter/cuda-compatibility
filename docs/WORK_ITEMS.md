@@ -540,6 +540,7 @@ The first work item is being executed under the user's explicit request to creat
 - **Target:** Vercel project `cuda-compatibility`; `https://www.cudacompat.com/`.
 - **Budget:** No spend beyond the owner's domain purchase.
 - **Stop conditions:** ACP refuses an external effect; a project gate fails; the GA4 stream would need to load without consent.
+- **Progress (2026-11-03):** The owner made the apex `cudacompat.com` the primary Vercel domain (`www` now 308-redirects to it) and removed `cuda-compatibility.vercel.app` from the project. Canonical URLs, sitemap, robots.txt, llms.txt, JSON-LD, README and hosting copy moved to `https://cudacompat.com/`; all 26 audited routes returned HTTP 200 on the apex at 2026-11-03T10:51:30Z. Evidence: `CLC-030-apex-route-audit`.
 
 ## CLC-029 — Redesign the project site and move hosting to Vercel
 
