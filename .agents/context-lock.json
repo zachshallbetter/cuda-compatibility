@@ -5,8 +5,8 @@
   "validityBasis": "aggregate-source-digest",
   "selectedPaths": [],
   "sourceSelection": {
-    "includedCount": 216,
-    "includedBytes": 1863181,
+    "includedCount": 220,
+    "includedBytes": 1882424,
     "excludedCounts": {
       "extension": 47,
       "generated-or-transient-file": 2
@@ -18,14 +18,14 @@
     "repositories": [
       {
         "path": ".",
-        "commit": "adfcd25b745637db6faba1bd8c886ac280f66bef",
-        "branch": "dpp-observation-semantics",
+        "commit": "9d17c8973b89c48cf6d1853279b41e113bb39a20",
+        "branch": "release-public-example",
         "dirty": true,
         "remote": "https://github.com/zachshallbetter/cuda-compatibility.git"
       }
     ]
   },
-  "aggregateSourceDigest": "ab5e06766020319edb4c5cff30fa284bcf082447d2765903dedc6cc8dfd1cd91",
+  "aggregateSourceDigest": "86f243d2ef238ea64369e07bd14487914094e5ac71a1c80c97df9990e81d713d",
   "sources": [
     {
       "path": ".agents/acp/README.md",
@@ -678,6 +678,11 @@
       "sha256": "daa4c70bc8011c38b079c8c5a3773361c45b1dad268758d878beba4f4941a7a1"
     },
     {
+      "path": ".github/ISSUE_TEMPLATE/reproduction-report.yml",
+      "bytes": 2044,
+      "sha256": "642de9b2d50df8a1b44b2de5ec0f4d5213c8d3e483dc68dac6344d322f80ac65"
+    },
+    {
       "path": ".github/workflows/verify.yml",
       "bytes": 633,
       "sha256": "520d93c6c0bbd33a317df3a147c51598188cccc98d18bb987c56b3d783f16e4b"
@@ -689,13 +694,13 @@
     },
     {
       "path": "README.md",
-      "bytes": 9926,
-      "sha256": "182c2f93027b1f07c11a054d91d47c2f3ef34097e0e46497536af767d798397a"
+      "bytes": 10360,
+      "sha256": "6eef597a64e8880f362aee8fbd13995201ea22e96a6ea5801ddee3f50c48be42"
     },
     {
       "path": "docs/DPP_IMPLEMENTATION.md",
-      "bytes": 29136,
-      "sha256": "7bbd8e357ff39d9540e535cd854bb93640b9d6552c2142bae12aaec3e7630afe"
+      "bytes": 29682,
+      "sha256": "592cd828f5aab0dc2babb7b4e5eeecf86d034b1b61624d503b672186487753cb"
     },
     {
       "path": "docs/PROJECT_MILESTONES.md",
@@ -704,8 +709,8 @@
     },
     {
       "path": "docs/WORK_ITEMS.md",
-      "bytes": 105545,
-      "sha256": "9512267d0184c94de1e6b4256cb801651c5d78f3708ce157a308eecd36f659d9"
+      "bytes": 108090,
+      "sha256": "af4a2acddae5327e394adf840890a6a823daba4fb69d6e17739b9e5c26ce2a89"
     },
     {
       "path": "docs/architecture.md",
@@ -806,6 +811,21 @@
       "path": "examples/dpp/availability-2026-11-03.json",
       "bytes": 1660,
       "sha256": "0cdde59a8d8299a82fa07245c729879dab4a5dc144a08fb3b9382aec1c9b62eb"
+    },
+    {
+      "path": "examples/sm52-mlp/README.md",
+      "bytes": 5169,
+      "sha256": "895b102d74e06bc6781211a877934d481cc1ca3d6be87eb7af0316d6b960b8dc"
+    },
+    {
+      "path": "examples/sm52-mlp/expected-output.json",
+      "bytes": 1874,
+      "sha256": "b65ccafb2a7723cc125c02f8b7524d0411f1cbe839b76519c2225df0779d686b"
+    },
+    {
+      "path": "examples/sm52-mlp/route_check.py",
+      "bytes": 5648,
+      "sha256": "baa45a0b60dff83596bdfe023107cb2ddf0bc10176eadef349204fb36dadd41a"
     },
     {
       "path": "experiments/llvm-nvptx/run_vector_add.sh",
@@ -974,8 +994,8 @@
     },
     {
       "path": "site/docs/getting-started.html",
-      "bytes": 17162,
-      "sha256": "c5b95a29249c60d952b8808d364315d20ac945d9a6a6258f2ae86a1ad07059dc"
+      "bytes": 17664,
+      "sha256": "2a6ece0babd1359efd0679b4a3ec3d3123efb916f55b321c8f7d34d7fd23e6a5"
     },
     {
       "path": "site/docs/index.html",
@@ -1004,8 +1024,8 @@
     },
     {
       "path": "site/index.html",
-      "bytes": 48080,
-      "sha256": "9506d9ac8aac01758b8ea49592a360d1e9a6662ba50b2153ccbe2153ed2ce6b4"
+      "bytes": 48561,
+      "sha256": "248144e3eedba9dbec8c57832df71abc79a039e31d77bc9ca7384f4c20ba0ae6"
     },
     {
       "path": "site/robots.txt",

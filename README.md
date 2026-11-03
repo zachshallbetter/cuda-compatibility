@@ -86,6 +86,7 @@ Project code is dual-licensed under **MIT OR Apache-2.0**. NVIDIA drivers, heade
 
 - **Verified:** Native CUDA 12.4 `sm_52` vector-add kernel passed on all three reference GPUs; see [Maxwell baseline](docs/research/maxwell-baseline.md).
 - **Experimental:** LLVM 23.1.4 compiled PTX 8.4 for `sm_52`, and a process-local shim returned CUDA Runtime 13.0.0 while preserving real device properties. The official PyTorch 2.14 CUDA 13 wheel passed an operator/MLP suite on all three cards. On broker-selected GPU 2, one owner-supplied transformer checkpoint matched CPU output across six tested batch/sequence configurations; a separate convolution classifier used CPU fallback for convolution. New float16 and strided matrix cases passed on GPUs 1 and 2, as did first-order gradients and seven `foreach=False` SGD updates for a 2×2 linear→ReLU→sum workload. The tiny training probe measured 2.360 ms on GPU 2 and 7.296 ms on GPU 1 median end-to-end latency, with 67,180,032 bytes peak allocated on each; this is diagnostic, not representative performance. Broader model, optimizer, library, and per-card coverage remains open. See [PyTorch CUDA 13 on Maxwell](docs/research/pytorch-cu130-maxwell.md).
+- **Try it:** [`examples/sm52-mlp`](examples/sm52-mlp/README.md) pins one workload to a release, machine and expected output, shows which route each operation takes, and links a [reproduction report](https://github.com/zachshallbetter/cuda-compatibility/issues/new?template=reproduction-report.yml) form.
 - **Implemented:** Read-only inventory and profile auditing. The target host is incompatible with the published PyTorch CUDA 13 build profile (`sm_75` minimum) and meets the published CUDA 12.6 Maxwell architecture floor (`sm_50`); the latter is a package-architecture check, not an end-to-end operator certification.
 - **Not yet implemented:** broad CUDA runtime mappings, general PyTorch operator/library coverage, arbitrary autograd/training compatibility, independently assembled CUDA execution, or multi-GPU workload scheduling.
 - **Not claimed:** General CUDA 13 binary compatibility or equal performance to newer cards.
@@ -99,6 +100,7 @@ Project code is dual-licensed under **MIT OR Apache-2.0**. NVIDIA drivers, heade
 - [`profiles/`](profiles/) — versioned, source-backed framework/tool requirements.
 - [`experiments/maxwell/`](experiments/maxwell/) — native kernel baseline and reproducible runner.
 - [`experiments/pytorch-cu130/`](experiments/pytorch-cu130/) — stock-wheel baseline and end-to-end launcher probes.
+- [`examples/sm52-mlp/`](examples/sm52-mlp/) — public example with pinned configuration, expected output and execution routes.
 - [`docs/research/`](docs/research/) — sourced technical findings and experiment records.
 - [`docs/decisions/`](docs/decisions/) — architecture and language decisions.
 - [`docs/WORK_ITEMS.md`](docs/WORK_ITEMS.md) — bounded local work frontier until a remote provider is bound.

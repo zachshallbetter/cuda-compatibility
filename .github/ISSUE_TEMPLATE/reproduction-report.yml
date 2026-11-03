@@ -1,0 +1,62 @@
+name: Reproduction report
+description: Report the result of running a published example on your own machine, pass or fail.
+title: "Reproduction: "
+labels: ["reproduction"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thank you for testing. Failed and partial runs are as useful as passing ones. Please paste output exactly; do not attach NVIDIA files.
+        The example and its expected output are in `examples/sm52-mlp/README.md`.
+  - type: input
+    id: example
+    attributes:
+      label: Example and project revision
+      description: Example name plus the release tag or commit you ran.
+      placeholder: "examples/sm52-mlp at v0.1.0"
+    validations:
+      required: true
+  - type: textarea
+    id: hardware
+    attributes:
+      label: GPU and driver
+      description: Output of `nvidia-smi --query-gpu=name,compute_cap,driver_version,memory.total --format=csv`.
+      render: text
+    validations:
+      required: true
+  - type: textarea
+    id: software
+    attributes:
+      label: Software
+      description: OS, Python, `python -m pip freeze | grep -i -E "torch|nvidia|cuda-legacy"`, LLVM version, CUDA header path.
+      render: text
+    validations:
+      required: true
+  - type: textarea
+    id: doctor
+    attributes:
+      label: cuda-legacy doctor output
+      render: text
+  - type: textarea
+    id: output
+    attributes:
+      label: Example output and exit codes
+      description: The JSON printed by both the stock run and the `cuda-legacy run` run, with each exit code.
+      render: text
+    validations:
+      required: true
+  - type: dropdown
+    id: outcome
+    attributes:
+      label: Outcome
+      options:
+        - Matched the published expected output
+        - Differed from the published expected output
+        - Could not run (prerequisite or install problem)
+    validations:
+      required: true
+  - type: textarea
+    id: notes
+    attributes:
+      label: Anything else
+      description: Differences from the tested configuration, workarounds, or what you expected instead.

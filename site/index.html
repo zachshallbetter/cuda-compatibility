@@ -224,6 +224,7 @@
 <div class="note">
 <h3 style="font-size:20px">Scope</h3>
 <p style="margin:0;font-size:16px">The launcher is a workload adapter for a narrow PyTorch subset, not a universal CUDA 13 runtime. It requires Linux x86_64 and homogeneous visible <code>sm_52</code> GPUs. It interposes one runtime-version query and does not replace the CUDA 13 API surface or implement general cuDNN, cuBLAS, NCCL, or Triton compatibility. Other devices, operations, optimizers, dtypes, layouts, and library paths need their own implementations and evidence.</p>
+<p style="margin:12px 0 0;font-size:16px">To check it yourself, run the <a href="https://github.com/zachshallbetter/cuda-compatibility/tree/main/examples/sm52-mlp">public example</a>: one small network pinned to a release, machine and expected output, showing which route each operation takes and two cases that fail. Then send a <a href="https://github.com/zachshallbetter/cuda-compatibility/issues/new?template=reproduction-report.yml">reproduction report</a>, pass or fail.</p>
 </div>
 </div>
 </section>

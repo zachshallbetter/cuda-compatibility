@@ -507,6 +507,23 @@ The first work item is being executed under the user's explicit request to creat
 - **Progress (2026-11-01):** Rewrote all 10 canonical page descriptions to be page-specific and 140–180 characters; added static checks for length and uniqueness. `make check` passed and `make test` passed 44/44. Commit `958388599dcad117b63470c31f3f584e1aa03c3f` was pushed to `codex/cuda-compat-publication` after exact ACP ALLOWs and deployed successfully in Pages run `41312924116`. The live audit fetched all 10 sitemap pages and six discovery assets/endpoints (16/16 HTTP 200); all 10 descriptions were unique and within range. Evidence: `CLC-028-bing-short-descriptions-recommendation`, `CLC-028-pages-release`, and `CLC-028-live-route-audit`. No ranking, traffic, or indexing effect is claimed.
 - **Disposition (2026-11-01):** Bing feedback has been addressed in the published site. Checks enforce the description bounds and uniqueness; the exact deployed revision returned HTTP 200 for all 16 audited routes/assets, with all 10 page descriptions between 140 and 180 characters. Search performance effects remain unobserved.
 
+## CLC-033 — Connect release claims to a reproducible public example
+
+- **Intent:** GitHub issue #50; let readers move from a stated capability to the exact software, environment, command and result behind it.
+- **Parent:** CLC-009 native operator slice; CLC-025 qualified operator coverage; DPP claim register.
+- **Status:** In review
+- **Objective:** Publish one example that pins a supported workload to release `v0.1.0`, the reference hardware, driver, framework and toolchain; shows each operation's execution route and CPU comparison; documents real unsupported cases; and records a clean-environment run.
+- **Scope:** `examples/sm52-mlp/**`; `.github/ISSUE_TEMPLATE/reproduction-report.yml`; `docs/DPP_IMPLEMENTATION.md`; `README.md`; `site/index.html`; `site/docs/getting-started.html`; `site/llms-full.txt`; `docs/WORK_ITEMS.md`; `.agents/records/evidence.jsonl`; `.agents/records/negative-results.jsonl`; generated context.
+- **Exclusions:** A new benchmark framework or claim registry; timing claims; adapter source changes; removing other runs' files on the reference host; redistributing NVIDIA components.
+- **Acceptance:** The issue #50 acceptance list: pinned configuration; recoverable inputs, commands, expected results, comparison criteria, routes and known failures; claim IDs linked to the example and raw evidence; a recorded clean-environment run or an explicit blocker; homepage and docs links to the example and an issue-report form.
+- **Evidence required:** Reference-host run output in a new environment; cleanup verification; check and test output; ACP decisions.
+- **Evaluator:** Project owner, CPU references, static checker, project tests.
+- **Permissions:** E1 local changes and a task-scoped run on the reference host with official downloads; E2 push and E3 deploy only after exact ACP `ALLOW`.
+- **Target:** Project checkout; reference GPU host `/tmp/cuda-compat-gh50` (removed after the run).
+- **Budget:** No spend; one small sequential run per GPU with enough free memory.
+- **Stop conditions:** A route or result differs from the published claims; ACP refuses an external effect; a project gate fails.
+- **Progress (2026-11-03):** Clean run from `v0.1.0` passed on physical GPUs 1 and 2 with identical output; GPU 0 lacked free memory. Evidence: `GH-50-public-example-sm52-mlp`; negative results `GH-50-fixed-tolerance-chained-reference`, `GH-50-gpu-constructor-no-fallback`, `GH-50-llvm-archive-zstd-window`, `GH-50-clc025-temp-files-remain`. Independent reproduction on separate hardware remains open.
+
 ## CLC-032 — Align the site and install paths with the Digital Presence Protocol
 
 - **Intent:** Make the project's public surfaces meet the pinned DPP 0.3.0 discovery, representation and accessibility guidance, and give Linux users a Homebrew install path.

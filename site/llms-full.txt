@@ -150,6 +150,8 @@ Fallback requires one CUDA device. Training evidence is limited to linear → Re
 
 The launcher is a workload adapter for a narrow PyTorch subset, not a universal CUDA 13 runtime. It requires Linux x86_64 and homogeneous visible sm_52 GPUs. It interposes one runtime-version query and does not replace the CUDA 13 API surface or implement general cuDNN, cuBLAS, NCCL, or Triton compatibility. Other devices, operations, optimizers, dtypes, layouts, and library paths need their own implementations and evidence.
 
+To check it yourself, run the public example: one small network pinned to a release, machine and expected output, showing which route each operation takes and two cases that fail. Then send a reproduction report, pass or fail.
+
 ## Compat­ibility is a stack
 Sheet 01 / 10
 
@@ -531,6 +533,8 @@ Compiler LLVM/Clang 23.1.4
 Headers CUDA 12.4 development files
 
 Hardware and workload claims are described on the support matrix. This configuration is the one recorded in CLC-025-sm52-operator-training; “ready” from doctor is a prerequisite check, not a certification.
+
+For a first run with a known answer, use the public example. It lists the exact commands, the expected output for the stock wheel and for the adapter, and the route each operation takes. Report what you see with the reproduction report form.
 
 General notes, all sheets
 
