@@ -1,0 +1,16 @@
+{
+  "format": "3",
+  "bootstrap": "formal-project-bootstrap",
+  "bootstrapVersion": "0.7.3",
+  "projectId": "cuda-legacy-compat",
+  "projectName": "CUDA Compatibility",
+  "mode": "new",
+  "profiles": [],
+  "createdAt": "2026-11-01T02:03:36.800424+00:00",
+  "unresolvedBootstrapCollisions": [],
+  "lastUpgrade": {
+    "fromVersion": "0.6.3",
+    "toVersion": "0.7.3"
+  },
+  "source": "https://github.com/zachshallbetter/formal-project-bootstrap"
+}
