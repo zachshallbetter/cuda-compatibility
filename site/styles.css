@@ -8,16 +8,6 @@ html{scroll-behavior:smooth;color-scheme:only light}
 .skip-link{position:absolute;left:-999px;top:8px;background:#FFD400;color:#000000;padding:10px 14px;font-weight:700;z-index:10}
 .skip-link:focus{left:16px}
 [hidden]{display:none!important}
-.analytics-banner{position:fixed;left:16px;right:16px;bottom:16px;z-index:20;max-width:760px;margin:0 auto;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:16px 28px;align-items:center;padding:20px 24px;background:#000000;color:#FFFFFF;border:3px solid #FFFFFF;box-shadow:8px 8px 0 #FFD400;font:15px/1.45 "Archivo","Helvetica Neue",Arial,sans-serif}
-.analytics-banner strong{display:block;font-weight:800;font-size:18px;font-stretch:110%;letter-spacing:-0.01em;margin-bottom:4px}
-.analytics-banner p{margin:0;color:#D6D6D0}
-.analytics-actions{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
-.analytics-actions button{min-height:44px;padding:0 18px;border:2px solid #FFD400;background:#FFD400;color:#000000;font:700 15px "Archivo",sans-serif;cursor:pointer}
-.analytics-actions button+button{background:transparent;color:#FFFFFF;border-color:#FFFFFF}
-.analytics-actions button:hover{background:#FFFFFF;border-color:#FFFFFF;color:#000000}
-.analytics-actions button:focus-visible,.analytics-actions a:focus-visible{outline:3px solid #FFD400;outline-offset:3px}
-.analytics-actions a{color:#FFFFFF;font-weight:600;font-size:14px}
-@media (max-width:640px){.analytics-banner{grid-template-columns:1fr}.analytics-actions button{flex:1 1 auto}}
 /* Accessibility corrections shared by every page */
 body .inv .exp{color:#000000}
 body .inv .open{color:var(--inv-mute)}
@@ -63,3 +53,5 @@ body div[style*="grid-template-columns:96px minmax(0,1fr)"]{grid-template-column
 /* Bordered claim panels: rows always fill the width (same treatment as title blocks) */
 body div[style*="grid-template-columns:repeat(auto-fit,minmax(min(300px,100%),1fr));gap:0;border:2px solid"]{display:flex!important;flex-wrap:wrap;overflow:hidden}
 body div[style*="grid-template-columns:repeat(auto-fit,minmax(min(300px,100%),1fr));gap:0;border:2px solid"]>*{flex:1 1 300px;margin:0 -1px -1px 0}
+
+footer.foot .wrap{font-size:16px}footer.foot .dim,footer.foot .sheet,footer.foot .legend{opacity:1;color:#E4E4DE;font-size:13px}footer.foot .tb{font-size:16px}footer.foot .tb>div>span:first-child,footer.foot .rev th{opacity:1;color:#E4E4DE;font-size:13px}footer.foot .rev{font-size:16px}footer.foot .mute{color:#E4E4DE}footer.foot .soft{color:#F2F2EE}footer.foot .gn li::before{color:#E4E4DE}

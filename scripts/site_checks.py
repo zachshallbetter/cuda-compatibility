@@ -221,12 +221,14 @@ def audit_site(site_root: Path) -> list[str]:
         errors.append(f"analytics.js is missing or unreadable: {exc}")
     if not re.search(r'const measurementId = "G-[A-Z0-9]+";', analytics_source):
         errors.append("analytics.js: expected a configured GA4 measurement ID")
-    if 'if (choice === "accepted") loadAnalytics();' not in analytics_source:
-        errors.append("analytics.js: existing analytics consent must be required before loading")
-    if 'if (!hasConsent() || !initialized || !allowedEvents.has(name)) return;' not in analytics_source:
-        errors.append("analytics.js: events must require affirmative consent and an allowlisted name")
-    if 'else if (choice !== "rejected") showBanner();' not in analytics_source:
-        errors.append("analytics.js: visitors without a saved choice must receive a consent prompt")
+    if 'if (!optedOut()) loadAnalytics();' not in analytics_source:
+        errors.append("analytics.js: the tag must not load for a browser that opted out")
+    if 'navigator.globalPrivacyControl === true || navigator.doNotTrack === "1"' not in analytics_source:
+        errors.append("analytics.js: Global Privacy Control and Do Not Track must count as an opt-out")
+    if 'if (optedOut() || !initialized || !allowedEvents.has(name)) return;' not in analytics_source:
+        errors.append("analytics.js: events must respect the opt-out and use an allowlisted name")
+    if "analytics-banner" in analytics_source:
+        errors.append("analytics.js: the site has no analytics prompt; remove the banner")
 
     errors.extend(_audit_event_allowlist(analytics_source, site_root / "site.js"))
     errors.extend(_audit_support_counts(site_root))

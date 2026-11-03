@@ -1,4 +1,5 @@
-/* Optional, consent-gated GA4 measurement. Set the web stream ID to enable. */
+/* GA4 measurement without a prompt. It never loads for a browser that sends Global Privacy Control or
+   Do Not Track, or that opted out on the privacy page. Set the web stream ID to enable. */
 (() => {
   const measurementId = "G-Q7C82JK9GM";
   const consentKey = "cuda-compat-analytics-consent";
@@ -22,21 +23,25 @@
     return;
   }
 
-  const privacyPath = location.pathname.includes("/docs/") ? "privacy.html" : "docs/privacy.html";
-  const banner = document.createElement("aside");
-  banner.className = "analytics-banner";
-  banner.hidden = true;
-  banner.setAttribute("role", "region");
-  banner.setAttribute("aria-labelledby", "analytics-banner-title");
-  banner.innerHTML = `<div><strong id="analytics-banner-title">Optional site analytics</strong><p>Allow Google Analytics to measure page visits, clicks on key project links, and use of the copy and replay buttons. No analytics tag loads unless you accept. You can change this choice from the privacy page.</p></div><div class="analytics-actions"><button type="button" data-analytics-choice="accept">Allow analytics</button><button type="button" data-analytics-choice="reject">Reject</button><a href="${privacyPath}">Details</a></div>`;
-  document.body.append(banner);
+  const optedOut = () => {
+    if (navigator.globalPrivacyControl === true || navigator.doNotTrack === "1") return true;
+    try {
+      return localStorage.getItem(consentKey) === "rejected";
+    } catch {
+      return false;
+    }
+  };
 
   const settings = document.querySelectorAll("[data-analytics-settings]");
-  const showBanner = () => {
-    banner.hidden = false;
-    banner.querySelector('[data-analytics-choice="accept"]').focus();
+  const labelSettings = () => {
+    const signal = navigator.globalPrivacyControl === true || navigator.doNotTrack === "1";
+    settings.forEach((button) => {
+      button.disabled = signal;
+      button.textContent = signal
+        ? "Analytics is off: your browser asks sites not to track"
+        : optedOut() ? "Turn analytics back on in this browser" : "Turn off analytics in this browser";
+    });
   };
-  settings.forEach((button) => button.addEventListener("click", showBanner));
 
   let initialized = false;
   const loadAnalytics = () => {
@@ -79,23 +84,16 @@
     });
   };
 
-  const hasConsent = () => {
+  const setOptOut = (off) => {
     try {
-      return localStorage.getItem(consentKey) === "accepted";
+      if (off) localStorage.setItem(consentKey, "rejected");
+      else localStorage.removeItem(consentKey);
     } catch {
-      return false;
+      // Without browser storage an opt-out can't be remembered, so keep analytics off for this page.
+      if (!off) return;
     }
-  };
-
-  const setConsent = (choice) => {
-    try {
-      localStorage.setItem(consentKey, choice);
-    } catch {
-      // Without persistent consent storage, keep analytics disabled.
-      return;
-    }
-    banner.hidden = true;
-    if (choice === "accepted") loadAnalytics();
+    labelSettings();
+    if (!off) loadAnalytics();
     else if (initialized) {
       window.gtag("consent", "update", {
         analytics_storage: "denied",
@@ -114,12 +112,7 @@
     }
   };
 
-  banner.addEventListener("click", (event) => {
-    const target = event.target instanceof Element ? event.target : event.target.parentElement;
-    const button = target?.closest("[data-analytics-choice]");
-    if (!button) return;
-    setConsent(button.dataset.analyticsChoice === "accept" ? "accepted" : "rejected");
-  });
+  settings.forEach((button) => button.addEventListener("click", () => setOptOut(!optedOut())));
 
   const classifyLink = (link) => {
     const url = new URL(link.href, location.href);
@@ -135,9 +128,9 @@
     return null;
   };
 
-  // Components report through this; it drops anything not allowlisted or sent before consent.
+  // Components report through this; it drops anything not allowlisted, sent before loading, or after an opt-out.
   const track = (name, params = {}) => {
-    if (!hasConsent() || !initialized || !allowedEvents.has(name)) return;
+    if (optedOut() || !initialized || !allowedEvents.has(name)) return;
     window.gtag("event", name, { page_path: location.pathname, ...params });
   };
   window.cudaCompatAnalytics = { track };
@@ -162,12 +155,6 @@
     });
   });
 
-  let choice = "";
-  try {
-    choice = localStorage.getItem(consentKey) || "";
-  } catch {
-    choice = "";
-  }
-  if (choice === "accepted") loadAnalytics();
-  else if (choice !== "rejected") showBanner();
+  labelSettings();
+  if (!optedOut()) loadAnalytics();
 })();

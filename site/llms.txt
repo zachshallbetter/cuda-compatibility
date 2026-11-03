@@ -12,7 +12,7 @@ This is a convenience index for people and automated agents. It is not a standar
 - [Architecture](https://cudacompat.com/docs/architecture.html): version facade, compiler, driver bridge, and dispatch routing.
 - [CLI reference](https://cudacompat.com/docs/cli.html): command syntax and exit codes.
 - [Research and evidence](https://cudacompat.com/docs/research.html): scope, methods, reproducible records, and known gaps.
-- [Privacy and measurement](https://cudacompat.com/docs/privacy.html): analytics scope, consent behavior, Google Search Console, and Bing Webmaster setup.
+- [Privacy and measurement](https://cudacompat.com/docs/privacy.html): analytics scope, opt-out behavior (Global Privacy Control, Do Not Track, a per-browser switch), Google Search Console, and Bing Webmaster setup.
 - [Search and AI discovery](https://cudacompat.com/docs/discovery.html): crawler access, sitemap and agent index, and the limits of current visibility evidence.
 - [Legacy GPU catalog](https://cudacompat.com/gpu-catalog.html): NVIDIA compute-capability tiers and project hardware status.
 
