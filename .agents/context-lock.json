@@ -6,7 +6,7 @@
   "selectedPaths": [],
   "sourceSelection": {
     "includedCount": 224,
-    "includedBytes": 1903826,
+    "includedBytes": 1903904,
     "excludedCounts": {
       "extension": 47,
       "generated-or-transient-file": 2
@@ -18,14 +18,14 @@
     "repositories": [
       {
         "path": ".",
-        "commit": "0a8ccbcfd9efd2b829d04fe9cc8550c13bddadcb",
-        "branch": "site/light-sections",
+        "commit": "34feca57c42fb3c9b8502ec5141bbcc51a4941cd",
+        "branch": "site/light-hero-code",
         "dirty": true,
         "remote": "https://github.com/zachshallbetter/cuda-compatibility.git"
       }
     ]
   },
-  "aggregateSourceDigest": "1a23339c433a9e0fbaeb4e7d1a57023ae9bce42a178363194bb2a45646b3d834",
+  "aggregateSourceDigest": "dea871bfe25edf625fc5402a8fc25255fb0746e3f09c07bf90d7d2ad681d8669",
   "sources": [
     {
       "path": ".agents/acp/README.md",
@@ -990,7 +990,7 @@
     {
       "path": "site/docs.css",
       "bytes": 9230,
-      "sha256": "5ea93865fc4cd85b901217ccbba6d74277250fe1de705a2e4172aa33483d2128"
+      "sha256": "9c56ca53720f1c50fb6cfec00f6562d49623d1fb1be6f8c2f8139e3192977909"
     },
     {
       "path": "site/docs/architecture.html",
@@ -999,8 +999,8 @@
     },
     {
       "path": "site/docs/cli.html",
-      "bytes": 15840,
-      "sha256": "5677988f66158b007dad0f5b63d7f13caa6ca46cb02aa6c82d32622d1e17ae50"
+      "bytes": 15859,
+      "sha256": "897b6a146fb9edfb2ad2777cd35c9141024cbfce5d1d68241ad0738469dc6fd9"
     },
     {
       "path": "site/docs/compatibility.html",
@@ -1039,13 +1039,13 @@
     },
     {
       "path": "site/home.css",
-      "bytes": 14850,
-      "sha256": "ab1746963623e6d4ff5672821a311c022a541aa921f64ad569938124f67a09c6"
+      "bytes": 14809,
+      "sha256": "b5651a0d64dad81ecf01b0c96d79ff23232dee726ed40e6912cd45109a384e35"
     },
     {
       "path": "site/index.html",
-      "bytes": 49953,
-      "sha256": "7b6cfcb8fabaaf87f087f4a5a539a5a48b999e7ceacea555bc1fa79a75154220"
+      "bytes": 49970,
+      "sha256": "f7974cb4bb737828b63db67fb41bd2ae5b5ff33c5bf11719e07222d5199142e1"
     },
     {
       "path": "site/robots.txt",
@@ -1054,13 +1054,13 @@
     },
     {
       "path": "site/site.js",
-      "bytes": 8381,
-      "sha256": "e1d9049cd152e94cba5ab8c29d3f94aa6460142a8a7f87d490be3d78932b4c18"
+      "bytes": 8363,
+      "sha256": "7a04502c9a58c41f028f37dd52121f5299628938a0badaa84d9372ddd3fb7ba3"
     },
     {
       "path": "site/styles.css",
-      "bytes": 5221,
-      "sha256": "faf02717661f6c6b48b287fb9aca749048460fe6b323c5f9e4d3b8bf5e3f2bbd"
+      "bytes": 5322,
+      "sha256": "0a4c92c200e0913b251b83036be6bf6c73d94b618098e62e8aaf7b1fd6ad5d57"
     },
     {
       "path": "site/vercel.json",

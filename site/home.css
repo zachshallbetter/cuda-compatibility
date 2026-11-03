@@ -11,7 +11,7 @@ code,pre{font-family:"Martian Mono",ui-monospace,Menlo,monospace}
 code{font-size:0.82em;background:var(--code);padding:2px 5px}
 .inv code{background:#222220;color:#FFFFFF}
 .y code{background:#FFFFFF;color:#000000}
-pre{margin:0;background:#000000;color:#FFFFFF;padding:20px 22px;font-size:13px;line-height:1.7;overflow-x:auto;border:2px solid #000000}
+pre{margin:0;background:#F2F2EE;color:#111111;padding:20px 22px;font-size:13px;line-height:1.7;overflow-x:auto;border:2px solid #000000}
 pre code{background:none;padding:0;color:inherit;font-size:inherit}
 .nav a{color:var(--fg);text-decoration:none;font-size:15px;font-weight:600}
 .nav a:hover{color:var(--link)}
@@ -46,20 +46,20 @@ a.btn>*{position:relative;z-index:2}
 a.btn::before,a.btn::after{content:"";position:absolute;inset:0;transform:scaleX(0);transform-origin:left center;transition:transform 650ms cubic-bezier(.2,.8,.2,1)}
 a.btn::before{z-index:0}
 a.btn::after{z-index:1}
-a.btn.primary,.inv a.btn.primary{color:var(--yellow);box-shadow:inset 0 0 0 2px var(--yellow)}
+a.btn.primary,.inv a.btn.primary{color:#000000;box-shadow:inset 0 0 0 2px #000000}
 a.btn.primary::before{background:var(--yellow)}
-a.btn.primary::after{background:#FFFFFF}
+a.btn.primary::after{background:#000000}
 .built a.btn.primary,.inv .built a.btn.primary{color:#000000}
 .built a.btn.primary::before{transform:scaleX(1)}
 .built a.btn.primary:hover::after{transform:scaleX(1)}
-.built a.btn.primary:hover{box-shadow:inset 0 0 0 2px #FFFFFF}
-a.btn.quiet,.inv a.btn.quiet{color:#FFFFFF;box-shadow:inset 0 0 0 2px rgba(255,255,255,0.3)}
-.built a.btn.quiet,.inv .built a.btn.quiet{box-shadow:inset 0 0 0 2px #FFFFFF}
-a.btn.quiet::after{background:#FFFFFF}
+.built a.btn.primary:hover{color:#FFFFFF;box-shadow:inset 0 0 0 2px #000000}
+a.btn.quiet,.inv a.btn.quiet{color:#000000;box-shadow:inset 0 0 0 2px rgba(0,0,0,0.3)}
+.built a.btn.quiet,.inv .built a.btn.quiet{box-shadow:inset 0 0 0 2px #000000}
+a.btn.quiet::after{background:#000000}
 .built a.btn.quiet:hover::after{transform:scaleX(1)}
-.built a.btn.quiet:hover{color:#000000;transition-delay:200ms}
-a.btn:focus-visible{outline:3px solid var(--yellow);outline-offset:3px}
-.ink{color:transparent;-webkit-text-stroke:1.5px var(--yellow);background-image:linear-gradient(90deg,var(--yellow) 0 50%,transparent 50% 100%);background-size:200% 100%;background-position:100% 0;background-repeat:no-repeat;-webkit-background-clip:text;background-clip:text;transition:background-position 1100ms cubic-bezier(.2,.8,.2,1)}
+.built a.btn.quiet:hover{color:#FFFFFF;transition-delay:200ms}
+a.btn:focus-visible{outline:3px solid #1F3DFF;outline-offset:3px}
+.ink{color:transparent;-webkit-text-stroke:1.5px #1F3DFF;background-image:linear-gradient(90deg,#1F3DFF 0 50%,transparent 50% 100%);background-size:200% 100%;background-position:100% 0;background-repeat:no-repeat;-webkit-background-clip:text;background-clip:text;transition:background-position 1100ms cubic-bezier(.2,.8,.2,1)}
 .built .ink{background-position:0 0}
 .sec{display:flex;align-items:center;gap:16px}
 .cut{flex:none;width:40px;height:40px;border:2px solid currentColor;border-radius:50%;display:grid;place-items:center;font-weight:800;font-size:17px;line-height:1}
@@ -136,8 +136,8 @@ main{counter-reset:note}
 .note.y{border:2px solid var(--line);background:var(--yellow);color:#000000}
 .y{background:var(--yellow);color:#000000}
 .stripe{border-top:1px solid currentColor}
-button.replay{display:inline-flex;align-items:center;gap:8px;min-height:36px;padding:0 12px;background:transparent;border:1.5px solid rgba(255,255,255,0.45);color:#FFFFFF;font:600 13px "Archivo",sans-serif;cursor:pointer}
-button.replay:hover{border-color:var(--yellow);color:var(--yellow)}
+button.replay{display:inline-flex;align-items:center;gap:8px;min-height:36px;padding:0 12px;background:transparent;border:1.5px solid rgba(0,0,0,0.5);color:#000000;font:600 13px "Archivo",sans-serif;cursor:pointer}
+button.replay:hover{border-color:#1F3DFF;color:#1F3DFF}
 .hero{display:grid;grid-template-columns:minmax(0,0.9fr) minmax(0,1.3fr);gap:48px;align-items:end}
 @media (max-width:900px){.hero{grid-template-columns:1fr}}
 a.repo{display:inline-flex;align-items:center;gap:8px;min-height:40px;padding:0 14px;border:2px solid currentColor;text-decoration:none;color:var(--fg);font-size:14px;font-weight:700;line-height:1}

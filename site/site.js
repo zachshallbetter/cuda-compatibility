@@ -121,16 +121,16 @@
       }
       ctx.lineWidth = 1;
       for (let bk = 0; bk < buckets; bk++) {
-        ctx.strokeStyle = `rgba(255,255,255,${(0.14 + (bk / (buckets - 1)) * 0.5).toFixed(3)})`;
+        ctx.strokeStyle = `rgba(0,0,0,${(0.14 + (bk / (buckets - 1)) * 0.5).toFixed(3)})`;
         ctx.stroke(paths[bk]);
       }
       if (count > settled) {
         const prev = new Path2D(), cur = new Path2D();
         for (let j = settled; j < count; j++) seg(j < partStart ? prev : cur, j);
-        ctx.strokeStyle = "rgba(255,212,0,0.45)";
+        ctx.strokeStyle = "rgba(31,61,255,0.45)";
         ctx.stroke(prev);
-        ctx.strokeStyle = "#FFD400";
-        ctx.shadowColor = "rgba(255,212,0,0.7)";
+        ctx.strokeStyle = "#1F3DFF";
+        ctx.shadowColor = "rgba(31,61,255,0.5)";
         ctx.shadowBlur = 5;
         ctx.stroke(cur);
         ctx.shadowBlur = 0;
@@ -143,16 +143,16 @@
           rot(L.x, L.y, L.z, yaw, pitch0, tmp, 0);
           const px = sx(tmp[0], tmp[2], w, k), py = sy(tmp[1], tmp[2], h, k);
           const ex = px + L.dx, ey = py + L.dy;
-          ctx.strokeStyle = `rgba(255,255,255,${(0.55 * la).toFixed(3)})`;
+          ctx.strokeStyle = `rgba(0,0,0,${(0.55 * la).toFixed(3)})`;
           ctx.lineWidth = 1;
           ctx.beginPath(); ctx.moveTo(px, py); ctx.lineTo(ex, ey); ctx.lineTo(ex + (L.dx < 0 ? -10 : 10), ey); ctx.stroke();
-          ctx.fillStyle = `rgba(255,255,255,${la.toFixed(3)})`;
+          ctx.fillStyle = `rgba(0,0,0,${la.toFixed(3)})`;
           ctx.beginPath(); ctx.arc(px, py, 2.5, 0, Math.PI * 2); ctx.fill();
           ctx.textAlign = L.dx < 0 ? "right" : "left";
           const tw = ctx.measureText(L.t).width, tx = ex + (L.dx < 0 ? -16 : 16);
-          ctx.fillStyle = `rgba(0,0,0,${(0.8 * la).toFixed(3)})`;
+          ctx.fillStyle = `rgba(242,242,238,${(0.9 * la).toFixed(3)})`;
           ctx.fillRect(L.dx < 0 ? tx - tw - 6 : tx - 6, ey - 11, tw + 12, 22);
-          ctx.fillStyle = `rgba(255,255,255,${la.toFixed(3)})`;
+          ctx.fillStyle = `rgba(0,0,0,${la.toFixed(3)})`;
           ctx.fillText(L.t, tx, ey);
         }
       }
