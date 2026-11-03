@@ -1,0 +1,31 @@
+name: Notify IndexNow after deploy
+
+# Vercel deploys main to production on its own; this waits until the changed pages are live, then sends only those.
+"on":
+  push:
+    branches: [main]
+    paths: ["site/**"]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: indexnow
+  cancel-in-progress: false
+
+jobs:
+  notify:
+    name: Send changed pages to IndexNow
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    permissions:
+      contents: read
+    steps:
+      - name: Check out the pushed revision
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
+        with:
+          fetch-depth: 0
+      - name: Wait for the deploy, then notify
+        env:
+          BEFORE: ${{ github.event.before }}
+        run: python3 scripts/indexnow.py --since "$BEFORE" --wait-live 900
