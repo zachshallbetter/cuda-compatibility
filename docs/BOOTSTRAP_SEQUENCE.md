@@ -23,6 +23,8 @@ Bind the minimum authority and execution provider required by originating intent
 
 No mutation becomes Ready while material project identity is unresolved.
 
+The generated README is an entry point under `docs/README_STANDARD.md`; it does not become a second authority source. Existing README files are preserved and reported for non-destructive review.
+
 ## Phase 1 — Pin formal resources
 
 Materialize only resources that materially constrain the project.
@@ -46,26 +48,33 @@ Resource importance does not imply normative authority. Generated context is nev
 
 Pass only when every required resource is addressable and no required dependency relies on an unpinned `latest`, an unverifiable summary, or generated context as its canonical source.
 
-## Phase 2 — Compile project context
+## Phase 2 — Bind context sources
 
-Run:
+Compile the source-bound lock. Generate searchable corpora locally only when the operating workflow needs them:
 
 ```bash
 python3 scripts/gen-context.py
 python3 scripts/gen-context.py --check
 ```
 
-Produce:
+Required:
+
+```text
+.agents/context-lock.json
+```
+
+Optional local exports:
 
 ```text
 .agents/llms.txt
 .agents/llms-full.txt
-.agents/context-lock.json
 ```
+
+Ignore optional exports in Git and exclude them from release archives. The context lock remains the source freshness record; the corpus files are reproducible transport aids.
 
 ### Gate B1 — Context reproducibility
 
-Pass only when unchanged canonical inputs regenerate the same aggregate source digest and generated context.
+Pass only when unchanged canonical inputs regenerate the same aggregate source digest and context lock. If an optional corpus exists, it must match that source state.
 
 Repository/branch/nested-repository state is provenance. Generated context must not participate in the identity it is attempting to describe.
 
@@ -126,30 +135,13 @@ Pass when the cycle demonstrates bounded mutation, current source/context identi
 
 ---
 
-## Conditional operational gates
+# Conditional operational gates
 
 B5–B8 are capability observations, not prerequisites that normal project initialization should manufacture.
 
 **Do not create fake blockers, artificial stale state, unnecessary landings, or synthetic peer communication merely to obtain a PASS.**
 
 If a condition has not occurred, record `NOT OBSERVED` or `NOT EXECUTED` and continue lawful work.
-
-```mermaid
-flowchart TD
-    Identity[Project identity] --> Resources[Pin formal resources]
-    Resources --> Context[Compile project context]
-    Context --> Reconcile[Read-only reconciliation]
-    Reconcile --> Graph[Initialize smallest useful work graph]
-    Graph --> Cycle[Prove one reversible cycle]
-    Cycle --> Profiles[Add only intent-required profiles]
-    Profiles --> Evidence[Increase autonomy from evidence]
-    Cycle -. conditional observation .-> B5[Frontier reselection]
-    Cycle -. conditional observation .-> B6[Candidate and landing separation]
-    Cycle -. conditional observation .-> B7[Multi-agent coordination]
-    Cycle -. conditional observation .-> B8[Recovery]
-```
-
-The B5–B8 observations are conditional branches; ordinary initialization must not manufacture them.
 
 An explicit qualification experiment may arrange a safe scenario for one of these gates, but that evaluator instruction is outside the project's ordinary operating authority and must not be confused with spontaneous behavioral evidence.
 
