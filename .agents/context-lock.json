@@ -1,12 +1,12 @@
 {
   "format": "2",
-  "generatorVersion": "0.6.2",
+  "generatorVersion": "0.6.3",
   "root": ".",
   "validityBasis": "aggregate-source-digest",
   "selectedPaths": [],
   "sourceSelection": {
     "includedCount": 173,
-    "includedBytes": 1553352,
+    "includedBytes": 1564234,
     "excludedCounts": {
       "excluded-directory": 1,
       "excluded-path": 1,
@@ -20,14 +20,14 @@
     "repositories": [
       {
         "path": ".",
-        "commit": "8c9ed9847aec21bde7226d55f712c5c289956109",
-        "branch": "chore/bootstrap-0.6.1",
+        "commit": "216b11bc3903ac2caca7a26ae00aa1367f5e4aa1",
+        "branch": "chore/bootstrap-0.6.3",
         "dirty": true,
         "remote": "https://github.com/zachshallbetter/cuda-compatibility.git"
       }
     ]
   },
-  "aggregateSourceDigest": "9eb12ad324495d74973572a2e31133ac86752dc8ed01c0c916bf2d8cd33e6858",
+  "aggregateSourceDigest": "012c0dbf42a7b53283f7ddc233f2b6421716ed48905c83852cc2bcd43d8c5442",
   "sources": [
     {
       "path": ".agents/rules/ci.md",
@@ -227,7 +227,7 @@
     {
       "path": ".formal-bootstrap.json",
       "bytes": 372,
-      "sha256": "655a733e781d96ec5b555a458e507d44095e76f7388b9a03f952be61c7ab2386"
+      "sha256": "d45676678f0f7ca80e242f4b56ce98b8eee53d0d024b791b15c3a192b4464e47"
     },
     {
       "path": ".github/workflows/verify.yml",
@@ -261,8 +261,8 @@
     },
     {
       "path": "PROJECT_PROFILE.json",
-      "bytes": 2326,
-      "sha256": "4cc182b5271f2ae0c4bc955a23d8d7555e2d34ae26fbfaef3c91e4e8cc2dff86"
+      "bytes": 2439,
+      "sha256": "9d5174dc5316b2208f796fb4bd2bdcb22a29a953c2e4d34b6961f96c3bf6d266"
     },
     {
       "path": "README.md",
@@ -272,7 +272,7 @@
     {
       "path": "VERSION",
       "bytes": 6,
-      "sha256": "a466ef209f5c3aee5ff0c702e2e9d5cced4783d2a655e8ab66330f21a5557b3f"
+      "sha256": "c9f56eb9348cbc8345bdaea7ca24c9f960e1598af05472794760a2682ff07a8c"
     },
     {
       "path": "bindings/PROJECT_BINDINGS.yaml",
@@ -291,8 +291,8 @@
     },
     {
       "path": "docs/ACP_INTEGRATION.md",
-      "bytes": 29258,
-      "sha256": "a42d94a1a771e2f7e258e3583deb9bcf3f5c065f77ddd99c404fa8a46ec26591"
+      "bytes": 30075,
+      "sha256": "eb889285bf82813f8c36f0c301cea37526e6a7f6bc5dbccc4e4dfb528958d7ae"
     },
     {
       "path": "docs/AGENT_CAPABILITIES.md",
@@ -321,8 +321,8 @@
     },
     {
       "path": "docs/CONTEXT_COMPILATION.md",
-      "bytes": 2906,
-      "sha256": "f4340c5afdba5aacf3d912af1ff9edcef21a1caf5bc4256975d23bf603740ed6"
+      "bytes": 3821,
+      "sha256": "0309f7f0e4ed9f4bc0fc8624a25197503a793e3e769c559c4e5f2f5a5651cbe8"
     },
     {
       "path": "docs/DPP_IMPLEMENTATION.md",
@@ -576,8 +576,8 @@
     },
     {
       "path": "schemas/acp-decision.schema.json",
-      "bytes": 5605,
-      "sha256": "2a870190e4a3d208b765054b04de35819570770639e93e16ebb52d4365e8c76c"
+      "bytes": 5822,
+      "sha256": "14104b5c057c8e09bcb8ab1f132f9c9e7266e50d8c7b7f4f6973adafb0b02641"
     },
     {
       "path": "schemas/acp-endpoint-registry.schema.json",
@@ -646,8 +646,8 @@
     },
     {
       "path": "scripts/acp.py",
-      "bytes": 59939,
-      "sha256": "438ae9b3e8cba6a8adca3bd4079a488342a1d939f7971e4ad06f80cdeb4e010d"
+      "bytes": 62581,
+      "sha256": "c9610122272b702b81df1a3c27cc3baf127421776d547e96fac2613238035c61"
     },
     {
       "path": "scripts/acp_endpoint_registry.py",
@@ -676,8 +676,8 @@
     },
     {
       "path": "scripts/gen-context.py",
-      "bytes": 14390,
-      "sha256": "1cecc3bc593ef0c89cc24692db223c5a29a5e434561e0ebf4c36bf9464799c1b"
+      "bytes": 20568,
+      "sha256": "a0fcab49f586f036d70c8d572f1f031054750ea9bb51a28fb94c80e5fc0e99f2"
     },
     {
       "path": "scripts/iepe-adopt.py",
