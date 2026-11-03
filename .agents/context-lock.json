@@ -8,7 +8,7 @@
     "includedCount": 250,
     "includedBytes": 2544259,
     "excludedCounts": {
-      "extension": 62,
+      "extension": 63,
       "generated-or-transient-file": 2
     }
   },
@@ -18,9 +18,9 @@
     "repositories": [
       {
         "path": ".",
-        "commit": "2a0459a2f3b1a7f4dd154c2759901a5d86683581",
+        "commit": "008e44a6909c7ae72aff17f7fa17de80861036a5",
         "branch": "site/software-entity",
-        "dirty": true,
+        "dirty": false,
         "remote": "https://github.com/zachshallbetter/cuda-compatibility.git"
       }
     ]
