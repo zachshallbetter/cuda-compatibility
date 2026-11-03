@@ -297,6 +297,16 @@ A version facade cannot supply a missing kernel.
 
 Source: https://cudacompat.com/gpu-catalog.html
 
+Hardware reference
+
+# Legacy GPU compute capability
+
+A guide to the older GPU generations in NVIDIA’s legacy CUDA list, with plain-language context and an honest view of what this project has tested.
+
+Read this before choosing a card: compute capability describes a GPU’s hardware feature and instruction level. It is not a CUDA Toolkit version, driver version, performance score, or promise that a current software package supports the GPU.
+
+By Zach Shallbetter · Sheet 08 of 10 · Updated 3 November 2026
+
 ## Three different questions
 
 The original NVIDIA page maps device models to compute capability. This companion adds interpretation and separates that hardware fact from software and project qualification.
@@ -360,6 +370,14 @@ General notes, all sheets
 ---
 
 Source: https://cudacompat.com/docs/
+
+# Documentation
+
+Start with setup, then check the support matrix before running an application.
+
+The prototype covers selected PyTorch operations on Linux sm_52 devices. It does not make arbitrary CUDA 13 software compatible.
+
+By Zach Shallbetter · Sheet 02 of 10 · Updated 3 November 2026
 
 ## Where to start
 Index
@@ -434,6 +452,12 @@ General notes, all sheets
 ---
 
 Source: https://cudacompat.com/docs/getting-started.html
+
+# Install CUDA Compatibility for an older NVIDIA GPU
+
+Install the package into the same Python environment as the CUDA-enabled PyTorch wheel. The launcher builds a process-local adapter and starts your script as a child process; it does not install or replace the system driver.
+
+By Zach Shallbetter · Sheet 03 of 10 · Updated 3 November 2026
 
 ## Requirements
 
@@ -549,6 +573,14 @@ General notes, all sheets
 
 Source: https://cudacompat.com/docs/compatibility.html
 
+# Support matrix
+
+The current target is useful, bounded PyTorch CUDA 13 execution on Linux x86_64 with homogeneous visible sm_52 GPUs. It is a set of tested paths, not blanket support for the wheel or all CUDA 13 applications.
+
+Native or verified Experimental or bounded Contradicted, observation kept Not supported or not verified
+
+By Zach Shallbetter · Sheet 04 of 10 · Updated 3 November 2026
+
 ## Native GPU implementations
 sm_52 kernel
 
@@ -625,6 +657,12 @@ General notes, all sheets
 ---
 
 Source: https://cudacompat.com/docs/architecture.html
+
+# How the compatibility layer works
+
+The adapter has four boundaries. Each keeps the actual GPU visible and routes only operations with an implementation.
+
+By Zach Shallbetter · Sheet 05 of 10 · Updated 3 November 2026
 
 ## Compatibility path
 
@@ -703,6 +741,12 @@ General notes, all sheets
 
 Source: https://cudacompat.com/docs/cli.html
 
+# cuda-legacy command reference
+
+cuda-legacy is the preferred terminal command. Install it into the same Python environment as the CUDA-enabled PyTorch package. The previous cuda-legacy-compat command remains an alias.
+
+By Zach Shallbetter · Sheet 06 of 10 · Updated 3 November 2026
+
 ## Commands
 
 | Command | Purpose |
@@ -761,6 +805,12 @@ General notes, all sheets
 ---
 
 Source: https://cudacompat.com/docs/research.html
+
+# Research and evidence
+
+This sheet reports implementation and test evidence with its limits. It does not claim a CUDA 13 conformance certification, general PyTorch support, or real-world search visibility.
+
+By Zach Shallbetter · Sheet 07 of 10 · Updated 3 November 2026
 
 ## Reproduced on reference hardware
 
@@ -859,6 +909,14 @@ General notes, all sheets
 
 Source: https://cudacompat.com/docs/discovery.html
 
+# Search and AI discovery
+
+What this project makes accessible to crawlers, how its discovery files work, and what has, and has not, been observed.
+
+The site is prepared with crawlable HTML pages, internal links, canonical URLs, an XML sitemap, a robots policy, and an informal llms.txt index. These make content easier to request and interpret; none proves a search engine indexed a page or an AI system retrieved, cited, or recommended it.
+
+By Zach Shallbetter · Sheet 09 of 10 · Updated 3 November 2026
+
 ## What can be requested
 
 | Surface | Purpose | Evidence boundary |
@@ -913,6 +971,14 @@ General notes, all sheets
 ---
 
 Source: https://cudacompat.com/docs/privacy.html
+
+# Privacy and measurement
+
+How site analytics work, how to opt out, which interactions are measured, and how to connect the published site to Google Search Console and Bing Webmaster Tools.
+
+The site is a static site served by Vercel. The project does not enable Vercel Web Analytics or analyze request logs. A GA4 web stream is configured, and its tag loads without a prompt unless the browser asks sites not to track or the visitor opts out below.
+
+By Zach Shallbetter · Sheet 10 of 10 · Updated 3 November 2026
 
 ## What the site measures
 

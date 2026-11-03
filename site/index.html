@@ -4,13 +4,20 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="color-scheme" content="only light">
-<meta name="theme-color" content="#000000">
+<meta name="theme-color" content="#F2F2EE">
 <meta name="description" content="Open-source CUDA compatibility for older NVIDIA GPUs: use selected CUDA 13 PyTorch operations on Maxwell sm_52 with native kernels, CPU fallbacks, and explicit limits.">
 <link rel="icon" href="favicon.ico" sizes="32x32">
 <link rel="icon" type="image/svg+xml" href="favicon.svg">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <link rel="mask-icon" href="mask-icon.svg" color="#000000">
 <link rel="manifest" href="manifest.webmanifest">
+<link rel="alternate" type="application/atom+xml" title="CUDA Compatibility sheets" href="feed.xml">
+<link rel="next" href="docs/index.html">
+<link rel="author" href="humans.txt">
+<link rel="license" href="https://github.com/zachshallbetter/cuda-compatibility/blob/main/LICENSE-MIT">
+<meta name="application-name" content="CUDA Compatibility">
+<meta name="apple-mobile-web-app-title" content="CUDA Compat">
+<meta name="format-detection" content="telephone=no">
 <meta property="og:type" content="website">
 <meta property="og:title" content="CUDA Compatibility — Newer CUDA workloads on older GPUs">
 <meta property="og:description" content="An evidence-first path to practical PyTorch CUDA 13 use on older NVIDIA GPUs.">
@@ -35,9 +42,10 @@
 <meta name="twitter:description" content="An experimental, evidence-led compatibility layer for selected CUDA 13 PyTorch operations on older NVIDIA GPUs.">
 <meta name="twitter:image" content="https://cudacompat.com/assets/social-card.png">
 <meta name="twitter:image:alt" content="Newer CUDA. Older GPUs. CUDA Compatibility, cudacompat.com, beside a wireframe of a GM200 reference graphics card">
-<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"WebSite","@id":"https://cudacompat.com/#website","url":"https://cudacompat.com/","name":"CUDA Compatibility","inLanguage":"en","publisher":{"@id":"https://cudacompat.com/#author"}},{"@type":"Person","@id":"https://cudacompat.com/#author","name":"Zach Shallbetter","url":"https://zachshallbetter.com/","sameAs":["https://github.com/zachshallbetter"],"jobTitle":"Systems engineer and independent researcher","description":"Zach Shallbetter is a systems engineer and independent researcher based in Spokane, Washington. His work spans applied AI, computer vision, embedded systems, and developer tooling. Through Snack Studio, he builds software that connects modern workflows with existing hardware, with an emphasis on compatibility, performance, and keeping useful systems operational.","homeLocation":{"@type":"Place","name":"Spokane, Washington"},"worksFor":{"@type":"Organization","name":"Snack Studio"}},{"@type":"SoftwareApplication","@id":"https://cudacompat.com/#software","name":"CUDA Compatibility","url":"https://cudacompat.com/","description":"An experimental compatibility layer for selected PyTorch CUDA 13 operations on older NVIDIA GPUs, with actual device identity preserved.","applicationCategory":"DeveloperApplication","operatingSystem":"Linux x86_64","softwareVersion":"0.1.0","isAccessibleForFree":true,"codeRepository":"https://github.com/zachshallbetter/cuda-compatibility","installUrl":"https://cudacompat.com/docs/getting-started.html","author":{"@id":"https://cudacompat.com/#author"},"featureList":["GPU inventory and compatibility profile checks","Process-local CUDA Runtime version facade","Selected native sm_52 PyTorch operator kernels","Bounded CPU fallback with selected first-order gradient paths"],"image":"https://cudacompat.com/assets/social-card.png","disambiguatingDescription":"Independent open-source project by Zach Shallbetter for running selected PyTorch CUDA 13 operations on older NVIDIA GPUs. It is not NVIDIA's CUDA Compatibility (forward-compatibility) package and is not affiliated with or endorsed by NVIDIA."}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"WebSite","@id":"https://cudacompat.com/#website","url":"https://cudacompat.com/","name":"CUDA Compatibility","alternateName":"cudacompat.com","inLanguage":"en","publisher":{"@id":"https://cudacompat.com/#author"},"copyrightHolder":{"@id":"https://cudacompat.com/#author"},"license":"https://github.com/zachshallbetter/cuda-compatibility/blob/main/LICENSE-MIT"},{"@type":"Person","@id":"https://cudacompat.com/#author","name":"Zach Shallbetter","url":"https://zachshallbetter.com/","sameAs":["https://github.com/zachshallbetter"],"jobTitle":"Systems engineer and independent researcher","description":"Zach Shallbetter is a systems engineer and independent researcher based in Spokane, Washington. His work spans applied AI, computer vision, embedded systems, and developer tooling. Through Snack Studio, he builds software that connects modern workflows with existing hardware, with an emphasis on compatibility, performance, and keeping useful systems operational.","homeLocation":{"@type":"Place","name":"Spokane, Washington"},"worksFor":{"@id":"https://cudacompat.com/#org"}},{"@type":"Organization","@id":"https://cudacompat.com/#org","name":"Snack Studio","url":"https://snackstud.io/","founder":{"@id":"https://cudacompat.com/#author"}},{"@type":"SoftwareApplication","@id":"https://cudacompat.com/#software","name":"CUDA Compatibility","url":"https://cudacompat.com/","description":"An experimental compatibility layer for selected PyTorch CUDA 13 operations on older NVIDIA GPUs, with actual device identity preserved.","applicationCategory":"DeveloperApplication","operatingSystem":"Linux x86_64","softwareVersion":"0.1.0","isAccessibleForFree":true,"codeRepository":"https://github.com/zachshallbetter/cuda-compatibility","installUrl":"https://cudacompat.com/docs/getting-started.html","author":{"@id":"https://cudacompat.com/#author"},"featureList":["GPU inventory and compatibility profile checks","Process-local CUDA Runtime version facade","Selected native sm_52 PyTorch operator kernels","Bounded CPU fallback with selected first-order gradient paths"],"image":{"@id":"https://cudacompat.com/assets/social-card.png"},"disambiguatingDescription":"Independent open-source project by Zach Shallbetter for running selected PyTorch CUDA 13 operations on older NVIDIA GPUs. It is not NVIDIA's CUDA Compatibility (forward-compatibility) package and is not affiliated with or endorsed by NVIDIA.","screenshot":{"@id":"https://cudacompat.com/assets/social-card.png"},"license":"https://github.com/zachshallbetter/cuda-compatibility/blob/main/LICENSE-MIT","downloadUrl":"https://github.com/zachshallbetter/cuda-compatibility/releases/tag/v0.1.0","releaseNotes":"https://github.com/zachshallbetter/cuda-compatibility/releases","softwareRequirements":"Python 3, a CUDA 13 PyTorch wheel, LLVM with the NVPTX backend","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"publisher":{"@id":"https://cudacompat.com/#author"},"mainEntityOfPage":{"@id":"https://cudacompat.com/"}},{"@type":"SoftwareSourceCode","@id":"https://cudacompat.com/#source","name":"cuda-compatibility","codeRepository":"https://github.com/zachshallbetter/cuda-compatibility","programmingLanguage":["Python","C++","CUDA"],"license":"https://github.com/zachshallbetter/cuda-compatibility/blob/main/LICENSE-MIT","author":{"@id":"https://cudacompat.com/#author"},"targetProduct":{"@id":"https://cudacompat.com/#software"},"runtimePlatform":"Linux x86_64"},{"@type":"WebPage","@id":"https://cudacompat.com/","url":"https://cudacompat.com/","name":"CUDA Compatibility: CUDA 13 on Older NVIDIA GPUs","description":"Open-source CUDA compatibility for older NVIDIA GPUs: use selected CUDA 13 PyTorch operations on Maxwell sm_52 with native kernels, CPU fallbacks, and explicit limits.","inLanguage":"en","isPartOf":{"@id":"https://cudacompat.com/#website"},"about":{"@id":"https://cudacompat.com/#software"},"mainEntity":{"@id":"https://cudacompat.com/#software"},"primaryImageOfPage":{"@id":"https://cudacompat.com/assets/social-card.png"},"author":{"@id":"https://cudacompat.com/#author"},"dateModified":"2026-11-03"},{"@type":"ImageObject","@id":"https://cudacompat.com/assets/social-card.png","url":"https://cudacompat.com/assets/social-card.png","contentUrl":"https://cudacompat.com/assets/social-card.png","width":1200,"height":630,"caption":"Newer CUDA. Older GPUs. CUDA Compatibility, cudacompat.com, beside a wireframe of a GM200 reference graphics card","encodingFormat":"image/png"}]}</script>
 <link rel="stylesheet" href="styles.css">
 <link rel="stylesheet" href="home.css">
+<noscript><style>@media (min-width:860px){#titan{background:url(assets/gm200-wireframe.png) no-repeat right 2% top 44%/min(60%,860px) auto}}</style></noscript>
 </head>
 <body>
 <div style="display:flex;flex-direction:column;min-height:100%">
@@ -293,7 +301,7 @@
 <p style="margin:0;font-size:19px;max-width:50ch">These models share NVIDIA-listed <code>sm_52</code> capability with the reference GM200 cards. The reference cards are the only hardware tested so far. An architecture match is not a certification: each board, driver, memory configuration, and workload still needs a run.</p>
 </div>
 <div class="dim"><span>Candidate models, same NVIDIA-listed compute capability as the reference target</span></div>
-<div style="overflow-x:auto;background:var(--bg)">
+<div class="scroll" role="region" aria-label="Cards to test next (scrolls sideways)" tabindex="0" style="overflow-x:auto;background:var(--bg)">
 <table aria-label="Cards to test next">
 <thead><tr><th scope="col" style="width:56px">Item</th><th scope="col">GPU family</th><th scope="col">NVIDIA-listed compute capability</th><th scope="col">Project status</th></tr></thead>
 <tbody>
@@ -365,7 +373,7 @@ cuda-legacy profiles show pytorch-2.14-cu130</code></pre>
 <div class="sec"><span class="cut" aria-hidden="true">F</span><h2 class="h2" style="font-size:44px">What full support would mean</h2><span class="plane" aria-hidden="true"></span><span class="sheet">Sheet 01 / 10</span></div>
 <p style="margin:0;font-size:19px;max-width:50ch">The destination is machine-wide practical compatibility. Each layer earns its support claim through tested behavior, not by assertion.</p>
 </div>
-<div style="overflow-x:auto;background:var(--bg)">
+<div class="scroll" role="region" aria-label="Layers toward full support (scrolls sideways)" tabindex="0" style="overflow-x:auto;background:var(--bg)">
 <table class="rev" aria-label="Layers toward full support">
 <thead><tr><th scope="col">Item</th><th scope="col">Description</th><th scope="col">State</th></tr></thead>
 <tbody>
@@ -402,7 +410,7 @@ cuda-legacy profiles show pytorch-2.14-cu130</code></pre>
 <div class="tb" role="group" aria-label="Title block">
 <div><span>Project</span><span>CUDA Compatibility</span></div>
 <div><span>Drawn by</span><span><a href="https://zachshallbetter.com/">Zach Shallbetter</a></span></div>
-<div><span>Project version</span><span>0.6.0</span></div>
+<div><span>Project version</span><span>0.1.0</span></div>
 <div><span>Reference hardware</span><span>GM200, compute capability 5.2</span></div>
 <div><span>License</span><span>MIT or Apache-2.0</span></div>
 <div><span>Affiliation</span><span>Independent research, not affiliated with NVIDIA</span></div>

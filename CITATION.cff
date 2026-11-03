@@ -1,0 +1,23 @@
+cff-version: 1.2.0
+message: "If you use this software or its evidence, please cite it as below."
+type: software
+title: "CUDA Compatibility"
+abstract: "An independent, experimental compatibility layer for running selected PyTorch CUDA 13 operations on older NVIDIA GPUs (sm_52), with real device identity preserved and explicit limits."
+authors:
+  - family-names: "Shallbetter"
+    given-names: "Zach"
+    website: "https://zachshallbetter.com/"
+version: "0.1.0"
+date-released: "2026-11-03"
+license:
+  - MIT
+  - Apache-2.0
+url: "https://cudacompat.com/"
+repository-code: "https://github.com/zachshallbetter/cuda-compatibility"
+keywords:
+  - CUDA
+  - PyTorch
+  - Maxwell
+  - sm_52
+  - legacy GPU
+  - compatibility

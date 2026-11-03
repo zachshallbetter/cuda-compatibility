@@ -1,15 +1,38 @@
 {
+  "id": "/",
   "name": "CUDA Compatibility",
   "short_name": "CUDA Compat",
   "description": "Selected CUDA 13 PyTorch operations on older NVIDIA GPUs, with explicit limits.",
+  "lang": "en",
+  "dir": "ltr",
   "start_url": "/",
   "scope": "/",
   "display": "browser",
-  "background_color": "#000000",
-  "theme_color": "#000000",
+  "background_color": "#F2F2EE",
+  "theme_color": "#F2F2EE",
+  "categories": [
+    "developer",
+    "education",
+    "utilities"
+  ],
   "icons": [
-    { "src": "/icon-192.png", "sizes": "192x192", "type": "image/png" },
-    { "src": "/icon-512.png", "sizes": "512x512", "type": "image/png" },
-    { "src": "/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+    {
+      "src": "/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icon-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
   ]
 }

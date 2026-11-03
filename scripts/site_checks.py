@@ -3,6 +3,7 @@ from __future__ import annotations
 
 from html.parser import HTMLParser
 import importlib.util
+from datetime import date
 import json
 from pathlib import Path
 import re
@@ -322,6 +323,16 @@ def audit_site(site_root: Path) -> list[str]:
             errors.append(f"{label}: indexable page declares noindex")
         if not re.search(r'<main\b', source, re.I) or not re.search(r'<a\b[^>]*class="skip-link"', source, re.I):
             errors.append(f"{label}: missing semantic main or skip link")
+        main_at, h1_at = source.find("<main"), source.find("<h1")
+        if main_at < 0 or h1_at < main_at:
+            errors.append(f"{label}: the h1 must sit inside main so skip links and reader views start at the title")
+        if "TechArticle" in source and not re.search(r'<time datetime="\d{4}-\d\d-\d\d">', source):
+            errors.append(f"{label}: article pages must show their updated date in a <time> element")
+        for wrapper in re.findall(r'<div\b[^>]*overflow-x:auto[^>]*>', source):
+            if 'tabindex="0"' not in wrapper or "aria-label=" not in wrapper:
+                errors.append(f"{label}: a sideways-scrolling region must be focusable and labelled")
+        if 'name="theme-color" content="#F2F2EE"' not in source:
+            errors.append(f"{label}: theme-color must match the paper colour #F2F2EE")
         if not any("privacy.html" in href for href in parser.links):
             errors.append(f"{label}: missing privacy and measurement link")
         if not parser.jsonld:
@@ -418,7 +429,7 @@ def audit_site(site_root: Path) -> list[str]:
     sitemap = site_root / "sitemap.xml"
     try:
         root = ElementTree.parse(sitemap).getroot()
-        locations = [node.text or "" for node in root.findall(".//{*}loc")]
+        locations = [node.text or "" for node in root.findall("{*}url/{*}loc")]
         sitemap_urls = set(locations)
         if len(locations) != len(sitemap_urls):
             errors.append("sitemap.xml contains duplicate URLs")
@@ -471,6 +482,25 @@ def audit_site(site_root: Path) -> list[str]:
             errors.append("llms-full.txt is stale; run python3 scripts/build_llms_full.py")
     except OSError as exc:
         errors.append(f"llms-full.txt is missing: {exc}")
+
+    try:
+        feed = ElementTree.parse(site_root / "feed.xml").getroot()
+        feed_urls = {node.get("href") for node in feed.findall("{*}entry/{*}link")}
+        if feed_urls != canonical_urls:
+            errors.append("feed.xml entries do not exactly match canonical HTML pages")
+    except (OSError, ElementTree.ParseError) as exc:
+        errors.append(f"feed.xml is missing or invalid: {exc}")
+    if not (site_root / "humans.txt").is_file():
+        errors.append("humans.txt is missing")
+    try:
+        security = (site_root / ".well-known" / "security.txt").read_text(encoding="utf-8")
+        expires = re.search(r"(?m)^Expires: (\d{4}-\d\d-\d\d)", security)
+        if not re.search(r"(?m)^Contact: https://", security) or not expires:
+            errors.append(".well-known/security.txt needs Contact and Expires fields")
+        elif expires[1] <= date.today().isoformat():
+            errors.append(".well-known/security.txt has expired; move Expires forward")
+    except OSError as exc:
+        errors.append(f".well-known/security.txt is missing: {exc}")
 
     css = site_root / "styles.css"
     if css.is_file() and re.search(r"(?:@import\s+|url\()\s*['\"]?https?://", css.read_text(encoding="utf-8"), re.I):

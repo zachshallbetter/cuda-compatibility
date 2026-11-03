@@ -2,15 +2,28 @@
 <html lang="en">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="color-scheme" content="only light"><meta name="theme-color" content="#000000"><meta name="description" content="See how CUDA Compatibility combines a process-local runtime-version facade, LLVM-generated Maxwell PTX kernels, PyTorch operator routing, and bounded CPU fallbacks."><link rel="icon" href="../favicon.ico" sizes="32x32">
+<meta name="color-scheme" content="only light"><meta name="theme-color" content="#F2F2EE"><meta name="description" content="See how CUDA Compatibility combines a process-local runtime-version facade, LLVM-generated Maxwell PTX kernels, PyTorch operator routing, and bounded CPU fallbacks."><link rel="icon" href="../favicon.ico" sizes="32x32">
 <link rel="icon" type="image/svg+xml" href="../favicon.svg">
 <link rel="apple-touch-icon" href="../apple-touch-icon.png">
 <link rel="mask-icon" href="../mask-icon.svg" color="#000000">
-<link rel="manifest" href="../manifest.webmanifest"><title>How the CUDA compatibility layer works | CUDA Compatibility</title><link rel="canonical" href="https://cudacompat.com/docs/architecture.html">
+<link rel="manifest" href="../manifest.webmanifest">
+<link rel="alternate" type="application/atom+xml" title="CUDA Compatibility sheets" href="../feed.xml">
+<link rel="prev" href="compatibility.html">
+<link rel="next" href="cli.html">
+<link rel="author" href="../humans.txt">
+<link rel="license" href="https://github.com/zachshallbetter/cuda-compatibility/blob/main/LICENSE-MIT">
+<meta name="application-name" content="CUDA Compatibility">
+<meta name="apple-mobile-web-app-title" content="CUDA Compat">
+<meta name="format-detection" content="telephone=no">
+<title>How the CUDA compatibility layer works | CUDA Compatibility</title><link rel="canonical" href="https://cudacompat.com/docs/architecture.html">
 <meta name="author" content="Zach Shallbetter">
 <meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1">
-<meta property="og:type" content="article"><meta property="og:site_name" content="CUDA Compatibility"><meta property="og:url" content="https://cudacompat.com/docs/architecture.html"><meta property="og:title" content="How the CUDA compatibility layer works"><meta property="og:description" content="Understand the process-local CUDA Runtime facade, LLVM PTX compilation, PyTorch operator routing, and fallback architecture."><meta property="og:locale" content="en_US"><meta property="og:image" content="https://cudacompat.com/assets/social/architecture.png"><meta property="og:image:type" content="image/png"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630"><meta property="og:image:alt" content="How the compatibility layer works: CUDA Compatibility documentation sheet 05 of 10, cudacompat.com"><meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="How the CUDA compatibility layer works"><meta name="twitter:description" content="Understand the process-local CUDA Runtime facade, LLVM PTX compilation, PyTorch operator routing, and fallback architecture."><meta name="twitter:image" content="https://cudacompat.com/assets/social/architecture.png"><meta name="twitter:image:alt" content="How the compatibility layer works: CUDA Compatibility documentation sheet 05 of 10, cudacompat.com">
-<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@context":"https://schema.org","@type":"TechArticle","headline":"How the CUDA compatibility layer works","description":"Understand the process-local CUDA Runtime facade, LLVM PTX compilation, PyTorch operator routing, and fallback architecture.","url":"https://cudacompat.com/docs/architecture.html","inLanguage":"en","dateModified":"2026-11-02","author":{"@type":"Person","@id":"https://cudacompat.com/#author","name":"Zach Shallbetter","url":"https://zachshallbetter.com/"},"isPartOf":{"@type":"WebSite","@id":"https://cudacompat.com/#website","name":"CUDA Compatibility","url":"https://cudacompat.com/"},"mainEntityOfPage":"https://cudacompat.com/docs/architecture.html","@id":"https://cudacompat.com/docs/architecture.html#article","image":"https://cudacompat.com/assets/social/architecture.png"},{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://cudacompat.com/"},{"@type":"ListItem","position":2,"name":"Documentation","item":"https://cudacompat.com/docs/"},{"@type":"ListItem","position":3,"name":"How it works","item":"https://cudacompat.com/docs/architecture.html"}]}]}</script>
+<meta property="og:type" content="article">
+<meta property="article:published_time" content="2026-11-01">
+<meta property="article:modified_time" content="2026-11-03">
+<meta property="article:author" content="https://zachshallbetter.com/">
+<meta property="article:section" content="Documentation"><meta property="og:site_name" content="CUDA Compatibility"><meta property="og:url" content="https://cudacompat.com/docs/architecture.html"><meta property="og:title" content="How the CUDA compatibility layer works"><meta property="og:description" content="Understand the process-local CUDA Runtime facade, LLVM PTX compilation, PyTorch operator routing, and fallback architecture."><meta property="og:locale" content="en_US"><meta property="og:image" content="https://cudacompat.com/assets/social/architecture.png"><meta property="og:image:type" content="image/png"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630"><meta property="og:image:alt" content="How the compatibility layer works: CUDA Compatibility documentation sheet 05 of 10, cudacompat.com"><meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="How the CUDA compatibility layer works"><meta name="twitter:description" content="Understand the process-local CUDA Runtime facade, LLVM PTX compilation, PyTorch operator routing, and fallback architecture."><meta name="twitter:image" content="https://cudacompat.com/assets/social/architecture.png"><meta name="twitter:image:alt" content="How the compatibility layer works: CUDA Compatibility documentation sheet 05 of 10, cudacompat.com">
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"WebSite","@id":"https://cudacompat.com/#website","url":"https://cudacompat.com/","name":"CUDA Compatibility","alternateName":"cudacompat.com","inLanguage":"en","publisher":{"@id":"https://cudacompat.com/#author"},"copyrightHolder":{"@id":"https://cudacompat.com/#author"},"license":"https://github.com/zachshallbetter/cuda-compatibility/blob/main/LICENSE-MIT"},{"@type":"Person","@id":"https://cudacompat.com/#author","name":"Zach Shallbetter","url":"https://zachshallbetter.com/","sameAs":["https://github.com/zachshallbetter"],"jobTitle":"Systems engineer and independent researcher","description":"Zach Shallbetter is a systems engineer and independent researcher based in Spokane, Washington. His work spans applied AI, computer vision, embedded systems, and developer tooling. Through Snack Studio, he builds software that connects modern workflows with existing hardware, with an emphasis on compatibility, performance, and keeping useful systems operational.","homeLocation":{"@type":"Place","name":"Spokane, Washington"},"worksFor":{"@id":"https://cudacompat.com/#org"}},{"@type":"Organization","@id":"https://cudacompat.com/#org","name":"Snack Studio","url":"https://snackstud.io/","founder":{"@id":"https://cudacompat.com/#author"}},{"@type":"SoftwareApplication","@id":"https://cudacompat.com/#software","name":"CUDA Compatibility","url":"https://cudacompat.com/"},{"@type":"WebPage","@id":"https://cudacompat.com/docs/architecture.html","url":"https://cudacompat.com/docs/architecture.html","name":"How the CUDA compatibility layer works","description":"See how CUDA Compatibility combines a process-local runtime-version facade, LLVM-generated Maxwell PTX kernels, PyTorch operator routing, and bounded CPU fallbacks.","inLanguage":"en","isPartOf":{"@id":"https://cudacompat.com/#website"},"breadcrumb":{"@id":"https://cudacompat.com/docs/architecture.html#breadcrumb"},"primaryImageOfPage":{"@id":"https://cudacompat.com/assets/social/architecture.png"},"mainEntity":{"@id":"https://cudacompat.com/docs/architecture.html#article"},"datePublished":"2026-11-01","dateModified":"2026-11-03"},{"@type":"ImageObject","@id":"https://cudacompat.com/assets/social/architecture.png","url":"https://cudacompat.com/assets/social/architecture.png","contentUrl":"https://cudacompat.com/assets/social/architecture.png","width":1200,"height":630,"caption":"How the compatibility layer works: CUDA Compatibility documentation sheet 05 of 10, cudacompat.com","encodingFormat":"image/png"},{"@type":"TechArticle","@id":"https://cudacompat.com/docs/architecture.html#article","headline":"How the compatibility layer works","name":"How the CUDA compatibility layer works","description":"See how CUDA Compatibility combines a process-local runtime-version facade, LLVM-generated Maxwell PTX kernels, PyTorch operator routing, and bounded CPU fallbacks.","url":"https://cudacompat.com/docs/architecture.html","mainEntityOfPage":{"@id":"https://cudacompat.com/docs/architecture.html"},"image":{"@id":"https://cudacompat.com/assets/social/architecture.png"},"inLanguage":"en","datePublished":"2026-11-01","dateModified":"2026-11-03","author":{"@id":"https://cudacompat.com/#author"},"publisher":{"@id":"https://cudacompat.com/#author"},"copyrightHolder":{"@id":"https://cudacompat.com/#author"},"copyrightYear":2026,"license":"https://github.com/zachshallbetter/cuda-compatibility/blob/main/LICENSE-MIT","isAccessibleForFree":true,"isPartOf":{"@id":"https://cudacompat.com/#website"},"about":{"@id":"https://cudacompat.com/#software"},"articleSection":"Documentation","position":5,"proficiencyLevel":"Expert"},{"@type":"BreadcrumbList","@id":"https://cudacompat.com/docs/architecture.html#breadcrumb","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://cudacompat.com/"},{"@type":"ListItem","position":2,"name":"Documentation","item":"https://cudacompat.com/docs/"},{"@type":"ListItem","position":3,"name":"How it works","item":"https://cudacompat.com/docs/architecture.html"}]}]}</script>
 <link rel="stylesheet" href="../styles.css">
 <link rel="stylesheet" href="../docs.css">
 <style>
@@ -43,15 +56,18 @@
 </div>
 </header>
 
-<section class="band">
+<main id="main">
+<article id="article" aria-labelledby="title">
+<header class="band">
 <div class="wrap" style="padding-top:56px;padding-bottom:56px;display:flex;flex-direction:column;gap:18px">
 <nav aria-label="Breadcrumb" class="crumbs"><ol><li><a href="../index.html">Home</a></li><li><a href="index.html">Documentation</a></li><li aria-current="page">How it works, sheet 05 / 10</li></ol></nav>
-<h1 class="disp" style="font-size:clamp(40px,4.6vw,64px);max-width:16ch">How the compatibility layer works</h1>
+<h1 id="title" class="disp" style="font-size:clamp(40px,4.6vw,64px);max-width:16ch">How the compatibility layer works</h1>
 <p style="margin:0;font-size:20px;line-height:1.4;max-width:56ch;font-weight:500">The adapter has four boundaries. Each keeps the actual GPU visible and routes only operations with an implementation.</p>
+<p class="byline">By <a rel="author" href="https://zachshallbetter.com/">Zach Shallbetter</a> · Sheet 05 of 10 · Updated <time datetime="2026-11-03">3 November 2026</time></p>
 </div>
-</section>
+</header>
 
-<main id="main" class="wrap body" style="padding-top:56px;padding-bottom:96px">
+<div class="wrap body" style="padding-top:56px;padding-bottom:96px">
 <nav aria-label="Documentation" style="display:flex;flex-direction:column;gap:12px">
 <p class="sheet" style="margin:0">Sheets</p>
 <ul class="side">
@@ -146,7 +162,10 @@
 <li>Yellow marks attention and is always bounded by an ink line. Blue marks a reproduced state. No meaning is carried by colour alone; each state has a mark shape and a text label.</li>
 </ol>
 </div>
+<nav class="pager" aria-label="Sheets, previous and next"><a rel="previous" href="compatibility.html"><span class="sheet">Previous · sheet 04</span><span class="pager-title">Support matrix</span></a><a rel="next" href="cli.html"><span class="sheet">Next · sheet 06</span><span class="pager-title">Command line</span></a></nav>
 </div>
+</div>
+</article>
 </main>
 
 <footer class="foot">
@@ -154,7 +173,7 @@
 <div class="tb" role="group" aria-label="Title block">
 <div><span>Project</span><span>CUDA Compatibility</span></div>
 <div><span>Drawn by</span><span><a href="https://zachshallbetter.com/">Zach Shallbetter</a></span></div>
-<div><span>Project version</span><span>0.6.0</span></div>
+<div><span>Project version</span><span>0.1.0</span></div>
 <div><span>License</span><span>MIT or Apache-2.0</span></div>
 <div><span>Status</span><span>Active research</span></div>
 <div><span>Sheet</span><span>05 / 10, how it works</span></div>
