@@ -6,7 +6,7 @@
   "selectedPaths": [],
   "sourceSelection": {
     "includedCount": 224,
-    "includedBytes": 1903904,
+    "includedBytes": 1904373,
     "excludedCounts": {
       "extension": 47,
       "generated-or-transient-file": 2
@@ -18,14 +18,14 @@
     "repositories": [
       {
         "path": ".",
-        "commit": "34feca57c42fb3c9b8502ec5141bbcc51a4941cd",
-        "branch": "site/light-hero-code",
+        "commit": "8c14ad0b69b238c32568c2ca63b212417d08b6a3",
+        "branch": "disambiguation-and-redirect",
         "dirty": true,
         "remote": "https://github.com/zachshallbetter/cuda-compatibility.git"
       }
     ]
   },
-  "aggregateSourceDigest": "dea871bfe25edf625fc5402a8fc25255fb0746e3f09c07bf90d7d2ad681d8669",
+  "aggregateSourceDigest": "80a56af1f9d04c8e1f9a35f3a854b4f65e222cf4a882e268ffab5743ad8ff08a",
   "sources": [
     {
       "path": ".agents/acp/README.md",
@@ -1044,8 +1044,8 @@
     },
     {
       "path": "site/index.html",
-      "bytes": 49970,
-      "sha256": "f7974cb4bb737828b63db67fb41bd2ae5b5ff33c5bf11719e07222d5199142e1"
+      "bytes": 50439,
+      "sha256": "db14b70e34a90531aea97998d7f52151076530e7d318150a31a6bc23acfefb1e"
     },
     {
       "path": "site/robots.txt",
