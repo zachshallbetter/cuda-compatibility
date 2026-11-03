@@ -399,7 +399,7 @@ Review discovery status
 
 ### Privacy and measurement
 
-How optional analytics work, what is measured, and how search measurement is connected.
+How analytics work, how to opt out, what is measured, and how search measurement is connected.
 Read the privacy guide
 
 ## Before you install
@@ -875,7 +875,7 @@ Partial Bing Webmaster Tools cudacompat.com was imported from Search Console. On
 
 Partial Google Search Console The cudacompat.com Domain property is verified. On 2026-11-03 the sitemap read as Success with 10 discovered pages, and URL Inspection reported the homepage indexed after a smartphone crawl that day. Index status for the other nine pages is not yet reported.
 
-Receipt only Analytics The consent-gated GA4 tag is deployed. One explicitly accepted test visit produced page_view, first_visit, and session_start in GA4 Realtime; test consent was withdrawn afterward. This single test is not audience coverage.
+Receipt only Analytics The GA4 tag is deployed; it loads without a prompt except in browsers that opt out. One explicitly accepted test visit produced page_view, first_visit, and session_start in GA4 Realtime; test consent was withdrawn afterward. This single test is not audience coverage.
 
 Unmeasured Discovery and engagement These vendor reports describe distinct processing states. No search impressions, indexed-page sample, AI retrieval trace, answer citation, or referral outcome is claimed. Public accessibility is verified; discovery and engagement remain unmeasured.
 
@@ -893,7 +893,7 @@ After Search Console verification, Bing Webmaster Tools can import the verified 
 
 Report each platform, property prefix, observation window, extraction date, and missing data separately. Search Console or Bing reporting does not guarantee indexing or ranking. Official guides: Search Console properties, ownership verification, Bing site import, Bing sitemap processing.
 
-Optional first-party analytics is configured with a GA4 measurement ID and requires affirmative visitor consent before contacting Google measurement services. It records only the documented page-view and allowlisted link events. Read the privacy and measurement guide for current settings and limitations.
+First-party analytics is configured with a GA4 measurement ID. It loads without a prompt and never contacts Google measurement services from a browser that sends Global Privacy Control or Do Not Track or has opted out. It records only the documented page-view and allowlisted link events. Read the privacy and measurement guide for current settings and limitations.
 
 ## Support claims have their own evidence
 
@@ -920,17 +920,17 @@ Named events after opt-in
 
 page_view installation_guide_click support_matrix_click gpu_catalog_click project_repository_click evidence_page_click discovery_page_click external_reference_click
 
-GA4 also automatically records first_visit, session_start, and user_engagement after consent. The site downloads its Archivo and Martian Mono font files from its own origin and does not request font files from Google or another font host.
+GA4 also automatically records first_visit, session_start, and user_engagement when the tag loads. The site downloads its Archivo and Martian Mono font files from its own origin and does not request font files from Google or another font host.
 
 Google Analytics may receive browser and device information and an IP address, use the address to infer approximate location, and set first-party cookies to distinguish browsers and sessions. Google says GA4 uses IP addresses at collection time and discards them before data is logged. Advertising storage, advertising user data, and personalization signals are denied by the site tag. Google Signals, user-provided data collection, ads personalization, and Enhanced Measurement are also off in the Analytics property. This is a data-minimization design, not a legal-compliance certification.
 
-Withdrawing consent blocks this site’s named events, updates Google’s consent state to denied, and attempts to remove GA cookies on the current host before reloading. Google may still process a consent update or limited signals. This control cannot delete data already sent to Google; deletion must be requested through the Analytics property.
+Opting out blocks this site’s named events, updates Google’s consent state to denied, and attempts to remove GA cookies on the current host before reloading. Google may still process that consent update or limited signals. This control cannot delete data already sent to Google; deletion must be requested through the Analytics property.
 
 Google’s documentation on Analytics data handling, automatically collected events, and data retention.
 
-## Consent and settings
+## Opting out
 
-Visitors see an optional choice before the site loads the Google tag. Accepting stores the choice in this browser and loads the tag; rejecting stores a local preference and does not load it. If browser storage is unavailable, analytics stays off. The project does not receive or store this consent choice. Requests to Google measurement services begin only after opt-in.
+The site shows no analytics prompt. The Google tag never loads in a browser that sends Global Privacy Control or Do Not Track. Anyone else can turn analytics off with the button below; the choice is stored only in this browser, and the project does not receive it. An earlier “Reject” choice from the old prompt is still honoured. Advertising storage, Google signals and ad personalisation stay off for every visitor.
 
 Google’s documentation describes the Analytics consent types, the GA4 event model, and data retention settings.
 
@@ -939,7 +939,7 @@ Google’s documentation describes the Analytics consent types, the GA4 event mo
 - The project GA4 property and web stream are configured.
 - Enhanced Measurement is off so the property does not add automatic scroll, form, or outbound-click events.
 - Event-level retention is two months. Email redaction is on, and URL redaction covers email, token, access_token, and code parameters. Google Signals, user-provided data collection, and ads personalization are off at the property level; advertising signals are denied by the site tag.
-- The stream Measurement ID is configured in analytics.js; the consent-gated tag is deployed.
+- The stream Measurement ID is configured in analytics.js; the tag is deployed and loads without a prompt, except for opted-out browsers.
 - A consented setup test on 2026-11-01 produced page_view, first_visit, and session_start in GA4 Realtime. Test consent was then withdrawn. This one test confirms event receipt only, not audience coverage or outcomes.
 
 ## Connect Google Search Console

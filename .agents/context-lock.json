@@ -6,7 +6,7 @@
   "selectedPaths": [],
   "sourceSelection": {
     "includedCount": 224,
-    "includedBytes": 1904591,
+    "includedBytes": 1903421,
     "excludedCounts": {
       "extension": 47,
       "generated-or-transient-file": 2
@@ -18,14 +18,14 @@
     "repositories": [
       {
         "path": ".",
-        "commit": "b5cf7d026dc316589076ff3f19aa09f115352dc1",
-        "branch": "author-biography",
+        "commit": "6880f064f5dd50513dd06babc2ceb5799eea5e69",
+        "branch": "site/no-consent-banner-footer-contrast",
         "dirty": true,
         "remote": "https://github.com/zachshallbetter/cuda-compatibility.git"
       }
     ]
   },
-  "aggregateSourceDigest": "aa0299e7b84d48dedf03f813acc65638abe52eae41fc80bb8a5e22e27d2b8a9c",
+  "aggregateSourceDigest": "33dbe64997e52ba4e440c4e2f8df958ef573d2e1c03d604da96a0454b9542270",
   "sources": [
     {
       "path": ".agents/acp/README.md",
@@ -699,8 +699,8 @@
     },
     {
       "path": "docs/DPP_IMPLEMENTATION.md",
-      "bytes": 30572,
-      "sha256": "b90426a5808b089e86dd6d2e9af36df53fd30003a6e8af0b25cd628603388e08"
+      "bytes": 30846,
+      "sha256": "585438e3c5bcf2b953666fbbd29b84f3448d86f5950f366be9122d414245ad5f"
     },
     {
       "path": "docs/PROJECT_MILESTONES.md",
@@ -764,8 +764,8 @@
     },
     {
       "path": "docs/publishing/README.md",
-      "bytes": 4641,
-      "sha256": "b6babea3622c8c4bf331956bf903f55c4cfd7f6e5953b82efdba713ca3ff64b6"
+      "bytes": 4652,
+      "sha256": "14ca196ecf8928a941018b0e461cf9e0c215d01b0963bc0f60c9a8de5d3a0188"
     },
     {
       "path": "docs/publishing/article.md",
@@ -954,8 +954,8 @@
     },
     {
       "path": "scripts/site_checks.py",
-      "bytes": 23994,
-      "sha256": "d33ff6abb53d2e7cbacf3b5a8c7d516d0ace37452abe57375228574999016f59"
+      "bytes": 24136,
+      "sha256": "67056009c3498632f4edd180969202c60e72b78616b2478d29f57f36ec0a62e0"
     },
     {
       "path": "site/03dd79a90f0607e442d7c5e89bd241ee.txt",
@@ -969,8 +969,8 @@
     },
     {
       "path": "site/analytics.js",
-      "bytes": 6840,
-      "sha256": "1d99f07d4647ace127bf695ca34372ebc057fe0cd959c458e63a8a83c8a907cc"
+      "bytes": 6067,
+      "sha256": "049d87eadd866e111168192937e5fe2a09df9ce1a88eead11140040a105fff0d"
     },
     {
       "path": "site/assets/fonts/OFL-Archivo.txt",
@@ -994,48 +994,48 @@
     },
     {
       "path": "site/docs/architecture.html",
-      "bytes": 19252,
-      "sha256": "c86d08a7a8d247bc803eb1cb3f778d1ee439d02a1f7f65cb3f19de688bafe338"
+      "bytes": 19230,
+      "sha256": "09d43c377a55b4c963fc4d64e76711045bdea5a5e984df2ff04ed85f312039eb"
     },
     {
       "path": "site/docs/cli.html",
-      "bytes": 15862,
-      "sha256": "a5a31b499c781ac0147e5c979919ee7ee73fcf9dc4d6b2e02f0e97982f652bb6"
+      "bytes": 15840,
+      "sha256": "15a913d533ac5e600228174ac332c2a917df1e01aa050e5a2985519b66bc5eb5"
     },
     {
       "path": "site/docs/compatibility.html",
-      "bytes": 21319,
-      "sha256": "27f3d7a28dc830f226dafabc2ec3b1a2cf825dbd1302f8fbd1dd5b72521e3287"
+      "bytes": 21297,
+      "sha256": "6a79120b2266e82537d91cfb69b8d0cb88d68f7b174b6a0d18f8c418ab2298c0"
     },
     {
       "path": "site/docs/discovery.html",
-      "bytes": 20252,
-      "sha256": "e83e9a1158eed1c3190e80d59561b7e713e50f72cc8410c9ed58085c5c4adf26"
+      "bytes": 20335,
+      "sha256": "84824c31c33938a15dd024688b74bfdf92c1136d460ba25dd06020f968328ea2"
     },
     {
       "path": "site/docs/getting-started.html",
-      "bytes": 17664,
-      "sha256": "2a6ece0babd1359efd0679b4a3ec3d3123efb916f55b321c8f7d34d7fd23e6a5"
+      "bytes": 17642,
+      "sha256": "0c84ddaceb0cc3f783e9bdcbcc73641f2eb0bb79eadf09a6a690d0b01eadd7a0"
     },
     {
       "path": "site/docs/index.html",
-      "bytes": 16378,
-      "sha256": "70846f2fadb67e2c3f1ffd04d0a14f2219deac3a21af26fb1401b2ec6100b10f"
+      "bytes": 16363,
+      "sha256": "d20c1b8b1277dd8a78a354785d4240c5137233404037330fbf055049a4a72b92"
     },
     {
       "path": "site/docs/privacy.html",
-      "bytes": 21957,
-      "sha256": "945b38c8f35dd0cbb8908c23ca12bc39b3d636919643e398a0211f97db6cf88a"
+      "bytes": 22123,
+      "sha256": "e927704290f189f7ccbe7d14f00eee7fcf2a0c1751e4e809a19b2027f8c8f352"
     },
     {
       "path": "site/docs/research.html",
-      "bytes": 29376,
-      "sha256": "33b5dfcf0e732f8b08745d8e4c2988c1567541884fb1b361a599d12a468ca9cf"
+      "bytes": 29354,
+      "sha256": "6220ea0c5d3587c8b291a8de66b862d3ee2e7b52c0420888ccdc99cf178ed7b6"
     },
     {
       "path": "site/gpu-catalog.html",
-      "bytes": 23125,
-      "sha256": "625be4e88ddf2e34527431e8daf1d7cffbbad36d64e156f891b99f4df5b6ffe1"
+      "bytes": 23103,
+      "sha256": "721e28ad2481a639391242e6e20638da17fab6858e869ef56a31d21c6fd44a28"
     },
     {
       "path": "site/home.css",
@@ -1044,8 +1044,8 @@
     },
     {
       "path": "site/index.html",
-      "bytes": 50061,
-      "sha256": "a5332cddeb484f76f25a00e6a70252f14196c65a726702e95aca4e97fc3b93c5"
+      "bytes": 50001,
+      "sha256": "3a5b6364d4a06966259fec437cd1305dffe987e7fa40cde3aa792318b3b1e5af"
     },
     {
       "path": "site/robots.txt",
@@ -1059,8 +1059,8 @@
     },
     {
       "path": "site/styles.css",
-      "bytes": 5670,
-      "sha256": "41878908235103bbf30452e32f7f7669754189e66259545b3e7f1e4e5870dbb8"
+      "bytes": 4810,
+      "sha256": "40c75cba7d3297af85f3877c7f321aa9a1a7a1e72e273f9ce74c1494b7e3f94a"
     },
     {
       "path": "site/vercel.json",
@@ -1144,8 +1144,8 @@
     },
     {
       "path": "tests/test_site_checks.py",
-      "bytes": 12771,
-      "sha256": "d210f816686880186de551bf2780fea729c11c6fa0c95206c3fae8fb1da8994f"
+      "bytes": 12765,
+      "sha256": "1f4bfdac680143da3567570df452505898eb93d4331bbaf31c79267accf4f4be"
     }
   ]
 }

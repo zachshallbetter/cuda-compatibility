@@ -32,17 +32,17 @@ class SiteDiscoveryChecksTests(unittest.TestCase):
             )
             self.assertTrue(any("configured GA4 measurement ID" in error for error in audit_site(site)))
 
-    def test_rejects_analytics_without_consent_gates(self) -> None:
+    def test_rejects_analytics_that_ignores_opt_outs(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             site = self.copy_site(directory)
             analytics = site / "analytics.js"
             source = analytics.read_text(encoding="utf-8").replace(
-                'if (!hasConsent() || !initialized || !allowedEvents.has(name)) return;',
+                'if (optedOut() || !initialized || !allowedEvents.has(name)) return;',
                 'if (!initialized) return;',
                 1,
             )
             analytics.write_text(source, encoding="utf-8")
-            self.assertTrue(any("events must require affirmative consent" in error for error in audit_site(site)))
+            self.assertTrue(any("events must respect the opt-out" in error for error in audit_site(site)))
 
     def test_rejects_dead_or_unlisted_analytics_events(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
@@ -123,7 +123,7 @@ class SiteDiscoveryChecksTests(unittest.TestCase):
             site = self.copy_site(directory)
             privacy = site / "docs" / "privacy.html"
             source = privacy.read_text(encoding="utf-8").replace(
-                "Requests to Google measurement services begin only after opt-in.",
+                "An earlier “Reject” choice from the old prompt is still honoured.",
                 "The live deployment has not yet been updated.",
                 1,
             )

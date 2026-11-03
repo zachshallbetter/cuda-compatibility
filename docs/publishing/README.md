@@ -42,7 +42,7 @@ Run each review at D+7, D+28 and D+90 after the first placement. Keep the four o
 
 | Outcome | Measure | Source | Not the same as |
 |---|---|---|---|
-| Access | Sessions, example page views, source downloads, command copies (consented visitors only); search impressions and clicks | GA4 (`DPP-ANALYTICS-01`), Search Console (`DPP-SEARCH-01`) | Interest or use; consent coverage is partial |
+| Access | Sessions, example page views, source downloads, command copies (visitors who have not opted out); search impressions and clicks | GA4 (`DPP-ANALYTICS-01`), Search Console (`DPP-SEARCH-01`) | Interest or use; opt-outs make coverage partial |
 | Recognition | Correct project and author identification in sampled answers or third-party mentions | Manual sample (`DPP-ER-01`, `DPP-AT-01`) | Traffic |
 | Independent reproduction | Reproduction reports from people other than the author, split by outcome (matched, differed, could not run) | GitHub issues using the reproduction form | Stars, likes or comments |
 | Qualified inquiries | Issues or messages asking about a specific card, workload or contribution | GitHub issues and the owner's inbox, classified by hand | Generic praise or vote counts |
