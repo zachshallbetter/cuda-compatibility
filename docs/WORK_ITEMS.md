@@ -511,7 +511,7 @@ The first work item is being executed under the user's explicit request to creat
 
 - **Intent:** Replace the GitHub Pages site with the engineering-drawing redesign, served from Vercel, without changing any hardware or support claim.
 - **Parent:** CLC-015 public project site; CLC-024 DPP discovery controls; CLC-027 consented analytics.
-- **Status:** In progress
+- **Status:** Done
 - **Objective:** Implement the "CUDA Compatibility site redesign" design canvas (home, documentation sheets 02–10, components, phone layouts) as the static `site/`, keep the existing page URLs, metadata, consent-gated analytics and discovery files, and publish it as a Vercel project.
 - **Scope:** `site/**`; `vercel.json`; `.vercelignore`; `.github/workflows/pages.yml`; `scripts/site_checks.py`; `tests/test_site_checks.py`; `README.md`; `docs/WORK_ITEMS.md`; `records/evidence.jsonl`; generated context.
 - **Exclusions:** New support, performance, or indexing claims; external font or script hosts at page load; redistributing NVIDIA components; custom domain or DNS changes; disabling the GitHub Pages site (owner action).
@@ -523,6 +523,8 @@ The first work item is being executed under the user's explicit request to creat
 - **Target:** Vercel project `cuda-compatibility` (scope `zachshallbetter`).
 - **Budget:** No spend; Vercel Hobby static hosting.
 - **Stop conditions:** ACP refuses an external effect; a project gate fails; the redesign would require changing a verified claim.
+- **Progress (2026-11-03):** PR 57 passed `make check`, `make test` (45/45) and the Vercel preview build. After exact ACP `ALLOW`s (push `6fcf006fb97a6229`, `fdfd420a954f24f6`; `main` update `1e8af2393c605768`; production deploy `5a66f3132d9075c2`), `main` was fast-forwarded from `850ccad` to `725c934` and Vercel deployed it to production. A live audit of `https://cuda-compatibility.vercel.app/` returned HTTP 200 for all 26 checked routes and assets. Evidence: `CLC-029-local-redesign-preview`, `CLC-029-vercel-live-route-audit`.
+- **Disposition (2026-11-03):** The redesign is live on Vercel. Search Console and Bing properties for the Vercel address, and retiring the GitHub Pages site, remain owner actions.
 
 ## CLC-025 — Extend PyTorch CUDA 13 behavior on Maxwell with qualified operator and training coverage
 
