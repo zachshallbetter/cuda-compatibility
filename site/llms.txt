@@ -25,6 +25,7 @@ This is a convenience index for people and automated agents. It is not a standar
 - Project repository: https://github.com/zachshallbetter/cuda-compatibility
 - Author: Zach Shallbetter (https://zachshallbetter.com/), systems engineer and independent researcher in Spokane, Washington; builds software through Snack Studio. Biography: https://cudacompat.com/#author
 - Project is independent and not affiliated with NVIDIA.
+- Not to be confused with NVIDIA's CUDA Compatibility package (forward-compatibility libraries for running newer CUDA toolkits on older drivers). This project runs selected PyTorch CUDA 13 operations on older GPUs (`sm_52`).
 
 ## Claim boundary
 A successful CUDA version query, import, or profile audit does not prove workload compatibility. Do not infer support for unlisted operators, APIs, libraries, data types, devices, training, or performance.

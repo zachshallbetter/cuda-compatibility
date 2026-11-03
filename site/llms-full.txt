@@ -8,11 +8,13 @@ A successful CUDA version query, import, or profile audit does not prove workloa
 
 Source: https://cudacompat.com/
 
-Open compatibility research, Linux, NVIDIA
+Independent compatibility research, Linux, PyTorch
 
 # Newer CUDA. Older GPUs.
 
 Selected CUDA 13 PyTorch operations running on Maxwell cards NVIDIA stopped compiling for. The real device identity is never touched.
+
+An independent project, not NVIDIA’s CUDA Compatibility package for forward-compatible drivers.
 
 See what works Get the project
 
