@@ -5,8 +5,8 @@
   "validityBasis": "aggregate-source-digest",
   "selectedPaths": [],
   "sourceSelection": {
-    "includedCount": 208,
-    "includedBytes": 1824409,
+    "includedCount": 209,
+    "includedBytes": 1834962,
     "excludedCounts": {
       "extension": 47,
       "generated-or-transient-file": 2
@@ -18,14 +18,14 @@
     "repositories": [
       {
         "path": ".",
-        "commit": "98e2fa175f0503bf09c80138b545b9ae6b56d834",
-        "branch": "docs-reconcile-operator-counts",
+        "commit": "f67bbd364739bd37b2954f11578dcdfbae47199e",
+        "branch": "docs-implementation-inventory",
         "dirty": true,
         "remote": "https://github.com/zachshallbetter/cuda-compatibility.git"
       }
     ]
   },
-  "aggregateSourceDigest": "ec1ffad9ffcf7c5077053e7714a04a85a43e986ca902897a8c55ad614df337a0",
+  "aggregateSourceDigest": "40287ae6603872744c462bc22539e23063d42f0e9750109f0678463cc245f3be",
   "sources": [
     {
       "path": ".agents/acp/README.md",
@@ -689,8 +689,8 @@
     },
     {
       "path": "README.md",
-      "bytes": 9766,
-      "sha256": "bb08fd68287e9fb133beabeee266ea33025fda11b1af274cfb701754187a403a"
+      "bytes": 9926,
+      "sha256": "182c2f93027b1f07c11a054d91d47c2f3ef34097e0e46497536af767d798397a"
     },
     {
       "path": "docs/DPP_IMPLEMENTATION.md",
@@ -711,6 +711,11 @@
       "path": "docs/architecture.md",
       "bytes": 6166,
       "sha256": "290c451fac47d5048f588cce75bdb9b2563143c0f29f9078e84529e26bcfe994"
+    },
+    {
+      "path": "docs/architecture/implementation-inventory.md",
+      "bytes": 9800,
+      "sha256": "0957c6827300fd05d91589b8154cef9e198137a7ef3efe572d0e780a8ba4e36d"
     },
     {
       "path": "docs/architecture/investigation-toolchain.md",
@@ -739,8 +744,8 @@
     },
     {
       "path": "docs/product/product-contract.md",
-      "bytes": 5560,
-      "sha256": "ee1b1f149888ac4f8ea6c60a202bd00ab1384a96656e9f6b2cfbf56d970b0f99"
+      "bytes": 6082,
+      "sha256": "53a4bd667d85fabcd9b6ab787b7d773c05dac6891aeffed3a815fadcfc79c230"
     },
     {
       "path": "docs/product/product-vision-and-experience.md",
@@ -789,8 +794,8 @@
     },
     {
       "path": "docs/user-guide.md",
-      "bytes": 10257,
-      "sha256": "f54f88521c900ccb608cd147ccaf5bc89a4907eecd988da5760d84cca59b2853"
+      "bytes": 10328,
+      "sha256": "ea86f68dffc7bab8a1f10c18a7f01fa0ca302944550d366b270a2b831baf7771"
     },
     {
       "path": "experiments/llvm-nvptx/run_vector_add.sh",

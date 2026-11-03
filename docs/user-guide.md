@@ -20,7 +20,7 @@ For development, use `python -m pip install -e .`. The package has no Python run
 - **User site — only when that Python already has PyTorch:** outside a virtual environment, `python3 -m pip install --user .` puts the command in Python's user scripts directory. Find the base with `python3 -m site --user-base`; on many Linux systems the scripts directory is `~/.local/bin`. Add that directory to `PATH` if needed. Python ignores `--user` installs inside an active virtual environment.
 - **System directories:** this project does not install to `/usr/local/bin` or modify system Python. Avoid `sudo pip install`.
 
-`pipx` normally gives a command its own isolated Python environment. That is a good default for independent CLI tools, but this prototype's `run` command uses its own interpreter and therefore must be installed in the same environment as PyTorch. A separate `pipx` environment cannot launch the supported PyTorch workload yet.
+`pipx` and Homebrew give the command its own isolated Python environment, which does not contain PyTorch. That works when you point the tool at your PyTorch environment: pass `--python /path/to/your-env/bin/python` to `doctor` and `run`, or set `CUDA_COMPAT_PYTHON`. Without it, `run` starts scripts with the interpreter that runs `cuda-legacy`, and `doctor` inspects that interpreter for PyTorch.
 
 The inventory and profile commands work without an NVIDIA GPU. The adapter has been tested only on Linux x86_64 with Python 3.10.12, official `torch 2.14.0+cu130`, CUDA Runtime 13.0.96, LLVM/Clang 23.1.4, CUDA 12.4 development headers, the NVIDIA 580.178.04 driver, and GTX TITAN X GM200 cards at `sm_52`. Other combinations are not yet qualified.
 

@@ -112,4 +112,4 @@ python3 .agents/bootstrap/scripts/gen-context.py --check
 python3 .agents/bootstrap/scripts/validate-bootstrap.py --check-context
 ```
 
-See [the architecture](docs/architecture.md), [target profiles](docs/compatibility-targets.md), and [roadmap](docs/roadmap.md). Project authority and operating rules are in `.agents/project/intent.md` and `AGENTS.md`.
+See [the architecture](docs/architecture.md), the [implementation inventory](docs/architecture/implementation-inventory.md) (what is implemented, experimental or proposed, and how open issues map onto it), [target profiles](docs/compatibility-targets.md), and [roadmap](docs/roadmap.md). Project authority and operating rules are in `.agents/project/intent.md` and `AGENTS.md`.

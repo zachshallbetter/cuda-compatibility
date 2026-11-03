@@ -4,12 +4,14 @@
 
 ## Minimal path
 ```console
-$ cuda-compat install
-$ cuda-compat doctor
-$ cuda-compat inspect -- python app.py
-$ cuda-compat run -- python app.py
-$ cuda-compat report --last
+$ python -m pip install .            # or: brew install cuda-legacy (Linux)
+$ cuda-legacy doctor
+$ cuda-legacy analyze -- app.py      # proposed (#12): static workload inspection
+$ cuda-legacy run -- app.py
+$ cuda-legacy run --report run.json -- app.py && cuda-legacy report run.json   # proposed
 ```
+
+`cuda-legacy inspect` already exists and reports the machine and its GPUs, so workload inspection uses the new `analyze` name. Installation, removal and rollback belong to pip or Homebrew while no command changes machine state. The reconciled plan and its rationale are in [`docs/architecture/implementation-inventory.md`](../architecture/implementation-inventory.md).
 
 No step should globally replace NVIDIA drivers, modify system CUDA installations, or rewrite the user's PyTorch environment without explicit consent.
 
