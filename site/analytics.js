@@ -1,6 +1,6 @@
 /* Optional, consent-gated GA4 measurement. Set the web stream ID to enable. */
 (() => {
-  const measurementId = "G-1SX2S8FHMC";
+  const measurementId = "G-Q7C82JK9GM";
   const consentKey = "cuda-compat-analytics-consent";
   const allowedEvents = new Set([
     "installation_guide_click",

@@ -26,7 +26,7 @@ class SiteDiscoveryChecksTests(unittest.TestCase):
             site = self.copy_site(directory)
             analytics = site / "analytics.js"
             analytics.write_text(
-                analytics.read_text(encoding="utf-8").replace('const measurementId = "G-1SX2S8FHMC";', 'const measurementId = "";'),
+                analytics.read_text(encoding="utf-8").replace('const measurementId = "G-Q7C82JK9GM";', 'const measurementId = "";'),
                 encoding="utf-8",
             )
             self.assertTrue(any("configured GA4 measurement ID" in error for error in audit_site(site)))
@@ -106,7 +106,7 @@ class SiteDiscoveryChecksTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as directory:
             site = self.copy_site(directory)
             sitemap = site / "sitemap.xml"
-            sitemap.write_text(sitemap.read_text(encoding="utf-8").replace("  <url><loc>https://cuda-compatibility.vercel.app/docs/privacy.html</loc></url>\n", ""), encoding="utf-8")
+            sitemap.write_text(sitemap.read_text(encoding="utf-8").replace("  <url><loc>https://www.cudacompat.com/docs/privacy.html</loc></url>\n", ""), encoding="utf-8")
             self.assertTrue(any("sitemap URLs" in error for error in audit_site(site)))
 
     def test_rejects_duplicate_meta_descriptions(self) -> None:

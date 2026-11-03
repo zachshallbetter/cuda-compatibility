@@ -507,6 +507,23 @@ The first work item is being executed under the user's explicit request to creat
 - **Progress (2026-11-01):** Rewrote all 10 canonical page descriptions to be page-specific and 140–180 characters; added static checks for length and uniqueness. `make check` passed and `make test` passed 44/44. Commit `958388599dcad117b63470c31f3f584e1aa03c3f` was pushed to `codex/cuda-compat-publication` after exact ACP ALLOWs and deployed successfully in Pages run `41312924116`. The live audit fetched all 10 sitemap pages and six discovery assets/endpoints (16/16 HTTP 200); all 10 descriptions were unique and within range. Evidence: `CLC-028-bing-short-descriptions-recommendation`, `CLC-028-pages-release`, and `CLC-028-live-route-audit`. No ranking, traffic, or indexing effect is claimed.
 - **Disposition (2026-11-01):** Bing feedback has been addressed in the published site. Checks enforce the description bounds and uniqueness; the exact deployed revision returned HTTP 200 for all 16 audited routes/assets, with all 10 page descriptions between 140 and 180 characters. Search performance effects remain unobserved.
 
+## CLC-030 — Move the site to cudacompat.com and the new GA4 stream
+
+- **Intent:** Serve the project site from its own domain and measure it with the owner's new GA4 stream, keeping the consent gate.
+- **Parent:** CLC-029 Vercel hosting; CLC-027 consented analytics.
+- **Status:** In progress
+- **Objective:** Make `https://www.cudacompat.com/` the canonical origin (owner purchased `cudacompat.com` and attached it to the Vercel project; the apex redirects to `www`), redirect `cuda-compatibility.vercel.app`, and switch `site/analytics.js` to measurement ID `G-Q7C82JK9GM`.
+- **Scope:** `site/**`; `README.md`; `tests/test_site_checks.py`; `docs/WORK_ITEMS.md`; `records/evidence.jsonl`; generated context; Vercel project domain redirect.
+- **Exclusions:** Loading the Google tag before consent; Search Console, Bing or GA4 property settings (owner actions); DNS changes.
+- **Dependencies:** Owner-provided GA4 tag; Vercel domain configuration; ACP decisions for push, `main` update and production deploy.
+- **Acceptance:** Canonical URLs, sitemap, robots.txt, llms.txt and JSON-LD name `https://www.cudacompat.com/`; analytics uses `G-Q7C82JK9GM` only after consent; `make check` and `make test` pass; every sitemap page and discovery asset returns HTTP 200 on the new origin after deploy; the old Vercel and apex addresses redirect.
+- **Evidence required:** Check and test output; live route audit; redirect observation; ACP decisions.
+- **Evaluator:** Project owner, static checker, project tests, live route audit.
+- **Permissions:** E1 local changes; E2 push, E3 `main` update and production deploy only after exact ACP `ALLOW`; one Vercel project-domain redirect setting.
+- **Target:** Vercel project `cuda-compatibility`; `https://www.cudacompat.com/`.
+- **Budget:** No spend beyond the owner's domain purchase.
+- **Stop conditions:** ACP refuses an external effect; a project gate fails; the GA4 stream would need to load without consent.
+
 ## CLC-029 — Redesign the project site and move hosting to Vercel
 
 - **Intent:** Replace the GitHub Pages site with the engineering-drawing redesign, served from Vercel, without changing any hardware or support claim.

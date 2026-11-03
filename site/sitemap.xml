@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url><loc>https://cuda-compatibility.vercel.app/</loc></url>
-  <url><loc>https://cuda-compatibility.vercel.app/gpu-catalog.html</loc></url>
-  <url><loc>https://cuda-compatibility.vercel.app/docs/</loc></url>
-  <url><loc>https://cuda-compatibility.vercel.app/docs/getting-started.html</loc></url>
-  <url><loc>https://cuda-compatibility.vercel.app/docs/compatibility.html</loc></url>
-  <url><loc>https://cuda-compatibility.vercel.app/docs/architecture.html</loc></url>
-  <url><loc>https://cuda-compatibility.vercel.app/docs/cli.html</loc></url>
-  <url><loc>https://cuda-compatibility.vercel.app/docs/research.html</loc></url>
-  <url><loc>https://cuda-compatibility.vercel.app/docs/discovery.html</loc></url>
-  <url><loc>https://cuda-compatibility.vercel.app/docs/privacy.html</loc></url>
+  <url><loc>https://www.cudacompat.com/</loc></url>
+  <url><loc>https://www.cudacompat.com/gpu-catalog.html</loc></url>
+  <url><loc>https://www.cudacompat.com/docs/</loc></url>
+  <url><loc>https://www.cudacompat.com/docs/getting-started.html</loc></url>
+  <url><loc>https://www.cudacompat.com/docs/compatibility.html</loc></url>
+  <url><loc>https://www.cudacompat.com/docs/architecture.html</loc></url>
+  <url><loc>https://www.cudacompat.com/docs/cli.html</loc></url>
+  <url><loc>https://www.cudacompat.com/docs/research.html</loc></url>
+  <url><loc>https://www.cudacompat.com/docs/discovery.html</loc></url>
+  <url><loc>https://www.cudacompat.com/docs/privacy.html</loc></url>
 </urlset>

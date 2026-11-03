@@ -31,4 +31,4 @@ Disallow: /
 User-agent: Google-CloudVertexBot
 Allow: /
 
-Sitemap: https://cuda-compatibility.vercel.app/sitemap.xml
+Sitemap: https://www.cudacompat.com/sitemap.xml
