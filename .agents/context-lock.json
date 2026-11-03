@@ -6,7 +6,7 @@
   "selectedPaths": [],
   "sourceSelection": {
     "includedCount": 224,
-    "includedBytes": 1903421,
+    "includedBytes": 1903831,
     "excludedCounts": {
       "extension": 47,
       "generated-or-transient-file": 2
@@ -18,14 +18,14 @@
     "repositories": [
       {
         "path": ".",
-        "commit": "6880f064f5dd50513dd06babc2ceb5799eea5e69",
-        "branch": "site/no-consent-banner-footer-contrast",
+        "commit": "b3eb200112b45d32670df93f7d79d61b8c4611b7",
+        "branch": "site/light-footer",
         "dirty": true,
         "remote": "https://github.com/zachshallbetter/cuda-compatibility.git"
       }
     ]
   },
-  "aggregateSourceDigest": "33dbe64997e52ba4e440c4e2f8df958ef573d2e1c03d604da96a0454b9542270",
+  "aggregateSourceDigest": "9df61c4b388ac58aa2200907f49ed8653094eeeaff2d20582fa5cf1b3bcc0859",
   "sources": [
     {
       "path": ".agents/acp/README.md",
@@ -1059,8 +1059,8 @@
     },
     {
       "path": "site/styles.css",
-      "bytes": 4810,
-      "sha256": "40c75cba7d3297af85f3877c7f321aa9a1a7a1e72e273f9ce74c1494b7e3f94a"
+      "bytes": 5220,
+      "sha256": "03efaa065c2faed7ac068e0f0113a56cb964dd0ee45ed374237f98557ec6eaf6"
     },
     {
       "path": "site/vercel.json",
