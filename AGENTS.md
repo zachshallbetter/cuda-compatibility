@@ -321,3 +321,4 @@ Procedure: `.agents/skills/authorize-protected-effect/SKILL.md`. Binding: `.agen
 - Do not redistribute NVIDIA proprietary components. Public release artifacts contain project code and user-installed dependency instructions only.
 - Numerical correctness is a release gate; performance is reported separately and only from reproduced measurements.
 - Multi-GPU profiles model per-device memory explicitly; never imply VRAM pooling or peer access without hardware evidence.
+- Every change under `site/` follows `docs/SITE_PROTOCOL.md`: the page contract, the change procedure, the verification matrix and the records it requires. A merge to `main` deploys production.

@@ -8,6 +8,8 @@ This folder prepares publication around one reproducible result: the [public `sm
 | [social.md](social.md) | Reveal short, limitation short, LinkedIn post, X thread; why HN text is not drafted |
 | [channels.md](channels.md) | Destination shortlist with rules, fit, class, rights, cost, owner and readiness |
 
+How the site's own pages, share cards and previews are kept is in [the site protocol](../SITE_PROTOCOL.md).
+
 The placement ledger is the **Distribution and intervention ledger** in [`docs/DPP_IMPLEMENTATION.md`](../DPP_IMPLEMENTATION.md#distribution-and-intervention-ledger), not a second register.
 
 ## Rules

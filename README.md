@@ -117,3 +117,5 @@ python3 .agents/bootstrap/scripts/validate-bootstrap.py --check-context
 ```
 
 See [the architecture](docs/architecture.md), the [implementation inventory](docs/architecture/implementation-inventory.md) (what is implemented, experimental or proposed, and how open issues map onto it), [target profiles](docs/compatibility-targets.md), and [roadmap](docs/roadmap.md). Project authority and operating rules are in `.agents/project/intent.md` and `AGENTS.md`.
+
+Changes to the site follow [the site protocol](docs/SITE_PROTOCOL.md): `make site` regenerates and checks, `make cards` renders the share cards, and `make live-audit` confirms a deploy serves this checkout.
