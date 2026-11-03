@@ -4,7 +4,7 @@
 
 **Project site:** [CUDA Compatibility](https://cudacompat.com/) · [Zach Shallbetter](https://zachshallbetter.com/) · [GitHub profile](https://github.com/zachshallbetter)
 
-The static project site is in `site/` and is served at https://cudacompat.com/ by the Vercel project `cuda-compatibility` (`www.cudacompat.com` redirects there), whose Root Directory is `site` and which has no build step. Pull requests run the project checks and test suite and receive a Vercel preview deployment; merging to `main` deploys production. Fonts, scripts and the hero wireframe are served from `site/` itself, so a page load makes no third-party request before analytics consent.
+The static project site is in `site/` and is served at https://cudacompat.com/ by the Vercel project `cuda-compatibility` (`www.cudacompat.com` redirects there), whose Root Directory is `site` and which has no build step. Pull requests run the project checks and test suite and receive a Vercel preview deployment; merging to `main` deploys production. Fonts, scripts and the hero wireframe are served from `site/` itself, so a page load makes no third-party request except analytics, which never loads for visitors who opt out. After each production deploy, `.github/workflows/indexnow.yml` sends the changed pages to IndexNow. Share cards are rendered by `python3 scripts/build_social_cards.py` (needs Google Chrome and Pillow).
 
 This independent research and implementation project targets software whose toolkit, compiler, or library requirements have moved beyond older cards. The end goal is to install a compatibility toolset on a host and run CUDA 13+ applications on its older GPUs with correct results. PyTorch CUDA 13 is the first target. The current prototype is an opt-in, per-process Python launcher; it is not yet a machine-wide installer and does not make arbitrary CUDA 13 applications compatible.
 
@@ -81,6 +81,8 @@ For the complete install-to-run workflow, diagnostic meanings, exit codes, and t
 ## Licensing
 
 Project code is dual-licensed under **MIT OR Apache-2.0**. NVIDIA drivers, headers, toolkit binaries, runtime libraries, and other proprietary components are not bundled.
+
+To cite the project, use [`CITATION.cff`](CITATION.cff). Report vulnerabilities privately as described in [`SECURITY.md`](SECURITY.md).
 
 ## Current status
 
