@@ -24,6 +24,7 @@ This is a convenience index for people and automated agents. It is not a standar
 ## Project identity
 - Project repository: https://github.com/zachshallbetter/cuda-compatibility
 - Author: Zach Shallbetter (https://zachshallbetter.com/)
+- About the author: systems engineer and independent researcher based in Spokane, Washington, working on applied AI, computer vision, embedded systems, and developer tooling. Builds software through Snack Studio (https://www.snackstud.io/). GitHub: https://github.com/zachshallbetter
 - Project is independent and not affiliated with NVIDIA.
 
 ## Claim boundary

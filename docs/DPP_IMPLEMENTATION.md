@@ -14,7 +14,7 @@ This record applies the pinned DPP objects and evidence rules to the project’s
 |---|---|---|---|
 | `cuda-compatibility` | Open-source CUDA compatibility project (`SoftwareApplication`) | `https://cudacompat.com/#software` | Project maintained by Zach Shallbetter; NVIDIA is not affiliated. |
 | `cuda-compatibility-site` | Project website (`WebSite`) | `https://cudacompat.com/#website` | Project-controlled source served by Vercel at the apex `cudacompat.com`; availability is a separate state. |
-| `zach-shallbetter` | Project author (`Person`) | `https://cudacompat.com/#author` | Author identity links to `https://zachshallbetter.com/` and `https://github.com/zachshallbetter`; those external surfaces are not controlled by this site. |
+| `zach-shallbetter` | Project author (`Person`) | `https://cudacompat.com/#author` | Author identity links to `https://zachshallbetter.com/` and `https://github.com/zachshallbetter`; those external surfaces are not controlled by this site. The homepage's About the author note and the `Person` markup carry the same facts: systems engineer and independent researcher, Spokane, Washington, practising through Snack Studio (`worksFor`, `https://www.snackstud.io/`), which is separate from the project. |
 
 The homepage is the entity’s canonical description. Documentation pages are scoped representations of the same project and link their `TechArticle` and `BreadcrumbList` metadata to the canonical site and author IDs. The repository URL is `https://github.com/zachshallbetter/cuda-compatibility`.
 
