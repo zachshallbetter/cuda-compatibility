@@ -794,7 +794,7 @@ Not established
 - CUDA Runtime, cuBLAS/cuBLASLt, NVRTC, cuDNN, NCCL, PyTorch CUDA, the Driver API, and R580 library paths were observed in a bounded process-map probe; broad symbol and API compatibility is not established.
 - The seven-step diagnostic measured 2.360 ms median end-to-end latency on GPU 2 and 7.296 ms on GPU 1, with 67,180,032 bytes peak allocated on each; this tiny workload does not predict application performance.
 - Candidate GPU models remain unverified unless specifically identified as reference hardware.
-- The routes and assets on cudacompat.com returned HTTP 200 in a 2026-11-03 audit; crawler use, indexing, search visibility, social-card rendering, and AI retrieval remain unobserved.
+- The routes and assets on cudacompat.com returned HTTP 200 in a 2026-11-03 audit; indexing of the other pages, search visibility, social-card rendering, and AI retrieval remain unobserved.
 
 ## Negative results, kept
 
@@ -836,7 +836,7 @@ CLC-026-final-live-publication-audit CLC-028-live-route-audit CLC-027-bing-sitem
 
 ## Claim status
 
-Established The source tree includes research logs and local verification records. The site is live at cudacompat.com. Bing ownership and sitemap receipts cover only the previous GitHub Pages address.
+Established The source tree includes research logs and local verification records. The site is live at cudacompat.com. Google and Bing read the sitemap on 2026-11-03, and Google reports the homepage indexed.
 
 Receipt only The consent-gated GA4 tag is deployed; one explicitly accepted test visit produced page_view, first_visit, and session_start in Realtime, after which test consent was withdrawn. An event-receipt check, not an audience outcome. Google Search Console verified its property.
 
@@ -867,9 +867,9 @@ Source: https://cudacompat.com/docs/discovery.html
 
 Verified Public accessibility The site is served by Vercel at cudacompat.com; www.cudacompat.com redirects there. A route audit on 2026-11-03 fetched all 10 sitemap pages, sitemap.xml, robots.txt, llms.txt, favicon.svg, the social card, and the page styles, scripts, fonts and wireframe model with HTTP 200. Point-in-time HTTP checks establish availability, not search indexing or audience reach.
 
-Unverified Bing Webmaster Tools Ownership verification and the sitemap Success report (10 URLs, zero errors or warnings) cover the previous GitHub Pages address. No Bing receipt is recorded for cudacompat.com.
+Partial Bing Webmaster Tools cudacompat.com was imported from Search Console. On 2026-11-03 Bing crawled the sitemap with Success: 10 URLs discovered, zero errors or warnings. Discovery is not indexing; no per-page index receipt is recorded.
 
-Unverified Google Search Console The URL-prefix property verified on 2026-11-01 covers the previous GitHub Pages address. The cudacompat.com address needs its own property; no verification, sitemap submission, or indexing receipt is recorded for it.
+Partial Google Search Console The cudacompat.com Domain property is verified. On 2026-11-03 the sitemap read as Success with 10 discovered pages, and URL Inspection reported the homepage indexed after a smartphone crawl that day. Index status for the other nine pages is not yet reported.
 
 Receipt only Analytics The consent-gated GA4 tag is deployed. One explicitly accepted test visit produced page_view, first_visit, and session_start in GA4 Realtime; test consent was withdrawn afterward. This single test is not audience coverage.
 
@@ -939,7 +939,7 @@ Google’s documentation describes the Analytics consent types, the GA4 event mo
 - A consented setup test on 2026-11-01 produced page_view, first_visit, and session_start in GA4 Realtime. Test consent was then withdrawn. This one test confirms event receipt only, not audience coverage or outcomes.
 
 ## Connect Google Search Console
-Verified, not indexed
+Verified, homepage indexed
 
 1 Publish the site at https://cudacompat.com/ and confirm it returns public pages over HTTPS.
 
@@ -951,12 +951,12 @@ Verified, not indexed
 
 5 Use URL Inspection for the homepage and key documentation pages. A crawl or indexing request is not a guarantee of indexing, ranking, or timing.
 
-The sitemap and crawler policy are available at sitemap.xml and robots.txt. Google verified a URL-prefix property for the previous GitHub Pages address on 2026-11-01. The cudacompat.com address has no verified property, sitemap submission, or indexing receipt yet; indexing is not confirmed.
+The sitemap and crawler policy are available at sitemap.xml and robots.txt. The cudacompat.com Domain property is verified. On 2026-11-03 Search Console read the sitemap as Success with 10 discovered pages, and URL Inspection reported the homepage indexed; index status for the other pages is not yet reported. The 2026-11-01 receipts cover only the retired GitHub Pages address.
 
 Google’s guidance on requesting a crawl and submitting a sitemap.
 
 ## Connect Bing Webmaster Tools
-Unverified for cudacompat.com
+Verified, sitemap read
 
 1 Open Bing Webmaster Tools and choose Import from Google Search Console after the URL-prefix property above is verified. Review the account-access request before granting it.
 
@@ -966,7 +966,7 @@ Unverified for cudacompat.com
 
 4 Check submission status, last-read time, and reported processing errors. Record the date and property prefix with any result; submission alone does not show that pages were indexed.
 
-Bing verified ownership by meta tag and reported sitemap Success (10 URLs, zero errors, zero warnings) for the previous GitHub Pages address. No Bing verification or sitemap receipt is recorded for cudacompat.com; neither would confirm that the URLs are indexed.
+Bing imported cudacompat.com from Search Console and on 2026-11-03 crawled its sitemap with Success: 10 URLs discovered, zero errors, zero warnings. That confirms discovery, not indexing.
 
 Bing documents importing verified Search Console properties, site verification methods, and sitemap submission and processing.
 

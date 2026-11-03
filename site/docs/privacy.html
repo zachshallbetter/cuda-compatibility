@@ -112,7 +112,7 @@ button.consent:hover{background:var(--yellow);border-color:var(--yellow)}
 </div>
 
 <div id="gsc" style="display:flex;flex-direction:column;gap:20px">
-<div class="sec"><span class="cut" aria-hidden="true">D</span><h2 class="h2">Connect Google Search Console</h2><span class="plane" aria-hidden="true"></span><span class="state exp"><i class="sw half" aria-hidden="true"></i>Verified, not indexed</span></div>
+<div class="sec"><span class="cut" aria-hidden="true">D</span><h2 class="h2">Connect Google Search Console</h2><span class="plane" aria-hidden="true"></span><span class="state exp"><i class="sw half" aria-hidden="true"></i>Verified, homepage indexed</span></div>
 <div style="display:flex;flex-direction:column;border-top:2px solid currentColor">
 <div class="step"><span class="num">1</span><span>Publish the site at <code>https://cudacompat.com/</code> and confirm it returns public pages over HTTPS.</span></div>
 <div class="step"><span class="num">2</span><span>In Google Search Console, add a URL-prefix property for that exact site address.</span></div>
@@ -120,19 +120,19 @@ button.consent:hover{background:var(--yellow);border-color:var(--yellow)}
 <div class="step"><span class="num">4</span><span>After verification, submit <code>sitemap.xml</code> in the Sitemaps report.</span></div>
 <div class="step" style="border-bottom-width:3px"><span class="num">5</span><span>Use URL Inspection for the homepage and key documentation pages. A crawl or indexing request is not a guarantee of indexing, ranking, or timing.</span></div>
 </div>
-<p class="soft" style="margin:0;font-size:16px;max-width:72ch">The sitemap and crawler policy are available at <a href="https://cudacompat.com/sitemap.xml">sitemap.xml</a> and <a href="https://cudacompat.com/robots.txt">robots.txt</a>. Google verified a URL-prefix property for the previous GitHub Pages address on 2026-11-01. The <code>cudacompat.com</code> address has no verified property, sitemap submission, or indexing receipt yet; indexing is not confirmed.</p>
+<p class="soft" style="margin:0;font-size:16px;max-width:72ch">The sitemap and crawler policy are available at <a href="https://cudacompat.com/sitemap.xml">sitemap.xml</a> and <a href="https://cudacompat.com/robots.txt">robots.txt</a>. The <code>cudacompat.com</code> Domain property is verified. On 2026-11-03 Search Console read the sitemap as Success with 10 discovered pages, and URL Inspection reported the homepage indexed; index status for the other pages is not yet reported. The 2026-11-01 receipts cover only the retired GitHub Pages address.</p>
 <p class="mute" style="margin:0;font-size:15px">Google’s guidance on <a href="https://developers.google.com/search/docs/crawling-indexing/ask-google-to-recrawl">requesting a crawl</a> and <a href="https://developers.google.com/search/docs/crawling-indexing/sitemaps/build-sitemap">submitting a sitemap</a>.</p>
 </div>
 
 <div id="bing" style="display:flex;flex-direction:column;gap:20px">
-<div class="sec"><span class="cut" aria-hidden="true">E</span><h2 class="h2">Connect Bing Webmaster Tools</h2><span class="plane" aria-hidden="true"></span><span class="state open"><i class="sw" aria-hidden="true"></i>Unverified for cudacompat.com</span></div>
+<div class="sec"><span class="cut" aria-hidden="true">E</span><h2 class="h2">Connect Bing Webmaster Tools</h2><span class="plane" aria-hidden="true"></span><span class="state exp"><i class="sw half" aria-hidden="true"></i>Verified, sitemap read</span></div>
 <div style="display:flex;flex-direction:column;border-top:2px solid currentColor">
 <div class="step"><span class="num">1</span><span>Open Bing Webmaster Tools and choose Import from Google Search Console after the URL-prefix property above is verified. Review the account-access request before granting it.</span></div>
 <div class="step"><span class="num">2</span><span>If you do not want to import, add this exact site prefix in Bing and complete the verification method Bing offers, such as its XML file or meta tag. Keep the supplied verification artifact in the published site; do not invent a token.</span></div>
 <div class="step"><span class="num">3</span><span>Submit <code>sitemap.xml</code> in the Sitemaps section.</span></div>
 <div class="step" style="border-bottom-width:3px"><span class="num">4</span><span>Check submission status, last-read time, and reported processing errors. Record the date and property prefix with any result; submission alone does not show that pages were indexed.</span></div>
 </div>
-<p class="soft" style="margin:0;font-size:16px;max-width:72ch">Bing verified ownership by meta tag and reported sitemap Success (10 URLs, zero errors, zero warnings) for the previous GitHub Pages address. No Bing verification or sitemap receipt is recorded for <code>cudacompat.com</code>; neither would confirm that the URLs are indexed.</p>
+<p class="soft" style="margin:0;font-size:16px;max-width:72ch">Bing imported <code>cudacompat.com</code> from Search Console and on 2026-11-03 crawled its sitemap with Success: 10 URLs discovered, zero errors, zero warnings. That confirms discovery, not indexing.</p>
 <p class="mute" style="margin:0;font-size:15px">Bing documents <a href="https://blogs.bing.com/webmaster/2019/9/Import-sites-from-Search-Console-to-Bing-Webmaster-Tools/">importing verified Search Console properties</a>, <a href="https://www.bing.com/webmasters/help/how-to-verify-ownership-of-your-site-afcfefc6">site verification methods</a>, and <a href="https://blogs.bing.com/webmaster/2025/7/Keeping-Content-Discoverable-with-Sitemaps-in-AI-Powered-Search/">sitemap submission and processing</a>.</p>
 </div>
 

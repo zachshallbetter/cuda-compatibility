@@ -6,7 +6,7 @@
   "selectedPaths": [],
   "sourceSelection": {
     "includedCount": 209,
-    "includedBytes": 1834962,
+    "includedBytes": 1835409,
     "excludedCounts": {
       "extension": 47,
       "generated-or-transient-file": 2
@@ -18,14 +18,14 @@
     "repositories": [
       {
         "path": ".",
-        "commit": "f67bbd364739bd37b2954f11578dcdfbae47199e",
-        "branch": "docs-implementation-inventory",
+        "commit": "e099bef89064782437dfd73118caff1716156dd1",
+        "branch": "discovery-baseline",
         "dirty": true,
         "remote": "https://github.com/zachshallbetter/cuda-compatibility.git"
       }
     ]
   },
-  "aggregateSourceDigest": "40287ae6603872744c462bc22539e23063d42f0e9750109f0678463cc245f3be",
+  "aggregateSourceDigest": "7e801c07d2d665524989ab89cc0add473db52c972d49d8240af39c4eb33b9d3f",
   "sources": [
     {
       "path": ".agents/acp/README.md",
@@ -694,8 +694,8 @@
     },
     {
       "path": "docs/DPP_IMPLEMENTATION.md",
-      "bytes": 28647,
-      "sha256": "31f20ee3b4d56bd42f89518577a0b5a585864d8252ad73379ccf1687ea71e2ac"
+      "bytes": 28873,
+      "sha256": "d46761338269524685c9088d0b655c72c3433574ae0610baeca32f60fc7212e9"
     },
     {
       "path": "docs/PROJECT_MILESTONES.md",
@@ -939,8 +939,8 @@
     },
     {
       "path": "site/docs/discovery.html",
-      "bytes": 20173,
-      "sha256": "166243e7ef42288552df357e40c93b85faf0ba0c45e00d55ccd0871204f60d06"
+      "bytes": 20252,
+      "sha256": "e83e9a1158eed1c3190e80d59561b7e713e50f72cc8410c9ed58085c5c4adf26"
     },
     {
       "path": "site/docs/getting-started.html",
@@ -954,13 +954,13 @@
     },
     {
       "path": "site/docs/privacy.html",
-      "bytes": 21942,
-      "sha256": "82a23be2a0b4aaa7dae023eab8fc63b32dabda97121e87f974b6c49564e0b6d2"
+      "bytes": 21957,
+      "sha256": "945b38c8f35dd0cbb8908c23ca12bc39b3d636919643e398a0211f97db6cf88a"
     },
     {
       "path": "site/docs/research.html",
-      "bytes": 29363,
-      "sha256": "27adbb6c53e9e0b02aa79f3972fdbaf84ecf8caae91de3e0856f636c7f4e12e6"
+      "bytes": 29376,
+      "sha256": "33b5dfcf0e732f8b08745d8e4c2988c1567541884fb1b361a599d12a468ca9cf"
     },
     {
       "path": "site/gpu-catalog.html",
@@ -994,8 +994,8 @@
     },
     {
       "path": "site/vercel.json",
-      "bytes": 1134,
-      "sha256": "ed38c62da0ea269f7f7ba0f82977f9de7f9fe5b8b1f095869117f32001b0ffe5"
+      "bytes": 1248,
+      "sha256": "ff83bdbe948d6b6a33b90116a051fb28800a7d192047a4aa8e795ed539b673ab"
     },
     {
       "path": "src/cuda_legacy_compat/__init__.py",
