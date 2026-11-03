@@ -1,11 +1,13 @@
 # frozen_string_literal: true
 
-# Homebrew formula for the cuda-legacy CLI (Linux x86_64 only; install with --HEAD until a release is tagged).
+# Homebrew formula for the cuda-legacy CLI (Linux x86_64 only).
 class CudaLegacy < Formula
   include Language::Python::Virtualenv
 
   desc "Inspect and adapt newer CUDA workloads for older NVIDIA GPUs"
   homepage "https://cudacompat.com/"
+  url "https://github.com/zachshallbetter/cuda-compatibility/archive/refs/tags/v0.1.0.tar.gz"
+  sha256 "76928fb07b0244df14d2aa0cd84068d0e73c66930f008ba1da0e8f2d8b82d2aa"
   license any_of: ["MIT", "Apache-2.0"]
   head "https://github.com/zachshallbetter/cuda-compatibility.git", branch: "main"
 

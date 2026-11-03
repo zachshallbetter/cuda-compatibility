@@ -6,7 +6,7 @@
   "selectedPaths": [],
   "sourceSelection": {
     "includedCount": 180,
-    "includedBytes": 1610546,
+    "includedBytes": 1610926,
     "excludedCounts": {
       "excluded-directory": 1,
       "excluded-path": 1,
@@ -20,14 +20,14 @@
     "repositories": [
       {
         "path": ".",
-        "commit": "2cd06214e14864443283851e9949e4730547b796",
-        "branch": "site-hero-size",
+        "commit": "de5925497c215f1382321f3a57cc7097f6e30f8c",
+        "branch": "release-formula-0.1.0",
         "dirty": true,
         "remote": "https://github.com/zachshallbetter/cuda-compatibility.git"
       }
     ]
   },
-  "aggregateSourceDigest": "c6a47b655e2461983b67f27daa37c44612adb49f6597b1cbd6061b59dca8a213",
+  "aggregateSourceDigest": "49f8627a4868a5acac4bb21161348fc9ddb21a8a3203aa424fedc415f9a77e7c",
   "sources": [
     {
       "path": ".agents/rules/ci.md",
@@ -266,8 +266,8 @@
     },
     {
       "path": "README.md",
-      "bytes": 9631,
-      "sha256": "e5ef230f212dc16d47f9e45f1d99206af2373fa4f7f8a62aa0c6a07e4917ff52"
+      "bytes": 9722,
+      "sha256": "1ff14ff314c8a10f5a4a07703c9ffad9221f5210ec299177f91e5af551102886"
     },
     {
       "path": "VERSION",
@@ -326,8 +326,8 @@
     },
     {
       "path": "docs/DPP_IMPLEMENTATION.md",
-      "bytes": 28052,
-      "sha256": "6c42212439e6525b10bdf8d78be9825715e6e92096304bce7cf01a5b4b4916dc"
+      "bytes": 28222,
+      "sha256": "3c553a7075654129713e41de4a0888fc681b8cc1ef235dc7a7c9060c5dd2264c"
     },
     {
       "path": "docs/EVIDENCE_METHOD.md",
@@ -801,8 +801,8 @@
     },
     {
       "path": "site/docs/getting-started.html",
-      "bytes": 16840,
-      "sha256": "95480b2a8078133d22e4df4b000b96894c498eddc760e819b02ef067086dcf73"
+      "bytes": 16964,
+      "sha256": "4e7682a22fa78509eacee2a16b8907fd781fecaeeeb89e88aa7798d1b2ce500b"
     },
     {
       "path": "site/docs/index.html",
@@ -831,8 +831,8 @@
     },
     {
       "path": "site/index.html",
-      "bytes": 48886,
-      "sha256": "3d5abc2476f030aa967717ce1404f52d4aeeab1514732dd805f6f32bbfb80686"
+      "bytes": 48881,
+      "sha256": "48162ea8048f229c4d27e093b5482f0d9240f416861b460924347cf3afc0b3a6"
     },
     {
       "path": "site/robots.txt",

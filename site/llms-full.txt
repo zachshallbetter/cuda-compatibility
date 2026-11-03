@@ -26,7 +26,7 @@ GM200 reference card, compute capability 5.2. The only hardware tested so far. E
 
 ## Get it running
 
-Two commands from a checkout, inside the Python environment that already holds the CUDA 13 PyTorch wheel. Linux x86_64, visible sm_52 GPUs only. No PyPI package yet; Homebrew on Linux builds from the main branch.
+Two commands from a checkout, inside the Python environment that already holds the CUDA 13 PyTorch wheel. Linux x86_64, visible sm_52 GPUs only. No PyPI package yet; Homebrew on Linux installs release 0.1.0.
 
 Full install sheet Releases Download zip
 
@@ -499,13 +499,13 @@ cuda-legacy run \
 The adapter is opt-in and affects only the child Python process. It sets LD_PRELOAD and a Python startup hook, builds temporary bridge and kernel files, and removes those files when the child exits. Use the launcher only with scripts you trust.
 
 ## Homebrew on Linux
-Head build
+Release 0.1.0
 
-Homebrew on Linux can install the command line tool in its own environment instead of steps 1 and 2. No release is tagged yet, so the formula builds the current main branch.
+Homebrew on Linux can install the command line tool in its own environment instead of steps 1 and 2. The formula installs the tagged 0.1.0 release; add --HEAD to build the current main branch instead.
 
 ```
 brew tap zachshallbetter/cuda-compatibility https://github.com/zachshallbetter/cuda-compatibility
-brew install --HEAD cuda-legacy
+brew install cuda-legacy
 export CUDA_COMPAT_PYTHON=/path/to/your-env/bin/python
 cuda-legacy doctor --llvm-root /path/to/LLVM-23.1.4
 ```
