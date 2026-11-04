@@ -77,9 +77,10 @@ class InplaceFallbackTests(unittest.TestCase):
             self.dispatch(aten.resize_.default, torch.zeros(4), [2, 2])
         self.assertIsNotNone(self.unrouted._recorded)
 
-    def test_more_than_64_mib_is_refused(self) -> None:
-        big = self.torch.zeros(17, 1024, 1024)
-        with self.assertRaisesRegex(NotImplementedError, "limited to 64 MiB"):
+    def test_more_than_the_per_operation_total_is_refused(self) -> None:
+        big = self.torch.zeros(17, 1024, 1024)   # 68 MiB: over a 64 MiB total, under the 1 GiB default
+        with mock.patch.object(self.adapter, "_CPU_FALLBACK_TOTAL_BYTES", 64 * 1024 * 1024), \
+                self.assertRaisesRegex(NotImplementedError, "limited to 64 MiB of CUDA inputs per operation"):
             self.dispatch(self.torch.ops.aten.zero_.default, big)
 
     def test_only_operators_that_write_just_self_qualify(self) -> None:

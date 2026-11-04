@@ -52,8 +52,10 @@ class FactoryFallbackTests(unittest.TestCase):
         self.torch.manual_seed(7)
         self.assertTrue(self.torch.equal(first, draw()))
 
-    def test_more_than_64_mib_is_refused_with_the_hint(self) -> None:
-        with self.assertRaisesRegex(NotImplementedError, "limited to 64 MiB of outputs"):
+    def test_more_than_the_per_operation_total_is_refused_with_the_hint(self) -> None:
+        # 68 MiB: under the 1 GiB default (it would move in pieces), over a 64 MiB total.
+        with mock.patch.object(self.adapter, "_CPU_FALLBACK_TOTAL_BYTES", 64 * 1024 * 1024), \
+                self.assertRaisesRegex(NotImplementedError, "limited to 64 MiB of outputs per operation"):
             self.dispatch(self.factory(self.torch.zeros), (17, 1024, 1024), device=self.cuda)
         self.assertEqual(self.moved, [])
         self.assertIsNotNone(self.unrouted.hint_for(self.unrouted._recorded[1]))

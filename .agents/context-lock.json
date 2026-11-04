@@ -6,7 +6,7 @@
   "selectedPaths": [],
   "sourceSelection": {
     "includedCount": 275,
-    "includedBytes": 2775756,
+    "includedBytes": 2777377,
     "excludedCounts": {
       "extension": 65,
       "generated-or-transient-file": 2
@@ -18,14 +18,14 @@
     "repositories": [
       {
         "path": ".",
-        "commit": "c2c05ff9bdecdafe3707390d7b7eed5322d081a2",
-        "branch": "feat/real-size-models",
+        "commit": "adde7e50378fa86f05385ab1f51a645ce383c5e5",
+        "branch": "feat/fallback-in-pieces",
         "dirty": true,
         "remote": "https://github.com/zachshallbetter/cuda-compatibility.git"
       }
     ]
   },
-  "aggregateSourceDigest": "5d1de04279a5007252593a2acb1073606302cd9417f39a538ee6c1b1c046c219",
+  "aggregateSourceDigest": "8ae1324a0efb9bc5511947c794554be9c6377ab93cf64f0dc46e995df9a2c554",
   "sources": [
     {
       "path": ".agents/acp/README.md",
@@ -1279,8 +1279,8 @@
     },
     {
       "path": "src/cuda_legacy_compat/torch_adapter.py",
-      "bytes": 59324,
-      "sha256": "59cea1d43fa350ad95cad4fcf0db5c265d5697c8c619a88ebee1835929079478"
+      "bytes": 60458,
+      "sha256": "16873582ef23ad67601fd29eba5ee71b18e758d3965a52e87dd40662d9ed57e1"
     },
     {
       "path": "src/cuda_legacy_compat/unrouted.py",
@@ -1309,8 +1309,8 @@
     },
     {
       "path": "tests/test_factory_fallback.py",
-      "bytes": 3379,
-      "sha256": "fbdceeb108f8c564fc65adcfabbe92ab5269eb02a0f3dfea12900bedc61aeac0"
+      "bytes": 3598,
+      "sha256": "7caa2617662d5b8799c97af4638ffe1f5b3c7a819cb5014615215ab3e8fe351e"
     },
     {
       "path": "tests/test_fused_rnn_cells.py",
@@ -1324,8 +1324,8 @@
     },
     {
       "path": "tests/test_inplace_fallback.py",
-      "bytes": 4981,
-      "sha256": "1394c860a171660e127d92394684302415a794cc7569cb9db5509adce581e5e4"
+      "bytes": 5182,
+      "sha256": "2e0bfa6661ffd2b5aa00270344e37f9458ca65ae55632c0e552fa7a2ec344678"
     },
     {
       "path": "tests/test_install_sh.py",
@@ -1354,8 +1354,8 @@
     },
     {
       "path": "tests/test_real_size_fallback.py",
-      "bytes": 8706,
-      "sha256": "b3b6b3a16f387af8df94591a495f76d7d095427d6b7950893bf527945a8ad7e1"
+      "bytes": 8773,
+      "sha256": "70a2f340f39506f9ab2abed19e3612111f1e7af17c05802f9f34636b995ce087"
     },
     {
       "path": "tests/test_reprobe_stock.py",

@@ -18,7 +18,19 @@ _library: torch.library.Library | None = None
 _bridge: ctypes.CDLL | None = None
 _fallback_mode: TorchDispatchMode | None = None
 _dispatch_state = threading.local()
+# The CPU fallback's bounds (#178): no single copy between a GPU and host memory moves more than
+# _CPU_FALLBACK_MAX_BYTES (a larger contiguous tensor moves in pieces of that size, each a plain memory copy), and
+# no operation stages more than _CPU_FALLBACK_TOTAL_BYTES, so a huge fallback still stops with one plain line.
 _CPU_FALLBACK_MAX_BYTES = 64 * 1024 * 1024
+_MIB = 1024 * 1024
+
+
+def _total_limit() -> int:
+    raw = os.environ.get("CUDA_COMPAT_FALLBACK_TOTAL_MIB", "")
+    return int(raw) * _MIB if raw.isdigit() and int(raw) > 0 else 1024 * _MIB
+
+
+_CPU_FALLBACK_TOTAL_BYTES = _total_limit()
 _autograd_library: torch.library.Library | None = None
 
 
@@ -148,7 +160,7 @@ def _falls_back_to_cpu(operation_name: str, oversize: Callable[..., Any] | None 
                     if result is None:
                         raise
                     return result
-                if oversize is not None and _over_fallback_limit(args, kwargs):
+                if oversize is not None and _over_fallback_limit(args, kwargs, _CPU_FALLBACK_MAX_BYTES):
                     return oversize(*args, **kwargs)
                 return _cpu_fallback(operation, operation_name.split(".")[0])(*args, **kwargs)
         return run
@@ -469,11 +481,13 @@ def _embedding_rows_on_cpu(
     consecutive runs, are plain memory copies, so a vocabulary larger than the fallback limit still works when the
     rows it touches fit under it. The backward is PyTorch's own (embedding_dense_backward)."""
     if weight.dim() != 2 or not weight.is_contiguous():
-        raise NotImplementedError("Maxwell CPU fallback for embedding is limited to 64 MiB of CUDA inputs")
+        return _cpu_fallback(torch.ops.aten.embedding.default, "embedding")(
+            weight, indices, padding_idx, scale_grad_by_freq, sparse)
     cpu_indices = _cuda_tensor_to_cpu(indices) if _is_cuda(indices) else indices
     rows, inverse = torch.unique(cpu_indices, return_inverse=True)
-    if rows.numel() * weight.shape[1] * weight.element_size() > _CPU_FALLBACK_MAX_BYTES:
-        raise NotImplementedError("Maxwell CPU fallback for embedding is limited to 64 MiB of looked-up rows")
+    if rows.numel() * weight.shape[1] * weight.element_size() > _CPU_FALLBACK_TOTAL_BYTES:
+        raise NotImplementedError(f"Maxwell CPU fallback for embedding is limited to "
+                                  f"{_CPU_FALLBACK_TOTAL_BYTES // _MIB} MiB of looked-up rows")
     picked = torch.empty((rows.numel(), weight.shape[1]), dtype=weight.dtype)
     numbers = rows.tolist()
     start = 0
@@ -487,37 +501,7 @@ def _embedding_rows_on_cpu(
             start = end
     output = torch.nn.functional.embedding(inverse, picked)
     _dispatch_state.last_path = "cpu-fallback-embedding-rows"
-    return output.to(weight.device)
-
-
-def _linear(input: torch.Tensor, weight: torch.Tensor, bias: torch.Tensor | None = None) -> torch.Tensor:
-    """linear through the CPU fallback. A weight over the fallback limit (a large vocabulary's output layer) is
-    split by output features for inference: each slice of rows is a plain copy, the pieces are joined on the CPU,
-    and the output moves once (#175). Training through such a layer is #178."""
-    fallback = _cpu_fallback(torch.ops.aten.linear.default, "linear")
-    if not _over_fallback_limit((input, weight, bias), {}):
-        return fallback(input, weight, bias)
-    if torch.is_grad_enabled() and any(tensor.requires_grad for tensor in _tensor_inputs((input, weight, bias))):
-        raise NotImplementedError("Maxwell linear with more than 64 MiB of weights runs only without autograd; "
-                                  "training through it is #178")
-    if weight.dim() != 2 or not weight.is_contiguous() or (bias is not None and not bias.is_contiguous()):
-        raise NotImplementedError("Maxwell CPU fallback for linear is limited to 64 MiB of CUDA inputs")
-    cpu_input = _cuda_tensor_to_cpu(input)
-    out_features, in_features = weight.shape
-    row_bytes = (in_features + (1 if bias is not None else 0)) * weight.element_size()
-    rows = (_CPU_FALLBACK_MAX_BYTES - cpu_input.numel() * cpu_input.element_size()) // row_bytes
-    if rows < 1:
-        raise NotImplementedError("Maxwell CPU fallback for linear is limited to 64 MiB of CUDA inputs")
-    if cpu_input.numel() // max(1, in_features) * out_features * weight.element_size() > _CPU_FALLBACK_MAX_BYTES:
-        raise NotImplementedError("Maxwell CPU fallback for linear is limited to 64 MiB of outputs")
-    pieces = []
-    for start in range(0, out_features, rows):
-        part = _cuda_tensor_to_cpu(weight[start:start + rows])
-        part_bias = _cuda_tensor_to_cpu(bias[start:start + rows]) if bias is not None else None
-        pieces.append(torch.nn.functional.linear(cpu_input, part, part_bias))
-    result = torch.cat(pieces, dim=-1).to(input.device)
-    _dispatch_state.last_path = "cpu-fallback-linear-pieces"
-    return result
+    return _move(output, weight.device)
 
 
 @_falls_back_to_cpu("embedding", oversize=_embedding_rows_on_cpu)
@@ -715,12 +699,45 @@ def _relu(self: torch.Tensor) -> torch.Tensor:
     return output
 
 
+def _copy_in_pieces(destination: torch.Tensor, source: torch.Tensor) -> torch.Tensor:
+    """Copy a contiguous tensor into a contiguous one of the same size, at most _CPU_FALLBACK_MAX_BYTES at a time:
+    between a GPU and host memory each piece is a plain memory copy, so no Maxwell kernel is needed (#178)."""
+    flat_destination, flat_source = destination.view(-1), source.reshape(-1)
+    step = max(1, _CPU_FALLBACK_MAX_BYTES // max(1, source.element_size()))
+    with torch.no_grad():
+        for start in range(0, flat_source.numel(), step):
+            flat_destination[start:start + step].copy_(flat_source[start:start + step])
+    return destination
+
+
+class _MoveInPieces(torch.autograd.Function):
+    """A copy to another device in pieces that autograd can go back through (the backward moves in pieces too)."""
+
+    @staticmethod
+    def forward(ctx, tensor: torch.Tensor, device) -> torch.Tensor:
+        ctx.source_device = tensor.device
+        return _copy_in_pieces(torch.empty(tensor.shape, dtype=tensor.dtype, device=device), tensor)
+
+    @staticmethod
+    def backward(ctx, grad: torch.Tensor):
+        return _move(grad if grad.device.type != "cpu" else grad.contiguous(), ctx.source_device), None
+
+
+def _move(tensor: torch.Tensor, device) -> torch.Tensor:
+    """`tensor.to(device)`, in pieces of at most _CPU_FALLBACK_MAX_BYTES when a contiguous tensor is bigger."""
+    if tensor.numel() * tensor.element_size() <= _CPU_FALLBACK_MAX_BYTES or not tensor.is_contiguous():
+        return tensor.to(device)
+    if torch.is_grad_enabled() and tensor.requires_grad:
+        return _MoveInPieces.apply(tensor, device)
+    return _copy_in_pieces(torch.empty(tensor.shape, dtype=tensor.dtype, device=device), tensor)
+
+
 def _cuda_tensor_to_cpu(tensor: torch.Tensor) -> torch.Tensor:
     if torch.is_grad_enabled() and tensor.requires_grad:
         _dispatch_state.last_path = "differentiable-cuda-to-cpu-copy"
-        return tensor.to("cpu")
+        return _move(tensor, "cpu")
     if tensor.numel() == 0 or tensor.is_contiguous():
-        return tensor.to("cpu")
+        return _move(tensor, "cpu")
     strides = tuple(tensor.stride())
     if any(stride < 0 for stride in strides):
         raise NotImplementedError("Maxwell CPU fallback does not support negative strides")
@@ -734,7 +751,7 @@ def _cuda_tensor_to_cpu(tensor: torch.Tensor) -> torch.Tensor:
     if maximum_offset >= storage_elements - tensor.storage_offset():
         raise RuntimeError("CUDA tensor view exceeds its underlying storage")
     if span_bytes > _CPU_FALLBACK_MAX_BYTES:
-        raise NotImplementedError("Maxwell CPU fallback is limited to 64 MiB per tensor view")
+        raise NotImplementedError("Maxwell CPU fallback is limited to 64 MiB per strided tensor view")
 
     global _bridge
     if _bridge is None:
@@ -821,9 +838,10 @@ def _cpu_fallback(operation: Callable[..., Any], name: str) -> Callable[..., Any
                 f"Maxwell CPU fallback for {name} requires tensors from one CUDA device"
             )
         transfer_bytes = sum(_cuda_tensor_transfer_bytes(tensor) for tensor in cuda_tensors)
-        if transfer_bytes > _CPU_FALLBACK_MAX_BYTES:
+        if transfer_bytes > _CPU_FALLBACK_TOTAL_BYTES:
             raise NotImplementedError(
-                f"Maxwell CPU fallback for {name} is limited to 64 MiB of CUDA inputs"
+                f"Maxwell CPU fallback for {name} is limited to {_CPU_FALLBACK_TOTAL_BYTES // _MIB} MiB of CUDA "
+                "inputs per operation (CUDA_COMPAT_FALLBACK_TOTAL_MIB)"
             )
 
         def move_to_cpu(value: Any) -> Any:
@@ -869,14 +887,15 @@ def _cpu_fallback(operation: Callable[..., Any], name: str) -> Callable[..., Any
                 return sum(result_bytes(item) for item in value.values())
             return 0
 
-        if result_bytes(cpu_result) > _CPU_FALLBACK_MAX_BYTES:
+        if result_bytes(cpu_result) > _CPU_FALLBACK_TOTAL_BYTES:
             raise NotImplementedError(
-                f"Maxwell CPU fallback for {name} is limited to 64 MiB of outputs"
+                f"Maxwell CPU fallback for {name} is limited to {_CPU_FALLBACK_TOTAL_BYTES // _MIB} MiB of outputs "
+                "per operation (CUDA_COMPAT_FALLBACK_TOTAL_MIB)"
             )
 
         def move_to_device(value: Any) -> Any:
             if isinstance(value, torch.Tensor):
-                return value.to(device) if value.device.type == "cpu" else value
+                return _move(value, device) if value.device.type == "cpu" else value
             if isinstance(value, tuple):
                 return tuple(move_to_device(item) for item in value)
             if isinstance(value, list):
@@ -997,8 +1016,10 @@ def _inplace_on_cpu(operation, name: str, args: tuple, kwargs: dict, schema=None
     if len({tensor.device for tensor in cuda_tensors}) != 1:
         raise NotImplementedError(f"Maxwell in-place fallback for {name} requires tensors from one CUDA device")
     read_bytes = sum(_cuda_tensor_transfer_bytes(tensor) for tensor in cuda_tensors if id(tensor) not in staged)
-    if staged_bytes + read_bytes > _CPU_FALLBACK_MAX_BYTES:
-        raise NotImplementedError(f"Maxwell in-place fallback for {name} is limited to 64 MiB of CUDA inputs")
+    if staged_bytes + read_bytes > _CPU_FALLBACK_TOTAL_BYTES:
+        raise NotImplementedError(f"Maxwell in-place fallback for {name} is limited to "
+                                  f"{_CPU_FALLBACK_TOTAL_BYTES // _MIB} MiB of CUDA inputs per operation "
+                                  "(CUDA_COMPAT_FALLBACK_TOTAL_MIB)")
 
     def move_to_cpu(value: Any) -> Any:
         if isinstance(value, torch.Tensor):
@@ -1018,7 +1039,7 @@ def _inplace_on_cpu(operation, name: str, args: tuple, kwargs: dict, schema=None
         raise NotImplementedError(f"Maxwell in-place fallback for {name} only supports value updates")
     # A same-dtype copy from host memory into a contiguous CUDA tensor is a plain memory copy, no kernel.
     for home, cpu_home in write_back:
-        home.copy_(cpu_home)
+        _copy_in_pieces(home, cpu_home)
     _dispatch_state.last_path = f"cpu-fallback-inplace-{name}"
     if schema is None:
         return args[0]
@@ -1094,10 +1115,12 @@ def _factory_on_cpu(operation, schema, name: str, args: tuple, kwargs: dict) -> 
     outputs = _tensor_inputs(cpu_result)
     if not outputs:
         return None
-    if sum(tensor.numel() * tensor.element_size() for tensor in outputs) > _CPU_FALLBACK_MAX_BYTES:
-        raise NotImplementedError(f"Maxwell CPU fallback for {name} is limited to 64 MiB of outputs")
-    result = cpu_result.to(device) if isinstance(cpu_result, torch.Tensor) else type(cpu_result)(
-        item.to(device) if isinstance(item, torch.Tensor) else item for item in cpu_result)
+    if sum(tensor.numel() * tensor.element_size() for tensor in outputs) > _CPU_FALLBACK_TOTAL_BYTES:
+        raise NotImplementedError(f"Maxwell CPU fallback for {name} is limited to "
+                                  f"{_CPU_FALLBACK_TOTAL_BYTES // _MIB} MiB of outputs per operation "
+                                  "(CUDA_COMPAT_FALLBACK_TOTAL_MIB)")
+    result = _move(cpu_result, device) if isinstance(cpu_result, torch.Tensor) else type(cpu_result)(
+        _move(item, device) if isinstance(item, torch.Tensor) else item for item in cpu_result)
     _dispatch_state.last_path = f"cpu-fallback-{name}"
     return result
 
@@ -1128,7 +1151,7 @@ def _foreach_in_pieces(operation, name: str, args: tuple, kwargs: dict, schema, 
         raise NotImplementedError(f"Maxwell CPU fallback for {name} needs tensor lists of one length")
     listed = {id(tensor) for index in lists for tensor in value_at(index)}
     shared = sum(_cuda_tensor_transfer_bytes(tensor) for tensor in _cuda_tensors((args, kwargs)) if id(tensor) not in listed)
-    room = _CPU_FALLBACK_MAX_BYTES - shared
+    room = _CPU_FALLBACK_TOTAL_BYTES - shared
 
     def element_bytes(position: int) -> int:
         return sum(_cuda_tensor_transfer_bytes(value_at(index)[position]) for index in lists
@@ -1148,7 +1171,9 @@ def _foreach_in_pieces(operation, name: str, args: tuple, kwargs: dict, schema, 
         tensors = [value_at(index)[position] for index in lists]
         if (name in _FOREACH_REDUCTIONS or any(not tensor.is_contiguous() for tensor in tensors)
                 or len({tensor.numel() for tensor in tensors}) != 1):
-            raise NotImplementedError(f"Maxwell CPU fallback for {name} is limited to 64 MiB of CUDA inputs")
+            raise NotImplementedError(f"Maxwell CPU fallback for {name} is limited to "
+                                      f"{_CPU_FALLBACK_TOTAL_BYTES // _MIB} MiB of CUDA inputs per operation "
+                                      "(CUDA_COMPAT_FALLBACK_TOTAL_MIB)")
         if current:
             pieces.append(current)
             current, used = [], 0
@@ -1203,9 +1228,10 @@ def _foreach_in_pieces(operation, name: str, args: tuple, kwargs: dict, schema, 
     return assembled
 
 
-def _over_fallback_limit(args: tuple, kwargs: dict) -> bool:
+def _over_fallback_limit(args: tuple, kwargs: dict, limit: int | None = None) -> bool:
     try:
-        return sum(_cuda_tensor_transfer_bytes(tensor) for tensor in _cuda_tensors((args, kwargs))) > _CPU_FALLBACK_MAX_BYTES
+        return sum(_cuda_tensor_transfer_bytes(tensor) for tensor in _cuda_tensors((args, kwargs))) > (
+            _CPU_FALLBACK_TOTAL_BYTES if limit is None else limit)
     except NotImplementedError:
         return False
 
@@ -1277,7 +1303,7 @@ def install() -> None:
     _library.impl("embedding", _embedding)
     _library.impl("layer_norm", _inference_only(_layer_norm, "layer_norm"))
     _library.impl("contiguous", _inference_only(_contiguous, "contiguous"))
-    _library.impl("linear", _linear)
+    _library.impl("linear", _cpu_fallback(torch.ops.aten.linear.default, "linear"))
     _library.impl("mm", _mm)
     _library.impl("bmm", _cpu_fallback(torch.ops.aten.bmm.default, "bmm"))
     _library.impl("_softmax", _cpu_fallback(torch.ops.aten._softmax.default, "softmax"))
