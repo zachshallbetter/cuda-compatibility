@@ -13,11 +13,13 @@
 #   --yes           do not ask before downloading LLVM during setup
 #   --dry-run       print each step without changing anything
 #   --uninstall     remove what setup created, then uninstall the package
+#   --allow-root    run as root outside a container (a disposable VM, say); never with sudo
 #   --version       print the release this script installs
 #   -- ARGS         pass the remaining arguments to `cuda-legacy setup`
 #
 # Needs Linux x86_64, Python 3.10+ in a virtualenv or conda environment with a PyTorch CUDA
-# wheel, and curl or wget. It never uses sudo, and it never changes drivers, the system CUDA
+# wheel, and curl or wget. Run it as your own user; root is accepted only inside a container
+# or with --allow-root. It never uses sudo, and it never changes drivers, the system CUDA
 # install or the system Python.
 #
 # Exit codes: 0 ready; 1 installed, but setup lists what still needs attention; 2 stopped.
@@ -49,6 +51,32 @@ step() {
     [ "$DRY_RUN" = 1 ] || "$@"
 }
 
+# True inside a Docker or Podman container (CUDA_LEGACY_CONTAINER_MARKERS overrides the files, for tests).
+in_container() {
+    [ -n "${container:-}" ] && return 0
+    for marker in ${CUDA_LEGACY_CONTAINER_MARKERS-/.dockerenv /run/.containerenv}; do
+        [ -e "$marker" ] && return 0
+    done
+    return 1
+}
+
+# Refuse root on a workstation, where pip would leave root-owned files in your environment and home.
+# Containers usually run as root and are disposable, so root is fine there; sudo never is.
+check_user() {
+    [ "$(id -u)" = 0 ] || return 0
+    [ -z "${SUDO_USER:-}" ] || stop "Run this as yourself, without sudo." \
+        "Everything installs into your Python environment and your home directory, so it needs no root."
+    if [ "$ALLOW_ROOT" = 1 ]; then
+        note "Running as root (--allow-root)."
+    elif in_container; then
+        note "Running as root inside a container."
+    else
+        stop "Run this as your own user, not root." \
+            "Everything installs into your Python environment and your home directory." \
+            "In a disposable machine where root is the only user, pass --allow-root."
+    fi
+}
+
 usage() {
     cat <<'EOF'
 Install cuda-legacy into the Python environment that holds your PyTorch CUDA wheel,
@@ -60,10 +88,12 @@ Usage: curl -fsSL https://cudacompat.com/install.sh | sh -s -- [options] [-- set
   --yes           do not ask before downloading LLVM during setup
   --dry-run       print each step without changing anything
   --uninstall     remove what setup created, then uninstall the package
+  --allow-root    run as root outside a container (a disposable VM, say); never with sudo
   --version       print the release this script installs
   -- ARGS         pass the remaining arguments to `cuda-legacy setup`
 
 To upgrade, run the same command again: it replaces the package and keeps the saved setup.
+Run it as your own user. Root is accepted inside a container (Docker, Podman) or with --allow-root.
 
 Exit codes: 0 ready; 1 installed, but setup lists what still needs attention; 2 stopped.
 EOF
@@ -283,6 +313,7 @@ main() {
     PIP_DISABLE_PIP_VERSION_CHECK=1
     export PIP_NO_CACHE_DIR PIP_DISABLE_PIP_VERSION_CHECK
     PYTHON=
+    ALLOW_ROOT=0
     YES=0
     DRY_RUN=0
     ACTION=do_install
@@ -297,6 +328,7 @@ main() {
             -y | --yes) YES=1 ;;
             -n | --dry-run) DRY_RUN=1 ;;
             --uninstall) ACTION=do_uninstall ;;
+            --allow-root) ALLOW_ROOT=1 ;;
             --version)
                 printf 'cuda-legacy installer %s\n' "$VERSION"
                 return 0
@@ -314,9 +346,7 @@ main() {
         shift
     done
 
-    [ "$(id -u)" != 0 ] || stop "Run this as your own user, not root or sudo." \
-        "Everything installs into your Python environment and your home directory."
-
+    check_user
     "$ACTION" "$@"
 }
 
