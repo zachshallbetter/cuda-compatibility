@@ -26,7 +26,7 @@ REGISTRY = ROOT / "content" / "pages.json"
 
 # The settled wireframe, drawn like site.js: same projection, depth-banded ink, no fan spin, no labels.
 WIREFRAME_JS = """
-async function wireframe(canvas, ox, oy, scale, alpha) {
+async function wireframe(canvas, ox, oy, scale, alpha, box) {
   const d = await (await fetch(WIRE)).json();
   const { q, n, e } = d, ctx = canvas.getContext("2d"), w = canvas.width, h = canvas.height;
   const yaw = 0.62, pitch = -0.5, f = 3.2, k = scale, buckets = 7, P = new Float32Array(n * 6);
@@ -41,7 +41,19 @@ async function wireframe(canvas, ox, oy, scale, alpha) {
     rot(e[b + 3] / q, e[b + 4] / q, e[b + 5] / q, b + 3);
   }
   const paths = Array.from({ length: buckets }, () => new Path2D());
-  const X = (x, z) => w * ox + x * (k / (f + z)), Y = (y, z) => h * oy - y * (k / (f + z));
+  let kk = k, cx = w * ox, cy = h * oy;
+  if (box) {
+    // Fit the whole drawing inside box = [x0, y0, x1, y1], centred, so no part leaves the image.
+    let x0 = Infinity, x1 = -Infinity, y0 = Infinity, y1 = -Infinity;
+    for (let o = 0; o < n * 6; o += 3) {
+      const u = P[o] / (f + P[o + 2]), v = -P[o + 1] / (f + P[o + 2]);
+      x0 = Math.min(x0, u); x1 = Math.max(x1, u); y0 = Math.min(y0, v); y1 = Math.max(y1, v);
+    }
+    kk = Math.min((box[2] - box[0]) / (x1 - x0), (box[3] - box[1]) / (y1 - y0));
+    cx = (box[0] + box[2]) / 2 - kk * (x0 + x1) / 2;
+    cy = (box[1] + box[3]) / 2 - kk * (y0 + y1) / 2;
+  }
+  const X = (x, z) => cx + x * (kk / (f + z)), Y = (y, z) => cy - y * (kk / (f + z));
   for (let j = 0; j < n; j++) {
     const z = (P[j * 6 + 2] + P[j * 6 + 5]) * 0.5, depth = Math.max(0, Math.min(1, (z + 1.1) / 2.2));
     const p = paths[Math.min(buckets - 1, Math.floor((1 - depth) * buckets))];
@@ -73,20 +85,20 @@ canvas{position:absolute;inset:0}
 .top{position:absolute;left:64px;right:64px;top:52px;display:flex;justify-content:space-between;align-items:center}
 .brand{display:flex;align-items:center;gap:14px;font-weight:800;font-stretch:110%;font-size:25px;letter-spacing:-0.02em}
 .chip{background:#FFD400;color:#000;border:2px solid #000;padding:7px 12px;font:500 15px "Martian Mono",monospace;letter-spacing:0.06em}
-.body{position:absolute;left:64px;top:150px;width:720px;display:flex;flex-direction:column;gap:22px}
+.meta{position:absolute;left:64px;right:64px;top:104px;border-bottom:3px solid #000;padding-bottom:14px;display:flex;justify-content:space-between;align-items:baseline;gap:24px}
+.body{position:absolute;left:64px;top:176px;width:660px;display:flex;flex-direction:column;gap:20px}
 .eyebrow{font:600 17px "Archivo",sans-serif;letter-spacing:0.12em;text-transform:uppercase;color:#4A4A46}
 h1{font-weight:800;font-stretch:112%;letter-spacing:-0.035em;line-height:0.98;color:#000}
 h1 .ink{color:#1F3DFF}
-.sum{font-size:25px;line-height:1.36;color:#3A3A36;max-width:720px}
-.foot{position:absolute;left:64px;right:64px;bottom:52px;border-top:3px solid #000;padding-top:18px;display:flex;justify-content:space-between;align-items:center}
-.url{font:500 19px "Martian Mono",monospace;color:#000}
-.tag{font-weight:800;font-size:17px;letter-spacing:0.08em;text-transform:uppercase}
+.sum{font-size:25px;line-height:1.36;color:#3A3A36;max-width:660px}
+.url{font:500 18px "Martian Mono",monospace;color:#000;white-space:nowrap}
+.tag{font-weight:800;font-size:16px;letter-spacing:0.08em;text-transform:uppercase;white-space:nowrap}
 </style></head><body>
 <canvas id="c" width="1200" height="630"></canvas>
 MARKS
 <div class="top"><div class="brand"><svg width="30" height="30" viewBox="0 0 32 32" fill="none" stroke="#000" stroke-width="3"><rect x="5" y="5" width="22" height="22"/><rect x="12" y="12" width="8" height="8" fill="#000" stroke="none"/></svg>CUDA Compatibility</div><span class="chip">SHEET</span></div>
+<div class="meta"><span class="url" id="u">URL</span><span class="tag">TAG</span></div>
 <div class="body"><p class="eyebrow">EYEBROW</p><h1 id="t">TITLE</h1><p class="sum">SUMMARY</p></div>
-<div class="foot"><span class="url">URL</span><span class="tag">TAG</span></div>
 <script>
 const WIRE = "WIREURL";
 WIREFRAME_JS
@@ -94,13 +106,16 @@ const t = document.getElementById("t");
 document.fonts.ready.then(async () => {
   let size = 84;
   t.style.fontSize = size + "px";
-  // Shrink the title until the whole text block clears the footer rule (top at 575 - 18 px padding).
-  const body = document.querySelector(".body"), sum = document.querySelector(".sum");
-  const fits = () => t.getBoundingClientRect().height <= 250 && body.getBoundingClientRect().bottom <= 500;
+  // X lays the page title over the bottom-left of the image, so the text ends by y=490 and the
+  // bottom of the card carries nothing a reader needs. The URL sits under the brand row instead.
+  const body = document.querySelector(".body"), sum = document.querySelector(".sum"), u = document.getElementById("u");
+  let us = 18;
+  while (u.parentElement.scrollWidth > u.parentElement.clientWidth && us > 14) { us -= 1; u.style.fontSize = us + "px"; }
+  const fits = () => t.getBoundingClientRect().height <= 230 && body.getBoundingClientRect().bottom <= 490;
   while (!fits() && size > 44) { size -= 2; t.style.fontSize = size + "px"; }
   let small = 25;
   while (!fits() && small > 20) { small -= 1; sum.style.fontSize = small + "px"; }
-  await wireframe(document.getElementById("c"), 0.87, 0.56, 1450, 0.55);
+  await wireframe(document.getElementById("c"), 0, 0, 0, 0.6, [744, 176, 1152, 582]);
   document.title = "ready";
 });
 </script></body></html>"""
