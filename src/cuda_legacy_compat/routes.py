@@ -41,9 +41,15 @@ NATIVE = (
     (("nll_loss_forward", "nll_loss_backward"), "Negative log likelihood",
      "1D or 2D float32 log-probabilities with int64 CUDA targets: mean, sum or none, ignore_index and class weights, "
      "and its gradient; cross_entropy runs through it. A target out of range raises IndexError."),
-    (("clone", "contiguous"), "Copies of strided views",
+    (("_foreach_mul_.Scalar", "_foreach_add_.Scalar", "_foreach_div_.ScalarList", "_foreach_lerp_.Scalar",
+      "_foreach_addcmul_.Scalar", "_foreach_addcdiv_.ScalarList", "_foreach_sqrt", "_foreach_add.List"),
+     "Optimizer steps",
+     "Adam, AdamW and momentum or weight-decay SGD's default foreach updates over contiguous float32 parameters on "
+     "one device. Other tensors (float16, another device) form their own group, which runs on the CPU; amsgrad, RMSprop "
+     "and Adagrad's other steps use the CPU route."),
+    (("clone", "contiguous", "select_backward"), "Copies of strided views",
      "Any dtype of 1, 2, 4 or 8 bytes, up to six dimensions (transposes, slices, broadcasts). Training through "
-     "contiguous uses PyTorch's decomposition onto clone."),
+     "contiguous uses PyTorch's decomposition onto clone; the gradient of x[:, i] and unbind (float32) too."),
     (("mm",), "Matrix multiplication",
      "2D float32 of any size with nonnegative strides (transposed views included), on a tiled kernel; training "
      "too. Other dtypes use the CPU fallback."),

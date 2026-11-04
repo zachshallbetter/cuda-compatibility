@@ -450,3 +450,29 @@ extern "C" __global__ void compat_nll_loss_backward_f32(const float* grad_output
     grad_input[n * columns + t] = -(weight != nullptr ? weight[t] : 1.0f) * g;
   }
 }
+
+// ── Optimizer steps (#184) ──────────────────────────────────────────────────────────────────────────────────
+// Elementwise over contiguous float32, as PyTorch's CPU kernels compute them: op 0 x*s, 1 lerp from x toward y by s,
+// 2 x + s*y*z, 3 sqrt(x), 4 x/s, 5 x+s, 6 x + s*y/z. `out` may be x (the in-place forms).
+extern "C" __global__ void compat_pointwise_f32(const float* x, const float* y, const float* z, float* out,
+                                                int64_t count, int op, float s) {
+  for (int64_t i = blockIdx.x * static_cast<int64_t>(blockDim.x) + threadIdx.x; i < count;
+       i += static_cast<int64_t>(gridDim.x) * blockDim.x) {
+    const float a = x[i];
+    float value;
+    switch (op) {
+      case 0: value = __fmul_rn(a, s); break;
+      case 1: {
+        const float d = __fsub_rn(y[i], a);
+        value = fabsf(s) < 0.5f ? __fmaf_rn(s, d, a) : __fmaf_rn(-d, __fsub_rn(1.0f, s), y[i]);
+        break;
+      }
+      case 2: value = __fadd_rn(a, __fmul_rn(__fmul_rn(s, y[i]), z[i])); break;
+      case 3: value = __fsqrt_rn(a); break;
+      case 4: value = __fdiv_rn(a, s); break;
+      case 5: value = __fadd_rn(a, s); break;
+      default: value = __fadd_rn(a, __fdiv_rn(__fmul_rn(s, y[i]), z[i])); break;
+    }
+    out[i] = value;
+  }
+}

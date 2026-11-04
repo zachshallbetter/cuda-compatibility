@@ -46,6 +46,17 @@ print(f"{'OK  ' if same else 'FAIL'} {'a clone keeps -0.0, NaN and inf':52s}")
 if not same:
     fails.append("special values")
 
+# The gradient of a selected slice (select_backward): x[:, i] and unbind.
+src = torch.randn(4, 3, 5)
+sc, sg = src.clone().requires_grad_(), src.clone().cuda().requires_grad_()
+(sc[:, 1] * 2).sum().backward(); (sg[:, 1] * 2).sum().backward()
+check("gradient of x[:, 1]", sg.grad, sc.grad, tol=1e-30)
+sc, sg = src.clone().requires_grad_(), src.clone().cuda().requires_grad_()
+w3 = torch.randn(4, 5)
+sum((t * w3 * k) for k, t in enumerate(sc.unbind(1))).sum().backward()
+sum((t * w3.cuda() * k) for k, t in enumerate(sg.unbind(1))).sum().backward()
+check("gradient through unbind", sg.grad, sc.grad, "")
+
 # In-place add at any size, broadcast, a number; SGD's foreach step.
 x, y = torch.randn(3_000_000), torch.randn(3_000_000)
 xg = x.cuda()
