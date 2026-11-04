@@ -1,6 +1,6 @@
 """Render the 1200x630 share cards and the no-JavaScript hero wireframe with headless Chrome.
 
-Usage: python3 scripts/build_social_cards.py [--chrome PATH]
+Usage: python3 scripts/build_social_cards.py [--chrome PATH] [--no-wireframe] [registry path ...]
 Each card takes its title, summary and sheet from the page it represents, so a card shared on its own says
 what the page is. Cards are ink on paper, matching the site; the wireframe is drawn from the same data the
 home page animates (site/assets/gm200-wireframe.json), settled and unlabelled.
@@ -159,12 +159,18 @@ def shoot(chrome: str, html: str, out: Path, size: tuple[int, int], transparent:
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     parser.add_argument("--chrome", default=CHROME)
+    parser.add_argument("pages", nargs="*", help="registry paths to render (default: every page)")
+    parser.add_argument("--no-wireframe", action="store_true", help="skip re-rendering the no-JavaScript wireframe")
     args = parser.parse_args()
     for page in cards():
+        if args.pages and page["path"] not in args.pages:
+            continue
         card = page["image"].removeprefix("https://cudacompat.com/")
         shoot(args.chrome, card_html(page), SITE / card, (1200, 630))
         print(f"wrote site/{card}")
     hero = HERO.replace("WIREFRAME_JS", WIREFRAME_JS).replace("WIREURL", (SITE / "assets/gm200-wireframe.json").as_uri())
+    if args.no_wireframe:
+        return 0
     out = SITE / "assets/gm200-wireframe.png"
     shoot(args.chrome, hero, out, (2400, 1500), transparent=True)
     from PIL import Image  # only this step needs Pillow: crop to the drawing and store ink as grey + alpha

@@ -26,6 +26,9 @@ This is a convenience index for people and automated agents. It is not a standar
 - [AI answer attribution pilot: baseline results](https://cudacompat.com/research/attribution-pilot.html): 108 signed-out answers from Perplexity, Google and Bing on 3 November 2026: none named the author, several credited NVIDIA, and the site missed page one.
 - [CUDA 12.9 to 13.0: what changed for older GPUs](https://cudacompat.com/research/cuda-12-9-to-13-0-changes.html): The CUDA 12.9 to 13.0 toolkit changes that matter for older GPUs, taken from NVIDIA's release notes, with component versions and what still needs checking.
 
+## Articles
+- [Running PyTorch's CUDA 13 wheel on a 2015 Maxwell GPU](https://cudacompat.com/articles/pytorch-cuda-13-on-maxwell.html): How a 2015 GTX TITAN X runs part of PyTorch's CUDA 13 wheel: kernels built for the real chip, a capped CPU fallback, what was shown, and where it stops.
+
 ## Machine-readable files
 - Full text of every page, as Markdown: https://cudacompat.com/llms-full.txt
 - Canonical page list: https://cudacompat.com/sitemap.xml
