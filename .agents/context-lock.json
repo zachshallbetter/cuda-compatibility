@@ -18,14 +18,14 @@
     "repositories": [
       {
         "path": ".",
-        "commit": "0d288c99a18c154a4277d8d446c09873a01813ac",
+        "commit": "9eebedf9344bbdf1739bc524b0cab85c3e9aeda0",
         "branch": "feat/native-gemm",
-        "dirty": true,
+        "dirty": false,
         "remote": "https://github.com/zachshallbetter/cuda-compatibility.git"
       }
     ]
   },
-  "aggregateSourceDigest": "f186cc9659bc5ee66ec12cdf6961c5cb7b5e0410447007f5f4d5e545f8f058a2",
+  "aggregateSourceDigest": "7298a9d11029306dc23b57e0c0c2323a80b19037bf6313c76e240ab5709362fc",
   "sources": [
     {
       "path": ".agents/acp/README.md",
@@ -975,7 +975,7 @@
     {
       "path": "pyproject.toml",
       "bytes": 747,
-      "sha256": "b1fa26853e7394d5f26977185851f179d45d310756c29f8b51a42153769427f6"
+      "sha256": "2690522288796de3829be4a62f4e8413d819219831cce72f00a8032d60f4f00e"
     },
     {
       "path": "schemas/vendor/dpp-0.3.0/SOURCE.json",
@@ -1230,7 +1230,7 @@
     {
       "path": "src/cuda_legacy_compat/__init__.py",
       "bytes": 91,
-      "sha256": "df0640575d92ddb4f8320a1d46da2a854b6f4d837bb6e417e5e8344b30a02798"
+      "sha256": "01c3c2ab8931cbeb1ca0df03506fe76540438cbe78318bcc5847dc0eb87e2901"
     },
     {
       "path": "src/cuda_legacy_compat/cli.py",
