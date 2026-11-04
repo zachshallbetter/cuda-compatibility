@@ -1345,10 +1345,11 @@ def _nll_loss_backward(grad_output: torch.Tensor, self: torch.Tensor, target: to
 
 
 @_falls_back_to_cpu("relu")
-def _relu(self: torch.Tensor) -> torch.Tensor:
+def _relu(self: torch.Tensor, output: torch.Tensor | None = None) -> torch.Tensor:
+    """The native ReLU into a new tensor, or into `output`: output=self is relu_ (elementwise, so aliasing is safe)."""
     if not self.is_cuda:
         raise NotImplementedError("Maxwell ReLU requires a CUDA tensor")
-    if self.requires_grad:
+    if self.requires_grad and output is None:  # relu_ arrives below autograd, which has already recorded it
         return _cpu_fallback(torch.ops.aten.relu.default, "relu")(self)
     if self.layout != torch.strided or not self.is_contiguous():
         raise NotImplementedError("Maxwell ReLU requires a contiguous dense tensor")
@@ -1356,7 +1357,7 @@ def _relu(self: torch.Tensor) -> torch.Tensor:
         raise NotImplementedError("Maxwell ReLU supports float32 tensors only")
     if self.numel() > 1048576:
         raise NotImplementedError("Maxwell float32 ReLU is limited to 1,048,576 elements")
-    output = torch.empty_like(self)
+    output = torch.empty_like(self) if output is None else output
     if self.numel() == 0:
         _dispatch_state.last_path = "llvm-sm52-relu-f32-empty"
         return output
@@ -2014,6 +2015,11 @@ class _MaxwellInferenceFallback(TorchDispatchMode):
             handled, result = _single_as_foreach(operation, args, kwargs)
             if handled:
                 return result
+            if str(operation) == "aten.relu_.default" and isinstance(args[0], torch.Tensor) and args[0].is_cuda:
+                try:  # ReLU(inplace=True) in a CNN: the native kernel in place, not a CPU round trip of the activation
+                    return _relu.__wrapped__(args[0], args[0])
+                except NotImplementedError:
+                    pass
             if str(operation) in ("aten.convolution.default", "aten.convolution_backward.default"):
                 try:
                     handled, result = _conv_on_gpu(str(operation), args)
