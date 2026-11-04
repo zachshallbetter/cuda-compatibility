@@ -347,6 +347,93 @@ def _foreach_add_list(self: list[torch.Tensor], other: list[torch.Tensor], *, al
         _add_inplace(tensor, update, alpha=alpha)
 
 
+# compat_pointwise_f32's operations: the steps Adam, AdamW and momentum SGD take through their foreach updates.
+_MUL, _LERP, _ADDCMUL, _SQRT, _DIV, _ADD_SCALAR, _ADDCDIV = range(7)
+
+
+def _pointwise(op: int, x: torch.Tensor, y: torch.Tensor | None = None, z: torch.Tensor | None = None,
+               scalar: float = 0.0, out: torch.Tensor | None = None) -> None:
+    """One pointwise optimizer step over contiguous float32 tensors of one shape (#184); `out` defaults to x."""
+    out = x if out is None else out
+    for t in (x, y, z, out):
+        if t is not None and t is not x and t is not out and _overlaps_otherwise(t, out):
+            raise NotImplementedError("Maxwell optimizer step refuses an operand that overlaps its output")
+    if x.numel():
+        _launch("compat_pointwise_f32", _blocks(x.numel()), _ptr(x), _ptr(y), _ptr(z), _ptr(out),
+                ctypes.c_int64(x.numel()), ctypes.c_int(op), ctypes.c_float(scalar), device=x.device)
+
+
+def _foreach_ready(*lists: list[torch.Tensor]) -> bool:
+    """Whether every tensor of the foreach call is contiguous float32 on one CUDA device, paired by shape."""
+    if not lists or not lists[0]:
+        return False
+    first = lists[0]
+    if any(len(other) != len(first) for other in lists[1:]):
+        return False
+    try:
+        for index, tensor in enumerate(first):
+            group = [tensor] + [other[index] for other in lists[1:]]
+            _f32(*group, contiguous=True)
+            if any(t.shape != tensor.shape for t in group):
+                return False
+    except NotImplementedError:
+        return False
+    return len({t.device for t in first}) == 1
+
+
+def _foreach_on_cpu(operation, args: tuple, kwargs: dict) -> Any:
+    """A foreach call the kernel can't take goes the way the dispatch mode would send it: in pieces over the
+    total limit, in place on the CPU for an in-place form, otherwise the CPU fallback."""
+    schema = operation._schema
+    if _over_fallback_limit(args, kwargs):
+        return _foreach_in_pieces(operation, schema.name, args, kwargs, schema, _writes_only_self(schema))
+    if _writes_only_self(schema):
+        return _inplace_on_cpu(operation, schema.name, args, kwargs)
+    return _cpu_fallback(operation, schema.name)(*args, **kwargs)
+
+
+def _foreach_kernel(overload: str):
+    """A registered foreach operator (_FOREACH): all tensors ready, the kernel per tensor; otherwise the CPU route
+    above."""
+    step, outputs = _FOREACH[overload]
+    name, _, variant = overload.partition(".")
+    operation = getattr(getattr(torch.ops.aten, name), variant or "default")
+
+    def run(*args: Any, **kwargs: Any) -> Any:
+        tensor_lists = [a for a in args if isinstance(a, (list, tuple)) and a and isinstance(a[0], torch.Tensor)]
+        if not _foreach_ready(*tensor_lists):
+            return _foreach_on_cpu(operation, args, kwargs)
+        results = [torch.empty_like(t) for t in tensor_lists[0]] if outputs else None
+        for index in range(len(tensor_lists[0])):
+            step(index, *args, results=results, **kwargs)
+        _dispatch_state.last_path = "llvm-sm52-foreach-f32"
+        return results
+    return run
+
+
+def _scalar_at(scalars, index: int) -> float:
+    value = scalars[index] if isinstance(scalars, (list, tuple)) else scalars
+    return float(value.item() if isinstance(value, torch.Tensor) else value)
+
+
+_FOREACH = {
+    "_foreach_mul_.Scalar": (lambda i, xs, scalar, results=None: _pointwise(_MUL, xs[i], scalar=float(scalar)), False),
+    "_foreach_add_.Scalar": (lambda i, xs, scalar, results=None: _pointwise(_ADD_SCALAR, xs[i], scalar=float(scalar)),
+                             False),
+    "_foreach_div_.ScalarList": (lambda i, xs, scalars, results=None: _pointwise(_DIV, xs[i],
+                                                                                scalar=_scalar_at(scalars, i)), False),
+    "_foreach_lerp_.Scalar": (lambda i, xs, ends, weight, results=None: _pointwise(_LERP, xs[i], ends[i],
+                                                                                  scalar=float(weight)), False),
+    "_foreach_addcmul_.Scalar": (lambda i, xs, t1, t2, value=1, results=None: _pointwise(
+        _ADDCMUL, xs[i], t1[i], t2[i], scalar=float(value)), False),
+    "_foreach_addcdiv_.ScalarList": (lambda i, xs, t1, t2, scalars, results=None: _pointwise(
+        _ADDCDIV, xs[i], t1[i], t2[i], scalar=_scalar_at(scalars, i)), False),
+    "_foreach_sqrt": (lambda i, xs, results=None: _pointwise(_SQRT, xs[i], out=results[i]), True),
+    "_foreach_add.List": (lambda i, xs, others, alpha=1, results=None: _binary(xs[i], others[i], 0, float(alpha),
+                                                                              out=results[i]), True),
+}
+
+
 class _Shape(ctypes.Structure):
     """compat_kernels.cu's CompatShape: up to six sizes and two operands' strides, passed by value."""
     _fields_ = [("size", ctypes.c_int64 * 6), ("a", ctypes.c_int64 * 6), ("b", ctypes.c_int64 * 6)]
@@ -1142,6 +1229,19 @@ def _clone(self: torch.Tensor, *, memory_format=None) -> torch.Tensor:
     return output
 
 
+@_falls_back_to_cpu("select_backward")
+def _select_backward(grad_output: torch.Tensor, input_sizes, dim: int, index: int) -> torch.Tensor:
+    """x[:, i] and unbind (attention's q, k, v) in training (#184): zeros with the gradient copied into its slice."""
+    _f32(grad_output)
+    output = torch.empty([int(size) for size in input_sizes], dtype=torch.float32, device=grad_output.device)
+    if output.numel():
+        _launch("compat_unary_f32", _blocks(output.numel()), _ptr(output), _ptr(output), ctypes.c_int64(output.numel()),
+                ctypes.c_int(2), ctypes.c_float(0.0), device=output.device)
+        _strided_copy(grad_output, output.select(int(dim), int(index)))
+    _dispatch_state.last_path = "llvm-sm52-select-backward-f32"
+    return output
+
+
 def _contiguous(
     input: torch.Tensor,
     memory_format: torch.memory_format = torch.contiguous_format,
@@ -1679,7 +1779,16 @@ def install() -> None:
     _library.impl("add.Tensor", _add)
     _library.impl("add_.Tensor", _add_inplace)
     _library.impl("_foreach_add_.List", _foreach_add_list)
+    _library.impl("_foreach_mul_.Scalar", _foreach_kernel("_foreach_mul_.Scalar"))
+    _library.impl("_foreach_add_.Scalar", _foreach_kernel("_foreach_add_.Scalar"))
+    _library.impl("_foreach_div_.ScalarList", _foreach_kernel("_foreach_div_.ScalarList"))
+    _library.impl("_foreach_lerp_.Scalar", _foreach_kernel("_foreach_lerp_.Scalar"))
+    _library.impl("_foreach_addcmul_.Scalar", _foreach_kernel("_foreach_addcmul_.Scalar"))
+    _library.impl("_foreach_addcdiv_.ScalarList", _foreach_kernel("_foreach_addcdiv_.ScalarList"))
+    _library.impl("_foreach_sqrt", _foreach_kernel("_foreach_sqrt"))
+    _library.impl("_foreach_add.List", _foreach_kernel("_foreach_add.List"))
     _library.impl("clone", _clone)
+    _library.impl("select_backward", _select_backward)
     _library.impl("arange", _arange)
     _library.impl("embedding", _embedding)
     _library.impl("layer_norm", _inference_only(_layer_norm, "layer_norm"))
