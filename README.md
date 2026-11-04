@@ -20,7 +20,7 @@ On Linux x86_64, one command installs the release into the Python environment th
 curl -fsSL https://cudacompat.com/install.sh | sh
 ```
 
-It never uses sudo and changes no driver, system CUDA install or system Python. Read it before running it: [`site/install.sh`](site/install.sh), published with its checksum at `https://cudacompat.com/install.sh.sha256`. Add `-s -- --dry-run` to print each step, `--yes` to skip the question before the LLVM download, `--python PATH` to choose the environment, or `--uninstall` to remove what it installed. It exits 0 when ready, 1 when setup lists something still to fix, and 2 when it stopped.
+It never uses sudo and changes no driver, system CUDA install or system Python. Read it before running it: [`site/install.sh`](site/install.sh), published with its checksum at `https://cudacompat.com/install.sh.sha256`. Add `-s -- --dry-run` to print each step, `--yes` to skip the question before the LLVM download, `--python PATH` to choose the environment, or `--uninstall` to remove what it installed. To upgrade, run the same command again: it replaces the package and keeps the saved setup. It exits 0 when ready, 1 when setup lists something still to fix, and 2 when it stopped.
 
 To install by hand instead, put the package into a Python environment you control. No NVIDIA files are bundled.
 

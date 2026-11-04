@@ -63,6 +63,8 @@ Usage: curl -fsSL https://cudacompat.com/install.sh | sh -s -- [options] [-- set
   --version       print the release this script installs
   -- ARGS         pass the remaining arguments to `cuda-legacy setup`
 
+To upgrade, run the same command again: it replaces the package and keeps the saved setup.
+
 Exit codes: 0 ready; 1 installed, but setup lists what still needs attention; 2 stopped.
 EOF
 }
@@ -78,6 +80,26 @@ has_cuda_torch() {
         *+cu*) return 0 ;;
         *) return 1 ;;
     esac
+}
+
+# The installed cuda-legacy version, empty when it is not installed.
+package_version() {
+    "$1" -c 'from importlib.metadata import version; print(version("cuda-legacy-compat"))' 2>/dev/null || true
+}
+
+# What this run does to the environment, in words: install, upgrade, reinstall or replace.
+change_line() {
+    installed=$(package_version "$1")
+    if [ -z "$installed" ]; then
+        printf 'Installing cuda-legacy %s into %s' "$VERSION" "$1"
+    elif [ "$installed" = "$VERSION" ]; then
+        printf 'Reinstalling cuda-legacy %s in %s' "$VERSION" "$1"
+    elif "$1" -c 'import sys; a, b = (tuple(int(p) for p in v.split(".")) for v in sys.argv[1:]); sys.exit(0 if a < b else 1)' \
+        "$installed" "$VERSION" 2>/dev/null; then
+        printf 'Upgrading cuda-legacy %s to %s in %s' "$installed" "$VERSION" "$1"
+    else
+        printf 'Replacing cuda-legacy %s with %s in %s' "$installed" "$VERSION" "$1"
+    fi
 }
 
 has_package() {
@@ -193,7 +215,7 @@ do_install() {
         note "SHA-256 verified"
     fi
 
-    say "Installing into $py"
+    say "$(change_line "$py")"
     step "$py" -m pip install --no-input --quiet --upgrade "$archive" ||
         stop "pip could not install $PACKAGE into $py." "pip's message is above. Nothing else was changed."
 
@@ -219,6 +241,7 @@ do_install() {
         0)
             say "Ready"
             note "Run a script: $bin run app.py"
+            note "Upgrade later: run the same command again"
             note "Remove it all: curl -fsSL https://cudacompat.com/install.sh | sh -s -- --uninstall"
             ;;
         1)

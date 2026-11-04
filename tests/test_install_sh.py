@@ -140,6 +140,21 @@ class InstallScriptTests(unittest.TestCase):
         self.assertIn("Dry run: nothing was changed", result.stdout)
         self.assertTrue(self.home_is_empty())
 
+    def test_says_whether_it_installs_upgrades_or_reinstalls(self) -> None:
+        pinned = _script_value("VERSION")
+        cases = [(None, f"Installing cuda-legacy {pinned} into"), ("0.1.0", f"Upgrading cuda-legacy 0.1.0 to {pinned} in"),
+                 (pinned, f"Reinstalling cuda-legacy {pinned} in"), ("9.0.0", f"Replacing cuda-legacy 9.0.0 with {pinned} in")]
+        for installed, expected in cases:
+            env = self.make_torch_env(f"torch-env-{installed}", with_pip=False)
+            if installed:
+                site = next((env / "lib").glob("python*/site-packages"))
+                info = site / f"cuda_legacy_compat-{installed}.dist-info"
+                info.mkdir()
+                (info / "METADATA").write_text(f"Metadata-Version: 2.1\nName: cuda-legacy-compat\nVersion: {installed}\n", encoding="utf-8")
+            result = self.run_script("--dry-run", "--yes", "--python", str(env / "bin" / "python"), CUDA_LEGACY_ARCHIVE_SHA256="0" * 64)
+            self.assertEqual(result.returncode, 0, result.stderr)
+            self.assertIn(expected, result.stdout)
+
     def test_asks_for_yes_without_a_terminal(self) -> None:
         result = self.run_script("--python", str(self.python), CUDA_LEGACY_ARCHIVE_SHA256="0" * 64)
         self.assertEqual(result.returncode, 2)

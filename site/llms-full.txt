@@ -396,7 +396,7 @@ The package bundles no NVIDIA toolkit files, runtime libraries, headers, or driv
 curl -fsSL https://cudacompat.com/install.sh | sh
 ```
 
-On Linux x86_64, the installer finds the environment that holds the PyTorch CUDA wheel, installs the release into it after checking its SHA-256, and runs cuda-legacy setup. It never uses sudo. Read install.sh first and compare it with its checksum. Add -s -- --dry-run to see each step, --yes to skip the download question, or --uninstall to remove everything it installed. The steps below do the same by hand.
+On Linux x86_64, the installer finds the environment that holds the PyTorch CUDA wheel, installs the release into it after checking its SHA-256, and runs cuda-legacy setup. It never uses sudo. Read install.sh first and compare it with its checksum. Add -s -- --dry-run to see each step, --yes to skip the download question, or --uninstall to remove everything it installed. To upgrade, run the same command again. The steps below do the same by hand.
 
 1
 
