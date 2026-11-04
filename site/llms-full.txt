@@ -22,7 +22,7 @@ GM200 reference card, compute capability 5.2. The only hardware tested so far. E
 
 - **Reference cards** 3
 
-- **Native operators** 39
+- **Native operators** 40
 
 - **Claims of universal support** 0
 
@@ -517,7 +517,7 @@ By Zach Shallbetter · Sheet 04 of 10 · Updated 4 November 2026
 ## Native GPU implementations
 sm_52 kernel
 
-These 20 registered cases cover 39 native operators: addition (in place too), the foreach steps of Adam, AdamW and SGD, subtraction, multiplication and division with broadcasting, range creation, embedding, layer normalization (inference and training), negative log likelihood, copies of strided views, matrix multiplication with and without bias, batched matrix multiplication, ReLU, GELU, softmax, safe softmax and log-softmax, sum over dimensions, fill and max pooling, with the gradients of each. They run through LLVM-generated PTX targeting the real Maxwell device and the CUDA Driver API bridge; other dtypes and layouts take the CPU fallback below.
+These 20 registered cases cover 40 native operators: addition (in place too), the foreach steps of Adam, AdamW and SGD, subtraction, multiplication and division with broadcasting, range creation, embedding, layer normalization (inference and training), negative log likelihood, copies of strided views, matrix multiplication with and without bias, batched matrix multiplication, ReLU, GELU, softmax, safe softmax and log-softmax, sum and mean over dimensions, fill and max pooling, with the gradients of each. They run through LLVM-generated PTX targeting the real Maxwell device and the CUDA Driver API bridge; other dtypes and layouts take the CPU fallback below.
 
 | No. | Operation | Supported case |
 | --- | --- | --- |
@@ -534,7 +534,7 @@ These 20 registered cases cover 39 native operators: addition (in place too), th
 | 11 | GELU | Contiguous float32, exact or tanh, and its gradient. |
 | 12 | Softmax and log-softmax | Contiguous float32 over the last dimension, masked (-inf) entries included, and their gradients. Safe softmax (attention with a mask) gives zeros for a fully masked row. |
 | 13 | Layer normalization in training | Contiguous float32 over the trailing dimensions, with or without weight and bias, and its gradients. |
-| 14 | Sum over dimensions | float32, any dimensions (up to six), keepdim or not. |
+| 14 | Sum and mean over dimensions | float32, any dimensions (up to six), keepdim or not. |
 | 15 | Fill | Contiguous float32 tensors (fill_, zero_). Other dtypes are filled in place on the CPU. |
 | 16 | ReLU | Contiguous float32 tensors up to 1,048,576 values. Other cases, and training, use the CPU fallback. |
 | 17 | Negative log likelihood | 1D or 2D float32 log-probabilities with int64 CUDA targets: mean, sum or none, ignore_index and class weights, and its gradient. cross_entropy runs through it; a target out of range raises IndexError. |

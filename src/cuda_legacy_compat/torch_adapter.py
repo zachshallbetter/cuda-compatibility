@@ -921,6 +921,17 @@ def _sum(self: torch.Tensor, dim, keepdim: bool = False, *, dtype=None) -> torch
     return output
 
 
+@_falls_back_to_cpu("mean.dim")
+def _mean(self: torch.Tensor, dim, keepdim: bool = False, *, dtype=None) -> torch.Tensor:
+    """The native sum divided in place by the reduced count: adaptive average pooling to 1x1 in a CNN (#184)."""
+    output = _sum.__wrapped__(self, dim, keepdim, dtype=dtype)
+    count = self.numel() // max(output.numel(), 1) if self.numel() else 0
+    if output.numel():
+        _binary(output, float(count), 3, out=output)  # 0/0 is NaN, as PyTorch's mean of nothing
+    _dispatch_state.last_path = "llvm-sm52-mean-f32"
+    return output
+
+
 @_falls_back_to_cpu("fill_.Scalar")
 def _fill(self: torch.Tensor, value) -> torch.Tensor:
     _f32(self, contiguous=True)
@@ -2117,6 +2128,7 @@ def install() -> None:
     _library.impl("mul.Tensor", _mul)
     _library.impl("div.Tensor", _div)
     _library.impl("sum.dim_IntList", _sum)
+    _library.impl("mean.dim", _mean)
     _library.impl("clamp_min", _cpu_fallback(torch.ops.aten.clamp_min.default, "clamp_min"))
     _library.impl("cat", _cpu_fallback(torch.ops.aten.cat.default, "cat"))
     _library.impl("relu", _relu)

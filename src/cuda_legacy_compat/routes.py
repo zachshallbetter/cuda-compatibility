@@ -26,7 +26,8 @@ NATIVE = (
      "(attention with a mask) gives zeros for a fully masked row."),
     (("native_layer_norm", "native_layer_norm_backward"), "Layer normalization in training",
      "Contiguous float32 over the trailing dimensions, with or without weight and bias, and its gradients."),
-    (("sum.dim_IntList",), "Sum over dimensions", "float32, any dimensions (up to six), keepdim or not."),
+    (("sum.dim_IntList", "mean.dim"), "Sum and mean over dimensions",
+     "float32, any dimensions (up to six), keepdim or not."),
     (("fill_.Scalar", "zero_"), "Fill", "Contiguous float32 tensors. Other dtypes are filled in place on the CPU."),
     (("add_.Tensor", "_foreach_add_.List"), "Float32 in-place addition",
      "A contiguous float32 tensor of any size updated by a broadcast float32 tensor or a number, with any alpha; "
