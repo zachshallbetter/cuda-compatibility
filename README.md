@@ -57,7 +57,7 @@ The `inspect` and `audit` commands require Python 3.10 or newer and no GPU. `run
 | PyTorch | Official `torch 2.14.0+cu130`; CUDA Runtime 13.0.96 |
 | GPU / driver | GTX TITAN X GM200, `sm_52`; NVIDIA driver 580.178.04 |
 | Compiler | LLVM/Clang 23.1.4 with NVPTX support |
-| Host development files | CUDA 12.4 headers (`cuda.h`, `cuda_runtime.h`), driver library/linker access, `g++` |
+| Host development files | CUDA 12.4 headers (`cuda.h`, `cuda_runtime.h`; setup fetches them if the system has none), driver library/linker access, `g++` |
 
 Other configurations may work, but are not yet validated. The adapter requires every visible GPU to report `sm_52`. It uses the host driver and CUDA 12.4 development interface to build and load supported kernels; installing the Python package does not install or change those system components.
 
@@ -78,7 +78,7 @@ cuda-legacy help run
 
 `inspect` prints local GPU/compiler inventory as JSON. `profiles` lists or explains the version-pinned targets. `doctor` checks the prerequisites for the current experimental launcher; `ready` means those prerequisites were found, not that a workload is supported. `audit` compares inventory with a target profile. Its `compatible` result covers only the profile's recorded toolkit and compute-capability checks, not operator, library, driver, or workload execution. Audit exits 0 for compatible, 1 for incompatible, 2 for an invalid profile, and 3 when compatibility is unknown. `doctor` exits 0 when all checked launcher prerequisites are present and 1 otherwise.
 
-`setup` finds the Python environment that holds PyTorch and the CUDA 12.4 headers, uses an LLVM 23.1.4 you already have or downloads the official llvm-project archive (1.2 GB, SHA-256 checked) and keeps only the compiler (about 370 MB in `~/.local/share/cuda-legacy`), then saves the result to `~/.config/cuda-legacy/config.json` and runs `doctor`. It asks before downloading (`--yes` skips the question, `--dry-run` shows the plan). It never installs drivers, changes the system CUDA install or edits the PyTorch environment. `cuda-legacy setup --remove` deletes exactly what setup created. Flags and the `CUDA_COMPAT_LLVM_ROOT`, `CUDA_COMPAT_CUDA_ROOT` and `CUDA_COMPAT_PYTHON` variables still override the saved setup.
+`setup` finds the Python environment that holds PyTorch and the CUDA 12.4 headers (without them, it fetches them after asking from NVIDIA's own CUDA 12.4 wheels on PyPI (83 MB, SHA-256 checked, under NVIDIA's license) and keeps about 47 MB of headers), uses an LLVM 23.1.4 you already have or downloads the official llvm-project archive (1.2 GB, SHA-256 checked) and keeps only the compiler (about 370 MB in `~/.local/share/cuda-legacy`), then saves the result to `~/.config/cuda-legacy/config.json` and runs `doctor`. It asks before downloading (`--yes` skips the question, `--dry-run` shows the plan). It never installs drivers, changes the system CUDA install or edits the PyTorch environment. `cuda-legacy setup --remove` deletes exactly what setup created. Flags and the `CUDA_COMPAT_LLVM_ROOT`, `CUDA_COMPAT_CUDA_ROOT` and `CUDA_COMPAT_PYTHON` variables still override the saved setup.
 
 The experimental `run` command starts one Python script with the opt-in PyTorch adapter:
 

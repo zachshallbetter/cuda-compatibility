@@ -388,9 +388,9 @@ By Zach Shallbetter · Sheet 03 of 10 · Updated 3 November 2026
 - Python 3.10 or newer; the tested environment uses Python 3.10.12.
 - Official PyTorch 2.14.0 CUDA 13.0 wheel in the active environment.
 - LLVM/Clang 23.1.4 with NVPTX support.
-- CUDA 12.4 development headers, a working driver interface, g++, and C++ headers.
+- A working driver interface, g++, and C++ headers. CUDA 12.4 development headers too: setup fetches them if the system has none.
 
-The package bundles no NVIDIA toolkit files, runtime libraries, headers, or drivers. The current launcher uses user-installed CUDA 12.4 development headers with the existing driver stack.
+The package bundles no NVIDIA toolkit files, runtime libraries, headers, or drivers. The launcher uses CUDA 12.4 development headers with the existing driver stack: the system's, or, without them, ones setup fetches from NVIDIA's own wheels on PyPI under NVIDIA's license.
 
 ## Four steps
 
@@ -444,7 +444,7 @@ No CUDA Compatibility package is currently published on PyPI. Install from the G
 cuda-legacy setup
 ```
 
-setup finds the environment that holds PyTorch and the CUDA 12.4 headers, then uses your LLVM 23.1.4 or, after asking, downloads the official llvm-project archive (1.2 GB, SHA-256 checked) and keeps only the compiler (about 370 MB). It saves the result and runs doctor, which lists anything still missing with the exact next step. “Ready” is not a workload certification. --dry-run shows the plan without changing anything; cuda-legacy setup --remove deletes exactly what setup created.
+setup finds the environment that holds PyTorch and the CUDA 12.4 headers (without them, it fetches them after asking from NVIDIA's own wheels on PyPI: 83 MB, SHA-256 checked, about 47 MB kept), then uses your LLVM 23.1.4 or, after asking, downloads the official llvm-project archive (1.2 GB, SHA-256 checked) and keeps only the compiler (about 370 MB). It saves the result and runs doctor, which lists anything still missing with the exact next step. “Ready” is not a workload certification. --dry-run shows the plan without changing anything; cuda-legacy setup --remove deletes exactly what setup created.
 
 4
 

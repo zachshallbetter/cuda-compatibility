@@ -91,9 +91,9 @@
 <li>Python 3.10 or newer; the tested environment uses Python 3.10.12.</li>
 <li>Official PyTorch 2.14.0 CUDA 13.0 wheel in the active environment.</li>
 <li>LLVM/Clang 23.1.4 with NVPTX support.</li>
-<li>CUDA 12.4 development headers, a working driver interface, <code>g++</code>, and C++ headers.</li>
+<li>A working driver interface, <code>g++</code>, and C++ headers. CUDA 12.4 development headers too: setup fetches them if the system has none.</li>
 </ul>
-<p class="soft" style="margin:0;font-size:16px;max-width:72ch">The package bundles no NVIDIA toolkit files, runtime libraries, headers, or drivers. The current launcher uses user-installed CUDA 12.4 development headers with the existing driver stack.</p>
+<p class="soft" style="margin:0;font-size:16px;max-width:72ch">The package bundles no NVIDIA toolkit files, runtime libraries, headers, or drivers. The launcher uses CUDA 12.4 development headers with the existing driver stack: the system's, or, without them, ones setup fetches from NVIDIA's own wheels on PyPI under NVIDIA's license.</p>
 </div>
 
 <div id="steps" style="display:flex;flex-direction:column;gap:24px">
@@ -130,7 +130,7 @@ python3 -m venv .venv
 <div style="display:flex;flex-direction:column;gap:12px">
 <h3>Set up once</h3>
 <pre><code>cuda-legacy setup</code></pre>
-<p class="soft" style="margin:0;font-size:16px"><code>setup</code> finds the environment that holds PyTorch and the CUDA 12.4 headers, then uses your LLVM 23.1.4 or, after asking, downloads the official llvm-project archive (1.2 GB, SHA-256 checked) and keeps only the compiler (about 370 MB). It saves the result and runs <code>doctor</code>, which lists anything still missing with the exact next step. “Ready” is not a workload certification. <code>--dry-run</code> shows the plan without changing anything; <code>cuda-legacy setup --remove</code> deletes exactly what setup created.</p>
+<p class="soft" style="margin:0;font-size:16px"><code>setup</code> finds the environment that holds PyTorch and the CUDA 12.4 headers (without them, it fetches them after asking from NVIDIA's own wheels on PyPI: 83 MB, SHA-256 checked, about 47 MB kept), then uses your LLVM 23.1.4 or, after asking, downloads the official llvm-project archive (1.2 GB, SHA-256 checked) and keeps only the compiler (about 370 MB). It saves the result and runs <code>doctor</code>, which lists anything still missing with the exact next step. “Ready” is not a workload certification. <code>--dry-run</code> shows the plan without changing anything; <code>cuda-legacy setup --remove</code> deletes exactly what setup created.</p>
 </div>
 </div>
 <div class="step">

@@ -1,8 +1,8 @@
 """Guided setup: find or fetch the pieces the launcher needs, save them once, and undo it cleanly.
 
 Setup never installs drivers, never changes the system CUDA install and never edits the PyTorch environment.
-The only things it creates are the LLVM files under the data directory and the saved setup, and both are
-listed in the setup's manifest so `setup --remove` deletes exactly those.
+The only things it creates are the LLVM files and, when the system has none, the CUDA 12.4 headers under the data
+directory, and the saved setup; each carries a marker so `setup --remove` deletes exactly those.
 """
 
 from __future__ import annotations
@@ -17,6 +17,7 @@ import sys
 import tarfile
 import tempfile
 import time
+import zipfile
 from dataclasses import dataclass, field
 from pathlib import Path, PurePosixPath
 from typing import IO, Any, Callable, Iterable
@@ -48,6 +49,27 @@ LLVM_ARCHIVES = (
 _LLVM_KEEP = ("bin/clang-23", "bin/clang", "bin/clang++", "lib/clang/")
 
 _CUDA_CANDIDATES = ("/usr/local/cuda-12.4", "/usr/local/cuda", "/usr/local/cuda-12", "/usr")
+
+# Without a system CUDA 12.4, setup assembles the part the build reads (#204): headers and libdevice from NVIDIA's own
+# wheels on PyPI, checked by SHA-256. clang's CUDA wrapper also includes cuRAND's mtgp32 header, which needs CCCL's
+# <nv/target>; only the .post1 CCCL wheel carries nv/. Built from these, the PTX is byte-identical to the toolkit's.
+CUDA_VERSION = "12.4"
+_PYPI = "https://files.pythonhosted.org/packages"
+CUDA_WHEELS = (
+    Archive(f"{_PYPI}/ea/27/1795d86fe88ef397885f2e580ac37628ed058a92ed2c39dc8eac3adf0619/"
+            "nvidia_cuda_runtime_cu12-12.4.127-py3-none-manylinux2014_x86_64.whl",
+            "64403288fa2136ee8e467cdc9c9427e0434110899d07c779f25b5c068934faa5", 883_737, None),
+    Archive(f"{_PYPI}/54/5c/c2f2592f3a5a041d546501cdcfab0f19ccbd31714de238f381a6e302a783/"
+            "nvidia_cuda_nvcc_cu12-12.4.131-py3-none-manylinux2014_x86_64.whl",
+            "e4c9a35435c3b0e36c6397c5696334c9ea6650e524736cbd1c5d345ea099bb04", 22_265_199, None),
+    Archive(f"{_PYPI}/8a/6d/44ad094874c6f1b9c654f8ed939590bdc408349f137f9b98a3a23ccec411/"
+            "nvidia_curand_cu12-10.3.5.147-py3-none-manylinux2014_x86_64.whl",
+            "a88f583d4e0bb643c49743469964103aa59f7f708d862c3ddb0fc07f851e3b8b", 56_305_206, None),
+    Archive(f"{_PYPI}/7f/62/6da9278c0d06e9ed48520d0ac23e300cc209f8cb4fdc854ef2e133cc2aa0/"
+            "nvidia_cuda_cccl_cu12-12.4.127.post1-py3-none-manylinux2014_x86_64.whl",
+            "2027fa5fc75fbee703bf24e8275a40a605cf94a3e8fef8a7187897d49b34facb", 3_111_329, None),
+)
+_CUDA_KEEP = ("include", "nvvm")   # under each wheel's nvidia/<package>/
 
 
 class SetupError(RuntimeError):
@@ -131,8 +153,17 @@ def _has_headers(root: Path) -> bool:
     return (root / "include" / "cuda.h").is_file() and (root / "include" / "cuda_runtime.h").is_file()
 
 
+def _has_libdevice(root: Path) -> bool:
+    return (root / "nvvm" / "libdevice" / "libdevice.10.bc").is_file()
+
+
+def managed_cuda_dir() -> Path:
+    return settings.data_dir() / f"cuda-{CUDA_VERSION}"
+
+
 def find_cuda_root(explicit: str | None = None) -> Found:
-    candidates = [explicit] if explicit else [os.environ.get("CUDA_COMPAT_CUDA_ROOT"), *_CUDA_CANDIDATES]
+    candidates = [explicit] if explicit else [os.environ.get("CUDA_COMPAT_CUDA_ROOT"), *_CUDA_CANDIDATES,
+                                              str(managed_cuda_dir())]
     if not explicit:
         candidates += sorted((str(p) for p in Path("/usr/local").glob("cuda-12.*")), reverse=True)
     considered = []
@@ -284,6 +315,45 @@ def unpack(archive_path: Path, decompressor: str | None, target: Path) -> Path:
             shutil.rmtree(staging, ignore_errors=True)
 
 
+def _wanted_cuda(name: str) -> str | None:
+    """The path inside the CUDA root for a wheel member we keep (nvidia/<package>/include|nvvm/...), or None."""
+    path = PurePosixPath(name)
+    parts = path.parts
+    if path.is_absolute() or any(part in ("..", "") for part in parts) or len(parts) < 4 or parts[0] != "nvidia":
+        return None
+    return "/".join(parts[2:]) if parts[2] in _CUDA_KEEP else None
+
+
+def unpack_cuda(wheels: Iterable[Path], target: Path) -> Path:
+    """Assemble the CUDA root from the wheels into `target` atomically: headers, libdevice and an empty bin/
+    (clang looks for it). A partial assembly never becomes `target`."""
+    staging = Path(tempfile.mkdtemp(prefix=".cuda-unpack-", dir=target.parent))
+    try:
+        for wheel in wheels:
+            with zipfile.ZipFile(wheel) as archive:
+                for member in archive.infolist():
+                    inner = _wanted_cuda(member.filename)
+                    if inner is None or member.is_dir():
+                        continue
+                    destination = staging / inner
+                    destination.parent.mkdir(parents=True, exist_ok=True)
+                    with archive.open(member) as source, destination.open("wb") as out:
+                        shutil.copyfileobj(source, out)
+        (staging / "bin").mkdir(exist_ok=True)
+        if not _has_headers(staging) or not _has_libdevice(staging):
+            raise SetupError("NVIDIA's CUDA wheels did not hold cuda.h, cuda_runtime.h and libdevice; report this")
+        (staging / MANAGED_MARKER).write_text("Created by cuda-legacy setup; `cuda-legacy setup --remove` deletes it.\n")
+        if target.exists():
+            shutil.rmtree(target)
+        staging.replace(target)
+        return target
+    except (zipfile.BadZipFile, OSError) as exc:
+        raise SetupError(f"could not unpack the CUDA headers: {exc}") from exc
+    finally:
+        if staging.exists():
+            shutil.rmtree(staging, ignore_errors=True)
+
+
 # ---------- the command ----------
 
 @dataclass
@@ -292,6 +362,7 @@ class Plan:
     cuda: Found
     llvm: Found
     archive: Archive | None
+    cuda_wheels: tuple[Archive, ...] = ()
 
     def as_json(self) -> dict[str, Any]:
         return {
@@ -299,6 +370,9 @@ class Plan:
             "llvm_download": None if self.archive is None else {"url": self.archive.url, "sha256": self.archive.sha256,
                                                                 "bytes": self.archive.size,
                                                                 "destination": str(managed_llvm_dir())},
+            "cuda_download": None if not self.cuda_wheels else {
+                "urls": [wheel.url for wheel in self.cuda_wheels], "bytes": sum(w.size for w in self.cuda_wheels),
+                "destination": str(managed_cuda_dir())},
         }
 
 
@@ -310,7 +384,8 @@ def plan(python: str | None, cuda_root: str | None, llvm_root: str | None) -> Pl
             archive = choose_archive()
         except SetupError:
             archive = None
-    return Plan(find_python(python), find_cuda_root(cuda_root), llvm, archive)
+    cuda = find_cuda_root(cuda_root)
+    return Plan(find_python(python), cuda, llvm, archive, CUDA_WHEELS if cuda.value is None and not cuda_root else ())
 
 
 def _say(message: str, quiet: bool) -> None:
@@ -367,16 +442,23 @@ def run_setup(*, python: str | None, cuda_root: str | None, llvm_root: str | Non
         str(directory) for directory in _parents_setup_may_create() if not directory.exists()
     })
     _say("CUDA Compatibility setup", quiet)
+    fetches = {
+        "CUDA headers": steps.cuda.value is None and steps.cuda_wheels and
+        f"will download {_human(sum(w.size for w in steps.cuda_wheels))} of NVIDIA's CUDA {CUDA_VERSION} wheels from "
+        f"PyPI (SHA-256 checked) and keep about 47 MB of headers in {managed_cuda_dir()}",
+        "LLVM": steps.llvm.value is None and steps.archive and
+        f"will download {_human(steps.archive.size)} from llvm-project (SHA-256 checked) and keep about 370 MB in "
+        f"{managed_llvm_dir()}",
+    }
     for label, found in (("PyTorch environment", steps.python), ("CUDA headers", steps.cuda), ("LLVM", steps.llvm)):
         _say(f"  {label + ':':<21}{found.detail}", quiet)
-    if steps.llvm.value is None and steps.archive:
-        _say(f"  {'':<21}will download {_human(steps.archive.size)} from llvm-project (SHA-256 checked) and keep "
-             f"about 370 MB in {managed_llvm_dir()}", quiet)
+        if fetches.get(label):
+            _say(f"  {'':<21}{fetches[label]}", quiet)
     if dry_run:
         # Report what a real run would end with: stop (exit 2), saved but not ready (1), or ready (0).
         if steps.llvm.value is None and (llvm_root or steps.archive is None):
             result["would"] = "stop"
-        elif steps.python.value is None or steps.cuda.value is None:
+        elif steps.python.value is None or (steps.cuda.value is None and not steps.cuda_wheels):
             result["would"] = "needs_attention"
         else:
             result["would"] = "ready"
@@ -385,6 +467,28 @@ def run_setup(*, python: str | None, cuda_root: str | None, llvm_root: str | Non
                    "ready": "setup would finish with everything it needs"}[result["would"]]
         _say(f"Dry run: nothing was downloaded or saved; {verdict}.", quiet)
         return result
+    if steps.cuda.value is None and steps.cuda_wheels:
+        total = sum(wheel.size for wheel in steps.cuda_wheels)
+        if not _confirm(f"Download the CUDA {CUDA_VERSION} headers from NVIDIA's wheels ({_human(total)})?", assume_yes):
+            raise SetupError("setup stopped before downloading; install the CUDA 12.4 development headers, or pass "
+                             "--cuda-root to use ones you already have")
+        target = managed_cuda_dir()
+        target.parent.mkdir(parents=True, exist_ok=True)
+        paths = []
+        try:
+            for wheel in steps.cuda_wheels:
+                path = target.parent / Path(wheel.url).name
+                if not path.is_file():
+                    _say(f"Downloading {path.name} ...", quiet)
+                    download(wheel, path, _progress(quiet))
+                paths.append(path)
+            _say("Assembling the CUDA headers ...", quiet)
+            unpack_cuda(paths, target)
+        finally:
+            for path in paths:
+                path.unlink(missing_ok=True)
+        steps.cuda = Found(str(target), f"CUDA {CUDA_VERSION} headers at {target} (installed by setup)")
+        result["created"].append(str(target))
     if steps.llvm.value is None:
         if llvm_root:
             raise SetupError(f"{llvm_root} is not a working LLVM {LLVM_VERSION}; fix the path or omit --llvm-root "
@@ -409,10 +513,12 @@ def run_setup(*, python: str | None, cuda_root: str | None, llvm_root: str | Non
     saved = {
         "python": steps.python.value, "cuda_root": steps.cuda.value, "llvm_root": steps.llvm.value,
         "llvm_managed": steps.llvm.value == str(managed_llvm_dir()),
+        "cuda_managed": steps.cuda.value == str(managed_cuda_dir()),
         "package_version": __version__, "saved_at": time.strftime("%Y-%m-%dT%H:%M:%S%z"),
         "created_dirs": created_dirs,
     }
-    path = settings.save({key: value for key, value in saved.items() if value is not None or key == "llvm_managed"})
+    path = settings.save({key: value for key, value in saved.items()
+                          if value is not None or key in ("llvm_managed", "cuda_managed")})
     result["saved"] = str(path)
     _say(f"Saved to {path}.", quiet)
     return result
@@ -425,16 +531,19 @@ def _parents_setup_may_create() -> list[Path]:
 
 
 def remove(*, quiet: bool = False) -> list[str]:
-    """Delete what setup created: the managed LLVM (only if it carries our marker) and the saved setup."""
+    """Delete what setup created: the managed LLVM and CUDA headers (only if they carry our marker) and the saved
+    setup."""
     removed = []
     created_dirs = [Path(item) for item in settings.load().get("created_dirs", [])]
     target = managed_llvm_dir()
-    if (target / MANAGED_MARKER).is_file():
-        shutil.rmtree(target)
-        removed.append(str(target))
-    for leftover in target.parent.glob("LLVM-*.partial"):
-        leftover.unlink(missing_ok=True)
-        removed.append(str(leftover))
+    for managed in (target, managed_cuda_dir()):
+        if (managed / MANAGED_MARKER).is_file():
+            shutil.rmtree(managed)
+            removed.append(str(managed))
+    for pattern in ("LLVM-*.partial", "nvidia_*.whl", "nvidia_*.whl.partial"):
+        for leftover in target.parent.glob(pattern):
+            leftover.unlink(missing_ok=True)
+            removed.append(str(leftover))
     path = settings.config_path()
     if path.is_file():
         path.unlink()

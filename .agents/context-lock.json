@@ -6,7 +6,7 @@
   "selectedPaths": [],
   "sourceSelection": {
     "includedCount": 284,
-    "includedBytes": 2865548,
+    "includedBytes": 2877337,
     "excludedCounts": {
       "extension": 65,
       "generated-or-transient-file": 2
@@ -18,14 +18,14 @@
     "repositories": [
       {
         "path": ".",
-        "commit": "d84f469169ac5c62e83867cd1500a882ef12f13d",
-        "branch": "chore/release-0.2.13",
+        "commit": "999ae3b0df26cc4d3f8bdd28da0ca489e00d4097",
+        "branch": null,
         "dirty": true,
         "remote": "https://github.com/zachshallbetter/cuda-compatibility.git"
       }
     ]
   },
-  "aggregateSourceDigest": "bb2ed01b44c78dabf1408ed3c7be4b3a82f5fb3ad2a4a0544bc19695150ccfa9",
+  "aggregateSourceDigest": "0ccc3f18f0da09273c2c3ad82eb5f0176e0d9a068db51220aa7328ee8b3e60c3",
   "sources": [
     {
       "path": ".agents/acp/README.md",
@@ -704,8 +704,8 @@
     },
     {
       "path": "README.md",
-      "bytes": 13200,
-      "sha256": "7cf814cd526e04a2dcb7d027536ff054643b0913e53d937767c8e287d078295d"
+      "bytes": 13413,
+      "sha256": "49f4e46e6e82a64f2ec2a082967fc6dd5a2906fd0138adaa37a41dbbc9b27eb3"
     },
     {
       "path": "SECURITY.md",
@@ -734,8 +734,8 @@
     },
     {
       "path": "docs/WORK_ITEMS.md",
-      "bytes": 121615,
-      "sha256": "fba5a01d1389513f57d6d5e9edce7aee3d824bb61e25b311f8767a2412249aff"
+      "bytes": 122100,
+      "sha256": "7f7a3dbace3ec203c46f962f0476c187f847caf33ecf4786017d2c162c3dc8b9"
     },
     {
       "path": "docs/architecture.md",
@@ -879,8 +879,8 @@
     },
     {
       "path": "docs/user-guide.md",
-      "bytes": 16033,
-      "sha256": "11fc44adb0cef81b5ae8e18a803629311103d6e4dfd6e14c6f4d5bfcd91885b4"
+      "bytes": 16205,
+      "sha256": "53df0c57d0dd9cbc13abeaa602996050a3f651b6c13aa85c779105fbe0467386"
     },
     {
       "path": "examples/dpp/availability-2026-11-03.json",
@@ -1149,8 +1149,8 @@
     },
     {
       "path": "site/docs/getting-started.html",
-      "bytes": 24551,
-      "sha256": "7e9e2da1c0f43131c2c05a5683ad2f6157a6e818d8b01b6e03e429774c8be6fe"
+      "bytes": 24803,
+      "sha256": "23483d056d7eb703f5ecf8379e540eb34a3fbb7ca56954683ff9b3ce71e925fb"
     },
     {
       "path": "site/docs/index.html",
@@ -1259,8 +1259,8 @@
     },
     {
       "path": "src/cuda_legacy_compat/cli.py",
-      "bytes": 27415,
-      "sha256": "991d4d604ae3328b3f68a265d080dc9b01565d8a2b882f56f6998dbf34b70fc3"
+      "bytes": 27467,
+      "sha256": "a33b3a9f28f0674db209f49f855810c057c5c83bfa03b53a1c7b6825912f1473"
     },
     {
       "path": "src/cuda_legacy_compat/compat/cuda_runtime_version_facade.cpp",
@@ -1304,8 +1304,8 @@
     },
     {
       "path": "src/cuda_legacy_compat/toolchain.py",
-      "bytes": 20708,
-      "sha256": "6c895d2ddd86e6662da3ae80d7cd58a0dc7cc80b8e885b10706a4ee8eeefe4b3"
+      "bytes": 26861,
+      "sha256": "7318a7506174f7ffc3a9f589f14cf02efb1505817f63467ff7730ab77e0d71fe"
     },
     {
       "path": "src/cuda_legacy_compat/torch_adapter.py",
@@ -1404,8 +1404,8 @@
     },
     {
       "path": "tests/test_setup.py",
-      "bytes": 17243,
-      "sha256": "14e77dd2483b2e17af6bcc42df5760545dcfa02b4501e2a6f7e24dce625dbd67"
+      "bytes": 21705,
+      "sha256": "2c0bcc64c506e837fa8fe9326c6bc3674511a8270230da6312d095ea91fde1a2"
     },
     {
       "path": "tests/test_single_as_foreach.py",

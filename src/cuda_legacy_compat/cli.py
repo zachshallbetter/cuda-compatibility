@@ -283,7 +283,8 @@ def _doctor_report(llvm_root: str | None, cuda_root: str, python: str | None = N
                 "cuda_headers",
                 "not_ready",
                 f"missing: {', '.join(missing_headers)}",
-                "Install the CUDA 12.4 development headers (cuda.h, cuda_runtime.h), then run `cuda-legacy setup`; or pass --cuda-root.",
+                "Run `cuda-legacy setup`: without a system CUDA 12.4 it fetches the headers from NVIDIA's wheels "
+                "(about 83 MB). Or pass --cuda-root to headers you have.",
             )
         )
     else:
