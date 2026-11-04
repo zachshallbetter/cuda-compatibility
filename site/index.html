@@ -337,25 +337,20 @@
 <div class="step">
 <span class="num">1</span>
 <div style="display:flex;flex-direction:column;gap:12px">
-<h3 style="font-size:24px">Install into the PyTorch environment</h3>
-<pre><code># from the project checkout, in the target PyTorch environment
-python -m pip install .</code></pre>
+<h3 style="font-size:24px">Install and set up</h3>
+<pre><code>curl -fsSL https://cudacompat.com/install.sh | sh</code></pre>
+<p class="mute" style="margin:0;font-size:15px">Installs into the environment that holds PyTorch, checks the release’s SHA-256, then runs <code>cuda-legacy setup</code>, which finds or downloads LLVM 23.1.4 and runs <code>doctor</code>. No sudo. <a href="install.sh">Read the script</a>.</p>
 </div>
 </div>
 <div class="step">
 <span class="num">2</span>
 <div style="display:flex;flex-direction:column;gap:12px">
-<h3 style="font-size:24px">Set up once</h3>
-<pre><code>cuda-legacy setup      # finds or downloads LLVM 23.1.4, saves it, runs doctor</code></pre>
-</div>
-</div>
-<div class="step">
-<span class="num">3</span>
-<div style="display:flex;flex-direction:column;gap:12px">
 <h3 style="font-size:24px">Launch one trusted script</h3>
 <pre><code>cuda-legacy run app.py</code></pre>
+<p class="mute" style="margin:0;font-size:15px">From that environment, or with the full path the installer prints.</p>
 </div>
 </div>
+<p class="mute" style="margin:0;font-size:15px">By hand instead: <code>python -m pip install .</code> from a checkout, then <code>cuda-legacy setup</code>. <a href="docs/getting-started.html">Getting started</a> has both paths.</p>
 <p class="mute" style="margin:0;font-size:15px">Other versions and cards may work but have not been validated.</p>
 <a href="https://pytorch.org/get-started/locally/" style="font-size:15px;font-weight:600;align-self:flex-start">PyTorch installation guide</a>
 </div>
