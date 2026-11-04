@@ -39,13 +39,15 @@ flowchart LR
 cuda-legacy inspect
 cuda-legacy profiles list
 cuda-legacy profiles show pytorch-2.14-cu130
-cuda-legacy doctor --llvm-root /path/to/LLVM-23.1.4
+cuda-legacy setup
+cuda-legacy doctor
 cuda-legacy audit pytorch-2.14-cu130
 ```
 
 - `inspect` prints the GPU and `nvcc` inventory it can discover.
 - `profiles list` shows the packaged target profiles. `profiles show` prints a profile's source, CUDA package version, and minimum GPU capability.
-- `doctor` checks the launcher prerequisites: Linux x86_64, Python, a CUDA-enabled PyTorch build, visible `sm_52` GPU(s), LLVM 23.1.4, CUDA headers, `g++`, and the CUDA Driver API library. It honors numeric `CUDA_VISIBLE_DEVICES` selections so a mixed-GPU host can check the same devices intended for `run`. UUID selectors cannot yet be mapped to the `nvidia-smi` inventory and are reported as unverified. Pass `--cuda-root` if the headers are not under `/usr/local/cuda-12.4`; the equivalent environment variables are `CUDA_COMPAT_LLVM_ROOT` and `CUDA_COMPAT_CUDA_ROOT`.
+- `setup` finds the PyTorch environment and CUDA headers, uses or downloads LLVM 23.1.4 (official archive, SHA-256 checked, about 370 MB kept under `~/.local/share/cuda-legacy`), saves the choices to `~/.config/cuda-legacy/config.json`, and runs `doctor`. It asks before downloading; `--yes` skips the question and `--dry-run` only shows the plan. `setup --remove` deletes exactly what it created. It never installs drivers, changes the system CUDA install or edits the PyTorch environment.
+- `doctor` checks the launcher prerequisites: Linux x86_64, Python, a CUDA-enabled PyTorch build, visible `sm_52` GPU(s), LLVM 23.1.4, CUDA headers, `g++`, and the CUDA Driver API library. It honors numeric `CUDA_VISIBLE_DEVICES` selections so a mixed-GPU host can check the same devices intended for `run`. UUID selectors cannot yet be mapped to the `nvidia-smi` inventory and are reported as unverified. After `setup`, `doctor` and `run` need no flags. `--llvm-root`, `--cuda-root` and `--python` (or `CUDA_COMPAT_LLVM_ROOT`, `CUDA_COMPAT_CUDA_ROOT` and `CUDA_COMPAT_PYTHON`) override the saved setup.
 - `audit` compares a machine inventory with the profile's published package requirements. `compatible` only means the checked profile fields pass; it does not mean the package's operators or models have been tested on that machine.
 
 The JSON forms are available as `inspect --json`, `profiles list --json`, `profiles show <profile> --json`, and `doctor --json`. `inspect` always returns JSON. `audit` always returns JSON.
@@ -54,14 +56,13 @@ The JSON forms are available as `inspect --json`, `profiles list --json`, `profi
 
 ## 3. Run a Python application
 
-Set paths to the user-installed compiler and CUDA 12.4 development files, then pass the application and its arguments after `--`:
+After `setup`, pass the application and its arguments:
 
 ```sh
-cuda-legacy run \
-  --llvm-root /path/to/LLVM-23.1.4 \
-  --cuda-root /usr/local/cuda-12.4 \
-  -- path/to/app.py --application-option value
+cuda-legacy run path/to/app.py --application-option value
 ```
+
+Under the adapter, PyTorch's own warning that `sm_52` is unsupported is replaced by one line saying the adapter is active; set `CUDA_COMPAT_VERBOSE=1` to see PyTorch's warnings.
 
 The command compiles selected kernels for the real `sm_52` target, builds a driver bridge and a CUDA Runtime version-query facade in a temporary directory, then starts the script as a child Python process. Temporary build files are removed when it exits. The facade changes the runtime-version response in that child process; the GPU name, compute capability, and driver remain genuine. The parent shell, other applications, installed PyTorch wheel, NVIDIA driver, and CUDA toolkit are not modified.
 

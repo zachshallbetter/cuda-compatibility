@@ -15,7 +15,7 @@ import sysconfig
 from pathlib import Path
 from typing import Any, Sequence
 
-from cuda_legacy_compat import __version__
+from cuda_legacy_compat import __version__, settings, toolchain
 from cuda_legacy_compat.inventory import inspect_system
 from cuda_legacy_compat.launch import LaunchError, launch
 from cuda_legacy_compat.profiles import ProfileError, audit_profile, load_profile
@@ -104,35 +104,9 @@ def _selected_gpu_devices(
     return selected, None
 
 
-_INTERPRETER_PROBE = (
-    "import importlib.metadata as m, json, sys\n"
-    "try:\n    torch = m.version('torch')\n"
-    "except m.PackageNotFoundError:\n    torch = None\n"
-    "print(json.dumps({'version': list(sys.version_info[:3]), 'torch': torch}))"
-)
-
-
 def _interpreter_facts(python: str | None) -> tuple[tuple[int, int, int] | None, str | None, str | None]:
     """Return (version, torch version, error) for this interpreter or the one named by --python."""
-    if python is None:
-        try:
-            torch_version: str | None = importlib.metadata.version("torch")
-        except importlib.metadata.PackageNotFoundError:
-            torch_version = None
-        major, minor, micro = sys.version_info[:3]
-        return (major, minor, micro), torch_version, None
-    try:
-        result = subprocess.run(
-            [python, "-c", _INTERPRETER_PROBE], capture_output=True, text=True, timeout=30, check=False
-        )
-        facts = json.loads(result.stdout) if result.returncode == 0 else None
-    except (OSError, subprocess.TimeoutExpired, ValueError) as exc:
-        return None, None, f"could not query {python}: {exc}"
-    if not isinstance(facts, dict) or not isinstance(facts.get("version"), list):
-        detail = result.stderr.strip() or f"exit code {result.returncode}"
-        return None, None, f"could not query {python}: {detail}"
-    major, minor, micro = (int(part) for part in facts["version"][:3])
-    return (major, minor, micro), facts.get("torch"), None
+    return toolchain.interpreter_facts(python)
 
 
 def _doctor_report(llvm_root: str | None, cuda_root: str, python: str | None = None) -> dict[str, Any]:
@@ -159,7 +133,7 @@ def _doctor_report(llvm_root: str | None, cuda_root: str, python: str | None = N
                 "python",
                 "not_ready",
                 interpreter_error or "the target interpreter could not be queried",
-                "Pass --python with the interpreter of the environment that contains PyTorch.",
+                "Run `cuda-legacy setup`, or pass --python with the interpreter of the environment that holds PyTorch.",
             )
         )
     elif interpreter_version < (3, 10):
@@ -256,7 +230,7 @@ def _doctor_report(llvm_root: str | None, cuda_root: str, python: str | None = N
                     "llvm",
                     "not_ready",
                     f"LLVM clang++ is unavailable at {clangxx}",
-                    "Install the verified LLVM 23.1.4 build and pass its root with --llvm-root.",
+                    "Run `cuda-legacy setup` to fetch and check LLVM 23.1.4, or pass --llvm-root.",
                 )
             )
         else:
@@ -284,7 +258,7 @@ def _doctor_report(llvm_root: str | None, cuda_root: str, python: str | None = N
                         "llvm",
                         "unsupported",
                         f"expected LLVM 23.1.4 at {clangxx}; {version_error}",
-                        "Install the verified LLVM 23.1.4 build.",
+                        "Run `cuda-legacy setup` to fetch and check LLVM 23.1.4.",
                     )
                 )
     else:
@@ -292,8 +266,8 @@ def _doctor_report(llvm_root: str | None, cuda_root: str, python: str | None = N
             _doctor_check(
                 "llvm",
                 "not_ready",
-                "LLVM root was not provided",
-                "Pass --llvm-root or set CUDA_COMPAT_LLVM_ROOT to LLVM 23.1.4.",
+                "LLVM 23.1.4 is not set up",
+                "Run `cuda-legacy setup` (it downloads and checks LLVM 23.1.4), or pass --llvm-root.",
             )
         )
 
@@ -309,7 +283,7 @@ def _doctor_report(llvm_root: str | None, cuda_root: str, python: str | None = N
                 "cuda_headers",
                 "not_ready",
                 f"missing: {', '.join(missing_headers)}",
-                "Install CUDA 12.4 development headers and pass their root with --cuda-root.",
+                "Install the CUDA 12.4 development headers (cuda.h, cuda_runtime.h), then run `cuda-legacy setup`; or pass --cuda-root.",
             )
         )
     else:
@@ -426,6 +400,27 @@ def _program_name() -> str:
     return "cuda-legacy-compat"
 
 
+def _add_location_flags(command: argparse.ArgumentParser) -> None:
+    command.add_argument("--llvm-root", help="LLVM 23.1.4 root (or CUDA_COMPAT_LLVM_ROOT; default: the saved setup)")
+    command.add_argument(
+        "--cuda-root",
+        help=f"CUDA development headers root (or CUDA_COMPAT_CUDA_ROOT; default: the saved setup, "
+        f"then {settings.DEFAULT_CUDA_ROOT})",
+    )
+    command.add_argument(
+        "--python",
+        help="interpreter of the environment that holds PyTorch "
+        "(or CUDA_COMPAT_PYTHON; default: the saved setup, then the interpreter running cuda-legacy)",
+    )
+
+
+def _locations(args: argparse.Namespace) -> tuple[str | None, str, str | None]:
+    llvm_root, _ = settings.resolve(args.llvm_root, "CUDA_COMPAT_LLVM_ROOT", "llvm_root")
+    cuda_root, _ = settings.resolve(args.cuda_root, "CUDA_COMPAT_CUDA_ROOT", "cuda_root", settings.DEFAULT_CUDA_ROOT)
+    python, _ = settings.resolve(args.python, "CUDA_COMPAT_PYTHON", "python")
+    return llvm_root, cuda_root or settings.DEFAULT_CUDA_ROOT, python
+
+
 def _build_parser(
     prog: str = "cuda-legacy-compat",
 ) -> tuple[argparse.ArgumentParser, dict[str, argparse.ArgumentParser]]:
@@ -437,11 +432,11 @@ def _build_parser(
         ),
         epilog=(
             "Examples:\n"
+            f"  {prog} setup          # once: finds or fetches what run needs\n"
+            f"  {prog} doctor\n"
+            f"  {prog} run app.py\n"
             f"  {prog} inspect\n"
-            f"  {prog} profiles list\n"
-            f"  {prog} doctor --llvm-root /opt/LLVM-23.1.4\n"
-            f"  {prog} audit pytorch-2.14-cu130\n"
-            f"  {prog} run --llvm-root /opt/LLVM-23.1.4 -- app.py\n\n"
+            f"  {prog} audit pytorch-2.14-cu130\n\n"
             "The run command affects only its child Python process. "
             "Its current adapter is experimental, "
             "Linux x86_64-only, and restricted to homogeneous sm_52 devices."
@@ -477,20 +472,22 @@ def _build_parser(
     doctor_parser = commands.add_parser(
         "doctor", help="check prerequisites for the experimental PyTorch launcher"
     )
-    doctor_parser.add_argument(
-        "--llvm-root", default=os.environ.get("CUDA_COMPAT_LLVM_ROOT"),
-        help="LLVM 23.1.4 installation (or CUDA_COMPAT_LLVM_ROOT)",
-    )
-    doctor_parser.add_argument(
-        "--cuda-root", default=os.environ.get("CUDA_COMPAT_CUDA_ROOT", "/usr/local/cuda-12.4"),
-        help="CUDA development headers root (default: /usr/local/cuda-12.4)",
-    )
-    doctor_parser.add_argument(
-        "--python", default=os.environ.get("CUDA_COMPAT_PYTHON"),
-        help="interpreter of the environment that contains PyTorch "
-        "(or CUDA_COMPAT_PYTHON; default: the interpreter running cuda-legacy)",
-    )
+    _add_location_flags(doctor_parser)
     doctor_parser.add_argument("--json", action="store_true", help="print machine-readable JSON")
+
+    setup_parser = commands.add_parser(
+        "setup", help="find or fetch everything run needs and save it, so later commands need no flags",
+        description=(
+            "Find the Python environment that holds PyTorch and the CUDA headers, use or download "
+            "LLVM 23.1.4 (SHA-256 checked), and save the result. Setup never installs drivers, changes "
+            "the system CUDA install or edits the PyTorch environment."
+        ),
+    )
+    _add_location_flags(setup_parser)
+    setup_parser.add_argument("--yes", action="store_true", help="download without asking")
+    setup_parser.add_argument("--dry-run", action="store_true", help="show what setup would do and stop")
+    setup_parser.add_argument("--remove", action="store_true", help="delete everything setup created")
+    setup_parser.add_argument("--json", action="store_true", help="print machine-readable JSON")
 
     audit_parser = commands.add_parser(
         "audit", help="compare machine inventory with a target profile"
@@ -500,19 +497,7 @@ def _build_parser(
     run_parser = commands.add_parser(
         "run", help="run a Python script through the opt-in PyTorch Maxwell adapter"
     )
-    run_parser.add_argument(
-        "--llvm-root", default=os.environ.get("CUDA_COMPAT_LLVM_ROOT"),
-        help="LLVM 23.1.4 installation (or CUDA_COMPAT_LLVM_ROOT)",
-    )
-    run_parser.add_argument(
-        "--cuda-root", default=os.environ.get("CUDA_COMPAT_CUDA_ROOT", "/usr/local/cuda-12.4"),
-        help="CUDA development headers root (default: /usr/local/cuda-12.4)",
-    )
-    run_parser.add_argument(
-        "--python", default=os.environ.get("CUDA_COMPAT_PYTHON"),
-        help="interpreter of the environment that contains PyTorch "
-        "(or CUDA_COMPAT_PYTHON; default: the interpreter running cuda-legacy)",
-    )
+    _add_location_flags(run_parser)
     run_parser.add_argument(
         "script", help="Python script to execute with the selected interpreter"
     )
@@ -525,11 +510,12 @@ def _build_parser(
     help_parser.add_argument(
         "topic",
         nargs="?",
-        choices=tuple(command_parsers) + ("profiles", "doctor", "audit", "run"),
+        choices=tuple(command_parsers) + ("profiles", "setup", "doctor", "audit", "run"),
     )
     command_parsers.update(
         {
             "profiles": profiles_parser,
+            "setup": setup_parser,
             "doctor": doctor_parser,
             "audit": audit_parser,
             "run": run_parser,
@@ -573,25 +559,59 @@ def main(argv: Sequence[str] | None = None) -> int:
             if profile.get("notes"):
                 print(f"Notes: {profile['notes']}")
         return 0
+    if args.command == "setup":
+        try:
+            if args.remove:
+                removed = toolchain.remove(quiet=args.json)
+                if args.json:
+                    _print_json({"removed": removed})
+                return 0
+            outcome = toolchain.run_setup(
+                python=args.python, cuda_root=args.cuda_root, llvm_root=args.llvm_root,
+                assume_yes=args.yes, dry_run=args.dry_run, quiet=args.json,
+            )
+        except toolchain.SetupError as exc:
+            print(f"setup stopped: {exc}", file=sys.stderr)
+            return 2
+        if args.dry_run:
+            if args.json:
+                _print_json(outcome)
+            return 0
+        llvm_root, cuda_root, python = _locations(argparse.Namespace(llvm_root=None, cuda_root=None, python=None))
+        report = _doctor_report(llvm_root, cuda_root, python)
+        if args.json:
+            _print_json({**outcome, "doctor": report})
+        else:
+            print()
+            _print_doctor(report)
+            if report["status"] == "ready":
+                print("\nReady. Run a script with:  cuda-legacy run app.py")
+        return 0 if report["status"] == "ready" else 1
     if args.command == "doctor":
-        report = _doctor_report(args.llvm_root, args.cuda_root, args.python)
+        llvm_root, cuda_root, python = _locations(args)
+        report = _doctor_report(llvm_root, cuda_root, python)
         if args.json:
             _print_json(report)
         else:
             _print_doctor(report)
         return 0 if report["status"] == "ready" else 1
     if args.command == "run":
-        if not args.llvm_root:
-            print("launch error: pass --llvm-root or set CUDA_COMPAT_LLVM_ROOT", file=sys.stderr)
+        llvm_root, cuda_root, python = _locations(args)
+        if not llvm_root:
+            print(
+                "launch error: LLVM 23.1.4 is not set up. Run `cuda-legacy setup` once "
+                "(or pass --llvm-root).",
+                file=sys.stderr,
+            )
             return 2
         script_args = args.script_args[1:] if args.script_args[:1] == ["--"] else args.script_args
         try:
             return launch(
                 Path(args.script),
                 script_args,
-                llvm_root=Path(args.llvm_root),
-                cuda_root=Path(args.cuda_root),
-                python=args.python,
+                llvm_root=Path(llvm_root),
+                cuda_root=Path(cuda_root),
+                python=python,
             )
         except LaunchError as exc:
             print(f"launch error: {exc}", file=sys.stderr)
