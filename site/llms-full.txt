@@ -707,6 +707,7 @@ By Zach Shallbetter · Sheet 06 of 10 · Updated 3 November 2026
 | cuda-legacy doctor [--llvm-root PATH] [--cuda-root PATH] [--python PATH] [--json] | Check prerequisites for the experimental launcher; each missing item names its next step. |
 | cuda-legacy ops [--json] | List what the adapter runs natively on sm_52, what it runs through the CPU fallback, and each limit. |
 | cuda-legacy audit PROFILE [--json] | Compare available machine facts against a target profile. |
+| cuda-legacy jupyter [--remove] | Register (or remove) the Jupyter kernel “Python (cuda-legacy, sm_52)”, which starts through run -m ipykernel_launcher in the saved PyTorch environment; it needs ipykernel there. |
 | cuda-legacy run [options] [-i] (SCRIPT \| -m MODULE \| -c CODE) [args...] | Start a Python script, module or code with the opt-in adapter, as python would; -i alone opens an interactive prompt. |
 
 ## Launch options

@@ -87,6 +87,7 @@ cuda-legacy run app.py --your-application-argument
 cuda-legacy run -m mypackage.train
 cuda-legacy run -m pytest tests/
 cuda-legacy run -i                      # an interactive prompt
+cuda-legacy jupyter                     # register a notebook kernel that runs through the adapter
 ```
 
 The launcher compiles selected kernels to real `sm_52` PTX, builds a driver bridge and runtime-version facade in a temporary directory, then enables the adapter only in the child process. It removes its generated build directory when the process exits. The facade reports CUDA Runtime 13.0 for that process while retaining actual GPU identity and compute capability. The adapter includes selected native PyTorch kernels and CPU fallbacks capped at 64 MiB of inputs and outputs per operation. Training matches the CPU for the workloads on the [compatibility sheet](https://cudacompat.com/docs/compatibility.html) (a 16-model sweep, and BERT-base and GPT-2-small at real size, with SGD, Adam and AdamW); this is not general PyTorch or CUDA 13 support. Because the launcher uses `LD_PRELOAD` and Python startup customization, run only scripts you trust.

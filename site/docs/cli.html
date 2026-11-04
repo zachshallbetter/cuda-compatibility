@@ -106,6 +106,7 @@ td.cmd code{font-size:13px;background:none;padding:0;font-weight:500}
 <tr><td class="cmd"><code>cuda-legacy doctor [--llvm-root PATH] [--cuda-root PATH] [--python PATH] [--json]</code></td><td>Check prerequisites for the experimental launcher; each missing item names its next step.</td></tr>
 <tr><td class="cmd"><code>cuda-legacy ops [--json]</code></td><td>List what the adapter runs natively on sm_52, what it runs through the CPU fallback, and each limit.</td></tr>
 <tr><td class="cmd"><code>cuda-legacy audit PROFILE [--json]</code></td><td>Compare available machine facts against a target profile.</td></tr>
+<tr><td class="cmd"><code>cuda-legacy jupyter [--remove]</code></td><td>Register (or remove) the Jupyter kernel “Python (cuda-legacy, sm_52)”, which starts through <code>run -m ipykernel_launcher</code> in the saved PyTorch environment; it needs <code>ipykernel</code> there.</td></tr>
 <tr><td class="cmd" style="border-bottom-width:3px"><code>cuda-legacy run [options] [-i] (SCRIPT | -m MODULE | -c CODE) [args...]</code></td><td style="border-bottom-width:3px">Start a Python script, module or code with the opt-in adapter, as <code>python</code> would; <code>-i</code> alone opens an interactive prompt.</td></tr>
 </tbody>
 </table>

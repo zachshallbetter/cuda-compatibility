@@ -103,6 +103,8 @@ The command compiles selected kernels for the real `sm_52` target, builds a driv
 
 The launcher inherits the parent environment and adds `LD_PRELOAD` and Python startup configuration for the child. Use it only with scripts you trust. The current adapter also requires all visible GPUs to report compute capability 5.2.
 
+For notebooks, `cuda-legacy jupyter` registers the kernel "Python (cuda-legacy, sm_52)". It starts as `cuda-legacy run -m ipykernel_launcher` in the saved PyTorch environment, which needs `ipykernel` (`pip install ipykernel`; the command names it if it's missing). Pick it from Jupyter's kernel menu; interrupting a cell stops the cell, not the kernel. `cuda-legacy jupyter --remove` deletes it, and so does `cuda-legacy setup --remove`.
+
 `run` returns the application process's exit code, or 128 + N when signal N ended it, as a shell does. A launcher/preflight error returns 2. Ctrl-C reaches the program, so a script that catches it (to save a checkpoint, say) finishes its handler; `SIGTERM` or `SIGHUP` sent to the launcher is passed on to the program. This is still a per-process Python entry point; native executables, statically linked CUDA programs, other GPU architectures, and arbitrary libraries are outside the verified scope.
 
 ## What the current adapter covers

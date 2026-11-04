@@ -15,7 +15,7 @@ import sysconfig
 from pathlib import Path
 from typing import Any, Sequence
 
-from cuda_legacy_compat import __version__, routes, settings, toolchain
+from cuda_legacy_compat import __version__, jupyter, routes, settings, toolchain
 from cuda_legacy_compat.inventory import inspect_system
 from cuda_legacy_compat.launch import LaunchError, launch
 from cuda_legacy_compat.profiles import ProfileError, audit_profile, load_profile
@@ -535,11 +535,22 @@ def _build_parser(
         "script_args", metavar="ARGS", nargs=argparse.REMAINDER, help="arguments passed to the script",
     )
 
+    jupyter_parser = commands.add_parser(
+        "jupyter", help="register a Jupyter kernel that runs notebooks through the adapter",
+        description="Register the Jupyter kernel \"Python (cuda-legacy, sm_52)\": it starts as "
+        f"`{prog} run -m ipykernel_launcher`, in the saved PyTorch environment (which needs ipykernel). "
+        "Pick it from Jupyter's kernel menu.",
+    )
+    jupyter_parser.add_argument("--python", metavar="PATH",
+                                help="the PyTorch environment's interpreter, to check for ipykernel (default: the "
+                                     "saved setup)")
+    jupyter_parser.add_argument("--remove", action="store_true", help="delete the kernel this command registered")
+
     help_parser = commands.add_parser("help", help="show general or command-specific help")
     help_parser.add_argument(
         "topic",
         nargs="?",
-        choices=tuple(command_parsers) + ("profiles", "setup", "doctor", "audit", "ops", "run"),
+        choices=tuple(command_parsers) + ("profiles", "setup", "doctor", "audit", "ops", "run", "jupyter"),
     )
     command_parsers.update(
         {
@@ -549,6 +560,7 @@ def _build_parser(
             "audit": audit_parser,
             "ops": ops_parser,
             "run": run_parser,
+            "jupyter": jupyter_parser,
             "help": help_parser,
         }
     )
@@ -614,6 +626,11 @@ def main(argv: Sequence[str] | None = None) -> int:
         try:
             if args.remove:
                 removed = toolchain.remove(quiet=args.json)
+                kernel = jupyter.remove()
+                if kernel is not None:
+                    removed.append(str(kernel))
+                    if not args.json:
+                        print(f"Removed {kernel}")
                 if args.json:
                     _print_json({"removed": removed})
                 return 0
@@ -647,6 +664,23 @@ def main(argv: Sequence[str] | None = None) -> int:
         else:
             _print_doctor(report)
         return 0 if report["status"] == "ready" else 1
+    if args.command == "jupyter":
+        if args.remove:
+            kernel = jupyter.remove()
+            print(f"Removed the Jupyter kernel at {kernel}." if kernel else
+                  "No Jupyter kernel registered by cuda-legacy here; nothing to remove.")
+            return 0
+        _saved_setup_warning()
+        python = settings.resolve(args.python, "CUDA_COMPAT_PYTHON", "python")[0] or sys.executable
+        try:
+            target = jupyter.install(python)
+        except jupyter.JupyterError as exc:
+            print(f"jupyter: {exc}", file=sys.stderr)
+            return 2
+        print(f"Registered the Jupyter kernel \"{jupyter.DISPLAY_NAME}\" at {target}.\n"
+              "Pick it from Jupyter's kernel menu (or `jupyter console --kernel cuda-legacy`). "
+              f"Remove it with: {_program_name()} jupyter --remove")
+        return 0
     if args.command == "run":
         module = code = None
         script_args = args.script_args[1:] if args.script_args[:1] == ["--"] else args.script_args
