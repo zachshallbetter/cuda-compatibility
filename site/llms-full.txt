@@ -238,9 +238,9 @@ NVIDIA legacy GPU capability list
 ## Try the prototype
 Sheet 01 / 10
 
-Install into the same Python environment that already holds the official CUDA 13 PyTorch wheel. The package installs no NVIDIA components and changes nothing system-wide.
+One command installs into the Python environment that already holds the official CUDA 13 PyTorch wheel. It installs no NVIDIA components and changes nothing system-wide.
 
-The command lands in that environment’s bin/. For a user-site install, find the scripts path with python3 -m site --user-base and add /bin to PATH. The Python used for that install must already contain PyTorch. Python Packaging User Guide
+The installer finds that environment itself, or takes --python, and refuses to use sudo or the system Python. cuda-legacy lands in that environment’s bin/. To remove everything, run it again with sh -s -- --uninstall.
 
 ### Trusted scripts only
 

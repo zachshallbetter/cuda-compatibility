@@ -325,8 +325,8 @@
 <div class="wrap" style="padding-top:88px;padding-bottom:96px;display:grid;grid-template-columns:repeat(auto-fit,minmax(min(400px,100%),1fr));gap:64px">
 <div style="display:flex;flex-direction:column;gap:28px">
 <div class="sec"><span class="cut" aria-hidden="true">E</span><h2 class="h2" style="font-size:44px">Try the prototype</h2><span class="plane" aria-hidden="true"></span><span class="sheet">Sheet 01 / 10</span></div>
-<p style="margin:0;font-size:19px;max-width:42ch">Install into the same Python environment that already holds the official CUDA 13 PyTorch wheel. The package installs no NVIDIA components and changes nothing system-wide.</p>
-<p class="mute" style="margin:0;font-size:15px;max-width:48ch">The command lands in that environment’s <code>bin/</code>. For a user-site install, find the scripts path with <code>python3 -m site --user-base</code> and add <code>/bin</code> to <code>PATH</code>. The Python used for that install must already contain PyTorch. <a href="https://packaging.python.org/en/latest/tutorials/installing-packages/">Python Packaging User Guide</a></p>
+<p style="margin:0;font-size:19px;max-width:42ch">One command installs into the Python environment that already holds the official CUDA 13 PyTorch wheel. It installs no NVIDIA components and changes nothing system-wide.</p>
+<p class="mute" style="margin:0;font-size:15px;max-width:48ch">The installer finds that environment itself, or takes <code>--python</code>, and refuses to use sudo or the system Python. <code>cuda-legacy</code> lands in that environment’s <code>bin/</code>. To remove everything, run it again with <code>sh -s -- --uninstall</code>.</p>
 <div class="note y" style="display:grid;grid-template-columns:44px minmax(0,1fr);gap:6px 16px;align-items:start">
 <svg class="glyph" role="img" aria-label="Caution" viewBox="0 0 44 44" fill="none" stroke="currentColor" stroke-width="2.5" style="grid-row:1 / span 2"><path d="M22 5 41 39H3z"></path><path d="M22 17v11M22 32v3"></path></svg>
 <h3 style="font-size:20px">Trusted scripts only</h3>
