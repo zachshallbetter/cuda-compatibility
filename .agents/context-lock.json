@@ -5,8 +5,8 @@
   "validityBasis": "aggregate-source-digest",
   "selectedPaths": [],
   "sourceSelection": {
-    "includedCount": 270,
-    "includedBytes": 2732351,
+    "includedCount": 271,
+    "includedBytes": 2743089,
     "excludedCounts": {
       "extension": 65,
       "generated-or-transient-file": 2
@@ -18,14 +18,14 @@
     "repositories": [
       {
         "path": ".",
-        "commit": "54bf7980a788b3c9bbfae62cbbbd4cc899addb49",
-        "branch": "feat/inplace-general",
+        "commit": "c19f1f5c3e94e512013f15cd0e5f521b54fc3aed",
+        "branch": "research/model-sweep",
         "dirty": true,
         "remote": "https://github.com/zachshallbetter/cuda-compatibility.git"
       }
     ]
   },
-  "aggregateSourceDigest": "5879ef56e10e0e5c7246e03d6143cc691c37a15d9959891c85545d1bf6cb0ccc",
+  "aggregateSourceDigest": "c8ae6b692a2d4488f12b4ee1673a2e891d331563eb93888126a1c0e4796f0824",
   "sources": [
     {
       "path": ".agents/acp/README.md",
@@ -729,8 +729,8 @@
     },
     {
       "path": "docs/SITE_PROTOCOL.md",
-      "bytes": 16132,
-      "sha256": "df0642bf26d372188e51ad1efa62b06a3f1ddc91e3f44a74ab526b403359fb1b"
+      "bytes": 16352,
+      "sha256": "388edc107f56290f509756045d9c5a15f8eb377ee9c6919ce76c9a37cf6b7f95"
     },
     {
       "path": "docs/WORK_ITEMS.md",
@@ -1028,6 +1028,11 @@
       "sha256": "ba050c1c8f28d272e63791a8725a649f90ae459052d2709d2f7501ce5559bbbf"
     },
     {
+      "path": "scripts/model_sweep.py",
+      "bytes": 9699,
+      "sha256": "9723bbd9ddc724c5af08ee326d1d1be49683c382761ed95342fc6751582b0f19"
+    },
+    {
       "path": "scripts/reprobe_stock.py",
       "bytes": 2535,
       "sha256": "d31bc2c3c68d0f8e65d7464dccb42ffc6bd6c186ce605c3ead37dc62232d2252"
@@ -1104,8 +1109,8 @@
     },
     {
       "path": "site/docs/compatibility.html",
-      "bytes": 29286,
-      "sha256": "4aa2cf36f5cfa11cfbb9c392984de6a4943bc431cac0acfa45b48ffe45bbcc01"
+      "bytes": 30105,
+      "sha256": "7ca7de82c040c90b6c8ba8acfb9750507731635238504e9ea4b22e6eedb9856e"
     },
     {
       "path": "site/docs/discovery.html",
