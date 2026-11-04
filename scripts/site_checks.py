@@ -122,7 +122,7 @@ def _expected_url(relative: Path, origin: str, prefix: str) -> str:
 
 
 def _adapter_registry(source: Path) -> tuple[set[str], set[str]] | None:
-    """Return (native operation families, CPU fallback routes) registered by the PyTorch adapter."""
+    """Return (native operators, CPU fallback routes) registered by the PyTorch adapter."""
     try:
         code = source.read_text(encoding="utf-8")
     except OSError:
@@ -155,14 +155,14 @@ def _audit_support_counts(site_root: Path) -> list[str]:
         matrix = (site_root / "docs" / "compatibility.html").read_text(encoding="utf-8")
     except OSError as exc:
         return [f"support count sources are unreadable: {exc}"]
-    stat = re.search(r"<dt[^>]*>Native operation families</dt><dd[^>]*>(\d+)</dd>", home)
+    stat = re.search(r"<dt[^>]*>Native operators</dt><dd[^>]*>(\d+)</dd>", home)
     if not stat or int(stat.group(1)) != families:
-        errors.append(f"index.html: native operation families must read {families} (adapter registrations)")
-    cases = re.search(r"These (\d+) registered cases cover (\d+) operation families", matrix)
+        errors.append(f"index.html: native operators must read {families} (adapter registrations)")
+    cases = re.search(r"These (\d+) registered cases cover (\d+) native operators", matrix)
     table = re.search(r'<table aria-label="Native GPU implementations">(.*?)</table>', matrix, re.S)
     rows = len(re.findall(r"<tr>", table.group(1).split("</thead>")[-1])) if table else -1
     if not cases or int(cases.group(2)) != families or int(cases.group(1)) != rows:
-        errors.append(f"docs/compatibility.html: native summary must state {rows} cases across {families} families")
+        errors.append(f"docs/compatibility.html: native summary must state {rows} cases across {families} operators")
     routes = re.search(r"These (\d+) registered fallback routes", matrix)
     if not routes or int(routes.group(1)) != fallbacks:
         errors.append(f"docs/compatibility.html: fallback summary must state {fallbacks} registered routes")

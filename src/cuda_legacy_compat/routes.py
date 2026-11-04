@@ -15,8 +15,17 @@ CPU_FALLBACK_LIMIT = ("each copy between the GPU and host memory at most 64 MiB 
 # (aten registrations, operation, supported case)
 NATIVE = (
     (("add.Tensor",), "Tensor addition",
-     "Same-device, same-shape contiguous float32 (up to 1,048,576 values) or int32 (up to 2,147,483,647 elements), "
-     "alpha=1. float16 up to 1,048,576 values, alpha=1. Other cases use the CPU fallback."),
+     "float32 of any size with broadcasting (up to six dimensions), any alpha, or a number; int32 and float16 "
+     "same-shape contiguous cases as before. Other dtypes use the CPU fallback."),
+    (("sub.Tensor", "rsub.Scalar", "mul.Tensor", "div.Tensor"), "Subtraction, multiplication and division",
+     "float32 of any size with broadcasting (up to six dimensions), or a number. Other dtypes use the CPU fallback."),
+    (("gelu", "gelu_backward"), "GELU", "Contiguous float32, exact or tanh, and its gradient."),
+    (("_softmax", "_log_softmax", "_softmax_backward_data", "_log_softmax_backward_data"), "Softmax and log-softmax",
+     "Contiguous float32 over the last dimension, masked (-inf) entries included, and their gradients."),
+    (("native_layer_norm", "native_layer_norm_backward"), "Layer normalization in training",
+     "Contiguous float32 over the trailing dimensions, with or without weight and bias, and its gradients."),
+    (("sum.dim_IntList",), "Sum over dimensions", "float32, any dimensions (up to six), keepdim or not."),
+    (("fill_.Scalar", "zero_"), "Fill", "Contiguous float32 tensors. Other dtypes are filled in place on the CPU."),
     (("add_.Tensor",), "Float32 in-place addition",
      "Same-shape contiguous float32 CUDA tensors up to 1,048,576 values; scaled updates as in the verified SGD case."),
     (("arange",), "Range creation", "CUDA int64 arange, up to 1,048,576 values. Other cases use the CPU fallback."),
@@ -38,9 +47,7 @@ NATIVE = (
 
 # (aten registration, operation)
 CPU_FALLBACK = (
-    ("_softmax", "softmax"),
-    ("scaled_dot_product_attention", "scaled dot-product attention"), ("gelu", "GELU"),
-    ("mul.Tensor", "multiplication"), ("div.Tensor", "division"), ("sum.dim_IntList", "sum over dimensions"),
+    ("scaled_dot_product_attention", "scaled dot-product attention"),
     ("clamp_min", "clamp_min"), ("cat", "concatenation"), ("contiguous", "contiguous copy"),
 )
 
@@ -81,7 +88,8 @@ def render() -> str:
     width = max(len(operation) for operation in [*(n[1] for n in NATIVE), *(f[1] for f in CPU_FALLBACK)]) + 2
     lines = ["Runs natively on sm_52:"]
     for names, operation, case in NATIVE:
-        lines.append(f"  {operation:<{width}}{', '.join(names)}")
+        lines.extend(textwrap.wrap(f"{operation:<{width}}{', '.join(names)}", width=98, initial_indent="  ",
+                                   subsequent_indent=" " * (width + 2), break_on_hyphens=False))
         lines.extend(textwrap.wrap(case, width=100, initial_indent=" " * (width + 2),
                                    subsequent_indent=" " * (width + 2)))
     lines.append("")

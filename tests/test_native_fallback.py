@@ -49,6 +49,21 @@ class NativeFallbackTests(unittest.TestCase):
             failing(1, 2)
         self.assertEqual(self.adapter._falls_back_to_cpu("mm")(lambda a, b: "native")(1, 2), "native")
 
+    def test_a_refused_in_place_case_updates_its_own_tensor(self) -> None:
+        # torch.ones(..., dtype=torch.bool, device="cuda") fills a bool tensor: the float32 kernel refuses it, and the
+        # fallback must write into that tensor, never return a new one (a causal mask was left uninitialised).
+        torch = self.torch
+        target = torch.zeros(3, 4, dtype=torch.bool)
+        with mock.patch.object(self.adapter, "_cuda_tensors", lambda value: self.adapter._tensor_inputs(value)), \
+                mock.patch.object(self.adapter, "_is_cuda", lambda tensor: True), \
+                mock.patch.object(self.adapter, "_cuda_tensor_to_cpu", lambda tensor: tensor.clone()):
+            result = self.adapter._fill(target, True)
+            self.assertIs(result, target)
+            self.assertTrue(bool(target.all()))
+            ints = torch.ones(5, dtype=torch.int64)
+            self.assertIs(self.adapter._zero(ints), ints)
+            self.assertEqual(ints.tolist(), [0] * 5)
+
     def test_every_native_kernel_is_wrapped(self) -> None:
         for kernel in ("_add", "_mm", "_relu", "_arange", "_embedding", "_layer_norm"):
             self.assertTrue(hasattr(getattr(self.adapter, kernel), "__wrapped__"), kernel)

@@ -22,7 +22,7 @@ GM200 reference card, compute capability 5.2. The only hardware tested so far. E
 
 - **Reference cards** 3
 
-- **Native operation families** 8
+- **Native operators** 23
 
 - **Claims of universal support** 0
 
@@ -120,7 +120,7 @@ Sheet 01 / 10
 ### Runs on the GPU
 Native sm_52 kernel
 
-10 registered cases, 8 operation families
+16 registered cases, 23 native operators
 
 - Tensor addition Contiguous float32 (up to 1,048,576 values) and int32 tensors (up to 2,147,483,647); same shape and device, alpha=1.
 - Float16 addition Same-shape contiguous float16 tensors, alpha=1, up to 1,048,576 values; edge values checked exactly.
@@ -132,6 +132,10 @@ Native sm_52 kernel
 - Matrix multiplication with bias As above, with alpha and a broadcast bias; linear layers run through it.
 - Batched matrix multiplication 3D float32 batches of any size; attention runs through it.
 - ReLU Contiguous float32 tensors, up to 1,048,576 values.
+- Elementwise arithmetic Add, subtract, multiply and divide in float32 with broadcasting, any size.
+- GELU, softmax and log-softmax float32, with their gradients; masked attention included.
+- Layer normalization in training Forward and backward, with or without weight and bias.
+- Sum and fill Sums over any dimensions; fill_ and zero_.
 
 Native forward kernels are not differentiable. Grad-enabled calls on these operations use differentiable CPU transfers instead.
 
@@ -140,9 +144,8 @@ Bounded autograd
 
 Operation / CPU implementation
 
-- Attention and activations softmax, scaled_dot_product_attention, GELU
-- Arithmetic add, multiply, divide
-- Reductions sum, clamp_min
+- Attention scaled_dot_product_attention (training runs on native kernels)
+- Reductions clamp_min
 - Layout concatenate, contiguous
 
 These use PyTorch’s CPU implementation with differentiable host and device transfers on selected first-order gradient paths. The dispatcher can also retry eligible out-of-place operations after recognized missing-image, architecture-mismatch, or cuDNN no-engine errors.
@@ -514,11 +517,11 @@ By Zach Shallbetter · Sheet 04 of 10 · Updated 4 November 2026
 ## Native GPU implementations
 sm_52 kernel
 
-These 10 registered cases cover 8 operation families (addition, range creation, embedding, layer normalization, matrix multiplication, matrix multiplication with bias, batched matrix multiplication and ReLU). They run through LLVM-generated PTX targeting the real Maxwell device and the CUDA Driver API bridge; cases outside these limits take the CPU fallback below or fail explicitly.
+These 16 registered cases cover 23 native operators: addition, subtraction, multiplication and division with broadcasting, range creation, embedding, layer normalization (inference and training), matrix multiplication with and without bias, batched matrix multiplication, ReLU, GELU, softmax and log-softmax, sum over dimensions and fill, with the gradients of each. They run through LLVM-generated PTX targeting the real Maxwell device and the CUDA Driver API bridge; other dtypes and layouts take the CPU fallback below.
 
 | No. | Operation | Supported case |
 | --- | --- | --- |
-| 01 | Tensor addition | Same-device, same-shape contiguous float32 (up to 1,048,576 values) or int32 (up to 2,147,483,647 elements), with alpha=1. |
+| 01 | Tensor addition | float32 of any size with broadcasting (up to six dimensions), any alpha, or a number; int32 same-shape contiguous tensors up to 2,147,483,647 elements. |
 | 02 | Float16 tensor addition | Same-device, same-shape contiguous float16 up to 1,048,576 values, with alpha=1; edge values match exactly. |
 | 03 | Float32 in-place addition | Same-shape contiguous float32 CUDA tensors up to 1,048,576 values; scaled updates are used by the verified SGD case. |
 | 04 | Range creation | CUDA int64 arange, up to 1,048,576 values. Other cases use the CPU fallback. |
@@ -527,19 +530,23 @@ These 10 registered cases cover 8 operation families (addition, range creation, 
 | 07 | Matrix multiplication | 2D float32 of any size with nonnegative strides, transposed views included, on a tiled kernel; training uses it too (#184). Other dtypes use the CPU fallback. |
 | 08 | Matrix multiplication with bias | As above, with alpha and a bias of any broadcastable shape. Linear layers run through it. |
 | 09 | Batched matrix multiplication | 3D float32 batches (up to 65,535) of any size with nonnegative strides. Attention runs through it. |
-| 10 | ReLU | Contiguous float32 tensors up to 1,048,576 values. Other cases, and training, use the CPU fallback. |
+| 10 | Subtraction, multiplication and division | float32 of any size with broadcasting (up to six dimensions), or a number (1.0 - x included). Other dtypes use the CPU fallback (#184). |
+| 11 | GELU | Contiguous float32, exact or tanh, and its gradient. |
+| 12 | Softmax and log-softmax | Contiguous float32 over the last dimension, masked (-inf) entries included, and their gradients. |
+| 13 | Layer normalization in training | Contiguous float32 over the trailing dimensions, with or without weight and bias, and its gradients. |
+| 14 | Sum over dimensions | float32, any dimensions (up to six), keepdim or not. |
+| 15 | Fill | Contiguous float32 tensors (fill_, zero_). Other dtypes are filled in place on the CPU. |
+| 16 | ReLU | Contiguous float32 tensors up to 1,048,576 values. Other cases, and training, use the CPU fallback. |
 
 Native forward kernels do not record autograd formulas. For grad-enabled inputs, eligible operations use the differentiable CPU transfer path; unsupported backward operators still fail explicitly.
 
 ## Registered CPU fallback operations
 Bounded autograd
 
-These 9 registered fallback routes, plus the CPU path that addition takes outside its native limits, use PyTorch’s CPU implementation and copy results back to the original CUDA device:
+These 4 registered fallback routes, plus the CPU path that addition takes outside its native limits, use PyTorch’s CPU implementation and copy results back to the original CUDA device:
 
-- softmax and scaled_dot_product_attention
-- gelu
-- mul and div, with addition outside its native limits
-- sum over dimensions and clamp_min
+- scaled_dot_product_attention (training decomposes it into native matrix multiplication and softmax)
+- clamp_min
 - cat (concatenation) and contiguous copies
 
 Limits

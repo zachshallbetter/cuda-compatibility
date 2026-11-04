@@ -149,7 +149,74 @@ CUresult current_kernels(const char* ptx_path, CUfunction* vector_add_i32,
   }
 }
 
+// A thread PyTorch never ran a CUDA call on (autograd's backward thread before its first allocation) has no current
+// context; make the device's primary context (the one PyTorch uses) current there.
+CUresult ensure_context(int device) {
+  CUcontext context = nullptr;
+  CUresult result = cuCtxGetCurrent(&context);
+  if (result != CUDA_SUCCESS || context != nullptr) return result;
+  CUdevice handle = 0;
+  result = cuDeviceGet(&handle, device);
+  if (result != CUDA_SUCCESS) return result;
+  result = cuDevicePrimaryCtxRetain(&context, handle);
+  if (result != CUDA_SUCCESS) return result;
+  return cuCtxSetCurrent(context);
+}
+
+// Kernels looked up by name (#184): the module current_kernels loaded for a context, then each function once.
+std::mutex named_mutex;
+std::unordered_map<std::string, CUfunction> named_functions;
+
+CUresult named_kernel(const char* ptx_path, const char* name, CUfunction* function) {
+  CUfunction unused[7] = {};
+  CUresult result = current_kernels(ptx_path, &unused[0], &unused[1], &unused[2], &unused[3], &unused[4],
+                                    &unused[5], &unused[6]);
+  if (result != CUDA_SUCCESS) return result;
+  CUcontext context = nullptr;
+  result = cuCtxGetCurrent(&context);
+  if (result != CUDA_SUCCESS) return result;
+  CUmodule module = nullptr;
+  {
+    std::lock_guard<std::mutex> guard(cache_mutex);
+    auto found = kernels_by_context.find(context);
+    if (found == kernels_by_context.end()) return CUDA_ERROR_INVALID_CONTEXT;
+    module = found->second.module;
+  }
+  try {
+    const std::string key = std::to_string(reinterpret_cast<std::uintptr_t>(context)) + "/" + name;
+    std::lock_guard<std::mutex> guard(named_mutex);
+    auto found = named_functions.find(key);
+    if (found != named_functions.end()) {
+      *function = found->second;
+      return CUDA_SUCCESS;
+    }
+    result = cuModuleGetFunction(function, module, name);
+    if (result == CUDA_SUCCESS) named_functions.emplace(key, *function);
+    return result;
+  } catch (...) {
+    return CUDA_ERROR_UNKNOWN;
+  }
+}
+
 }  // namespace
+
+// Launch a kernel of the adapter's module by name with the caller's argument pointers (cuLaunchKernel's own form),
+// so a new kernel needs no launcher of its own here (#184).
+extern "C" int cuda_compat_launch_named(const char* ptx_path, const char* name, int device, unsigned int grid_x,
+                                        unsigned int grid_y, unsigned int grid_z, unsigned int block_x,
+                                        unsigned int block_y, unsigned int block_z, unsigned int shared_bytes,
+                                        std::uintptr_t stream_pointer, void** arguments) {
+  if (ptx_path == nullptr || name == nullptr || arguments == nullptr || grid_x == 0 || grid_y == 0 ||
+      grid_z == 0 || block_x * block_y * block_z == 0 || block_x * block_y * block_z > 1024)
+    return CUDA_ERROR_INVALID_VALUE;
+  CUresult result = ensure_context(device);
+  if (result != CUDA_SUCCESS) return result;
+  CUfunction function = nullptr;
+  result = named_kernel(ptx_path, name, &function);
+  if (result != CUDA_SUCCESS) return result;
+  return cuLaunchKernel(function, grid_x, grid_y, grid_z, block_x, block_y, block_z, shared_bytes,
+                        reinterpret_cast<CUstream>(stream_pointer), arguments, nullptr);
+}
 
 extern "C" int cuda_compat_launch_vector_add(
     const char* ptx_path, std::uint64_t left_pointer,

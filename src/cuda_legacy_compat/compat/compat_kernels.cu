@@ -154,3 +154,220 @@ extern "C" __global__ void compat_relu_f32(const float* input, float* output,
     output[index] = value < 0.0f ? 0.0f : value;
   }
 }
+
+// ── Elementwise, row-wise and reduction kernels (#184 part C) ─────────────────────────────────────────────────
+// Up to six dimensions; `a` and `b` are the two operands' element strides for each output dimension (0 broadcasts).
+struct CompatShape {
+  int64_t size[6];
+  int64_t a[6];
+  int64_t b[6];
+};
+
+__device__ inline void compat_offsets(int64_t index, const CompatShape& shape, int ndim, int64_t* a, int64_t* b) {
+  int64_t left = 0, right = 0;
+  for (int d = ndim - 1; d >= 0; --d) {
+    const int64_t i = index % shape.size[d];
+    index /= shape.size[d];
+    left += i * shape.a[d];
+    right += i * shape.b[d];
+  }
+  *a = left;
+  *b = right;
+}
+
+// op: 0 a + alpha*b, 1 a - alpha*b, 2 a*b, 3 a/b, 4 a + scalar, 5 a*scalar, 6 a/scalar, 7 scalar - a.
+extern "C" __global__ void compat_binary_f32(const float* left, const float* right, float* output, int64_t count,
+                                             int ndim, CompatShape shape, int op, float alpha, float scalar) {
+  for (int64_t i = blockIdx.x * static_cast<int64_t>(blockDim.x) + threadIdx.x; i < count;
+       i += static_cast<int64_t>(gridDim.x) * blockDim.x) {
+    int64_t a, b;
+    compat_offsets(i, shape, ndim, &a, &b);
+    const float x = left[a];
+    float value;
+    switch (op) {
+      case 0: value = __fmaf_rn(alpha, right[b], x); break;
+      case 1: value = __fmaf_rn(-alpha, right[b], x); break;
+      case 2: value = x * right[b]; break;
+      case 3: value = x / right[b]; break;
+      case 4: value = x + scalar; break;
+      case 5: value = x * scalar; break;
+      case 6: value = x / scalar; break;
+      default: value = scalar - x; break;
+    }
+    output[i] = value;
+  }
+}
+
+// op: 0 GELU (erf), 1 GELU (tanh), 2 fill with `value`.
+extern "C" __global__ void compat_unary_f32(const float* input, float* output, int64_t count, int op, float value) {
+  for (int64_t i = blockIdx.x * static_cast<int64_t>(blockDim.x) + threadIdx.x; i < count;
+       i += static_cast<int64_t>(gridDim.x) * blockDim.x) {
+    if (op == 2) {
+      output[i] = value;
+      continue;
+    }
+    const float x = input[i];
+    output[i] = op == 0 ? 0.5f * x * (1.0f + erff(x * 0.70710678118654752f))
+                        : 0.5f * x * (1.0f + tanhf(0.79788456080286536f * (x + 0.044715f * x * x * x)));
+  }
+}
+
+extern "C" __global__ void compat_gelu_backward_f32(const float* grad, const float* input, float* output,
+                                                   int64_t count, int approximate) {
+  for (int64_t i = blockIdx.x * static_cast<int64_t>(blockDim.x) + threadIdx.x; i < count;
+       i += static_cast<int64_t>(gridDim.x) * blockDim.x) {
+    const float x = input[i];
+    float derivative;
+    if (approximate == 0) {
+      const float cdf = 0.5f * (1.0f + erff(x * 0.70710678118654752f));
+      const float pdf = expf(-0.5f * x * x) * 0.39894228040143268f;
+      derivative = cdf + x * pdf;
+    } else {
+      const float k = 0.79788456080286536f;
+      const float inner = k * (x + 0.044715f * x * x * x);
+      const float t = tanhf(inner);
+      derivative = 0.5f * (1.0f + t) + 0.5f * x * (1.0f - t * t) * k * (1.0f + 3.0f * 0.044715f * x * x);
+    }
+    output[i] = grad[i] * derivative;
+  }
+}
+
+// One 256-thread block per row; returns the block-wide result to every thread.
+__device__ inline float compat_block_reduce(float value, float* scratch, bool take_max) {
+  scratch[threadIdx.x] = value;
+  __syncthreads();
+  for (int width = blockDim.x / 2; width > 0; width >>= 1) {
+    if (threadIdx.x < width)
+      scratch[threadIdx.x] = take_max ? fmaxf(scratch[threadIdx.x], scratch[threadIdx.x + width])
+                                      : scratch[threadIdx.x] + scratch[threadIdx.x + width];
+    __syncthreads();
+  }
+  const float result = scratch[0];
+  __syncthreads();
+  return result;
+}
+
+extern "C" __global__ void compat_softmax_rows_f32(const float* input, float* output, int64_t rows, int64_t columns,
+                                                   int log_softmax) {
+  __shared__ float scratch[256];
+  const int64_t row = blockIdx.x;
+  if (row >= rows) return;
+  const float* x = input + row * columns;
+  float* y = output + row * columns;
+  float m = -__int_as_float(0x7f800000);
+  for (int64_t c = threadIdx.x; c < columns; c += blockDim.x) m = fmaxf(m, x[c]);
+  m = compat_block_reduce(m, scratch, true);
+  float s = 0.0f;
+  for (int64_t c = threadIdx.x; c < columns; c += blockDim.x) s += expf(x[c] - m);
+  s = compat_block_reduce(s, scratch, false);
+  const float log_s = logf(s);
+  for (int64_t c = threadIdx.x; c < columns; c += blockDim.x)
+    y[c] = log_softmax ? x[c] - m - log_s : expf(x[c] - m) / s;
+}
+
+extern "C" __global__ void compat_softmax_backward_rows_f32(const float* grad, const float* output, float* grad_input,
+                                                            int64_t rows, int64_t columns, int log_softmax) {
+  __shared__ float scratch[256];
+  const int64_t row = blockIdx.x;
+  if (row >= rows) return;
+  const float* g = grad + row * columns;
+  const float* y = output + row * columns;
+  float* gi = grad_input + row * columns;
+  float dot = 0.0f;
+  for (int64_t c = threadIdx.x; c < columns; c += blockDim.x) dot += log_softmax ? g[c] : g[c] * y[c];
+  dot = compat_block_reduce(dot, scratch, false);
+  for (int64_t c = threadIdx.x; c < columns; c += blockDim.x)
+    gi[c] = log_softmax ? g[c] - expf(y[c]) * dot : y[c] * (g[c] - dot);
+}
+
+// Layer normalization over the last `columns` values of each row, saving each row's mean and 1/std for backward.
+extern "C" __global__ void compat_layer_norm_forward_f32(const float* input, const float* weight, const float* bias,
+                                                         float* output, float* mean_out, float* rstd_out,
+                                                         int64_t rows, int64_t columns, float epsilon) {
+  __shared__ float scratch[256];
+  const int64_t row = blockIdx.x;
+  if (row >= rows) return;
+  const float* x = input + row * columns;
+  float s = 0.0f;
+  for (int64_t c = threadIdx.x; c < columns; c += blockDim.x) s += x[c];
+  const float mean = compat_block_reduce(s, scratch, false) / columns;
+  float v = 0.0f;
+  for (int64_t c = threadIdx.x; c < columns; c += blockDim.x) v += (x[c] - mean) * (x[c] - mean);
+  const float rstd = rsqrtf(compat_block_reduce(v, scratch, false) / columns + epsilon);
+  for (int64_t c = threadIdx.x; c < columns; c += blockDim.x) {
+    float value = (x[c] - mean) * rstd;
+    if (weight != nullptr) value *= weight[c];
+    if (bias != nullptr) value += bias[c];
+    output[row * columns + c] = value;
+  }
+  if (threadIdx.x == 0) {
+    mean_out[row] = mean;
+    rstd_out[row] = rstd;
+  }
+}
+
+extern "C" __global__ void compat_layer_norm_backward_input_f32(const float* grad, const float* input, const float* mean,
+                                                                const float* rstd, const float* weight,
+                                                                float* grad_input, int64_t rows, int64_t columns) {
+  __shared__ float scratch[256];
+  const int64_t row = blockIdx.x;
+  if (row >= rows) return;
+  const float* g = grad + row * columns;
+  const float* x = input + row * columns;
+  const float m = mean[row], r = rstd[row];
+  float sum_gw = 0.0f, sum_gw_xhat = 0.0f;
+  for (int64_t c = threadIdx.x; c < columns; c += blockDim.x) {
+    const float gw = weight != nullptr ? g[c] * weight[c] : g[c];
+    sum_gw += gw;
+    sum_gw_xhat += gw * (x[c] - m) * r;
+  }
+  sum_gw = compat_block_reduce(sum_gw, scratch, false);
+  sum_gw_xhat = compat_block_reduce(sum_gw_xhat, scratch, false);
+  for (int64_t c = threadIdx.x; c < columns; c += blockDim.x) {
+    const float gw = weight != nullptr ? g[c] * weight[c] : g[c];
+    const float xhat = (x[c] - m) * r;
+    grad_input[row * columns + c] = r * (gw - sum_gw / columns - xhat * sum_gw_xhat / columns);
+  }
+}
+
+// One block per column: the weight and bias gradients sum over every row.
+extern "C" __global__ void compat_layer_norm_backward_params_f32(const float* grad, const float* input,
+                                                                 const float* mean, const float* rstd,
+                                                                 float* grad_weight, float* grad_bias,
+                                                                 int64_t rows, int64_t columns) {
+  __shared__ float scratch[256];
+  const int64_t column = blockIdx.x;
+  if (column >= columns) return;
+  float sw = 0.0f, sb = 0.0f;
+  for (int64_t row = threadIdx.x; row < rows; row += blockDim.x) {
+    const float g = grad[row * columns + column];
+    sw += g * (input[row * columns + column] - mean[row]) * rstd[row];
+    sb += g;
+  }
+  sw = compat_block_reduce(sw, scratch, false);
+  sb = compat_block_reduce(sb, scratch, false);
+  if (threadIdx.x == 0) {
+    if (grad_weight != nullptr) grad_weight[column] = sw;
+    if (grad_bias != nullptr) grad_bias[column] = sb;
+  }
+}
+
+// Sum over any set of dimensions: one block per output element. `kept` holds the kept dimensions' sizes (size) and
+// input strides (a); `reduced` the reduced ones'.
+extern "C" __global__ void compat_reduce_sum_f32(const float* input, float* output, int64_t outputs, int kept_ndim,
+                                                 CompatShape kept, int reduced_ndim, CompatShape reduced,
+                                                 int64_t reduced_count) {
+  __shared__ float scratch[256];
+  const int64_t o = blockIdx.x;
+  if (o >= outputs) return;
+  int64_t base, unused;
+  compat_offsets(o, kept, kept_ndim, &base, &unused);
+  float s = 0.0f;
+  for (int64_t r = threadIdx.x; r < reduced_count; r += blockDim.x) {
+    int64_t offset;
+    compat_offsets(r, reduced, reduced_ndim, &offset, &unused);
+    s += input[base + offset];
+  }
+  s = compat_block_reduce(s, scratch, false);
+  if (threadIdx.x == 0) output[o] = s;
+}

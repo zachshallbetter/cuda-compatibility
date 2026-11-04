@@ -91,7 +91,7 @@
 <p style="margin:0;font-size:15px;line-height:1.3;max-width:46ch"><span style="font-weight:700">GM200 reference card, compute capability 5.2.</span> <span class="mute">The only hardware tested so far. Experimental, process-local, workload-specific.</span></p>
 <dl style="margin:0;display:flex;gap:32px;flex-wrap:wrap">
 <div style="display:flex;flex-direction:column;gap:2px"><dt class="sheet">Reference cards</dt><dd style="margin:0;font-weight:800;font-size:22px;line-height:1">3</dd></div>
-<div style="display:flex;flex-direction:column;gap:2px"><dt class="sheet">Native operation families</dt><dd style="margin:0;font-weight:800;font-size:22px;line-height:1">8</dd></div>
+<div style="display:flex;flex-direction:column;gap:2px"><dt class="sheet">Native operators</dt><dd style="margin:0;font-weight:800;font-size:22px;line-height:1">23</dd></div>
 <div style="display:flex;flex-direction:column;gap:2px"><dt class="sheet">Claims of universal support</dt><dd style="margin:0;font-weight:800;font-size:22px;line-height:1">0</dd></div>
 </dl>
 <button type="button" class="replay" id="replay" hidden aria-label="Replay the card assembly">Replay build<svg aria-hidden="true" width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M10 6a4 4 0 1 1-1.2-2.9M9 1v2.5H6.5"></path></svg></button>
@@ -199,7 +199,7 @@
 <h3 style="font-size:26px">Runs on the GPU</h3>
 <span class="state ok"><i class="sw full" aria-hidden="true" style="border-color:var(--on-ok);background:var(--on-ok);width:10px;height:10px;margin-right:7px"></i>Native sm_52 kernel</span>
 </div>
-<div class="dim"><span>10 registered cases, 8 operation families</span></div>
+<div class="dim"><span>16 registered cases, 23 native operators</span></div>
 <ul class="ops">
 <li><strong>Tensor addition</strong><span class="soft">Contiguous float32 (up to 1,048,576 values) and int32 tensors (up to 2,147,483,647); same shape and device, <code>alpha=1</code>.</span></li>
 <li><strong>Float16 addition</strong><span class="soft">Same-shape contiguous float16 tensors, <code>alpha=1</code>, up to 1,048,576 values; edge values checked exactly.</span></li>
@@ -211,6 +211,10 @@
 <li><strong>Matrix multiplication with bias</strong><span class="soft">As above, with <code>alpha</code> and a broadcast bias; linear layers run through it.</span></li>
 <li><strong>Batched matrix multiplication</strong><span class="soft">3D float32 batches of any size; attention runs through it.</span></li>
 <li><strong>ReLU</strong><span class="soft">Contiguous float32 tensors, up to 1,048,576 values.</span></li>
+<li><strong>Elementwise arithmetic</strong><span class="soft">Add, subtract, multiply and divide in float32 with broadcasting, any size.</span></li>
+<li><strong>GELU, softmax and log-softmax</strong><span class="soft">float32, with their gradients; masked attention included.</span></li>
+<li><strong>Layer normalization in training</strong><span class="soft">Forward and backward, with or without weight and bias.</span></li>
+<li><strong>Sum and fill</strong><span class="soft">Sums over any dimensions; <code>fill_</code> and <code>zero_</code>.</span></li>
 </ul>
 <p class="mute" style="margin:0;font-size:15px">Native forward kernels are not differentiable. Grad-enabled calls on these operations use differentiable CPU transfers instead.</p>
 </div>
@@ -221,9 +225,8 @@
 </div>
 <div class="dim"><span>Operation / CPU implementation</span></div>
 <ul class="ops">
-<li><strong>Attention and activations</strong><span class="soft"><code>softmax</code>, <code>scaled_dot_product_attention</code>, <code>GELU</code></span></li>
-<li><strong>Arithmetic</strong><span class="soft"><code>add</code>, <code>multiply</code>, <code>divide</code></span></li>
-<li><strong>Reductions</strong><span class="soft"><code>sum</code>, <code>clamp_min</code></span></li>
+<li><strong>Attention</strong><span class="soft"><code>scaled_dot_product_attention</code> (training runs on native kernels)</span></li>
+<li><strong>Reductions</strong><span class="soft"><code>clamp_min</code></span></li>
 <li><strong>Layout</strong><span class="soft"><code>concatenate</code>, <code>contiguous</code></span></li>
 </ul>
 <p style="margin:0;font-size:15px">These use PyTorch’s CPU implementation with differentiable host and device transfers on selected first-order gradient paths. The dispatcher can also retry eligible out-of-place operations after recognized missing-image, architecture-mismatch, or cuDNN no-engine errors.</p>

@@ -95,7 +95,8 @@ class SiteDiscoveryChecksTests(unittest.TestCase):
         native, fallback = registry
         self.assertIn("mm", native)
         self.assertIn("bmm", native)   # the tiled kernel (#184)
-        self.assertIn("_softmax", fallback)
+        self.assertIn("_softmax", native)
+        self.assertIn("cat", fallback)
         self.assertNotIn("contiguous", native)
 
     def test_rejects_home_count_that_drifts_from_adapter(self) -> None:
@@ -104,8 +105,8 @@ class SiteDiscoveryChecksTests(unittest.TestCase):
             shutil.copytree(PROJECT_ROOT / "src", Path(directory) / "src")
             home = site / "index.html"
             source = home.read_text(encoding="utf-8")
-            home.write_text(re.sub(r"(Native operation families</dt><dd[^>]*>)\d+", r"\g<1>99", source), encoding="utf-8")
-            self.assertTrue(any("native operation families must read" in error for error in audit_site(site)))
+            home.write_text(re.sub(r"(Native operators</dt><dd[^>]*>)\d+", r"\g<1>99", source), encoding="utf-8")
+            self.assertTrue(any("native operators must read" in error for error in audit_site(site)))
 
     def test_rejects_missing_webmaster_verification_tags(self) -> None:
         with tempfile.TemporaryDirectory() as directory:

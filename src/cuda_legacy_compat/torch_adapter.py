@@ -119,6 +119,9 @@ def _load_bridge() -> tuple[ctypes.CDLL, bytes]:
     bridge.cuda_compat_launch_matrix_multiply_f32.argtypes = (
         [ctypes.c_char_p] + [ctypes.c_uint64] * 18 + [ctypes.c_float, ctypes.c_float, ctypes.c_size_t])
     bridge.cuda_compat_launch_matrix_multiply_f32.restype = ctypes.c_int
+    bridge.cuda_compat_launch_named.argtypes = [ctypes.c_char_p, ctypes.c_char_p, ctypes.c_int] + [ctypes.c_uint] * 7 + [
+        ctypes.c_size_t, ctypes.POINTER(ctypes.c_void_p)]
+    bridge.cuda_compat_launch_named.restype = ctypes.c_int
     bridge.cuda_compat_launch_relu_f32.argtypes = [
         ctypes.c_char_p,
         ctypes.c_uint64,
@@ -150,6 +153,10 @@ def _falls_back_to_cpu(operation_name: str, oversize: Callable[..., Any] | None 
                     return result
                 if oversize is not None and _over_fallback_limit(args, kwargs, _CPU_FALLBACK_MAX_BYTES):
                     return oversize(*args, **kwargs)
+                if _writes_only_self(operation._schema):
+                    # An in-place operator (fill_, zero_) must update its own tensor: the out-of-place fallback
+                    # would return a new one and leave the target as it was (uninitialised for ones/zeros).
+                    return _inplace_on_cpu(operation, f"aten::{operation_name.split('.')[0]}", args, kwargs)
                 return _cpu_fallback(operation, operation_name.split(".")[0])(*args, **kwargs)
         return run
     return wrap
@@ -177,6 +184,13 @@ def _record_stream(tensors: tuple[torch.Tensor, ...], stream: Any) -> None:
 @_falls_back_to_cpu("add.Tensor")
 def _add(self: torch.Tensor, other: torch.Tensor, *, alpha: int | float = 1) -> torch.Tensor:
     global _bridge
+    # float32 with broadcasting, a scalar, any alpha or size, in training too (#184): the elementwise kernel.
+    if self.dtype == torch.float32 and self.is_cuda and (
+            _scalar(other) is not None or (isinstance(other, torch.Tensor) and other.dtype == torch.float32
+                                           and other.is_cuda and other.device == self.device)):
+        output = _binary(self, other, 0, float(alpha))
+        _dispatch_state.last_path = "llvm-sm52-binary-f32"
+        return output
     if not isinstance(other, torch.Tensor) or (other.dim() == 0 and not other.is_cuda):
         # x + 1, 1 + x, x + 0.5, x + torch.tensor(1.0): a scalar operand has no Maxwell kernel here.
         scalar = other.item() if isinstance(other, torch.Tensor) else other
@@ -357,6 +371,303 @@ def _add_inplace(
     if result != 0:
         raise RuntimeError(f"CUDA Driver API Maxwell in-place float32 add failed with CUresult={result}")
     _dispatch_state.last_path = "llvm-sm52-f32-add-inplace"
+    return self
+
+
+class _Shape(ctypes.Structure):
+    """compat_kernels.cu's CompatShape: up to six sizes and two operands' strides, passed by value."""
+    _fields_ = [("size", ctypes.c_int64 * 6), ("a", ctypes.c_int64 * 6), ("b", ctypes.c_int64 * 6)]
+
+
+def _shape(sizes, a_strides, b_strides=None) -> _Shape:
+    if len(sizes) > 6:
+        raise NotImplementedError("Maxwell elementwise kernels take at most six dimensions")
+    shape = _Shape()
+    for d, size in enumerate(sizes):
+        shape.size[d], shape.a[d] = size, a_strides[d]
+        shape.b[d] = b_strides[d] if b_strides is not None else 0
+    return shape
+
+
+def _launch(name: str, grid: int, *arguments, block: int = 256, device: torch.device | None = None) -> None:
+    """Run one kernel of the adapter's module by name (cuda_compat_launch_named), on the current stream."""
+    global _bridge
+    if _bridge is None:
+        _bridge, ptx_path = _load_bridge()
+    else:
+        ptx_path = os.fsencode(os.environ["CUDA_COMPAT_VECTOR_ADD_PTX"])
+    pointers = (ctypes.c_void_p * len(arguments))(*[ctypes.cast(ctypes.pointer(a), ctypes.c_void_p) for a in arguments])
+    index = device.index if device is not None and device.index is not None else torch.cuda.current_device()
+    stream = torch.cuda.current_stream(index).cuda_stream
+    result = _bridge.cuda_compat_launch_named(ptx_path, name.encode(), index, max(1, grid), 1, 1, block, 1, 1, 0,
+                                              stream, pointers)
+    if result != 0:
+        raise RuntimeError(f"CUDA Driver API Maxwell {name} failed with CUresult={result}")
+
+
+def _ptr(tensor: torch.Tensor | None) -> ctypes.c_uint64:
+    return ctypes.c_uint64(tensor.data_ptr() if tensor is not None else 0)
+
+
+def _blocks(count: int) -> int:
+    return min(4096, (count + 255) // 256)
+
+
+def _f32(*tensors: torch.Tensor | None, contiguous: bool = False) -> None:
+    """Refuse (to the CPU fallback) anything but float32 CUDA tensors of one device, without negative strides."""
+    present = [t for t in tensors if t is not None]
+    if any(not isinstance(t, torch.Tensor) or t.dtype != torch.float32 or not t.is_cuda for t in present):
+        raise NotImplementedError("Maxwell elementwise kernels take float32 CUDA tensors only")
+    if len({t.device for t in present}) > 1 or any(s < 0 for t in present for s in t.stride()):
+        raise NotImplementedError("Maxwell elementwise kernels need one device and nonnegative strides")
+    if contiguous and any(not t.is_contiguous() for t in present):
+        raise NotImplementedError("Maxwell elementwise kernel needs contiguous tensors")
+
+
+def _scalar(value: Any) -> float | None:
+    """A Python number, or a 0-d CPU tensor (x * torch.tensor(2.0)); None for anything else."""
+    if isinstance(value, torch.Tensor):
+        return value.item() if value.dim() == 0 and not value.is_cuda and value.dtype.is_floating_point else None
+    return float(value) if isinstance(value, (int, float)) and not isinstance(value, bool) else None
+
+
+def _binary(left: torch.Tensor, right: Any, op: int, alpha: float = 1.0) -> torch.Tensor:
+    """left (op) right with broadcasting (#184): op 0 add, 1 sub, 2 mul, 3 div against a float32 CUDA tensor, or
+    the scalar forms 4-7 (add, mul, div, reverse-subtract) when right is a number."""
+    scalar = _scalar(right)
+    if scalar is not None:
+        _f32(left)
+        shape, other = left.shape, None
+        # add -> 4 (x + alpha*s), sub -> 4 (x - alpha*s), mul -> 5, div -> 6.
+        op, value = {0: (4, alpha * scalar), 1: (4, -alpha * scalar), 2: (5, scalar), 3: (6, scalar)}[op]
+    else:
+        _f32(left, right)
+        shape, other, value = torch.broadcast_shapes(left.shape, right.shape), right, 0.0
+    output = torch.empty(shape, dtype=torch.float32, device=left.device)
+    count = output.numel()
+    if count:
+        lv = left.expand(shape)
+        rv = other.expand(shape) if other is not None else lv
+        _launch("compat_binary_f32", _blocks(count), _ptr(lv), _ptr(rv), _ptr(output), ctypes.c_int64(count),
+                ctypes.c_int(len(shape)), _shape(shape, lv.stride(), rv.stride()), ctypes.c_int(op),
+                ctypes.c_float(alpha), ctypes.c_float(value), device=lv.device)
+    return output
+
+
+@_falls_back_to_cpu("sub.Tensor")
+def _sub(self: torch.Tensor, other: Any, *, alpha: int | float = 1) -> torch.Tensor:
+    output = _binary(self, other, 1, float(alpha))
+    _dispatch_state.last_path = "llvm-sm52-binary-f32"
+    return output
+
+
+@_falls_back_to_cpu("rsub.Scalar")
+def _rsub(self: torch.Tensor, other: Any, alpha: int | float = 1) -> torch.Tensor:
+    """other - alpha * self (1.0 - x): the kernel's reverse-subtract form, for alpha 1."""
+    scalar = _scalar(other)
+    if scalar is None or alpha != 1:
+        raise NotImplementedError("Maxwell reverse subtraction takes a number and alpha=1")
+    _f32(self)
+    output = torch.empty(self.shape, dtype=torch.float32, device=self.device)
+    count = output.numel()
+    if count:
+        sv = self.expand(self.shape)
+        _launch("compat_binary_f32", _blocks(count), _ptr(sv), _ptr(sv), _ptr(output), ctypes.c_int64(count),
+                ctypes.c_int(self.dim()), _shape(self.shape, sv.stride(), sv.stride()), ctypes.c_int(7),
+                ctypes.c_float(1.0), ctypes.c_float(scalar), device=self.device)
+    _dispatch_state.last_path = "llvm-sm52-binary-f32"
+    return output
+
+
+@_falls_back_to_cpu("mul.Tensor")
+def _mul(self: torch.Tensor, other: Any) -> torch.Tensor:
+    output = _binary(self, other, 2)
+    _dispatch_state.last_path = "llvm-sm52-binary-f32"
+    return output
+
+
+@_falls_back_to_cpu("div.Tensor")
+def _div(self: torch.Tensor, other: Any) -> torch.Tensor:
+    output = _binary(self, other, 3)
+    _dispatch_state.last_path = "llvm-sm52-binary-f32"
+    return output
+
+
+@_falls_back_to_cpu("gelu")
+def _gelu(self: torch.Tensor, *, approximate: str = "none") -> torch.Tensor:
+    _f32(self, contiguous=True)
+    output = torch.empty_like(self)
+    if self.numel():
+        _launch("compat_unary_f32", _blocks(self.numel()), _ptr(self), _ptr(output), ctypes.c_int64(self.numel()),
+                ctypes.c_int(0 if approximate == "none" else 1), ctypes.c_float(0.0), device=self.device)
+    _dispatch_state.last_path = "llvm-sm52-gelu-f32"
+    return output
+
+
+@_falls_back_to_cpu("gelu_backward")
+def _gelu_backward(grad_output: torch.Tensor, self: torch.Tensor, *, approximate: str = "none") -> torch.Tensor:
+    _f32(grad_output, self, contiguous=True)
+    if grad_output.shape != self.shape:
+        raise NotImplementedError("Maxwell GELU backward needs the gradient in the input's shape")
+    output = torch.empty_like(self)
+    if self.numel():
+        _launch("compat_gelu_backward_f32", _blocks(self.numel()), _ptr(grad_output), _ptr(self), _ptr(output),
+                ctypes.c_int64(self.numel()), ctypes.c_int(0 if approximate == "none" else 1), device=grad_output.device)
+    _dispatch_state.last_path = "llvm-sm52-gelu-backward-f32"
+    return output
+
+
+def _rows(tensor: torch.Tensor, dim: int) -> tuple[int, int]:
+    if dim % max(1, tensor.dim()) != tensor.dim() - 1:
+        raise NotImplementedError("Maxwell softmax runs over the last dimension only")
+    columns = tensor.shape[-1] if tensor.dim() else 1
+    return (tensor.numel() // columns if columns else 0), columns
+
+
+def _softmax_rows(self: torch.Tensor, dim: int, log: bool) -> torch.Tensor:
+    _f32(self, contiguous=True)
+    rows, columns = _rows(self, dim)
+    output = torch.empty_like(self)
+    if rows and columns:
+        _launch("compat_softmax_rows_f32", rows, _ptr(self), _ptr(output), ctypes.c_int64(rows),
+                ctypes.c_int64(columns), ctypes.c_int(int(log)), device=self.device)
+    return output
+
+
+def _softmax_rows_backward(grad_output: torch.Tensor, output: torch.Tensor, dim: int, log: bool) -> torch.Tensor:
+    _f32(grad_output, output, contiguous=True)
+    rows, columns = _rows(output, dim)
+    grad_input = torch.empty_like(output)
+    if rows and columns:
+        _launch("compat_softmax_backward_rows_f32", rows, _ptr(grad_output), _ptr(output), _ptr(grad_input),
+                ctypes.c_int64(rows), ctypes.c_int64(columns), ctypes.c_int(int(log)), device=grad_output.device)
+    return grad_input
+
+
+@_falls_back_to_cpu("_softmax")
+def _softmax(self: torch.Tensor, dim: int, half_to_float: bool) -> torch.Tensor:
+    output = _softmax_rows(self, dim, False)
+    _dispatch_state.last_path = "llvm-sm52-softmax-f32"
+    return output
+
+
+@_falls_back_to_cpu("_log_softmax")
+def _log_softmax(self: torch.Tensor, dim: int, half_to_float: bool) -> torch.Tensor:
+    output = _softmax_rows(self, dim, True)
+    _dispatch_state.last_path = "llvm-sm52-log-softmax-f32"
+    return output
+
+
+@_falls_back_to_cpu("_softmax_backward_data")
+def _softmax_backward(grad_output: torch.Tensor, output: torch.Tensor, dim: int, input_dtype) -> torch.Tensor:
+    grad_input = _softmax_rows_backward(grad_output, output, dim, False)
+    _dispatch_state.last_path = "llvm-sm52-softmax-backward-f32"
+    return grad_input
+
+
+@_falls_back_to_cpu("_log_softmax_backward_data")
+def _log_softmax_backward(grad_output: torch.Tensor, output: torch.Tensor, dim: int, input_dtype) -> torch.Tensor:
+    grad_input = _softmax_rows_backward(grad_output, output, dim, True)
+    _dispatch_state.last_path = "llvm-sm52-log-softmax-backward-f32"
+    return grad_input
+
+
+def _norm_rows(input: torch.Tensor, normalized_shape) -> tuple[int, int, tuple[int, ...]]:
+    columns = 1
+    for size in normalized_shape:
+        columns *= int(size)
+    keep = input.dim() - len(normalized_shape)
+    if keep < 0 or tuple(input.shape[keep:]) != tuple(int(s) for s in normalized_shape):
+        raise NotImplementedError("Maxwell layer normalization: the normalized shape must end the input's shape")
+    rows = input.numel() // columns if columns else 0
+    return rows, columns, tuple(input.shape[:keep]) + (1,) * len(normalized_shape)
+
+
+@_falls_back_to_cpu("native_layer_norm")
+def _native_layer_norm(input: torch.Tensor, normalized_shape, weight: torch.Tensor | None, bias: torch.Tensor | None,
+                       eps: float):
+    _f32(input, weight, bias, contiguous=True)
+    rows, columns, stat_shape = _norm_rows(input, normalized_shape)
+    output = torch.empty_like(input)
+    mean = torch.empty(stat_shape, dtype=torch.float32, device=input.device)
+    rstd = torch.empty(stat_shape, dtype=torch.float32, device=input.device)
+    if rows and columns:
+        _launch("compat_layer_norm_forward_f32", rows, _ptr(input), _ptr(weight), _ptr(bias), _ptr(output), _ptr(mean),
+                _ptr(rstd), ctypes.c_int64(rows), ctypes.c_int64(columns), ctypes.c_float(eps), device=input.device)
+    _dispatch_state.last_path = "llvm-sm52-native-layer-norm-f32"
+    return output, mean, rstd
+
+
+@_falls_back_to_cpu("native_layer_norm_backward")
+def _native_layer_norm_backward(grad_out: torch.Tensor, input: torch.Tensor, normalized_shape, mean: torch.Tensor,
+                                rstd: torch.Tensor, weight: torch.Tensor | None, bias: torch.Tensor | None,
+                                output_mask):
+    _f32(grad_out, input, mean, rstd, weight, contiguous=True)
+    rows, columns, _ = _norm_rows(input, normalized_shape)
+    grad_input = torch.empty_like(input) if output_mask[0] else None
+    grad_weight = torch.empty(tuple(int(s) for s in normalized_shape), dtype=torch.float32, device=input.device) \
+        if output_mask[1] and weight is not None else None
+    grad_bias = torch.empty(tuple(int(s) for s in normalized_shape), dtype=torch.float32, device=input.device) \
+        if output_mask[2] and bias is not None else None
+    if rows and columns:
+        if grad_input is not None:
+            _launch("compat_layer_norm_backward_input_f32", rows, _ptr(grad_out), _ptr(input), _ptr(mean), _ptr(rstd),
+                    _ptr(weight), _ptr(grad_input), ctypes.c_int64(rows), ctypes.c_int64(columns), device=grad_out.device)
+        if grad_weight is not None or grad_bias is not None:
+            _launch("compat_layer_norm_backward_params_f32", columns, _ptr(grad_out), _ptr(input), _ptr(mean),
+                    _ptr(rstd), _ptr(grad_weight), _ptr(grad_bias), ctypes.c_int64(rows), ctypes.c_int64(columns), device=grad_out.device)
+    _dispatch_state.last_path = "llvm-sm52-native-layer-norm-backward-f32"
+    return grad_input, grad_weight, grad_bias
+
+
+@_falls_back_to_cpu("sum.dim_IntList")
+def _sum(self: torch.Tensor, dim, keepdim: bool = False, *, dtype=None) -> torch.Tensor:
+    if dtype is not None and dtype != torch.float32:
+        raise NotImplementedError("Maxwell sum keeps float32")
+    _f32(self)
+    ndim = self.dim()
+    dims = sorted({d % ndim for d in dim} if dim else set(range(ndim))) if ndim else []
+    kept = [d for d in range(ndim) if d not in dims]
+    if len(kept) > 6 or len(dims) > 6:
+        raise NotImplementedError("Maxwell sum takes at most six dimensions")
+    out_shape = [1 if d in dims else self.shape[d] for d in range(ndim)] if keepdim else [self.shape[d] for d in kept]
+    output = torch.empty(out_shape, dtype=torch.float32, device=self.device)
+    outputs = output.numel()
+    reduced_count = 1
+    for d in dims:
+        reduced_count *= self.shape[d]
+    if ndim == 0:
+        output.copy_(self)   # same dtype and device: a plain memory copy
+    elif outputs:
+        if reduced_count == 0:
+            _launch("compat_unary_f32", _blocks(outputs), _ptr(self), _ptr(output), ctypes.c_int64(outputs),
+                    ctypes.c_int(2), ctypes.c_float(0.0), device=self.device)
+        else:
+            _launch("compat_reduce_sum_f32", outputs, _ptr(self), _ptr(output), ctypes.c_int64(outputs),
+                    ctypes.c_int(len(kept)), _shape([self.shape[d] for d in kept], [self.stride(d) for d in kept]),
+                    ctypes.c_int(len(dims)), _shape([self.shape[d] for d in dims], [self.stride(d) for d in dims]),
+                    ctypes.c_int64(reduced_count), device=self.device)
+    _dispatch_state.last_path = "llvm-sm52-sum-f32"
+    return output
+
+
+@_falls_back_to_cpu("fill_.Scalar")
+def _fill(self: torch.Tensor, value) -> torch.Tensor:
+    _f32(self, contiguous=True)
+    if self.numel():
+        _launch("compat_unary_f32", _blocks(self.numel()), _ptr(self), _ptr(self), ctypes.c_int64(self.numel()),
+                ctypes.c_int(2), ctypes.c_float(float(value)), device=self.device)
+    _dispatch_state.last_path = "llvm-sm52-fill-f32"
+    return self
+
+
+@_falls_back_to_cpu("zero_")
+def _zero(self: torch.Tensor) -> torch.Tensor:
+    _f32(self, contiguous=True)
+    if self.numel():
+        _launch("compat_unary_f32", _blocks(self.numel()), _ptr(self), _ptr(self), ctypes.c_int64(self.numel()),
+                ctypes.c_int(2), ctypes.c_float(0.0), device=self.device)
+    _dispatch_state.last_path = "llvm-sm52-fill-f32"
     return self
 
 
@@ -1317,7 +1628,17 @@ def install() -> None:
     _library.impl("mm", _mm)
     _library.impl("addmm", _addmm)
     _library.impl("bmm", _bmm)
-    _library.impl("_softmax", _cpu_fallback(torch.ops.aten._softmax.default, "softmax"))
+    _library.impl("_softmax", _softmax)
+    _library.impl("_log_softmax", _log_softmax)
+    _library.impl("_softmax_backward_data", _softmax_backward)
+    _library.impl("_log_softmax_backward_data", _log_softmax_backward)
+    _library.impl("native_layer_norm", _native_layer_norm)
+    _library.impl("native_layer_norm_backward", _native_layer_norm_backward)
+    _library.impl("gelu_backward", _gelu_backward)
+    _library.impl("sub.Tensor", _sub)
+    _library.impl("rsub.Scalar", _rsub)
+    _library.impl("fill_.Scalar", _fill)
+    _library.impl("zero_", _zero)
     _library.impl(
         "scaled_dot_product_attention",
         _inference_only(_cpu_fallback(
@@ -1325,10 +1646,10 @@ def install() -> None:
             "scaled_dot_product_attention",
         ), "scaled_dot_product_attention"),
     )
-    _library.impl("gelu", _cpu_fallback(torch.ops.aten.gelu.default, "gelu"))
-    _library.impl("mul.Tensor", _cpu_fallback(torch.ops.aten.mul.Tensor, "mul"))
-    _library.impl("div.Tensor", _cpu_fallback(torch.ops.aten.div.Tensor, "div"))
-    _library.impl("sum.dim_IntList", _cpu_fallback(torch.ops.aten.sum.dim_IntList, "sum"))
+    _library.impl("gelu", _gelu)
+    _library.impl("mul.Tensor", _mul)
+    _library.impl("div.Tensor", _div)
+    _library.impl("sum.dim_IntList", _sum)
     _library.impl("clamp_min", _cpu_fallback(torch.ops.aten.clamp_min.default, "clamp_min"))
     _library.impl("cat", _cpu_fallback(torch.ops.aten.cat.default, "cat"))
     _library.impl("relu", _relu)
