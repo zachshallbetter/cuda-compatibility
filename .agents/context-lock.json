@@ -6,7 +6,7 @@
   "selectedPaths": [],
   "sourceSelection": {
     "includedCount": 293,
-    "includedBytes": 2944614,
+    "includedBytes": 2947655,
     "excludedCounts": {
       "extension": 65,
       "generated-or-transient-file": 2
@@ -18,14 +18,14 @@
     "repositories": [
       {
         "path": ".",
-        "commit": "7d7501821083f4b33507a413bb9a8e9ccfbefae8",
-        "branch": "chore/repin-0.2.21",
+        "commit": "e7eb3a1f66aee85bc7f11d2d2adea069f08a6768",
+        "branch": null,
         "dirty": true,
         "remote": "https://github.com/zachshallbetter/cuda-compatibility.git"
       }
     ]
   },
-  "aggregateSourceDigest": "cfa19bb7593c7c1491fb4ab9415d35c7ae4989c467d59a412baeda9443fd2af3",
+  "aggregateSourceDigest": "bdabad6039e7601be61b99742601bd4413e68be688e334795ad810b3c0302be6",
   "sources": [
     {
       "path": ".agents/acp/README.md",
@@ -704,8 +704,8 @@
     },
     {
       "path": "README.md",
-      "bytes": 13800,
-      "sha256": "6eae037552af969df1eee8c5fcfe3847015152717549ee23cde72525d098dd2c"
+      "bytes": 13885,
+      "sha256": "852220826c13161019554f3789fc396c6ed366b169fa2ef9e114739908f7f4f2"
     },
     {
       "path": "SECURITY.md",
@@ -879,8 +879,8 @@
     },
     {
       "path": "docs/user-guide.md",
-      "bytes": 17288,
-      "sha256": "7ba9ce65b6615be27e7016097442284f308bdb0e2ae8cd8d900156532310b5f2"
+      "bytes": 17380,
+      "sha256": "c66c6752a17a3427d41c70221393d60be5a952c1e81352ef88d381e9ece46fe3"
     },
     {
       "path": "examples/dpp/availability-2026-11-03.json",
@@ -1199,8 +1199,8 @@
     },
     {
       "path": "site/install.sh",
-      "bytes": 17084,
-      "sha256": "0e0f9c9036759be600aecff6225bdd882533d4803b66cc13ce60e2ab3d16ca6c"
+      "bytes": 18757,
+      "sha256": "420946e20598091191b9404b790c38ab03439bbad1c4659d22654ca062eb6754"
     },
     {
       "path": "site/research/attribution-pilot.html",
@@ -1384,8 +1384,8 @@
     },
     {
       "path": "tests/test_install_sh.py",
-      "bytes": 15424,
-      "sha256": "a57c49847212f99f16c31a74e01d5b5a3a0a94610720e8c78474a82d92e60fea"
+      "bytes": 16615,
+      "sha256": "d15001cd7bc6a71c53a9c290326aca5552de2368434ef99300fb3f2b0ce93431"
     },
     {
       "path": "tests/test_inventory.py",
