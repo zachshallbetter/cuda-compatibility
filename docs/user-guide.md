@@ -103,7 +103,7 @@ The command compiles selected kernels for the real `sm_52` target, builds a driv
 
 The launcher inherits the parent environment and adds `LD_PRELOAD` and Python startup configuration for the child. Use it only with scripts you trust. The current adapter also requires all visible GPUs to report compute capability 5.2.
 
-`run` returns the application process's exit code. A launcher/preflight error returns 2. This is still a per-process Python entry point; native executables, statically linked CUDA programs, other GPU architectures, and arbitrary libraries are outside the verified scope.
+`run` returns the application process's exit code, or 128 + N when signal N ended it, as a shell does. A launcher/preflight error returns 2. Ctrl-C reaches the program, so a script that catches it (to save a checkpoint, say) finishes its handler; `SIGTERM` or `SIGHUP` sent to the launcher is passed on to the program. This is still a per-process Python entry point; native executables, statically linked CUDA programs, other GPU architectures, and arbitrary libraries are outside the verified scope.
 
 ## What the current adapter covers
 

@@ -734,7 +734,7 @@ audit 0 compatible against recorded profile fields; 1 incompatible; 2 invalid or
 
 profiles 0 on success; 2 when a profile cannot be read or resolved.
 
-run Returns the child application’s exit code; launcher preflight or build errors return 2.
+run Returns the child application’s exit code, or 128 + N when signal N ended it, as a shell does; launcher preflight or build errors return 2. Ctrl-C and Jupyter’s interrupt reach the program, which decides what to do; SIGTERM or SIGHUP sent to the launcher is passed on.
 
 “Compatible” and “ready” refer only to fields each command checks. Neither is an operator or workload certification.
 

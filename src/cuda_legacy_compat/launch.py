@@ -6,6 +6,7 @@ import os
 import platform
 import re
 import shutil
+import signal
 import subprocess
 import sys
 import tempfile
@@ -101,6 +102,32 @@ def build_adapter(llvm_root: Path, cuda_root: Path, output_dir: Path) -> tuple[P
     return ptx, bridge, facade
 
 
+def _wait(child: subprocess.Popen) -> int:
+    """Wait for the program as a shell would (#217). Ctrl-C, and Jupyter's interrupt, go to the whole process group,
+    so the program already has its SIGINT: the launcher keeps it from ending the wait (subprocess.run would kill the
+    program a quarter second later), lets the program decide, and cleans up after it. SIGTERM and SIGHUP sent to
+    the launcher alone are passed on. A program ended by signal N returns 128 + N, as in a shell."""
+    def ignore(signum, frame):
+        pass
+
+    def forward(signum, frame):
+        if child.poll() is None:
+            child.send_signal(signum)
+
+    previous = {}
+    try:
+        for signum, handler in ((signal.SIGINT, ignore), (signal.SIGTERM, forward), (signal.SIGHUP, forward)):
+            previous[signum] = signal.signal(signum, handler)
+    except ValueError:
+        pass   # not the main thread: signals stay as they were
+    try:
+        code = child.wait()
+    finally:
+        for signum, handler in previous.items():
+            signal.signal(signum, handler)
+    return 128 - code if code < 0 else code
+
+
 def launch(
     script: Path | None,
     script_args: Sequence[str],
@@ -149,8 +176,7 @@ def launch(
         env["LD_PRELOAD"] = ":".join(filter(None, [str(facade), env.get("LD_PRELOAD", "")]))
         env["PYTHONPATH"] = ":".join(filter(None, [str(_RESOURCE_DIR), env.get("PYTHONPATH", "")]))
         try:
-            return subprocess.run(
-                [interpreter, *program], env=env, check=False
-            ).returncode
+            child = subprocess.Popen([interpreter, *program], env=env)
         except OSError as exc:
             raise LaunchError(f"could not start Python: {exc}") from exc
+        return _wait(child)
