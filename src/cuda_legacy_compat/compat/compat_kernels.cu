@@ -523,3 +523,96 @@ extern "C" __global__ void compat_max_pool2d_backward_f32(const float* grad_outp
       atomicAdd(grad_input + (i / out_plane_size) * plane_size + index, grad_output[i]);
   }
 }
+
+// ── Fused recurrent cells (#243) ────────────────────────────────────────────────────────────────────────────
+// One thread per (row, hidden unit), computed as torch_adapter.py's CPU versions are: LSTM gates in i, f, g, o order
+// with the activated gates as workspace; GRU gates in r, z, n order with workspace r, z, n, hx, hn. A null pointer is
+// an absent bias or gradient.
+__device__ inline float compat_sigmoid(float x) { return 1.0f / (1.0f + expf(-x)); }
+
+extern "C" __global__ void compat_lstm_cell_f32(const float* input_gates, const float* hidden_gates, const float* cx,
+                                                const float* input_bias, const float* hidden_bias, float* hy,
+                                                float* cy, float* workspace, int64_t rows, int64_t hidden) {
+  for (int64_t e = blockIdx.x * static_cast<int64_t>(blockDim.x) + threadIdx.x; e < rows * hidden;
+       e += static_cast<int64_t>(gridDim.x) * blockDim.x) {
+    const int64_t b = e / hidden, j = e - b * hidden, row = b * 4 * hidden;
+    float gate[4];
+    for (int k = 0; k < 4; ++k) {
+      const int64_t at = k * hidden + j;
+      float v = input_gates[row + at] + hidden_gates[row + at];
+      if (input_bias != nullptr) v = v + input_bias[at] + hidden_bias[at];
+      gate[k] = k == 2 ? tanhf(v) : compat_sigmoid(v);
+      workspace[row + at] = gate[k];
+    }
+    const float c = gate[1] * cx[e] + gate[0] * gate[2];
+    cy[e] = c;
+    hy[e] = gate[3] * tanhf(c);
+  }
+}
+
+extern "C" __global__ void compat_lstm_cell_backward_f32(const float* grad_hy, const float* grad_cy, const float* cx,
+                                                         const float* cy, const float* workspace, float* grad_gates,
+                                                         float* grad_cx, int64_t rows, int64_t hidden) {
+  for (int64_t e = blockIdx.x * static_cast<int64_t>(blockDim.x) + threadIdx.x; e < rows * hidden;
+       e += static_cast<int64_t>(gridDim.x) * blockDim.x) {
+    const int64_t b = e / hidden, j = e - b * hidden, row = b * 4 * hidden;
+    const float i = workspace[row + j], f = workspace[row + hidden + j];
+    const float g = workspace[row + 2 * hidden + j], o = workspace[row + 3 * hidden + j];
+    const float ghy = grad_hy != nullptr ? grad_hy[e] : 0.0f, gcy = grad_cy != nullptr ? grad_cy[e] : 0.0f;
+    const float t = tanhf(cy[e]);
+    const float gc = ghy * o * (1.0f - t * t) + gcy;
+    grad_gates[row + j] = gc * g * i * (1.0f - i);
+    grad_gates[row + hidden + j] = gc * cx[e] * f * (1.0f - f);
+    grad_gates[row + 2 * hidden + j] = gc * i * (1.0f - g * g);
+    grad_gates[row + 3 * hidden + j] = ghy * t * o * (1.0f - o);
+    grad_cx[e] = gc * f;
+  }
+}
+
+extern "C" __global__ void compat_gru_cell_f32(const float* input_gates, const float* hidden_gates, const float* hx,
+                                               const float* input_bias, const float* hidden_bias, float* hy,
+                                               float* workspace, int64_t rows, int64_t hidden) {
+  for (int64_t e = blockIdx.x * static_cast<int64_t>(blockDim.x) + threadIdx.x; e < rows * hidden;
+       e += static_cast<int64_t>(gridDim.x) * blockDim.x) {
+    const int64_t b = e / hidden, j = e - b * hidden, row = b * 3 * hidden, ws = b * 5 * hidden;
+    float in[3], hn[3];
+    for (int k = 0; k < 3; ++k) {
+      in[k] = input_gates[row + k * hidden + j];
+      hn[k] = hidden_gates[row + k * hidden + j];
+      if (input_bias != nullptr) {
+        in[k] = in[k] + input_bias[k * hidden + j];
+        hn[k] = hn[k] + hidden_bias[k * hidden + j];
+      }
+    }
+    const float r = compat_sigmoid(in[0] + hn[0]), z = compat_sigmoid(in[1] + hn[1]);
+    const float n = tanhf(in[2] + r * hn[2]);
+    hy[e] = n + z * (hx[e] - n);
+    workspace[ws + j] = r;
+    workspace[ws + hidden + j] = z;
+    workspace[ws + 2 * hidden + j] = n;
+    workspace[ws + 3 * hidden + j] = hx[e];
+    workspace[ws + 4 * hidden + j] = hn[2];
+  }
+}
+
+extern "C" __global__ void compat_gru_cell_backward_f32(const float* grad_hy, const float* workspace,
+                                                        float* grad_input, float* grad_hidden, float* grad_hx,
+                                                        int64_t rows, int64_t hidden) {
+  for (int64_t e = blockIdx.x * static_cast<int64_t>(blockDim.x) + threadIdx.x; e < rows * hidden;
+       e += static_cast<int64_t>(gridDim.x) * blockDim.x) {
+    const int64_t b = e / hidden, j = e - b * hidden, row = b * 3 * hidden, ws = b * 5 * hidden;
+    const float r = workspace[ws + j], z = workspace[ws + hidden + j], n = workspace[ws + 2 * hidden + j];
+    const float h = workspace[ws + 3 * hidden + j], hn = workspace[ws + 4 * hidden + j];
+    const float g = grad_hy[e];
+    const float gz = g * (h - n) * z * (1.0f - z);
+    const float gn = g * (1.0f - z) * (1.0f - n * n);
+    const float gr = gn * hn * r * (1.0f - r);
+    grad_input[row + j] = gr;
+    grad_input[row + hidden + j] = gz;
+    grad_input[row + 2 * hidden + j] = gn;
+    grad_hidden[row + j] = gr;
+    grad_hidden[row + hidden + j] = gz;
+    grad_hidden[row + 2 * hidden + j] = gn * r;
+    grad_hx[e] = g * z;
+  }
+}

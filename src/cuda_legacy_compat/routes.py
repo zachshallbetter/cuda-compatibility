@@ -51,6 +51,10 @@ NATIVE = (
     (("max_pool2d_with_indices", "max_pool2d_with_indices_backward"), "Max pooling",
      "2-D float32, a contiguous (C, H, W) or (N, C, H, W) input, any kernel, stride, padding, dilation and ceil mode: "
      "values and indices as the CPU computes them (NaN included), and the gradient."),
+    (("_thnn_fused_lstm_cell", "_thnn_fused_lstm_cell_backward_impl", "_thnn_fused_gru_cell",
+      "_thnn_fused_gru_cell_backward"), "Recurrent cells",
+     "The fused LSTM and GRU cells nn.LSTM and nn.GRU run each timestep, and their gradients: float32, contiguous "
+     "2-D gates, with or without biases. Other cases run on the CPU."),
     (("clone", "contiguous", "select_backward"), "Copies of strided views",
      "Any dtype of 1, 2, 4 or 8 bytes, up to six dimensions (transposes, slices, broadcasts). Training through "
      "contiguous uses PyTorch's decomposition onto clone; the gradient of x[:, i] and unbind (float32) too."),
@@ -77,7 +81,7 @@ NOTES = (
     "generator: torch.manual_seed keeps them reproducible, but they differ from a GPU that has kernels.",
     "Training is verified against the CPU for small Linear/GELU MLPs with SGD, momentum SGD, Adam and AdamW "
     "(their default foreach updates included), for a Conv2d/BatchNorm2d/MaxPool CNN with momentum SGD, and for "
-    "LSTM, GRU and RNN layers (the fused CUDA cells run on the CPU). "
+    "LSTM, GRU and RNN layers (the fused LSTM and GRU cells run on the GPU for float32). "
     "cuDNN is switched off under the adapter: it has no Maxwell support in the CUDA 13 wheels.",
     "Training through layer_norm, scaled_dot_product_attention and contiguous uses PyTorch's own "
     "decomposition, so Transformers, attention and LayerNorm models train; attention uses the math backend. "

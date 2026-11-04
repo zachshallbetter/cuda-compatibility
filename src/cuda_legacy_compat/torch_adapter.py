@@ -1850,6 +1850,97 @@ def _gru_cell_backward(grad_hy, workspace, has_bias):
     return (grad_input, grad_hidden, grad_hy * z) + biases
 
 
+def _cell_shapes(gates: torch.Tensor, state: torch.Tensor, chunks: int, *biases) -> tuple[int, int]:
+    """(rows, hidden) of a fused cell whose gates are (rows, chunks*hidden); a case the kernel doesn't take raises
+    NotImplementedError for the CPU version."""
+    _f32(gates, state, *biases, contiguous=True)
+    if gates.dim() != 2 or state.dim() != 2 or gates.shape[1] != chunks * state.shape[1] or gates.shape[0] != state.shape[0]:
+        raise NotImplementedError("Maxwell fused cells take 2-D gates of (rows, chunks * hidden)")
+    if len(biases) == 2 and (biases[0] is None) != (biases[1] is None):
+        raise NotImplementedError("Maxwell fused cells take both biases or neither")
+    if any(b is not None and b.shape != (gates.shape[1],) for b in biases):
+        raise NotImplementedError("Maxwell fused cells take biases of one value per gate")
+    return state.shape[0], state.shape[1]
+
+
+def _lstm_cell_native(input_gates, hidden_gates, cx, input_bias=None, hidden_bias=None):
+    """aten::_thnn_fused_lstm_cell on the GPU (#243); other cases run _lstm_cell on the CPU."""
+    try:
+        _f32(hidden_gates, contiguous=True)
+        rows, hidden = _cell_shapes(input_gates, cx, 4, input_bias, hidden_bias)
+        if hidden_gates.shape != input_gates.shape:
+            raise NotImplementedError("Maxwell LSTM cell needs input and hidden gates of one shape")
+    except NotImplementedError:
+        return _cpu_fallback(_lstm_cell, "aten::_thnn_fused_lstm_cell")(input_gates, hidden_gates, cx, input_bias,
+                                                                         hidden_bias)
+    hy, cy = torch.empty_like(cx), torch.empty_like(cx)
+    workspace = torch.empty_like(input_gates)
+    if rows * hidden:
+        _launch("compat_lstm_cell_f32", _blocks(rows * hidden), _ptr(input_gates), _ptr(hidden_gates), _ptr(cx),
+                _ptr(input_bias), _ptr(hidden_bias), _ptr(hy), _ptr(cy), _ptr(workspace), ctypes.c_int64(rows),
+                ctypes.c_int64(hidden), device=cx.device)
+    _dispatch_state.last_path = "llvm-sm52-lstm-cell-f32"
+    return hy, cy, workspace
+
+
+def _lstm_cell_backward_native(grad_hy, grad_cy, cx, cy, workspace, has_bias):
+    try:
+        rows, hidden = _cell_shapes(workspace, cx, 4)
+        _f32(grad_hy, grad_cy, cy, contiguous=True)
+        if cy.shape != cx.shape or any(g is not None and g.shape != cx.shape for g in (grad_hy, grad_cy)):
+            raise NotImplementedError("Maxwell LSTM cell backward needs states of one shape")
+    except NotImplementedError:
+        return _cpu_fallback(_lstm_cell_backward, "aten::_thnn_fused_lstm_cell_backward_impl")(
+            grad_hy, grad_cy, cx, cy, workspace, has_bias)
+    grad_gates, grad_cx = torch.empty_like(workspace), torch.empty_like(cx)
+    if rows * hidden:
+        _launch("compat_lstm_cell_backward_f32", _blocks(rows * hidden), _ptr(grad_hy), _ptr(grad_cy), _ptr(cx),
+                _ptr(cy), _ptr(workspace), _ptr(grad_gates), _ptr(grad_cx), ctypes.c_int64(rows),
+                ctypes.c_int64(hidden), device=cx.device)
+    grad_bias = _sum(grad_gates, [0]) if has_bias else None
+    _dispatch_state.last_path = "llvm-sm52-lstm-cell-backward-f32"
+    return grad_gates, grad_cx, grad_bias
+
+
+def _gru_cell_native(input_gates, hidden_gates, hx, input_bias=None, hidden_bias=None):
+    """aten::_thnn_fused_gru_cell on the GPU (#243); other cases run _gru_cell on the CPU."""
+    try:
+        _f32(hidden_gates, contiguous=True)
+        rows, hidden = _cell_shapes(input_gates, hx, 3, input_bias, hidden_bias)
+        if hidden_gates.shape != input_gates.shape:
+            raise NotImplementedError("Maxwell GRU cell needs input and hidden gates of one shape")
+    except NotImplementedError:
+        return _cpu_fallback(_gru_cell, "aten::_thnn_fused_gru_cell")(input_gates, hidden_gates, hx, input_bias,
+                                                                       hidden_bias)
+    hy = torch.empty_like(hx)
+    workspace = torch.empty((rows, 5 * hidden), dtype=torch.float32, device=hx.device)
+    if rows * hidden:
+        _launch("compat_gru_cell_f32", _blocks(rows * hidden), _ptr(input_gates), _ptr(hidden_gates), _ptr(hx),
+                _ptr(input_bias), _ptr(hidden_bias), _ptr(hy), _ptr(workspace), ctypes.c_int64(rows),
+                ctypes.c_int64(hidden), device=hx.device)
+    _dispatch_state.last_path = "llvm-sm52-gru-cell-f32"
+    return hy, workspace
+
+
+def _gru_cell_backward_native(grad_hy, workspace, has_bias):
+    try:
+        _f32(grad_hy, workspace, contiguous=True)
+        if grad_hy.dim() != 2 or workspace.shape != (grad_hy.shape[0], 5 * grad_hy.shape[1]):
+            raise NotImplementedError("Maxwell GRU cell backward needs a (rows, 5 * hidden) workspace")
+    except NotImplementedError:
+        return _cpu_fallback(_gru_cell_backward, "aten::_thnn_fused_gru_cell_backward")(grad_hy, workspace, has_bias)
+    rows, hidden = grad_hy.shape
+    grad_input = torch.empty((rows, 3 * hidden), dtype=torch.float32, device=grad_hy.device)
+    grad_hidden, grad_hx = torch.empty_like(grad_input), torch.empty_like(grad_hy)
+    if rows * hidden:
+        _launch("compat_gru_cell_backward_f32", _blocks(rows * hidden), _ptr(grad_hy), _ptr(workspace),
+                _ptr(grad_input), _ptr(grad_hidden), _ptr(grad_hx), ctypes.c_int64(rows), ctypes.c_int64(hidden),
+                device=grad_hy.device)
+    biases = (_sum(grad_input, [0]), _sum(grad_hidden, [0])) if has_bias else (None, None)
+    _dispatch_state.last_path = "llvm-sm52-gru-cell-backward-f32"
+    return (grad_input, grad_hidden, grad_hx) + biases
+
+
 # Operators with a CUDA kernel and no CPU one: the CPU fallback runs these instead.
 _CPU_ONLY_HERE = {
     "aten::_thnn_fused_lstm_cell": _lstm_cell,
@@ -2109,6 +2200,10 @@ def install() -> None:
     _library.impl("nll_loss_forward", _nll_loss_forward)
     _library.impl("nll_loss_backward", _nll_loss_backward)
     _library.impl("max_pool2d_with_indices", _max_pool2d_with_indices)
+    _library.impl("_thnn_fused_lstm_cell", _lstm_cell_native)
+    _library.impl("_thnn_fused_lstm_cell_backward_impl", _lstm_cell_backward_native)
+    _library.impl("_thnn_fused_gru_cell", _gru_cell_native)
+    _library.impl("_thnn_fused_gru_cell_backward", _gru_cell_backward_native)
     _library.impl("max_pool2d_with_indices_backward", _max_pool2d_with_indices_backward)
     _library.impl("native_layer_norm", _native_layer_norm)
     _library.impl("native_layer_norm_backward", _native_layer_norm_backward)
