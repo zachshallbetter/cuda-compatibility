@@ -94,7 +94,8 @@ class SiteDiscoveryChecksTests(unittest.TestCase):
         self.assertIsNotNone(registry)
         native, fallback = registry
         self.assertIn("mm", native)
-        self.assertIn("bmm", fallback)
+        self.assertIn("bmm", native)   # the tiled kernel (#184)
+        self.assertIn("_softmax", fallback)
         self.assertNotIn("contiguous", native)
 
     def test_rejects_home_count_that_drifts_from_adapter(self) -> None:
