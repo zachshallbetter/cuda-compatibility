@@ -411,6 +411,32 @@ def _foreach_kernel(overload: str):
     return run
 
 
+def _fused_adam(adamw: bool):
+    """torch.optim.Adam/AdamW(fused=True): one compat_adam_f32 launch per parameter (#246). amsgrad, gradient
+    scaling, or tensors the kernel can't take go the CPU route of any foreach call."""
+    operation = torch.ops.aten._fused_adamw_.default if adamw else torch.ops.aten._fused_adam_.default
+
+    def run(params, grads, exp_avgs, exp_avg_sqs, max_exp_avg_sqs, state_steps, *, lr, beta1, beta2, weight_decay,
+            eps, amsgrad, maximize, grad_scale=None, found_inf=None) -> None:
+        args = (params, grads, exp_avgs, exp_avg_sqs, max_exp_avg_sqs, state_steps)
+        kwargs = dict(lr=lr, beta1=beta1, beta2=beta2, weight_decay=weight_decay, eps=eps, amsgrad=amsgrad,
+                      maximize=maximize, grad_scale=grad_scale, found_inf=found_inf)
+        steps_ready = all(isinstance(t, torch.Tensor) and t.is_cuda and t.dtype == torch.float32 and t.numel() == 1
+                          for t in state_steps) and len(state_steps) == len(params)
+        if amsgrad or grad_scale is not None or found_inf is not None or isinstance(lr, torch.Tensor) \
+                or not steps_ready or not _foreach_ready(params, grads, exp_avgs, exp_avg_sqs):
+            return _foreach_on_cpu(operation, args, kwargs)
+        for param, grad, exp_avg, exp_avg_sq, step in zip(params, grads, exp_avgs, exp_avg_sqs, state_steps):
+            if param.numel():
+                _launch("compat_adam_f32", _blocks(param.numel()), _ptr(param), _ptr(grad), _ptr(exp_avg),
+                        _ptr(exp_avg_sq), _ptr(step), ctypes.c_int64(param.numel()), ctypes.c_float(lr),
+                        ctypes.c_float(beta1), ctypes.c_float(beta2), ctypes.c_float(weight_decay),
+                        ctypes.c_float(eps), ctypes.c_int(int(adamw)), ctypes.c_int(int(maximize)),
+                        device=param.device)
+        _dispatch_state.last_path = "llvm-sm52-fused-adam-f32"
+    return run
+
+
 def _scalar_at(scalars, index: int) -> float:
     value = scalars[index] if isinstance(scalars, (list, tuple)) else scalars
     return float(value.item() if isinstance(value, torch.Tensor) else value)
@@ -2091,6 +2117,8 @@ def install() -> None:
     _library.impl("_foreach_addcdiv_.ScalarList", _foreach_kernel("_foreach_addcdiv_.ScalarList"))
     _library.impl("_foreach_sqrt", _foreach_kernel("_foreach_sqrt"))
     _library.impl("_foreach_add.List", _foreach_kernel("_foreach_add.List"))
+    _library.impl("_fused_adam_", _fused_adam(False))
+    _library.impl("_fused_adamw_", _fused_adam(True))
     _library.impl("clone", _clone)
     _library.impl("select_backward", _select_backward)
     _library.impl("arange", _arange)

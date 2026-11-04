@@ -523,3 +523,30 @@ extern "C" __global__ void compat_max_pool2d_backward_f32(const float* grad_outp
       atomicAdd(grad_input + (i / out_plane_size) * plane_size + index, grad_output[i]);
   }
 }
+
+// ── Fused Adam and AdamW (#246) ─────────────────────────────────────────────────────────────────────────────
+// One launch per parameter for the whole step, as PyTorch's fused CUDA kernel computes it: weight decay (decoupled
+// for AdamW, added to the gradient for Adam), both moments, bias correction from the step read on the device, and
+// the update. amsgrad and gradient scaling stay on the CPU route.
+extern "C" __global__ void compat_adam_f32(float* param, const float* grad, float* exp_avg, float* exp_avg_sq,
+                                           const float* step, int64_t count, float lr, float beta1, float beta2,
+                                           float weight_decay, float eps, int adamw, int maximize) {
+  const float t = step[0];
+  const float bias_correction1 = 1.0f - powf(beta1, t);
+  const float bias_correction2_sqrt = sqrtf(1.0f - powf(beta2, t));
+  const float step_size = lr / bias_correction1;
+  for (int64_t i = blockIdx.x * static_cast<int64_t>(blockDim.x) + threadIdx.x; i < count;
+       i += static_cast<int64_t>(gridDim.x) * blockDim.x) {
+    float p = param[i];
+    float g = maximize ? -grad[i] : grad[i];
+    if (weight_decay != 0.0f) {
+      if (adamw) p -= lr * weight_decay * p;
+      else g += weight_decay * p;
+    }
+    const float m = beta1 * exp_avg[i] + (1.0f - beta1) * g;
+    const float v = beta2 * exp_avg_sq[i] + (1.0f - beta2) * g * g;
+    exp_avg[i] = m;
+    exp_avg_sq[i] = v;
+    param[i] = p - step_size * m / (sqrtf(v) / bias_correction2_sqrt + eps);
+  }
+}

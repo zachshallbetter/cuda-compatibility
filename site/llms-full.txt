@@ -22,7 +22,7 @@ GM200 reference card, compute capability 5.2. The only hardware tested so far. E
 
 - **Reference cards** 3
 
-- **Native operators** 40
+- **Native operators** 42
 
 - **Claims of universal support** 0
 
@@ -517,7 +517,7 @@ By Zach Shallbetter · Sheet 04 of 10 · Updated 4 November 2026
 ## Native GPU implementations
 sm_52 kernel
 
-These 20 registered cases cover 40 native operators: addition (in place too), the foreach steps of Adam, AdamW and SGD, subtraction, multiplication and division with broadcasting, range creation, embedding, layer normalization (inference and training), negative log likelihood, copies of strided views, matrix multiplication with and without bias, batched matrix multiplication, ReLU, GELU, softmax, safe softmax and log-softmax, sum and mean over dimensions, fill and max pooling, with the gradients of each. They run through LLVM-generated PTX targeting the real Maxwell device and the CUDA Driver API bridge; other dtypes and layouts take the CPU fallback below.
+These 20 registered cases cover 42 native operators: addition (in place too), the foreach and fused steps of Adam, AdamW and SGD, subtraction, multiplication and division with broadcasting, range creation, embedding, layer normalization (inference and training), negative log likelihood, copies of strided views, matrix multiplication with and without bias, batched matrix multiplication, ReLU, GELU, softmax, safe softmax and log-softmax, sum and mean over dimensions, fill and max pooling, with the gradients of each. They run through LLVM-generated PTX targeting the real Maxwell device and the CUDA Driver API bridge; other dtypes and layouts take the CPU fallback below.
 
 | No. | Operation | Supported case |
 | --- | --- | --- |
@@ -539,7 +539,7 @@ These 20 registered cases cover 40 native operators: addition (in place too), th
 | 16 | ReLU | Contiguous float32 tensors up to 1,048,576 values. Other cases, and training, use the CPU fallback. |
 | 17 | Negative log likelihood | 1D or 2D float32 log-probabilities with int64 CUDA targets: mean, sum or none, ignore_index and class weights, and its gradient. cross_entropy runs through it; a target out of range raises IndexError. |
 | 18 | Copies of strided views | clone and contiguous of any 1-, 2-, 4- or 8-byte dtype, up to six dimensions: transposes, slices and broadcasts stay on the GPU, and so does the float32 gradient of x[:, i] and unbind. |
-| 19 | Optimizer steps | The default foreach updates of Adam, AdamW and momentum or weight-decay SGD over contiguous float32 parameters on one device. Other tensors (float16, another device) form their own group, which runs on the CPU; amsgrad, RMSprop and Adagrad’s other steps use the CPU route. |
+| 19 | Optimizer steps | The default foreach updates of Adam, AdamW and momentum or weight-decay SGD over contiguous float32 parameters on one device, and Adam or AdamW with fused=True in one launch per parameter. Other tensors (float16, another device) form their own group, which runs on the CPU; amsgrad, RMSprop and Adagrad’s other steps use the CPU route. |
 | 20 | Max pooling | 2-D float32, a contiguous (C, H, W) or (N, C, H, W) input, any kernel, stride, padding, dilation and ceil mode: values and indices as the CPU computes them, NaN included, and the gradient (#184). |
 
 Autograd runs above these kernels: training reaches them through PyTorch’s own backward formulas, and layer_norm, scaled_dot_product_attention and contiguous decompose first. Unsupported backward operators still fail explicitly.

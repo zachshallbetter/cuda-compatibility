@@ -43,10 +43,11 @@ NATIVE = (
      "1D or 2D float32 log-probabilities with int64 CUDA targets: mean, sum or none, ignore_index and class weights, "
      "and its gradient; cross_entropy runs through it. A target out of range raises IndexError."),
     (("_foreach_mul_.Scalar", "_foreach_add_.Scalar", "_foreach_div_.ScalarList", "_foreach_lerp_.Scalar",
-      "_foreach_addcmul_.Scalar", "_foreach_addcdiv_.ScalarList", "_foreach_sqrt", "_foreach_add.List"),
+      "_foreach_addcmul_.Scalar", "_foreach_addcdiv_.ScalarList", "_foreach_sqrt", "_foreach_add.List",
+      "_fused_adam_", "_fused_adamw_"),
      "Optimizer steps",
      "Adam, AdamW and momentum or weight-decay SGD's default foreach updates over contiguous float32 parameters on "
-     "one device. Other tensors (float16, another device) form their own group, which runs on the CPU; amsgrad, RMSprop "
+     "one device, and Adam or AdamW with fused=True in one launch per parameter. Other tensors (float16, another device) form their own group, which runs on the CPU; amsgrad, RMSprop "
      "and Adagrad's other steps use the CPU route."),
     (("max_pool2d_with_indices", "max_pool2d_with_indices_backward"), "Max pooling",
      "2-D float32, a contiguous (C, H, W) or (N, C, H, W) input, any kernel, stride, padding, dilation and ceil mode: "
