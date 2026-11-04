@@ -24,6 +24,7 @@ class UnroutedHintTests(unittest.TestCase):
         hint = unrouted.hint_for(error)
         self.assertIn("aten::ones has no sm_52 route", hint)
         self.assertIn(f"cuda-legacy {__version__}", hint)
+        self.assertIn("`cuda-legacy ops` lists what runs", hint)
         self.assertIn(unrouted.COVERAGE_URL, hint)
         self.assertIn(unrouted.REPORT_URL, hint)
 
