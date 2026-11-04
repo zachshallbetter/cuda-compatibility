@@ -507,6 +507,19 @@ The first work item is being executed under the user's explicit request to creat
 - **Progress (2026-11-01):** Rewrote all 10 canonical page descriptions to be page-specific and 140–180 characters; added static checks for length and uniqueness. `make check` passed and `make test` passed 44/44. Commit `958388599dcad117b63470c31f3f584e1aa03c3f` was pushed to `codex/cuda-compat-publication` after exact ACP ALLOWs and deployed successfully in Pages run `41312924116`. The live audit fetched all 10 sitemap pages and six discovery assets/endpoints (16/16 HTTP 200); all 10 descriptions were unique and within range. Evidence: `CLC-028-bing-short-descriptions-recommendation`, `CLC-028-pages-release`, and `CLC-028-live-route-audit`. No ranking, traffic, or indexing effect is claimed.
 - **Disposition (2026-11-01):** Bing feedback has been addressed in the published site. Checks enforce the description bounds and uniqueness; the exact deployed revision returned HTTP 200 for all 16 audited routes/assets, with all 10 page descriptions between 140 and 180 characters. Search performance effects remain unobserved.
 
+## CLC-036 — Install, set up and run without hand-assembled paths
+
+- **Intent:** Take a user from nothing to a working `cuda-legacy run app.py` without downloading compilers by hand or passing paths on every command. Implements the install, doctor and run slice of GitHub #42 (#90, #91, #92, #94; #93 closed after measurement).
+- **Parent:** GitHub #42; CLC-032.
+- **Status:** In progress
+- **Objective:** `cuda-legacy setup` finds the PyTorch environment and CUDA headers, uses or downloads LLVM 23.1.4 with a SHA-256 check, saves the result and can remove exactly what it created. doctor and run read the saved setup. A one-command installer is served from cudacompat.com. Release 0.2.0.
+- **Scope:** `src/cuda_legacy_compat/{settings,toolchain,cli}.py`, `compat/sitecustomize.py`, `site/install.sh`, tests, docs, site pages, `Formula/cuda-legacy.rb`, `CITATION.cff`, records.
+- **Exclusions:** Driver, kernel-module or system CUDA changes; downloading NVIDIA files; changes to supported operations or claims.
+- **Acceptance:** On the reference host, in a sandboxed home, setup reports doctor ready and the public example runs with no flags and matches the CPU; remove leaves nothing; make check and make test pass.
+- **Evidence required:** The end-to-end log on the reference host; test output; release digest.
+- **Permissions:** E1 local changes; merges to `main` deploy production; release tags by the owner's standing approval.
+- **Progress (2026-11-04):** #95 merged (setup, saved settings, doctor next steps, quieter adapter warnings). Release v0.2.0 tagged. The reference-host run passed (evidence `CLC-036-setup-reference-host`). The installer (#91) is in review.
+
 ## CLC-035 — Make every sheet readable and self-describing on its own
 
 - **Intent:** Any single page that is visited, printed, read aloud or shared should say what it is, who wrote it, when it changed and where it sits, without the rest of the site.
