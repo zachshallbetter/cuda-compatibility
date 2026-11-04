@@ -78,8 +78,29 @@ class NativeFallbackTests(unittest.TestCase):
         for overload in self.adapter._FOREACH:
             self.assertIn(f'_library.impl("{overload}", _foreach_kernel("{overload}"))', source)
 
+    def test_max_pool_output_size_matches_pytorch(self) -> None:
+        import itertools
+        torch, pool_size = self.torch, self.adapter._pool_size
+        for size, k, s, p, d, ceil in itertools.product(range(1, 10), (1, 2, 3), (1, 2, 3), (0, 1), (1, 2), (False, True)):
+            if p > k // 2:
+                continue
+            try:
+                want = torch.nn.functional.max_pool2d(torch.zeros(1, 1, size, size), k, s, p, d, ceil_mode=ceil).shape[-1]
+            except RuntimeError:
+                want = 0
+            self.assertEqual(max(pool_size(size, k, s, p, d, ceil), 0), want, (size, k, s, p, d, ceil))
+
+    def test_max_pool_leaves_arguments_pytorch_rejects_to_the_cpu_path(self) -> None:
+        pairs = self.adapter._pool_pairs
+        self.assertEqual(pairs(3, [], 1, 1), ([3, 3], [3, 3], [1, 1], [1, 1]))
+        self.assertEqual(pairs([2, 3], [1, 2], [1, 0], [1, 1]), ([2, 3], [1, 2], [1, 0], [1, 1]))
+        for bad in ((2, [], 2, 1), (0, [], 0, 1), (3, [0], 0, 1), ([1, 2, 3], [], 0, 1)):
+            with self.assertRaises(NotImplementedError, msg=bad):
+                pairs(*bad)
+
     def test_every_native_kernel_is_wrapped(self) -> None:
-        for kernel in ("_add", "_mm", "_relu", "_arange", "_embedding", "_layer_norm"):
+        for kernel in ("_add", "_mm", "_relu", "_arange", "_embedding", "_layer_norm", "_max_pool2d_with_indices",
+                       "_max_pool2d_with_indices_backward"):
             self.assertTrue(hasattr(getattr(self.adapter, kernel), "__wrapped__"), kernel)
 
 

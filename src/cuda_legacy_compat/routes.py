@@ -47,6 +47,9 @@ NATIVE = (
      "Adam, AdamW and momentum or weight-decay SGD's default foreach updates over contiguous float32 parameters on "
      "one device. Other tensors (float16, another device) form their own group, which runs on the CPU; amsgrad, RMSprop "
      "and Adagrad's other steps use the CPU route."),
+    (("max_pool2d_with_indices", "max_pool2d_with_indices_backward"), "Max pooling",
+     "2-D float32, a contiguous (C, H, W) or (N, C, H, W) input, any kernel, stride, padding, dilation and ceil mode: "
+     "values and indices as the CPU computes them (NaN included), and the gradient."),
     (("clone", "contiguous", "select_backward"), "Copies of strided views",
      "Any dtype of 1, 2, 4 or 8 bytes, up to six dimensions (transposes, slices, broadcasts). Training through "
      "contiguous uses PyTorch's decomposition onto clone; the gradient of x[:, i] and unbind (float32) too."),
