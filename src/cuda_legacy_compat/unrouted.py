@@ -42,7 +42,7 @@ def hint_for(error: BaseException) -> str | None:
         return None
     return (
         f"cuda-legacy: {operation} has no sm_52 route in cuda-legacy {__version__}, so this GPU cannot run it. "
-        f"What runs: {COVERAGE_URL} . To ask for it: {REPORT_URL}"
+        f"See what runs: {COVERAGE_URL} | Ask for it: {REPORT_URL}"
     )
 
 
