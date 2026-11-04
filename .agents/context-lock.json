@@ -18,9 +18,9 @@
     "repositories": [
       {
         "path": ".",
-        "commit": "535794438c0173ce477b27b14f60b00853162ffd",
+        "commit": "f76bdd034bf09c6a3bc82d8630ab5497b83dc6a0",
         "branch": "chore/bump-0.2.2",
-        "dirty": true,
+        "dirty": false,
         "remote": "https://github.com/zachshallbetter/cuda-compatibility.git"
       }
     ]
