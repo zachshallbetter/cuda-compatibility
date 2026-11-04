@@ -5,8 +5,8 @@
   "validityBasis": "aggregate-source-digest",
   "selectedPaths": [],
   "sourceSelection": {
-    "includedCount": 290,
-    "includedBytes": 2927338,
+    "includedCount": 291,
+    "includedBytes": 2928828,
     "excludedCounts": {
       "extension": 65,
       "generated-or-transient-file": 2
@@ -18,14 +18,14 @@
     "repositories": [
       {
         "path": ".",
-        "commit": "cd71fb26936da05c36f0e91dcd97d78e1f8c280a",
-        "branch": null,
+        "commit": "076de80ea5637cc267f76fd73336323fbfe9ca05",
+        "branch": "perf/relu-inplace",
         "dirty": true,
         "remote": "https://github.com/zachshallbetter/cuda-compatibility.git"
       }
     ]
   },
-  "aggregateSourceDigest": "e9fd5cbb1c3c95ad475fee626e9346488d3cd115c2463f821f285c49bcceca30",
+  "aggregateSourceDigest": "65019689b54ae3bc017fd50fd1e7cedd62455bf34c79fee0cbe2692ce9a8d1ed",
   "sources": [
     {
       "path": ".agents/acp/README.md",
@@ -1319,8 +1319,8 @@
     },
     {
       "path": "src/cuda_legacy_compat/torch_adapter.py",
-      "bytes": 108435,
-      "sha256": "77fc92a8242405312c6addcc58bc1aae17524b611dd5425a148b4d8fb2417313"
+      "bytes": 109068,
+      "sha256": "85a36c3dd8f7e7f49e355cdc369546111f72a3dc527e3b40abb4dda6439eeabb"
     },
     {
       "path": "src/cuda_legacy_compat/unrouted.py",
@@ -1416,6 +1416,11 @@
       "path": "tests/test_records_parse.py",
       "bytes": 1050,
       "sha256": "fdb44bee1d42805bb81725d4c32acb9a4c9ea363bdbf7f156f8d4372587e2e57"
+    },
+    {
+      "path": "tests/test_relu_inplace.py",
+      "bytes": 857,
+      "sha256": "2ad6d5d61e09bf3d2ffb2e3d0a9c8a3cf0690e62278442c6dc741067938f5377"
     },
     {
       "path": "tests/test_reprobe_stock.py",
