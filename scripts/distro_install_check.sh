@@ -5,7 +5,7 @@
 #
 #   sh scripts/distro_install_check.sh PYTHON
 #
-# PYTHON is the distribution's python3. Run it as a normal user: the installer refuses root. Run from a checkout; the installer is site/install.sh, which downloads
+# PYTHON is the distribution's python3. Run it as a normal user, or as root inside a container (the installer accepts that, #125). Run from a checkout; the installer is site/install.sh, which downloads
 # the release archive it pins. Needs network access. Used by .github/workflows/installer-distros.yml.
 set -eu
 
@@ -34,6 +34,9 @@ cat "$work/install.txt"
 # No GPU and no CUDA headers here, so setup lists what still needs attention (exit 1); 2 means it stopped.
 [ "$code" -eq 1 ] || [ "$code" -eq 0 ] || fail "installer exited $code"
 grep -q "$work/venv/bin/python" "$work/install.txt" || fail "installer did not use the active virtualenv"
+if [ "$(id -u)" = 0 ]; then
+    grep -q "Running as root inside a container." "$work/install.txt" || fail "installer did not accept root in this container"
+fi
 
 version=$(sed -n 's/^VERSION=//p' "$root/site/install.sh")
 [ "$(cuda-legacy --version)" = "cuda-legacy $version" ] || fail "installed version is not $version"
