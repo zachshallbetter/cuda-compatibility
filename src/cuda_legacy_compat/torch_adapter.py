@@ -122,6 +122,8 @@ def _load_bridge() -> tuple[ctypes.CDLL, bytes]:
     bridge.cuda_compat_launch_named.argtypes = [ctypes.c_char_p, ctypes.c_char_p, ctypes.c_int] + [ctypes.c_uint] * 7 + [
         ctypes.c_size_t, ctypes.POINTER(ctypes.c_void_p)]
     bridge.cuda_compat_launch_named.restype = ctypes.c_int
+    bridge.cuda_compat_ensure_context.argtypes = [ctypes.c_int]
+    bridge.cuda_compat_ensure_context.restype = ctypes.c_int
     bridge.cuda_compat_launch_relu_f32.argtypes = [
         ctypes.c_char_p,
         ctypes.c_uint64,
@@ -220,6 +222,7 @@ def _add(self: torch.Tensor, other: torch.Tensor, *, alpha: int | float = 1) -> 
             ptx_path = os.fsencode(os.environ["CUDA_COMPAT_VECTOR_ADD_PTX"])
         current_stream = torch.cuda.current_stream(self.device)
         _record_stream((self, other), current_stream)
+        _ensure_context()
         result = _bridge.cuda_compat_launch_vector_add_f16(
             ptx_path,
             self.data_ptr(),
@@ -255,6 +258,7 @@ def _add(self: torch.Tensor, other: torch.Tensor, *, alpha: int | float = 1) -> 
         current_stream = torch.cuda.current_stream(self.device)
         _record_stream((self, other), current_stream)
         stream = current_stream.cuda_stream
+        _ensure_context()
         result = _bridge.cuda_compat_launch_vector_add_f32(
             ptx_path,
             self.data_ptr(),
@@ -290,6 +294,7 @@ def _add(self: torch.Tensor, other: torch.Tensor, *, alpha: int | float = 1) -> 
         current_stream = torch.cuda.current_stream(self.device)
         _record_stream((self, other), current_stream)
         stream = current_stream.cuda_stream
+        _ensure_context()
         result = _bridge.cuda_compat_launch_vector_add(
             ptx_path,
             self.data_ptr(),
@@ -359,6 +364,7 @@ def _add_inplace(
         ptx_path = os.fsencode(os.environ["CUDA_COMPAT_VECTOR_ADD_PTX"])
     current_stream = torch.cuda.current_stream(self.device)
     _record_stream((self, other), current_stream)
+    _ensure_context()
     result = _bridge.cuda_compat_launch_vector_add_scaled_f32(
         ptx_path,
         self.data_ptr(),
@@ -403,6 +409,14 @@ def _launch(name: str, grid: int, *arguments, block: int = 256, device: torch.de
                                               stream, pointers)
     if result != 0:
         raise RuntimeError(f"CUDA Driver API Maxwell {name} failed with CUresult={result}")
+
+
+def _ensure_context() -> None:
+    """Make the current device's primary context current for the driver-API launch that follows (#188): autograd's
+    backward thread may have none, since a cached allocation makes no CUDA call."""
+    result = _bridge.cuda_compat_ensure_context(torch.cuda.current_device())
+    if result != 0:
+        raise RuntimeError(f"CUDA Driver API could not make a context current (CUresult={result})")
 
 
 def _ptr(tensor: torch.Tensor | None) -> ctypes.c_uint64:
@@ -705,6 +719,7 @@ def _gemm(left: torch.Tensor, right: torch.Tensor, output: torch.Tensor, bias: t
         ptx_path = os.fsencode(os.environ["CUDA_COMPAT_VECTOR_ADD_PTX"])
     current_stream = torch.cuda.current_stream(output.device)
     _record_stream(tuple(tensors), current_stream)
+    _ensure_context()
     result = _bridge.cuda_compat_launch_matrix_multiply_f32(
         ptx_path, left.data_ptr(), right.data_ptr(), bias_pointer, output.data_ptr(), batch, rows, columns, inner,
         ls[-2], ls[-1], rs[-2], rs[-1], bias_strides[0], bias_strides[1], ls[0] if batched else 0,
@@ -783,6 +798,7 @@ def _arange(
     else:
         ptx_path = os.fsencode(os.environ["CUDA_COMPAT_VECTOR_ADD_PTX"])
     stream = torch.cuda.current_stream(device).cuda_stream
+    _ensure_context()
     result = _bridge.cuda_compat_launch_arange_i64(
         ptx_path, output.data_ptr(), count, stream
     )
@@ -897,6 +913,7 @@ def _embedding(
 
     stream = current_stream.cuda_stream
     _record_stream((weight, indices), current_stream)
+    _ensure_context()
     result = _bridge.cuda_compat_launch_embedding_f32(
         ptx_path,
         weight.data_ptr(),
@@ -970,6 +987,7 @@ def _layer_norm(
     current_stream = torch.cuda.current_stream(input.device)
     _record_stream((input, weight, bias), current_stream)
     stream = current_stream.cuda_stream
+    _ensure_context()
     result = _bridge.cuda_compat_launch_layer_norm_f32(
         ptx_path,
         input.data_ptr(),
@@ -1012,6 +1030,7 @@ def _relu(self: torch.Tensor) -> torch.Tensor:
     current_stream = torch.cuda.current_stream(self.device)
     _record_stream((self,), current_stream)
     stream = current_stream.cuda_stream
+    _ensure_context()
     result = _bridge.cuda_compat_launch_relu_f32(
         ptx_path, self.data_ptr(), output.data_ptr(), self.numel(), stream
     )

@@ -200,6 +200,10 @@ CUresult named_kernel(const char* ptx_path, const char* name, CUfunction* functi
 
 }  // namespace
 
+// Make the device's primary context current on this thread when none is (#188). Every native launch calls it first:
+// on autograd's backward thread a cached allocation makes no CUDA call, so nothing else would.
+extern "C" int cuda_compat_ensure_context(int device) { return ensure_context(device); }
+
 // Launch a kernel of the adapter's module by name with the caller's argument pointers (cuLaunchKernel's own form),
 // so a new kernel needs no launcher of its own here (#184).
 extern "C" int cuda_compat_launch_named(const char* ptx_path, const char* name, int device, unsigned int grid_x,
