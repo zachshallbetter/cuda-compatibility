@@ -5,8 +5,8 @@
   "validityBasis": "aggregate-source-digest",
   "selectedPaths": [],
   "sourceSelection": {
-    "includedCount": 256,
-    "includedBytes": 2615313,
+    "includedCount": 257,
+    "includedBytes": 2619423,
     "excludedCounts": {
       "extension": 64,
       "generated-or-transient-file": 2
@@ -18,14 +18,14 @@
     "repositories": [
       {
         "path": ".",
-        "commit": "cf4aeceb02eb7aaa319c8254b59f7d98f9e91f8b",
+        "commit": "a2a8fa475baaf2ec1f6078adf0baf36906e490fb",
         "branch": "feat/explain-unsupported",
         "dirty": true,
         "remote": "https://github.com/zachshallbetter/cuda-compatibility.git"
       }
     ]
   },
-  "aggregateSourceDigest": "3f3a3249c5a91a98d12afc0ab336fb7678f9c14c9c595c6b8e978cf77eb03b2c",
+  "aggregateSourceDigest": "c2293ed032669ba5a5002f057aa5dbdd4cb8cce002f6a2f1456b0c9e2ec86675",
   "sources": [
     {
       "path": ".agents/acp/README.md",
@@ -1209,8 +1209,8 @@
     },
     {
       "path": "src/cuda_legacy_compat/compat/sitecustomize.py",
-      "bytes": 1262,
-      "sha256": "3da380d94133459d829c30a69a8e0f98a5b20def41d2701561ef9dfef1b35133"
+      "bytes": 2176,
+      "sha256": "b97c9f5005eea534d00e96aeabddaddaabbe0ae103162576f84611bff4c93ac7"
     },
     {
       "path": "src/cuda_legacy_compat/inventory.py",
@@ -1301,6 +1301,11 @@
       "path": "tests/test_site_meta.py",
       "bytes": 3100,
       "sha256": "65e5f63c6da44218a75ae46c97957cfeab621a951120c76668c9888eb9e59c3b"
+    },
+    {
+      "path": "tests/test_sitecustomize.py",
+      "bytes": 3196,
+      "sha256": "bd8154ded872d8f9ee172d162a2333320d56789cb6960ffbf6570562c4e59d25"
     },
     {
       "path": "tests/test_unrouted.py",
