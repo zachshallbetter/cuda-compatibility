@@ -6,7 +6,7 @@
   "selectedPaths": [],
   "sourceSelection": {
     "includedCount": 278,
-    "includedBytes": 2815652,
+    "includedBytes": 2815654,
     "excludedCounts": {
       "extension": 65,
       "generated-or-transient-file": 2
@@ -18,14 +18,14 @@
     "repositories": [
       {
         "path": ".",
-        "commit": "684bc05d95a987f2b04ca6bf00e17bfed1597c50",
-        "branch": "fix/example-native-routes",
+        "commit": "78406207cf7640b8ff9740a0b19e0c8c9e543b44",
+        "branch": "chore/release-0.2.10",
         "dirty": true,
         "remote": "https://github.com/zachshallbetter/cuda-compatibility.git"
       }
     ]
   },
-  "aggregateSourceDigest": "a1105e1216fe061eb2709076c67f71f4a435ffdf27097ce4fbe5d9d6684933d7",
+  "aggregateSourceDigest": "aefe0036ed0ba83b00e9355123a6aeb68266971ba6e30081628f2815e26b2cfc",
   "sources": [
     {
       "path": ".agents/acp/README.md",
@@ -974,8 +974,8 @@
     },
     {
       "path": "pyproject.toml",
-      "bytes": 747,
-      "sha256": "2690522288796de3829be4a62f4e8413d819219831cce72f00a8032d60f4f00e"
+      "bytes": 748,
+      "sha256": "66a2bb4fa2ea3655938bd10bb911307525f6d2474b761c91261a3524d56e518d"
     },
     {
       "path": "schemas/vendor/dpp-0.3.0/SOURCE.json",
@@ -1239,8 +1239,8 @@
     },
     {
       "path": "src/cuda_legacy_compat/__init__.py",
-      "bytes": 91,
-      "sha256": "01c3c2ab8931cbeb1ca0df03506fe76540438cbe78318bcc5847dc0eb87e2901"
+      "bytes": 92,
+      "sha256": "8f91739d77b547097e5b9e82fb9119809b7b209f0b58db1147d44c5299bef659"
     },
     {
       "path": "src/cuda_legacy_compat/cli.py",
