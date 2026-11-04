@@ -21,7 +21,7 @@ class RoutesTests(unittest.TestCase):
         self.assertEqual(routes.registered(), registered)
 
     def test_counts_match_the_published_support_matrix(self) -> None:
-        self.assertEqual(len(routes.CPU_FALLBACK), 4)
+        self.assertEqual(len(routes.CPU_FALLBACK), 3)
 
     def test_the_compatibility_sheet_names_every_route(self) -> None:
         sheet = SHEET.read_text(encoding="utf-8")
@@ -45,7 +45,7 @@ class RoutesTests(unittest.TestCase):
             self.assertEqual(cli.main(["ops"]), 0)
         text = out.getvalue()
         self.assertIn("Runs natively on sm_52", text)
-        self.assertIn("Runs on the CPU and copies back (4 operations)", text)
+        self.assertIn("Runs on the CPU and copies back (3 operations)", text)
         self.assertTrue(all(len(line) <= 100 for line in text.splitlines()))
         out = io.StringIO()
         with redirect_stdout(out):

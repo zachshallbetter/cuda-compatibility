@@ -328,56 +328,23 @@ def _add(self: torch.Tensor, other: torch.Tensor, *, alpha: int | float = 1) -> 
 def _add_inplace(
     self: torch.Tensor, other: torch.Tensor, *, alpha: int | float = 1
 ) -> torch.Tensor:
-    if not isinstance(other, torch.Tensor):
+    """self += alpha * other on the elementwise kernel, any size, other broadcast or a number (#184 B: SGD's step and
+    gradient accumulation stay on the GPU). A case it can't take is computed on the CPU and written back."""
+    try:
+        if self.numel():
+            _binary(self, other, 0, float(alpha), out=self)
+    except NotImplementedError:
         return _inplace_on_cpu(torch.ops.aten.add_.Tensor, "add_", (self, other), {"alpha": alpha})
-    if torch.is_grad_enabled() and (self.requires_grad or other.requires_grad):
-        # Autograd sits above this kernel and needs only the values, which the CPU path provides.
-        return _inplace_on_cpu(torch.ops.aten.add_.Tensor, "add_", (self, other), {"alpha": alpha})
-    if (
-        not self.is_cuda
-        or not other.is_cuda
-        or self.device != other.device
-        or self.dtype != torch.float32
-        or other.dtype != torch.float32
-        or self.shape != other.shape
-        or not self.is_contiguous()
-        or not other.is_contiguous()
-    ) or self.numel() > 1048576:
-        # No Maxwell kernel for this case: compute on the CPU and write the result back.
-        return _inplace_on_cpu(torch.ops.aten.add_.Tensor, "add_", (self, other), {"alpha": alpha})
-    left_start = self.data_ptr()
-    right_start = other.data_ptr()
-    byte_count = self.numel() * self.element_size()
-    if (
-        left_start != right_start
-        and left_start < right_start + byte_count
-        and right_start < left_start + byte_count
-    ):
-        raise NotImplementedError("Maxwell in-place addition rejects partially overlapping tensors")
-    if self.numel() == 0:
-        _dispatch_state.last_path = "llvm-sm52-f32-add-inplace-empty"
-        return self
-    global _bridge
-    if _bridge is None:
-        _bridge, ptx_path = _load_bridge()
-    else:
-        ptx_path = os.fsencode(os.environ["CUDA_COMPAT_VECTOR_ADD_PTX"])
-    current_stream = torch.cuda.current_stream(self.device)
-    _record_stream((self, other), current_stream)
-    _ensure_context()
-    result = _bridge.cuda_compat_launch_vector_add_scaled_f32(
-        ptx_path,
-        self.data_ptr(),
-        other.data_ptr(),
-        self.data_ptr(),
-        self.numel(),
-        float(alpha),
-        current_stream.cuda_stream,
-    )
-    if result != 0:
-        raise RuntimeError(f"CUDA Driver API Maxwell in-place float32 add failed with CUresult={result}")
     _dispatch_state.last_path = "llvm-sm52-f32-add-inplace"
     return self
+
+
+def _foreach_add_list(self: list[torch.Tensor], other: list[torch.Tensor], *, alpha: int | float = 1) -> None:
+    """torch._foreach_add_(params, grads, alpha=-lr), SGD's step (#184 B): each pair through the in-place add."""
+    if len(self) != len(other):
+        raise RuntimeError("_foreach_add_ needs lists of the same length")
+    for tensor, update in zip(self, other):
+        _add_inplace(tensor, update, alpha=alpha)
 
 
 class _Shape(ctypes.Structure):
@@ -445,9 +412,12 @@ def _scalar(value: Any) -> float | None:
     return float(value) if isinstance(value, (int, float)) and not isinstance(value, bool) else None
 
 
-def _binary(left: torch.Tensor, right: Any, op: int, alpha: float = 1.0) -> torch.Tensor:
+def _binary(left: torch.Tensor, right: Any, op: int, alpha: float = 1.0,
+            out: torch.Tensor | None = None) -> torch.Tensor:
     """left (op) right with broadcasting (#184): op 0 add, 1 sub, 2 mul, 3 div against a float32 CUDA tensor, or
-    the scalar forms 4-7 (add, mul, div, reverse-subtract) when right is a number."""
+    the scalar forms 4-7 (add, mul, div, reverse-subtract) when right is a number. `out`, when given, is a contiguous
+    tensor of the result's shape that receives it (in place when it is `left`); an operand that overlaps it any other
+    way is refused."""
     scalar = _scalar(right)
     if scalar is not None:
         _f32(left)
@@ -457,7 +427,14 @@ def _binary(left: torch.Tensor, right: Any, op: int, alpha: float = 1.0) -> torc
     else:
         _f32(left, right)
         shape, other, value = torch.broadcast_shapes(left.shape, right.shape), right, 0.0
-    output = torch.empty(shape, dtype=torch.float32, device=left.device)
+    if out is None:
+        output = torch.empty(shape, dtype=torch.float32, device=left.device)
+    else:
+        if out.dtype != torch.float32 or out.shape != shape or not out.is_contiguous() or out.device != left.device:
+            raise NotImplementedError("Maxwell elementwise output must be a contiguous float32 tensor of the result's shape")
+        if any(operand is not None and _overlaps_otherwise(operand, out) for operand in (left, other)):
+            raise NotImplementedError("Maxwell elementwise kernels refuse an operand that partly overlaps the output")
+        output = out
     count = output.numel()
     if count:
         lv = left.expand(shape)
@@ -466,6 +443,15 @@ def _binary(left: torch.Tensor, right: Any, op: int, alpha: float = 1.0) -> torc
                 ctypes.c_int(len(shape)), _shape(shape, lv.stride(), rv.stride()), ctypes.c_int(op),
                 ctypes.c_float(alpha), ctypes.c_float(value), device=lv.device)
     return output
+
+
+def _overlaps_otherwise(operand: torch.Tensor, output: torch.Tensor) -> bool:
+    """Whether operand shares memory with output other than as the very same view (x += y reads x[i] before writing
+    x[i]; any other sharing could read a value already written)."""
+    if operand.untyped_storage().data_ptr() != output.untyped_storage().data_ptr():
+        return False
+    return not (operand.data_ptr() == output.data_ptr() and operand.shape == output.shape
+                and operand.stride() == output.stride())
 
 
 @_falls_back_to_cpu("sub.Tensor")
@@ -538,13 +524,14 @@ def _rows(tensor: torch.Tensor, dim: int) -> tuple[int, int]:
     return (tensor.numel() // columns if columns else 0), columns
 
 
-def _softmax_rows(self: torch.Tensor, dim: int, log: bool) -> torch.Tensor:
+def _softmax_rows(self: torch.Tensor, dim: int, mode: int) -> torch.Tensor:
+    """mode 0 softmax, 1 log-softmax, 2 safe softmax (fully masked rows give zeros)."""
     _f32(self, contiguous=True)
     rows, columns = _rows(self, dim)
     output = torch.empty_like(self)
     if rows and columns:
         _launch("compat_softmax_rows_f32", rows, _ptr(self), _ptr(output), ctypes.c_int64(rows),
-                ctypes.c_int64(columns), ctypes.c_int(int(log)), device=self.device)
+                ctypes.c_int64(columns), ctypes.c_int(mode), device=self.device)
     return output
 
 
@@ -560,15 +547,25 @@ def _softmax_rows_backward(grad_output: torch.Tensor, output: torch.Tensor, dim:
 
 @_falls_back_to_cpu("_softmax")
 def _softmax(self: torch.Tensor, dim: int, half_to_float: bool) -> torch.Tensor:
-    output = _softmax_rows(self, dim, False)
+    output = _softmax_rows(self, dim, 0)
     _dispatch_state.last_path = "llvm-sm52-softmax-f32"
     return output
 
 
 @_falls_back_to_cpu("_log_softmax")
 def _log_softmax(self: torch.Tensor, dim: int, half_to_float: bool) -> torch.Tensor:
-    output = _softmax_rows(self, dim, True)
+    output = _softmax_rows(self, dim, 1)
     _dispatch_state.last_path = "llvm-sm52-log-softmax-f32"
+    return output
+
+
+@_falls_back_to_cpu("_safe_softmax")
+def _safe_softmax(self: torch.Tensor, dim: int, dtype=None) -> torch.Tensor:
+    """Attention with a mask (#184 B): softmax, except a row masked everywhere gives zeros."""
+    if dtype is not None and dtype != torch.float32:
+        raise NotImplementedError("Maxwell safe softmax keeps float32")
+    output = _softmax_rows(self, dim, 2)
+    _dispatch_state.last_path = "llvm-sm52-safe-softmax-f32"
     return output
 
 
@@ -850,10 +847,6 @@ def _embedding(
     scale_grad_by_freq: bool = False,
     sparse: bool = False,
 ) -> torch.Tensor:
-    if weight.requires_grad:
-        return _cpu_fallback(torch.ops.aten.embedding.default, "embedding")(
-            weight, indices, padding_idx, scale_grad_by_freq, sparse
-        )
     if (
         not weight.is_cuda
         or not indices.is_cuda
@@ -873,8 +866,6 @@ def _embedding(
     if padding_idx < -rows or padding_idx >= rows:
         raise IndexError("padding_idx is out of range")
     token_count = indices.numel()
-    if token_count * embedding_size > 1048576:
-        raise NotImplementedError("Maxwell embedding output is limited to 1,048,576 values")
     output = torch.empty(
         (*indices.shape, embedding_size), dtype=weight.dtype, device=weight.device
     )
@@ -894,9 +885,7 @@ def _embedding(
 
     global _bridge
     if _bridge is None:
-        _bridge, ptx_path = _load_bridge()
-    else:
-        ptx_path = os.fsencode(os.environ["CUDA_COMPAT_VECTOR_ADD_PTX"])
+        _bridge, _ = _load_bridge()
     span_count = maximum_offset + 1
     host_indices = ctypes.create_string_buffer(span_count * indices.element_size())
     current_stream = torch.cuda.current_stream(weight.device)
@@ -911,24 +900,13 @@ def _embedding(
     if int(logical_indices.min()) < 0 or int(logical_indices.max()) >= rows:
         raise IndexError("embedding index is out of range")
 
-    stream = current_stream.cuda_stream
     _record_stream((weight, indices), current_stream)
-    _ensure_context()
-    result = _bridge.cuda_compat_launch_embedding_f32(
-        ptx_path,
-        weight.data_ptr(),
-        indices.data_ptr(),
-        output.data_ptr(),
-        token_count,
-        embedding_size,
-        indices.shape[1] if indices.dim() == 2 else 1,
-        index_strides[0],
-        index_strides[1] if indices.dim() == 2 else 0,
-        indices.dim(),
-        stream,
-    )
-    if result != 0:
-        raise RuntimeError(f"CUDA Driver API Maxwell embedding failed with CUresult={result}")
+    count = token_count * embedding_size
+    _launch("compat_embedding_f32", (count + 255) // 256, _ptr(weight), _ptr(indices), _ptr(output),
+            ctypes.c_uint64(token_count), ctypes.c_uint64(embedding_size),
+            ctypes.c_uint64(indices.shape[1] if indices.dim() == 2 else 1), ctypes.c_uint64(index_strides[0]),
+            ctypes.c_uint64(index_strides[1] if indices.dim() == 2 else 0), ctypes.c_uint64(indices.dim()),
+            device=weight.device)
     _dispatch_state.last_path = "llvm-sm52-embedding-f32"
     return output
 
@@ -942,67 +920,99 @@ def _layer_norm(
     eps: float = 1e-5,
     cudnn_enable: bool = True,
 ) -> torch.Tensor:
+    """Layer normalization without autograd (training decomposes to native_layer_norm, _composite_autograd): the
+    native_layer_norm kernel. Parameters that require grad are fine here, since nothing differentiates this call."""
     del cudnn_enable
-    if input.requires_grad or (weight is not None and weight.requires_grad) or (bias is not None and bias.requires_grad):
-        return _cpu_fallback(torch.ops.aten.layer_norm.default, "layer_norm")(
-            input, normalized_shape, weight, bias, eps, False
-        )
-    if (
-        not input.is_cuda
-        or input.dtype != torch.float32
-        or input.layout != torch.strided
-        or not input.is_contiguous()
-        or input.dim() == 0
-        or tuple(normalized_shape) != (input.shape[-1],)
-    ):
-        raise NotImplementedError(
-            "Maxwell layer normalization supports contiguous float32 input normalized on its last dimension"
-        )
-    if (
-        weight is None
-        or bias is None
-        or weight.device != input.device
-        or bias.device != input.device
-        or weight.dtype != torch.float32
-        or bias.dtype != torch.float32
-        or weight.shape != (input.shape[-1],)
-        or bias.shape != (input.shape[-1],)
-        or not weight.is_contiguous()
-        or not bias.is_contiguous()
-    ):
-        raise NotImplementedError("Maxwell layer normalization requires contiguous float32 weight and bias")
-    normalized_size = input.shape[-1]
-    row_count = input.numel() // normalized_size
-    if row_count * normalized_size > 1048576:
-        raise NotImplementedError("Maxwell layer normalization is limited to 1,048,576 values")
-    output = torch.empty_like(input)
-    if row_count == 0:
-        return output
-
-    global _bridge
-    if _bridge is None:
-        _bridge, ptx_path = _load_bridge()
-    else:
-        ptx_path = os.fsencode(os.environ["CUDA_COMPAT_VECTOR_ADD_PTX"])
-    current_stream = torch.cuda.current_stream(input.device)
-    _record_stream((input, weight, bias), current_stream)
-    stream = current_stream.cuda_stream
-    _ensure_context()
-    result = _bridge.cuda_compat_launch_layer_norm_f32(
-        ptx_path,
-        input.data_ptr(),
-        weight.data_ptr(),
-        bias.data_ptr(),
-        output.data_ptr(),
-        row_count,
-        normalized_size,
-        eps,
-        stream,
-    )
-    if result != 0:
-        raise RuntimeError(f"CUDA Driver API Maxwell layer normalization failed with CUresult={result}")
+    output = _native_layer_norm.__wrapped__(input, normalized_shape, weight, bias, eps)[0]
     _dispatch_state.last_path = "llvm-sm52-layernorm-f32"
     return output
+
+
+@_falls_back_to_cpu("embedding_dense_backward")
+def _embedding_dense_backward(grad_output: torch.Tensor, indices: torch.Tensor, num_weights: int, padding_idx: int,
+                              scale_grad_by_freq: bool) -> torch.Tensor:
+    """The embedding's weight gradient on the GPU (#184 B): each looked-up row's gradient added into a zeroed table."""
+    if scale_grad_by_freq:
+        raise NotImplementedError("Maxwell embedding backward does not scale by frequency")
+    _f32(grad_output, contiguous=True)
+    if indices.dtype != torch.int64 or not indices.is_cuda or indices.device != grad_output.device \
+            or not indices.is_contiguous():
+        raise NotImplementedError("Maxwell embedding backward takes contiguous int64 CUDA indices")
+    columns = grad_output.shape[-1] if grad_output.dim() else 1
+    tokens = indices.numel()
+    if grad_output.numel() != tokens * columns:
+        raise NotImplementedError("Maxwell embedding backward needs one gradient row per index")
+    grad_weight = torch.empty((int(num_weights), columns), dtype=torch.float32, device=grad_output.device)
+    if grad_weight.numel():
+        _launch("compat_unary_f32", _blocks(grad_weight.numel()), _ptr(grad_weight), _ptr(grad_weight),
+                ctypes.c_int64(grad_weight.numel()), ctypes.c_int(2), ctypes.c_float(0.0), device=grad_output.device)
+    if tokens * columns:
+        _launch("compat_embedding_backward_f32", _blocks(tokens * columns), _ptr(grad_output), _ptr(indices),
+                _ptr(grad_weight), ctypes.c_int64(tokens), ctypes.c_int64(columns), ctypes.c_int64(int(num_weights)),
+                ctypes.c_int64(int(padding_idx)), device=grad_output.device)
+    _dispatch_state.last_path = "llvm-sm52-embedding-backward-f32"
+    return grad_weight
+
+
+_REDUCTIONS = {0: "none", 1: "mean", 2: "sum"}
+
+
+def _nll_shapes(input: torch.Tensor, target: torch.Tensor, weight: torch.Tensor | None) -> tuple[int, int]:
+    """Rows and classes of a (classes,) or (rows, classes) nll_loss, after checking the targets on the host (a
+    target out of range raises as on the CPU, never reads past the row)."""
+    _f32(input, weight, contiguous=True)
+    if input.dim() not in (1, 2) or target.dtype != torch.int64 or not target.is_cuda \
+            or target.device != input.device or not target.is_contiguous():
+        raise NotImplementedError("Maxwell nll_loss takes a 1D or 2D float32 input and contiguous int64 CUDA targets")
+    rows, columns = (input.shape[0] if input.dim() == 2 else 1), input.shape[-1]
+    if target.numel() != rows or (weight is not None and weight.numel() != columns):
+        raise NotImplementedError("Maxwell nll_loss needs one target per row and one weight per class")
+    return rows, columns
+
+
+def _check_targets(target: torch.Tensor, columns: int, ignore_index: int) -> None:
+    host = _cuda_tensor_to_cpu(target)
+    kept = host[host != ignore_index]
+    if kept.numel() and (int(kept.min()) < 0 or int(kept.max()) >= columns):
+        raise IndexError(f"Target {int(kept.max()) if int(kept.max()) >= columns else int(kept.min())} is out of bounds.")
+
+
+@_falls_back_to_cpu("nll_loss_forward")
+def _nll_loss_forward(self: torch.Tensor, target: torch.Tensor, weight: torch.Tensor | None, reduction: int,
+                      ignore_index: int):
+    """cross_entropy's second half (#184 B): the loss of a batch of log-probabilities without moving them."""
+    rows, columns = _nll_shapes(self, target, weight)
+    if reduction not in _REDUCTIONS:
+        raise NotImplementedError(f"Maxwell nll_loss has no reduction {reduction}")
+    _check_targets(target, columns, ignore_index)
+    output = torch.empty((rows,) if reduction == 0 and self.dim() == 2 else (), dtype=torch.float32,
+                         device=self.device)
+    total_weight = torch.empty((), dtype=torch.float32, device=self.device)
+    _launch("compat_nll_loss_forward_f32", 1, _ptr(self), _ptr(target), _ptr(weight), _ptr(output),
+            _ptr(total_weight), ctypes.c_int64(rows), ctypes.c_int64(columns), ctypes.c_int64(int(ignore_index)),
+            ctypes.c_int(reduction), ctypes.c_int(int(self.dim() == 2)), device=self.device)
+    _dispatch_state.last_path = "llvm-sm52-nll-loss-f32"
+    return output, total_weight
+
+
+@_falls_back_to_cpu("nll_loss_backward")
+def _nll_loss_backward(grad_output: torch.Tensor, self: torch.Tensor, target: torch.Tensor,
+                       weight: torch.Tensor | None, reduction: int, ignore_index: int,
+                       total_weight: torch.Tensor) -> torch.Tensor:
+    rows, columns = _nll_shapes(self, target, weight)
+    _f32(grad_output, total_weight, contiguous=True)
+    if reduction not in _REDUCTIONS or grad_output.numel() != (rows if reduction == 0 else 1):
+        raise NotImplementedError("Maxwell nll_loss backward needs one gradient per row, or one for a reduction")
+    grad_input = torch.empty_like(self)
+    if grad_input.numel():
+        _launch("compat_unary_f32", _blocks(grad_input.numel()), _ptr(grad_input), _ptr(grad_input),
+                ctypes.c_int64(grad_input.numel()), ctypes.c_int(2), ctypes.c_float(0.0), device=self.device)
+    if rows:
+        _launch("compat_nll_loss_backward_f32", _blocks(rows), _ptr(grad_output), _ptr(target), _ptr(weight),
+                _ptr(total_weight), _ptr(grad_input), ctypes.c_int64(rows), ctypes.c_int64(columns),
+                ctypes.c_int64(int(ignore_index)), ctypes.c_int(reduction), device=self.device)
+    _dispatch_state.last_path = "llvm-sm52-nll-loss-backward-f32"
+    return grad_input
 
 
 @_falls_back_to_cpu("relu")
@@ -1108,6 +1118,30 @@ def _cuda_tensor_to_cpu(tensor: torch.Tensor) -> torch.Tensor:
     return cpu_storage.as_strided(tensor.shape, strides).clone()
 
 
+def _strided_copy(source: torch.Tensor, output: torch.Tensor) -> torch.Tensor:
+    """output[...] = source[...] element by element through both tensors' strides, for any 1-, 2-, 4- or 8-byte
+    dtype (#184 B): a strided view's clone stays on the GPU instead of a round trip through the CPU."""
+    if not source.is_cuda or not output.is_cuda or source.device != output.device or source.dtype != output.dtype \
+            or source.shape != output.shape:
+        raise NotImplementedError("Maxwell strided copy needs one CUDA device, one dtype and one shape")
+    if source.layout != torch.strided or source.element_size() not in (1, 2, 4, 8) or source.dim() > 6:
+        raise NotImplementedError("Maxwell strided copy takes dense tensors of up to six dimensions, 1 to 8 bytes")
+    count = output.numel()
+    if count:
+        _launch("compat_strided_copy", _blocks(count), _ptr(source), _ptr(output), ctypes.c_int64(count),
+                ctypes.c_int(source.dim()), _shape(source.shape, source.stride(), output.stride()),
+                ctypes.c_int(source.element_size()), device=source.device)
+    return output
+
+
+@_falls_back_to_cpu("clone")
+def _clone(self: torch.Tensor, *, memory_format=None) -> torch.Tensor:
+    output = torch.empty_like(self, memory_format=memory_format or torch.preserve_format)
+    _strided_copy(self, output)
+    _dispatch_state.last_path = "llvm-sm52-strided-copy"
+    return output
+
+
 def _contiguous(
     input: torch.Tensor,
     memory_format: torch.memory_format = torch.contiguous_format,
@@ -1119,10 +1153,14 @@ def _contiguous(
     if input.is_contiguous(memory_format=memory_format):
         _dispatch_state.last_path = "pytorch-contiguous-alias"
         return input
-    result = torch.ops.aten.contiguous.default(
-        _cuda_tensor_to_cpu(input), memory_format=memory_format
-    ).to(input.device)
-    _dispatch_state.last_path = "cpu-fallback-contiguous"
+    try:
+        result = _strided_copy(input, torch.empty(input.shape, dtype=input.dtype, device=input.device))
+        _dispatch_state.last_path = "llvm-sm52-strided-copy"
+    except NotImplementedError:
+        result = torch.ops.aten.contiguous.default(
+            _cuda_tensor_to_cpu(input), memory_format=memory_format
+        ).to(input.device)
+        _dispatch_state.last_path = "cpu-fallback-contiguous"
     return result
 
 
@@ -1640,6 +1678,8 @@ def install() -> None:
     _library = torch.library.Library("aten", "IMPL", "CUDA")
     _library.impl("add.Tensor", _add)
     _library.impl("add_.Tensor", _add_inplace)
+    _library.impl("_foreach_add_.List", _foreach_add_list)
+    _library.impl("clone", _clone)
     _library.impl("arange", _arange)
     _library.impl("embedding", _embedding)
     _library.impl("layer_norm", _inference_only(_layer_norm, "layer_norm"))
@@ -1651,6 +1691,10 @@ def install() -> None:
     _library.impl("_log_softmax", _log_softmax)
     _library.impl("_softmax_backward_data", _softmax_backward)
     _library.impl("_log_softmax_backward_data", _log_softmax_backward)
+    _library.impl("_safe_softmax", _safe_softmax)
+    _library.impl("embedding_dense_backward", _embedding_dense_backward)
+    _library.impl("nll_loss_forward", _nll_loss_forward)
+    _library.impl("nll_loss_backward", _nll_loss_backward)
     _library.impl("native_layer_norm", _native_layer_norm)
     _library.impl("native_layer_norm_backward", _native_layer_norm_backward)
     _library.impl("gelu_backward", _gelu_backward)

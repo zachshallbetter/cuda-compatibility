@@ -20,21 +20,30 @@ NATIVE = (
     (("sub.Tensor", "rsub.Scalar", "mul.Tensor", "div.Tensor"), "Subtraction, multiplication and division",
      "float32 of any size with broadcasting (up to six dimensions), or a number. Other dtypes use the CPU fallback."),
     (("gelu", "gelu_backward"), "GELU", "Contiguous float32, exact or tanh, and its gradient."),
-    (("_softmax", "_log_softmax", "_softmax_backward_data", "_log_softmax_backward_data"), "Softmax and log-softmax",
-     "Contiguous float32 over the last dimension, masked (-inf) entries included, and their gradients."),
+    (("_softmax", "_safe_softmax", "_log_softmax", "_softmax_backward_data", "_log_softmax_backward_data"),
+     "Softmax and log-softmax",
+     "Contiguous float32 over the last dimension, masked (-inf) entries included, and their gradients; safe softmax "
+     "(attention with a mask) gives zeros for a fully masked row."),
     (("native_layer_norm", "native_layer_norm_backward"), "Layer normalization in training",
      "Contiguous float32 over the trailing dimensions, with or without weight and bias, and its gradients."),
     (("sum.dim_IntList",), "Sum over dimensions", "float32, any dimensions (up to six), keepdim or not."),
     (("fill_.Scalar", "zero_"), "Fill", "Contiguous float32 tensors. Other dtypes are filled in place on the CPU."),
-    (("add_.Tensor",), "Float32 in-place addition",
-     "Same-shape contiguous float32 CUDA tensors up to 1,048,576 values; scaled updates as in the verified SGD case."),
+    (("add_.Tensor", "_foreach_add_.List"), "Float32 in-place addition",
+     "A contiguous float32 tensor of any size updated by a broadcast float32 tensor or a number, with any alpha; "
+     "SGD's foreach step and gradient accumulation. Other cases are computed on the CPU and written back."),
     (("arange",), "Range creation", "CUDA int64 arange, up to 1,048,576 values. Other cases use the CPU fallback."),
-    (("embedding",), "Embedding",
-     "Contiguous float32 weight, int64 CUDA indices in 1D or 2D, up to 1,048,576 output values. "
-     "Other cases, and training, use the CPU fallback."),
+    (("embedding", "embedding_dense_backward"), "Embedding",
+     "Contiguous float32 weight of any size and int64 CUDA indices in 1D or 2D, in training too: the weight "
+     "gradient (padding_idx included, scale_grad_by_freq on the CPU) stays on the GPU."),
     (("layer_norm",), "Layer normalization",
-     "Contiguous float32 input normalized over the last dimension, float32 weight and bias, up to 1,048,576 "
-     "values. Other cases use the CPU fallback; training uses PyTorch's decomposition."),
+     "Inference: contiguous float32 normalized over the trailing dimensions, any size, with or without weight and "
+     "bias. Training uses PyTorch's decomposition onto native_layer_norm."),
+    (("nll_loss_forward", "nll_loss_backward"), "Negative log likelihood",
+     "1D or 2D float32 log-probabilities with int64 CUDA targets: mean, sum or none, ignore_index and class weights, "
+     "and its gradient; cross_entropy runs through it. A target out of range raises IndexError."),
+    (("clone", "contiguous"), "Copies of strided views",
+     "Any dtype of 1, 2, 4 or 8 bytes, up to six dimensions (transposes, slices, broadcasts). Training through "
+     "contiguous uses PyTorch's decomposition onto clone."),
     (("mm",), "Matrix multiplication",
      "2D float32 of any size with nonnegative strides (transposed views included), on a tiled kernel; training "
      "too. Other dtypes use the CPU fallback."),
@@ -48,7 +57,7 @@ NATIVE = (
 # (aten registration, operation)
 CPU_FALLBACK = (
     ("scaled_dot_product_attention", "scaled dot-product attention"),
-    ("clamp_min", "clamp_min"), ("cat", "concatenation"), ("contiguous", "contiguous copy"),
+    ("clamp_min", "clamp_min"), ("cat", "concatenation"),
 )
 
 NOTES = (
@@ -63,8 +72,8 @@ NOTES = (
     "Training through layer_norm, scaled_dot_product_attention and contiguous uses PyTorch's own "
     "decomposition, so Transformers, attention and LayerNorm models train; attention uses the math backend. "
     "Inference keeps the adapter's kernels for them.",
-    "In-place operators (x += 1, mul_, zero_, fill_, x[i] = v, relu_, nn.ReLU(inplace=True), and the "
-    "GradScaler steps of torch.amp) run on a CPU copy and are copied back, within the 64 MiB limit; a strided "
+    "Other in-place operators (mul_, fill_ and zero_ of other dtypes, x[i] = v, relu_, nn.ReLU(inplace=True), "
+    "and the GradScaler steps of torch.amp) run on a CPU copy and are copied back, within the 64 MiB limit; a strided "
     "view such as x[:, 1:3] is updated through its contiguous base. Other mutating or alias-returning "
     "operators fail closed.",
 )

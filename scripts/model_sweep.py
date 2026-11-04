@@ -2,7 +2,8 @@
 
 Run on an sm_52 machine after setup: cuda-legacy run scripts/model_sweep.py
 Each model is built from torch.nn with seeded random weights (no downloads). For each it runs inference and two
-training steps on the GPU and the CPU side by side, compares outputs and parameters, and on failure records the
+training steps on the GPU and the CPU side by side, compares outputs, first-step gradients and parameters (see
+significant_diff for Adam on zero gradients), and on failure records the
 first operator named in the error. Prints one JSON object with per-model results and a ranked list of blockers.
 """
 import copy
@@ -20,6 +21,16 @@ R = {}
 def first_op(msg):
     m = re.search(r"(aten[:.]+[\w.]+)|operator (\S+)|fallback for (\S+)", msg)
     return next((g for g in m.groups() if g), None) if m else None
+
+
+def significant_diff(gpu_param, cpu_param, cpu_grad):
+    """The largest parameter difference where the first step's CPU gradient wasn't zero to float precision. Adam-family
+    steps divide by the gradient's own size, so a gradient that is analytically zero (a key projection's bias under
+    softmax) turns float noise of 1e-10 into a whole lr step; those elements are covered by grad_rel instead."""
+    d = (gpu_param.detach().cpu() - cpu_param.detach()).abs()
+    if cpu_grad is not None and cpu_grad.numel():
+        d = d[cpu_grad.abs() > 1e-6 * float(cpu_grad.abs().max())]
+    return float(d.max()) if d.numel() else 0.0
 
 
 def run(name, build, batch, loss_fn, opt=lambda p: torch.optim.SGD(p, lr=0.01), train=True, exact=True):
@@ -44,7 +55,8 @@ def run(name, build, batch, loss_fn, opt=lambda p: torch.optim.SGD(p, lr=0.01), 
         try:
             cpu.train(); gpu.train()
             oc_, og_ = opt(cpu.parameters()), opt(gpu.parameters())
-            for _ in range(2):
+            grads = {}
+            for step in range(2):
                 for m, o, dev in ((cpu, oc_, None), (gpu, og_, "cuda")):
                     o.zero_grad()
                     xs = [t.cuda() for t in x] if dev else x
@@ -52,10 +64,16 @@ def run(name, build, batch, loss_fn, opt=lambda p: torch.optim.SGD(p, lr=0.01), 
                     out = out[0] if isinstance(out, tuple) else out
                     loss = loss_fn(out, y.cuda() if dev else y)
                     loss.backward()
+                    if step == 0:
+                        grads[dev] = [None if q.grad is None else q.grad.detach().cpu().clone() for q in m.parameters()]
                     o.step()
-            rec["param_diff"] = max(float((a.detach().cpu() - b.detach()).abs().max())
-                                    for a, b in zip(gpu.parameters(), cpu.parameters()))
-            rec["train_ok"] = rec["param_diff"] < 1e-3 or not exact
+            pairs = list(zip(gpu.parameters(), cpu.parameters(), grads["cuda"], grads[None]))
+            rec["param_diff"] = max(float((a.detach().cpu() - b.detach()).abs().max()) for a, b, _, _ in pairs)
+            scale = max([float(c.abs().max()) for _, _, _, c in pairs if c is not None and c.numel()] or [0.0])
+            rec["grad_rel"] = max([float((g - c).abs().max()) / (scale or 1.0) for _, _, g, c in pairs
+                                   if g is not None and c is not None and c.numel()] or [0.0])
+            rec["param_diff_nonzero_grad"] = max(significant_diff(a, b, c) for a, b, _, c in pairs)
+            rec["train_ok"] = (rec["param_diff_nonzero_grad"] < 1e-3 and rec["grad_rel"] < 1e-4) or not exact
         except Exception as e:
             msg = f"{type(e).__name__}: {str(e).splitlines()[0][:220]}"
             rec.update(train_ok=False, stage="training", error=msg, op=first_op(msg))
