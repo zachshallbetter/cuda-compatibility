@@ -64,6 +64,20 @@ class NativeFallbackTests(unittest.TestCase):
             self.assertIs(self.adapter._zero(ints), ints)
             self.assertEqual(ints.tolist(), [0] * 5)
 
+    def test_a_foreach_step_the_kernel_cannot_take_goes_the_cpu_route(self) -> None:
+        seen = []
+        with mock.patch.object(self.adapter, "_foreach_on_cpu", lambda op, args, kwargs: seen.append(op) or "cpu"):
+            step = self.adapter._foreach_kernel("_foreach_mul_.Scalar")
+            self.assertEqual(step([self.torch.ones(2)], 2.0), "cpu")   # a CPU tensor: not ready for the kernel
+            self.assertEqual(step([], 2.0), "cpu")
+        self.assertEqual(seen, [self.torch.ops.aten._foreach_mul_.Scalar] * 2)
+
+    def test_every_foreach_step_is_registered(self) -> None:
+        import inspect
+        source = inspect.getsource(self.adapter.install)
+        for overload in self.adapter._FOREACH:
+            self.assertIn(f'_library.impl("{overload}", _foreach_kernel("{overload}"))', source)
+
     def test_every_native_kernel_is_wrapped(self) -> None:
         for kernel in ("_add", "_mm", "_relu", "_arange", "_embedding", "_layer_norm"):
             self.assertTrue(hasattr(getattr(self.adapter, kernel), "__wrapped__"), kernel)
