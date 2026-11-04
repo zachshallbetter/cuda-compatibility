@@ -6,7 +6,7 @@
   "selectedPaths": [],
   "sourceSelection": {
     "includedCount": 265,
-    "includedBytes": 2692248,
+    "includedBytes": 2692124,
     "excludedCounts": {
       "extension": 65,
       "generated-or-transient-file": 2
@@ -18,14 +18,14 @@
     "repositories": [
       {
         "path": ".",
-        "commit": "b14d474a34c48c692781832ccfb8c55fad8ad81d",
-        "branch": "feat/root-in-containers-2",
+        "commit": "abff8cd7661a1818847488c9d87c16c11faa8e90",
+        "branch": "feat/root-in-containers-3",
         "dirty": true,
         "remote": "https://github.com/zachshallbetter/cuda-compatibility.git"
       }
     ]
   },
-  "aggregateSourceDigest": "da9ce4991270bd477a5dc3eca29756028ffb9f4d0c905f5710fd983fee1b62d6",
+  "aggregateSourceDigest": "71d8a9325af135870dbad00308bf731e74235aa0058bf28c6cb9d89697cf9d84",
   "sources": [
     {
       "path": ".agents/acp/README.md",
@@ -1139,8 +1139,8 @@
     },
     {
       "path": "site/index.html",
-      "bytes": 54488,
-      "sha256": "a23ede8cc24413b5e04f8ce0dde171157a1dc7de3539fa3c84127188784bd9a8"
+      "bytes": 54364,
+      "sha256": "0ef82974cf26f6161164f7738899361ca9559b5f48110461b3f9b5d089a5f31c"
     },
     {
       "path": "site/install.sh",
