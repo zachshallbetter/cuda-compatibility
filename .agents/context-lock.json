@@ -18,8 +18,8 @@
     "repositories": [
       {
         "path": ".",
-        "commit": "e629eb4536bef98724f39403e6c48301c8c2d932",
-        "branch": null,
+        "commit": "bf1ab9a876556569c2fdb493e886a21d5426b1cc",
+        "branch": "perf/fused-adam",
         "dirty": true,
         "remote": "https://github.com/zachshallbetter/cuda-compatibility.git"
       }

@@ -614,6 +614,9 @@ extern "C" __global__ void compat_gru_cell_backward_f32(const float* grad_hy, co
     grad_hidden[row + hidden + j] = gz;
     grad_hidden[row + 2 * hidden + j] = gn * r;
     grad_hx[e] = g * z;
+  }
+}
+
 // ── Fused Adam and AdamW (#246) ─────────────────────────────────────────────────────────────────────────────
 // One launch per parameter for the whole step, as PyTorch's fused CUDA kernel computes it: weight decay (decoupled
 // for AdamW, added to the gradient for Adam), both moments, bias correction from the step read on the device, and
