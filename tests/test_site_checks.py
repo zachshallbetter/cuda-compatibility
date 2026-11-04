@@ -237,6 +237,18 @@ class SiteDiscoveryChecksTests(unittest.TestCase):
             page.write_text(source, encoding="utf-8")
             self.assertTrue(any("h1 must sit inside main" in error for error in audit_site(site)))
 
+    def test_rejects_page_without_dark_scheme_metadata(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            site = self.copy_site(directory)
+            page = site / "docs" / "cli.html"
+            source = page.read_text(encoding="utf-8")
+            source = source.replace('<meta name="theme-color" content="#171613" media="(prefers-color-scheme: dark)">', "", 1)
+            source = source.replace('<meta name="color-scheme" content="light dark">', '<meta name="color-scheme" content="only light">', 1)
+            page.write_text(source, encoding="utf-8")
+            errors = audit_site(site)
+            self.assertTrue(any("dark theme-color" in error for error in errors))
+            self.assertTrue(any("color-scheme must be 'light dark'" in error for error in errors))
+
     def test_rejects_unfocusable_scroll_region(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             site = self.copy_site(directory)

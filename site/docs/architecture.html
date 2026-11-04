@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="color-scheme" content="only light"><meta name="theme-color" content="#F2F2EE"><meta name="description" content="How the layer works: a process-local CUDA runtime version facade, LLVM-built Maxwell kernels, PyTorch operator routing, and a bounded CPU fallback path."><link rel="icon" href="../favicon.ico" sizes="32x32">
+<meta name="color-scheme" content="light dark"><meta name="theme-color" content="#F2F2EE" media="(prefers-color-scheme: light)"><meta name="theme-color" content="#171613" media="(prefers-color-scheme: dark)"><meta name="description" content="How the layer works: a process-local CUDA runtime version facade, LLVM-built Maxwell kernels, PyTorch operator routing, and a bounded CPU fallback path."><link rel="icon" href="../favicon.ico" sizes="32x32">
 <link rel="icon" type="image/svg+xml" href="../favicon.svg">
 <link rel="apple-touch-icon" href="../apple-touch-icon.png">
 <link rel="mask-icon" href="../mask-icon.svg" color="#000000">
@@ -101,7 +101,7 @@
 <div class="node" style="border-color:var(--yellow)"><span class="balloon" aria-hidden="true" style="grid-row:1 / span 2">2</span><strong style="font-size:17px;font-weight:800">Interposition</strong><span class="mute" style="font-size:14px;grid-column:2">Preload answers <code>cudaRuntimeGetVersion</code> with 13000; everything else forwards</span></div>
 <div class="arrow"><i aria-hidden="true"></i><span class="sheet">Route by operator</span></div>
 <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(180px,100%),1fr));gap:12px">
-<div style="border:2px solid var(--blue);padding:14px 18px;display:flex;flex-direction:column;gap:4px"><span class="state ok"><i class="sw full" aria-hidden="true" style="border-color:#FFFFFF;background:#FFFFFF"></i>Native kernel</span><span class="mute" style="font-size:14px">LLVM/Clang to PTX for sm_52, launched through the Driver API bridge on PyTorch’s current stream</span></div>
+<div style="border:2px solid var(--blue);padding:14px 18px;display:flex;flex-direction:column;gap:4px"><span class="state ok"><i class="sw full" aria-hidden="true" style="border-color:var(--on-ok);background:var(--on-ok)"></i>Native kernel</span><span class="mute" style="font-size:14px">LLVM/Clang to PTX for sm_52, launched through the Driver API bridge on PyTorch’s current stream</span></div>
 <div style="border:2px solid var(--yellow);padding:14px 18px;display:flex;flex-direction:column;gap:4px"><span class="state exp"><i class="sw half" aria-hidden="true"></i>CPU fallback</span><span class="mute" style="font-size:14px">PyTorch CPU implementation, differentiable transfers, 64 MiB in and out</span></div>
 </div>
 <div class="arrow"><i aria-hidden="true"></i><span class="sheet">Result returned</span></div>

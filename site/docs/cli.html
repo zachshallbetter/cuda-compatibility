@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="color-scheme" content="only light"><meta name="theme-color" content="#F2F2EE"><meta name="description" content="Every cuda-legacy command and launch option, with what each one prints, its exit codes, and fixes for the setup errors people run into most often."><link rel="icon" href="../favicon.ico" sizes="32x32">
+<meta name="color-scheme" content="light dark"><meta name="theme-color" content="#F2F2EE" media="(prefers-color-scheme: light)"><meta name="theme-color" content="#171613" media="(prefers-color-scheme: dark)"><meta name="description" content="Every cuda-legacy command and launch option, with what each one prints, its exit codes, and fixes for the setup errors people run into most often."><link rel="icon" href="../favicon.ico" sizes="32x32">
 <link rel="icon" type="image/svg+xml" href="../favicon.svg">
 <link rel="apple-touch-icon" href="../apple-touch-icon.png">
 <link rel="mask-icon" href="../mask-icon.svg" color="#000000">
@@ -30,7 +30,7 @@
 td.cmd{white-space:nowrap}
 td.cmd code{font-size:13px;background:none;padding:0;font-weight:500}
 .exit{display:grid;grid-template-columns:72px minmax(0,1fr);gap:0 16px;align-items:start}
-.exit b{font-family:"Martian Mono",monospace;font-size:13px;font-weight:500;background:#F2F2EE;color:#000000;border:1px solid #000000;padding:4px 8px;display:inline-block}
+.exit b{font-family:"Martian Mono",monospace;font-size:13px;font-weight:500;background:var(--surface);color:var(--ink);border:1px solid var(--line);padding:4px 8px;display:inline-block}
 </style>
 </head>
 <body>
@@ -59,8 +59,8 @@ td.cmd code{font-size:13px;background:none;padding:0;font-weight:500}
 <header class="band">
 <div class="wrap" style="padding-top:56px;padding-bottom:56px;display:flex;flex-direction:column;gap:18px">
 <nav aria-label="Breadcrumb" class="crumbs"><ol><li><a href="../index.html">Home</a></li><li><a href="index.html">Documentation</a></li><li aria-current="page">Command line, sheet 06 / 10</li></ol></nav>
-<h1 id="title" class="disp" style="font-size:clamp(40px,4.6vw,64px);max-width:16ch"><code style="background:none;padding:0;font-size:0.9em;color:#1F3DFF">cuda-legacy</code> command reference</h1>
-<p style="margin:0;font-size:20px;line-height:1.4;max-width:56ch;font-weight:500"><code style="background:#E4E4DE;color:#000000">cuda-legacy</code> is the preferred terminal command. Install it into the same Python environment as the CUDA-enabled PyTorch package. The previous <code style="background:#E4E4DE;color:#000000">cuda-legacy-compat</code> command remains an alias.</p>
+<h1 id="title" class="disp" style="font-size:clamp(40px,4.6vw,64px);max-width:16ch"><code style="background:none;padding:0;font-size:0.9em;color:var(--blue)">cuda-legacy</code> command reference</h1>
+<p style="margin:0;font-size:20px;line-height:1.4;max-width:56ch;font-weight:500"><code style="background:var(--code);color:var(--ink)">cuda-legacy</code> is the preferred terminal command. Install it into the same Python environment as the CUDA-enabled PyTorch package. The previous <code style="background:var(--code);color:var(--ink)">cuda-legacy-compat</code> command remains an alias.</p>
 <p class="byline">By <a rel="author" href="https://zachshallbetter.com/">Zach Shallbetter</a> · Sheet 06 of 10 · Updated <time datetime="2026-11-03">3 November 2026</time></p>
 </div>
 </header>

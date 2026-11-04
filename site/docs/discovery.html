@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="color-scheme" content="only light"><meta name="theme-color" content="#F2F2EE">
+<meta name="color-scheme" content="light dark"><meta name="theme-color" content="#F2F2EE" media="(prefers-color-scheme: light)"><meta name="theme-color" content="#171613" media="(prefers-color-scheme: dark)">
 <meta name="description" content="How cudacompat.com is found by search engines and AI tools: crawler policy, sitemap, agent index, and what Google and Bing data can and cannot confirm.">
 <link rel="icon" href="../favicon.ico" sizes="32x32">
 <link rel="icon" type="image/svg+xml" href="../favicon.svg">
@@ -62,7 +62,7 @@ td.op{font-weight:800;white-space:nowrap}
 <nav aria-label="Breadcrumb" class="crumbs"><ol><li><a href="../index.html">Home</a></li><li><a href="index.html">Documentation</a></li><li aria-current="page">Search and AI discovery, sheet 09 / 10</li></ol></nav>
 <h1 id="title" class="disp" style="font-size:clamp(40px,4.6vw,64px);max-width:16ch">Search and AI discovery</h1>
 <p style="margin:0;font-size:20px;line-height:1.4;max-width:56ch;font-weight:500">What this project makes accessible to crawlers, how its discovery files work, and what has, and has not, been observed.</p>
-<p class="mute" style="margin:0;font-size:16px;max-width:64ch">The site is prepared with crawlable HTML pages, internal links, canonical URLs, an XML sitemap, a robots policy, and an informal <code style="background:#E4E4DE;color:#000000">llms.txt</code> index. These make content easier to request and interpret; none proves a search engine indexed a page or an AI system retrieved, cited, or recommended it.</p>
+<p class="mute" style="margin:0;font-size:16px;max-width:64ch">The site is prepared with crawlable HTML pages, internal links, canonical URLs, an XML sitemap, a robots policy, and an informal <code style="background:var(--code);color:var(--ink)">llms.txt</code> index. These make content easier to request and interpret; none proves a search engine indexed a page or an AI system retrieved, cited, or recommended it.</p>
 <p class="byline">By <a rel="author" href="https://zachshallbetter.com/">Zach Shallbetter</a> · Sheet 09 of 10 · Updated <time datetime="2026-11-03">3 November 2026</time></p>
 </div>
 </header>
@@ -110,7 +110,7 @@ td.op{font-weight:800;white-space:nowrap}
 <div id="state" style="display:flex;flex-direction:column;gap:20px">
 <div class="sec"><span class="cut" aria-hidden="true">B</span><h2 class="h2">Current observation state</h2><span class="plane" aria-hidden="true"></span></div>
 <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(280px,100%),1fr));gap:0;border:2px solid currentColor">
-<div class="cell"><span class="state ok" style="align-self:flex-start"><i class="sw full" aria-hidden="true" style="border-color:#FFFFFF;background:#FFFFFF"></i>Verified</span><strong>Public accessibility</strong><span class="soft">The site is served by Vercel at <code>cudacompat.com</code>; <code>www.cudacompat.com</code> redirects there. A route audit on 2026-11-03 fetched all 10 sitemap pages, <code>sitemap.xml</code>, <code>robots.txt</code>, <code>llms.txt</code>, <code>favicon.svg</code>, the social card, and the page styles, scripts, fonts and wireframe model with HTTP 200. Point-in-time HTTP checks establish availability, not search indexing or audience reach.</span></div>
+<div class="cell"><span class="state ok" style="align-self:flex-start"><i class="sw full" aria-hidden="true" style="border-color:var(--on-ok);background:var(--on-ok)"></i>Verified</span><strong>Public accessibility</strong><span class="soft">The site is served by Vercel at <code>cudacompat.com</code>; <code>www.cudacompat.com</code> redirects there. A route audit on 2026-11-03 fetched all 10 sitemap pages, <code>sitemap.xml</code>, <code>robots.txt</code>, <code>llms.txt</code>, <code>favicon.svg</code>, the social card, and the page styles, scripts, fonts and wireframe model with HTTP 200. Point-in-time HTTP checks establish availability, not search indexing or audience reach.</span></div>
 <div class="cell"><span class="state exp" style="align-self:flex-start"><i class="sw half" aria-hidden="true"></i>Partial</span><strong>Bing Webmaster Tools</strong><span class="soft"><code>cudacompat.com</code> was imported from Search Console. On 2026-11-03 Bing crawled the sitemap with Success: 10 URLs discovered, zero errors or warnings. Discovery is not indexing; no per-page index receipt is recorded.</span></div>
 <div class="cell"><span class="state exp" style="align-self:flex-start"><i class="sw half" aria-hidden="true"></i>Partial</span><strong>Google Search Console</strong><span class="soft">The <code>cudacompat.com</code> Domain property is verified. On 2026-11-03 the sitemap read as Success with 10 discovered pages, and URL Inspection reported the homepage indexed after a smartphone crawl that day. Index status for the other nine pages is not yet reported.</span></div>
 <div class="cell"><span class="state exp" style="align-self:flex-start"><i class="sw half" aria-hidden="true"></i>Receipt only</span><strong>Analytics</strong><span class="soft">The GA4 tag is deployed; it loads without a prompt except in browsers that opt out. One explicitly accepted test visit produced <code>page_view</code>, <code>first_visit</code>, and <code>session_start</code> in GA4 Realtime; test consent was withdrawn afterward. This single test is not audience coverage.</span></div>
@@ -134,7 +134,7 @@ td.op{font-weight:800;white-space:nowrap}
 
 <div id="claims" style="display:flex;flex-direction:column;gap:20px">
 <div class="sec"><span class="cut" aria-hidden="true">E</span><h2 class="h2">Support claims have their own evidence</h2><span class="plane" aria-hidden="true"></span></div>
-<div class="note" style="border-color:#000000">
+<div class="note" style="border-color:var(--line)">
 <p style="margin:0;font-size:16px">Search visibility does not establish CUDA compatibility. For hardware and workload support, use the <a href="../docs/compatibility.html">operation-by-operation support matrix</a> and the <a href="../docs/research.html">reproduction records</a>. A GPU name, compute capability, profile match, version query, search result, or AI recommendation is not a workload certification.</p>
 </div>
 <p class="mute" style="margin:0;font-size:15px">Discovery policy: <a href="https://cudacompat.com/robots.txt">robots.txt</a>, <a href="https://cudacompat.com/sitemap.xml">sitemap</a>, <a href="https://cudacompat.com/llms.txt">agent index</a>, <a href="../docs/privacy.html">privacy and measurement</a>.</p>

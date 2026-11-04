@@ -185,7 +185,7 @@ def head_meta(page: dict, root: str, data: dict, extra: str = "") -> str:
 <html lang="en">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="color-scheme" content="only light"><meta name="theme-color" content="#F2F2EE"><meta name="description" content="{x}">
+<meta name="color-scheme" content="light dark"><meta name="theme-color" content="#F2F2EE" media="(prefers-color-scheme: light)"><meta name="theme-color" content="#171613" media="(prefers-color-scheme: dark)"><meta name="description" content="{x}">
 <link rel="icon" href="{root}favicon.ico" sizes="32x32">
 <link rel="icon" type="image/svg+xml" href="{root}favicon.svg">
 <link rel="apple-touch-icon" href="{root}apple-touch-icon.png">

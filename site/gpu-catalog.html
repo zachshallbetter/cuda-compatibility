@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="color-scheme" content="only light">
+<meta name="color-scheme" content="light dark">
 <link rel="icon" href="favicon.ico" sizes="32x32">
 <link rel="icon" type="image/svg+xml" href="favicon.svg">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
@@ -17,7 +17,7 @@
 <meta name="application-name" content="CUDA Compatibility">
 <meta name="apple-mobile-web-app-title" content="CUDA Compat">
 <meta name="format-detection" content="telephone=no">
-<meta name="theme-color" content="#F2F2EE">
+<meta name="theme-color" content="#F2F2EE" media="(prefers-color-scheme: light)"><meta name="theme-color" content="#171613" media="(prefers-color-scheme: dark)">
 <meta name="description" content="NVIDIA&#x27;s legacy compute-capability tiers explained: which GPUs sit in each, what newer CUDA releases still build for, and which cards this project tested.">
 <title>Legacy NVIDIA GPU Compute Capability Guide | CUDA Compatibility</title>
 <link rel="canonical" href="https://cudacompat.com/gpu-catalog.html">
@@ -39,8 +39,8 @@ td.cc{font-stretch:110%;font-weight:800;font-size:22px;line-height:1;white-space
 td.tier{font-weight:800;font-size:16px;min-width:180px}
 td.ctx{min-width:340px}
 td.ex{min-width:220px}
-tr.ref{background:var(--yellow);box-shadow:inset 0 2px 0 #000000,inset 0 -2px 0 #000000}
-tr.ref td{border-bottom-color:#000000}
+tr.ref{background:var(--caution-bg);color:var(--caution-fg);box-shadow:inset 0 2px 0 var(--caution-line),inset 0 -2px 0 var(--caution-line)}
+tr.ref td{border-bottom-color:var(--caution-line)}
 tr.ref td:first-child{padding-left:12px}
 .q{display:grid;grid-template-columns:36px minmax(0,1fr);gap:6px 16px;padding:20px 0;border-bottom:1px solid currentColor;align-items:start}
 .q p{margin:0;font-size:16px;color:var(--soft);grid-column:2}
@@ -128,7 +128,7 @@ tr.ref td:first-child{padding-left:12px}
 <tr><td class="cc">6.1</td><td class="tier">Pascal</td><td class="ctx">Pascal data-center, workstation, and consumer GPUs. CUDA 13 support removal is a software-toolchain boundary, not proof that the silicon cannot perform useful computation.</td><td class="ex mute">Tesla P40/P4, Quadro P6000/P5000/P4000, GeForce GTX 1080/1070/1060/1050</td><td><span class="state open"><i class="sw" aria-hidden="true"></i>Unverified, outside gate</span></td></tr>
 <tr><td class="cc">6.0</td><td class="tier">Pascal compute</td><td class="ctx">A Pascal data-center and workstation capability tier. The model name and exact product configuration should be checked against NVIDIA’s source table.</td><td class="ex mute">Tesla P100, Quadro GP100</td><td><span class="state open"><i class="sw" aria-hidden="true"></i>Unverified, outside gate</span></td></tr>
 <tr><td class="cc">5.3</td><td class="tier">Maxwell embedded</td><td class="ctx">Maxwell’s embedded 5.3 tier. It shares a broad generation name with other Maxwell GPUs, but the current adapter requires exact capability 5.2 and does not accept 5.3.</td><td class="ex mute">Jetson Nano</td><td><span class="state open"><i class="sw" aria-hidden="true"></i>Unverified, outside gate</span></td></tr>
-<tr class="ref"><td class="cc">5.2</td><td class="tier">Maxwell GM200 and related devices</td><td class="ctx">This is the only capability accepted by the current adapter. Native kernel and selected PyTorch probes have run on three GM200 reference cards; model-level validation covers only one selected card. Candidate models at 5.2 remain unverified.</td><td style="color:#333330">Tesla M40/M60, Quadro M6000/M5000/M4000/M2000, GeForce GTX 980 Ti/980/970/960/950</td><td><span class="state exp" style="color:#000000;border-color:#000000"><i class="sw half" aria-hidden="true"></i>Experimental, reference configuration</span></td></tr>
+<tr class="ref"><td class="cc">5.2</td><td class="tier">Maxwell GM200 and related devices</td><td class="ctx">This is the only capability accepted by the current adapter. Native kernel and selected PyTorch probes have run on three GM200 reference cards; model-level validation covers only one selected card. Candidate models at 5.2 remain unverified.</td><td style="color:var(--soft)">Tesla M40/M60, Quadro M6000/M5000/M4000/M2000, GeForce GTX 980 Ti/980/970/960/950</td><td><span class="state exp" style="color:#000000;border-color:var(--line)"><i class="sw half" aria-hidden="true"></i>Experimental, reference configuration</span></td></tr>
 <tr><td class="cc">5.0</td><td class="tier">Maxwell GM107-class devices</td><td class="ctx">Another Maxwell tier, found across workstation, consumer, and mobile products. Similar generation does not mean the adapter can target it: current launcher validation is exact sm_52.</td><td class="ex mute">Quadro K2200/K1200/K620, GeForce GTX 750 Ti/750, GeForce GTX 850M/840M/830M</td><td><span class="state open"><i class="sw" aria-hidden="true"></i>Unverified, outside gate</span></td></tr>
 <tr><td class="cc">3.7</td><td class="tier">Kepler data center</td><td class="ctx">A Kepler compute tier. It predates Maxwell and has distinct hardware and software constraints; a Maxwell code path cannot be assumed to work here.</td><td class="ex mute">Tesla K80</td><td><span class="state open"><i class="sw" aria-hidden="true"></i>Unverified, outside gate</span></td></tr>
 <tr><td class="cc">3.5</td><td class="tier">Kepler GK110-class</td><td class="ctx">A Kepler tier covering data-center and workstation boards along with consumer products. It requires its own kernel and library qualification.</td><td class="ex mute">Tesla K40/K20, Quadro K6000/K5200, GeForce GTX 780 Ti/780</td><td><span class="state open"><i class="sw" aria-hidden="true"></i>Unverified, outside gate</span></td></tr>
@@ -147,7 +147,7 @@ tr.ref td:first-child{padding-left:12px}
 
 <div id="listed" style="display:flex;flex-direction:column;gap:20px">
 <div class="sec"><span class="cut" aria-hidden="true">C</span><h2 class="h2">What “listed” means for this project</h2><span class="plane" aria-hidden="true"></span></div>
-<div class="note" style="border-color:#000000">
+<div class="note" style="border-color:var(--line)">
 <p style="margin:0;font-size:16px">A model in NVIDIA’s table has a published compute capability. That fact alone cannot supply a missing PyTorch kernel, translate an unsupported instruction, or replace a library that rejects the GPU. Our support status is based on reproducible operation and workload results. At present, the experimental path is limited to Linux x86_64, PyTorch CUDA 13, and sm_52, with selected operations and bounded CPU fallbacks.</p>
 </div>
 </div>

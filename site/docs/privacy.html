@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="color-scheme" content="only light"><meta name="theme-color" content="#F2F2EE">
+<meta name="color-scheme" content="light dark"><meta name="theme-color" content="#F2F2EE" media="(prefers-color-scheme: light)"><meta name="theme-color" content="#171613" media="(prefers-color-scheme: dark)">
 <meta name="description" content="What cudacompat.com measures and why, how to opt out in one click or with Global Privacy Control, and how its Search Console and Bing setup works.">
 <link rel="icon" href="../favicon.ico" sizes="32x32">
 <link rel="icon" type="image/svg+xml" href="../favicon.svg">
@@ -32,8 +32,8 @@
 .step .num{font-stretch:110%;font-weight:800;font-size:18px;line-height:1;background:var(--yellow);color:#000000;width:44px;height:44px;display:grid;place-items:center}
 .ev{display:flex;flex-wrap:wrap;gap:8px}
 .ev code{font-size:13px;padding:5px 8px;border:1px solid currentColor;background:none}
-button.consent{display:inline-flex;align-items:center;min-height:44px;padding:0 18px;border:2px solid #000000;background:#FFFFFF;color:#000000;font:700 15px "Archivo",sans-serif;cursor:pointer}
-button.consent:hover{background:var(--yellow);border-color:var(--yellow)}
+button.consent{display:inline-flex;align-items:center;min-height:44px;padding:0 18px;border:2px solid var(--line);background:var(--surface);color:var(--ink);font:700 15px "Archivo",sans-serif;cursor:pointer}
+button.consent:hover{background:var(--yellow);border-color:var(--yellow);color:#000000}
 </style>
 </head>
 <body>
@@ -153,7 +153,7 @@ button.consent:hover{background:var(--yellow);border-color:var(--yellow)}
 
 <div id="reach" style="display:flex;flex-direction:column;gap:20px">
 <div class="sec"><span class="cut" aria-hidden="true">F</span><h2 class="h2">Measurement is not proof of reach</h2><span class="plane" aria-hidden="true"></span></div>
-<div class="note" style="border-color:#000000">
+<div class="note" style="border-color:var(--line)">
 <p style="margin:0;font-size:16px">Analytics can describe measured visits and link clicks. Search Console reports search impressions, clicks, and indexing signals. Neither proves a visitor found the site through a particular recommendation, nor guarantees search visibility. The project will report each metric with its observation window and data source.</p>
 </div>
 </div>

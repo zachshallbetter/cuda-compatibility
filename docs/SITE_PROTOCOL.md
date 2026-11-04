@@ -45,7 +45,7 @@ Every canonical page meets all of these. **Check** is what enforces it: `make ch
 | `lang="en"`, charset, viewport, one `<title>`, one meta description of 140–180 characters that no other page shares | `make check` |
 | `<link rel="canonical">` to the page's own URL. `og:url` is the same URL | `make check`; live audit |
 | `robots` policy, and no `noindex` on an indexable page | `make check` |
-| `theme-color` `#F2F2EE`, `color-scheme` `only light` | `make check` (theme-color) |
+| `color-scheme` `light dark`; two `theme-color` tags, `#F2F2EE` with `media="(prefers-color-scheme: light)"` and `#171613` with `media="(prefers-color-scheme: dark)"` | `make check` (theme-color, color-scheme) |
 | Favicon ICO and SVG, apple-touch icon, mask icon, manifest | `make check` |
 | `rel=alternate` (the feed), `rel=author` (`humans.txt`), `rel=license`, `rel=prev` and `rel=next` along the sheet order | manual |
 | Open Graph: title, description of at least 100 characters (LinkedIn's minimum), url, type, site name, locale, and image with type, size and alt. Twitter card tags. The Twitter image equals the OG image | `make check`, except the 100-character minimum, which LinkedIn reports (§6.6) |
@@ -69,9 +69,12 @@ Every canonical page meets all of these. **Check** is what enforces it: `make ch
 
 ### Look
 
-- Ink on paper only. Paper `#F2F2EE`, text `#111`, labels `#4A4A46`, muted text `#3A3A36`, links black, accent, hover and focus blue `#1F3DFF`. **No white-on-black section.**
+- Ink on paper only. Every colour is a token on `:root` in `styles.css`; pages and per-page styles use `var(--…)`, never a literal, except black text on a yellow fill.
+- Light: paper `#F2F2EE` everywhere (body, header, bands, footer), raised surfaces (cards, code blocks, notes, the pager) `#E9E9E3`, inline code `#E2E2DA`, text `#111`, lines and link ink black, labels `#4A4A46`, muted text `#3A3A36`, accent, hover and focus blue `#1F3DFF`. **No white-on-black section.**
+- Dark (`prefers-color-scheme: dark`, screen only): paper `#171613`, surfaces `#211F1B`, inline code `#2C2A25`, text `#ECEAE3`, ink `#F6F4ED`, lines `#D9D6CD`, labels `#ABA89F`, muted text `#C9C6BD`, accent and focus `#8C9CFF`, contradiction red `#FF7A85`. The caution fill (`.y`, `.note.y`, the reference row) turns dark amber `#2E2808` with a yellow line. The hero wireframe reads its strokes from `--wire-ink`, `--wire-paper` and `--wire-accent`; the no-script PNG is inverted.
+- Print is always light: the dark tokens apply to `screen` only.
 - Yellow `#FFD400` is a fill under black text, always bounded by an ink line. It is never text colour.
-- Scrollbars, text selection and tap highlight are themed site-wide in `styles.css`.
+- Scrollbars, text selection and tap highlight are themed site-wide in `styles.css`, in both schemes.
 - No colour carries meaning alone. Every state has a mark shape and a text label.
 
 ### Share card

@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="color-scheme" content="only light"><meta name="theme-color" content="#F2F2EE"><meta name="description" content="Which PyTorch CUDA 13 operations run on Maxwell sm_52 today: native GPU kernels, bounded CPU fallbacks, supported dtypes, and what is not supported yet."><link rel="icon" href="../favicon.ico" sizes="32x32">
+<meta name="color-scheme" content="light dark"><meta name="theme-color" content="#F2F2EE" media="(prefers-color-scheme: light)"><meta name="theme-color" content="#171613" media="(prefers-color-scheme: dark)"><meta name="description" content="Which PyTorch CUDA 13 operations run on Maxwell sm_52 today: native GPU kernels, bounded CPU fallbacks, supported dtypes, and what is not supported yet."><link rel="icon" href="../favicon.ico" sizes="32x32">
 <link rel="icon" type="image/svg+xml" href="../favicon.svg">
 <link rel="apple-touch-icon" href="../apple-touch-icon.png">
 <link rel="mask-icon" href="../mask-icon.svg" color="#000000">
@@ -28,7 +28,7 @@
 <link rel="stylesheet" href="../docs.css">
 <style>
 .sw.x{background:linear-gradient(45deg,transparent 42%,currentColor 42% 58%,transparent 58%),linear-gradient(-45deg,transparent 42%,currentColor 42% 58%,transparent 58%)}
-.con{background:transparent;color:#B00020;border-color:#B00020}
+.con{background:transparent;color:var(--red);border-color:var(--red)}
 .ev{display:flex;flex-wrap:wrap;gap:6px;margin-top:4px}
 .ev a{font-family:"Martian Mono",monospace;font-size:11px;font-weight:500;color:inherit;text-decoration:none;border:1px solid currentColor;padding:3px 6px;line-height:1;opacity:0.7}
 .ev a:hover{color:var(--link);opacity:1}
@@ -69,8 +69,8 @@ td.n{font-family:"Martian Mono",monospace;font-size:12px;color:var(--mute);width
 <div class="wrap" style="padding-top:56px;padding-bottom:56px;display:flex;flex-direction:column;gap:18px">
 <nav aria-label="Breadcrumb" class="crumbs"><ol><li><a href="../index.html">Home</a></li><li><a href="index.html">Documentation</a></li><li aria-current="page">Support matrix, sheet 04 / 10</li></ol></nav>
 <h1 id="title" class="disp" style="font-size:clamp(40px,4.6vw,64px);max-width:16ch">Support matrix</h1>
-<p style="margin:0;font-size:20px;line-height:1.4;max-width:56ch;font-weight:500">The current target is useful, bounded PyTorch CUDA 13 execution on Linux x86_64 with homogeneous visible <code style="background:#E4E4DE;color:#000000">sm_52</code> GPUs. It is a set of tested paths, not blanket support for the wheel or all CUDA 13 applications.</p>
-<div class="legend" style="color:#3A3A36;padding-top:8px" aria-label="Status legend"><span><i class="sw full" aria-hidden="true"></i>Native or verified</span><span><i class="sw half" aria-hidden="true" style="color:#000000"></i>Experimental or bounded</span><span><i class="sw x" aria-hidden="true" style="color:#B3261E"></i>Contradicted, observation kept</span><span><i class="sw" aria-hidden="true"></i>Not supported or not verified</span></div>
+<p style="margin:0;font-size:20px;line-height:1.4;max-width:56ch;font-weight:500">The current target is useful, bounded PyTorch CUDA 13 execution on Linux x86_64 with homogeneous visible <code style="background:var(--code);color:var(--ink)">sm_52</code> GPUs. It is a set of tested paths, not blanket support for the wheel or all CUDA 13 applications.</p>
+<div class="legend" style="color:var(--soft);padding-top:8px" aria-label="Status legend"><span><i class="sw full" aria-hidden="true"></i>Native or verified</span><span><i class="sw half" aria-hidden="true" style="color:var(--ink)"></i>Experimental or bounded</span><span><i class="sw x" aria-hidden="true" style="color:var(--red)"></i>Contradicted, observation kept</span><span><i class="sw" aria-hidden="true"></i>Not supported or not verified</span></div>
 <p class="byline">By <a rel="author" href="https://zachshallbetter.com/">Zach Shallbetter</a> · Sheet 04 of 10 · Updated <time datetime="2026-11-03">3 November 2026</time></p>
 </div>
 </header>
@@ -100,7 +100,7 @@ td.n{font-family:"Martian Mono",monospace;font-size:12px;color:var(--mute);width
 
 <div style="display:flex;flex-direction:column;gap:56px">
 <div id="native" style="display:flex;flex-direction:column;gap:20px">
-<div class="sec"><span class="cut" aria-hidden="true">A</span><h2 class="h2">Native GPU implementations</h2><span class="plane" aria-hidden="true"></span><span class="state ok"><i class="sw full" aria-hidden="true" style="border-color:#FFFFFF;background:#FFFFFF"></i>sm_52 kernel</span></div>
+<div class="sec"><span class="cut" aria-hidden="true">A</span><h2 class="h2">Native GPU implementations</h2><span class="plane" aria-hidden="true"></span><span class="state ok"><i class="sw full" aria-hidden="true" style="border-color:var(--on-ok);background:var(--on-ok)"></i>sm_52 kernel</span></div>
 <p class="soft" style="margin:0;font-size:16px;max-width:72ch">These 8 registered cases cover 6 operation families (addition, range creation, embedding, layer normalization, matrix multiplication and ReLU). They run through LLVM-generated PTX targeting the real Maxwell device and the CUDA Driver API bridge; cases outside these limits take the CPU fallback below or fail explicitly.</p>
 <div class="scroll" role="region" aria-label="Native GPU implementations (scrolls sideways)" tabindex="0" style="overflow-x:auto">
 <table aria-label="Native GPU implementations">
@@ -167,7 +167,7 @@ td.n{font-family:"Martian Mono",monospace;font-size:12px;color:var(--mute);width
 <div class="con-row"><b>D1</b><span>Stock float32 <code>torch.mm</code> on the official 2.14.0+cu130 wheel fails in cuBLAS with <code>CUBLAS_STATUS_ARCH_MISMATCH</code>. <span class="mute">Reopens when</span> a future wheel or compatible cuBLAS runs the same probe on sm_52 without the adapter.</span><span class="state con"><i class="sw x" aria-hidden="true"></i>Contradicted</span><div class="ev"><a href="https://github.com/zachshallbetter/cuda-compatibility/blob/main/.agents/records/negative-results.jsonl">CLC-009-stock-mm-cublas-arch-mismatch</a></div></div>
 <div class="con-row"><b>D2</b><span>Stock float32 <code>torch.relu</code> on the same wheel reports no kernel image for the device. <span class="mute">Reopens when</span> a future wheel ships a ReLU image executable on sm_52.</span><span class="state con"><i class="sw x" aria-hidden="true"></i>Contradicted</span><div class="ev"><a href="https://github.com/zachshallbetter/cuda-compatibility/blob/main/.agents/records/negative-results.jsonl">CLC-009-stock-relu-no-kernel-image</a></div></div>
 </div>
-<div class="note" style="border-color:#000000">
+<div class="note" style="border-color:var(--line)">
 <p style="margin:0;font-size:16px">General CUDA 13 APIs, arbitrary prebuilt binaries, broad cuDNN, cuBLAS, NCCL, or Triton coverage, arbitrary models or optimizers, higher-order gradients, AMP, mixed visible architectures, other compute capabilities, performance parity, and machine-wide interposition are not established. Only the documented first-order training slice has been validated, on broker-selected GPUs 1 and 2.</p>
 </div>
 <p class="mute" style="margin:0;font-size:15px">Sources: <a href="https://github.com/pytorch/pytorch/blob/v2.14.0/RELEASE.md">PyTorch 2.14 release matrix</a>, <a href="https://docs.nvidia.com/cuda/archive/13.0.0/cuda-toolkit-release-notes/index.html">CUDA 13 release notes</a>, <a href="https://github.com/zachshallbetter/cuda-compatibility/blob/main/docs/architecture.md">project architecture record</a>.</p>

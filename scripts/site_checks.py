@@ -331,8 +331,12 @@ def audit_site(site_root: Path) -> list[str]:
         for wrapper in re.findall(r'<div\b[^>]*overflow-x:auto[^>]*>', source):
             if 'tabindex="0"' not in wrapper or "aria-label=" not in wrapper:
                 errors.append(f"{label}: a sideways-scrolling region must be focusable and labelled")
-        if 'name="theme-color" content="#F2F2EE"' not in source:
-            errors.append(f"{label}: theme-color must match the paper colour #F2F2EE")
+        if 'name="theme-color" content="#F2F2EE" media="(prefers-color-scheme: light)"' not in source:
+            errors.append(f"{label}: light theme-color must match the paper colour #F2F2EE")
+        if 'name="theme-color" content="#171613" media="(prefers-color-scheme: dark)"' not in source:
+            errors.append(f"{label}: dark theme-color must match the dark paper colour #171613")
+        if parser.meta.get("color-scheme") != ["light dark"]:
+            errors.append(f"{label}: color-scheme must be 'light dark'")
         if not any("privacy.html" in href for href in parser.links):
             errors.append(f"{label}: missing privacy and measurement link")
         if not parser.jsonld:
