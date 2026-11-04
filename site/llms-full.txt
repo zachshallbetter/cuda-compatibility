@@ -742,6 +742,8 @@ By Zach Shallbetter · Sheet 07 of 10 · Updated 3 November 2026
 
 Each record below has its own page with its method, results and limits. Every one is project-maintained, not peer reviewed.
 
+- Running PyTorch's CUDA 13 wheel on a 2015 Maxwell GPU
+How a 2015 GTX TITAN X runs part of PyTorch's CUDA 13 wheel: kernels built for the real chip, a capped CPU fallback, what was shown, and where it stops.
 - Research program: CUDA-era semantics on legacy GPUs
 The charter for this research: one question, six falsifiable hypotheses, the evidence gathered so far, and the method each new result must follow to count.
 - Maxwell native baseline: CUDA 12.4 on three GM200 cards
@@ -1161,7 +1163,7 @@ flowchart LR
 
 A research result is publication-ready only when the exact commit, artifacts, independent rerun instructions, baseline, numerical/behavioral tests, limitations and reviewer sign-off are available. Distinguish original project findings from NVIDIA documentation and independent upstream work.
 
-Source record: docs/research/RESEARCH_PROGRAM.md. Cite as: Shallbetter, Z. (2026). Official research program: CUDA Compatibility. CUDA Compatibility. https://cudacompat.com/research/research-program.html. Project-maintained research, not peer reviewed or endorsed by NVIDIA.
+Source: docs/research/RESEARCH_PROGRAM.md. Cite as: Shallbetter, Z. (2026). Official research program: CUDA Compatibility. CUDA Compatibility. https://cudacompat.com/research/research-program.html. Project-maintained research, not peer reviewed or endorsed by NVIDIA.
 
 ---
 
@@ -1222,7 +1224,7 @@ Each line used a different physical card through the one-device CUDA_VISIBLE_DEV
 
 Use an isolated Linux build environment with LLVM/Clang NVPTX, preserve the NVIDIA 12.4 assembler/driver as a separate downstream stage, compile equivalent vector-add source to PTX for sm_52, assemble it, and run the exact correctness checks on all three cards. Record the earliest incompatibility only if one is reproduced. Do not alter the host driver or system CUDA installation.
 
-Source record: docs/research/maxwell-baseline.md. Cite as: Shallbetter, Z. (2026). Maxwell native baseline. CUDA Compatibility. https://cudacompat.com/research/maxwell-baseline.html. Project-maintained research, not peer reviewed or endorsed by NVIDIA.
+Source: docs/research/maxwell-baseline.md. Cite as: Shallbetter, Z. (2026). Maxwell native baseline. CUDA Compatibility. https://cudacompat.com/research/maxwell-baseline.html. Project-maintained research, not peer reviewed or endorsed by NVIDIA.
 
 ---
 
@@ -1271,7 +1273,7 @@ CUDA_VISIBLE_DEVICES mapped each selected physical card to logical device 0 insi
 
 This proves one simple CUDA kernel can be compiled by this LLVM build for Maxwell, assembled by CUDA 12.4, and executed correctly through the R580 driver. It does not prove arbitrary CUDA C++ coverage, compatibility with all PTX 8.4 features, CUDA 13 runtime/API compatibility, PyTorch operator coverage, library compatibility, concurrent multi-GPU execution, peer access, or performance parity. The NVIDIA driver and CUDA 12.4 assembler remain user-installed dependencies; no NVIDIA files were redistributed or modified.
 
-Source record: docs/research/llvm-nvptx.md. Cite as: Shallbetter, Z. (2026). LLVM NVPTX Maxwell experiment. CUDA Compatibility. https://cudacompat.com/research/llvm-nvptx.html. Project-maintained research, not peer reviewed or endorsed by NVIDIA.
+Source: docs/research/llvm-nvptx.md. Cite as: Shallbetter, Z. (2026). LLVM NVPTX Maxwell experiment. CUDA Compatibility. https://cudacompat.com/research/llvm-nvptx.html. Project-maintained research, not peer reviewed or endorsed by NVIDIA.
 
 ---
 
@@ -1322,7 +1324,7 @@ The probe also rejected CUDA_COMPAT_RUNTIME_VERSION=13001. The compatibility pro
 
 This proves only that one dynamically linked application's runtime-version check can be changed while ordinary calls in the tested CUDA 12.4 workload continue to use the real runtime. It does not add CUDA 13 APIs, device instructions, library kernels, or support to the prebuilt PyTorch CUDA 13 package. Code paths selected after the version query may still fail. Applications using a statically linked runtime, alternate version-query paths, or other loader arrangements are outside this experiment. Do not represent this probe as general CUDA 13 compatibility.
 
-Source record: docs/research/runtime-version-facade.md. Cite as: Shallbetter, Z. (2026). Runtime-version facade experiment. CUDA Compatibility. https://cudacompat.com/research/runtime-version-facade.html. Project-maintained research, not peer reviewed or endorsed by NVIDIA.
+Source: docs/research/runtime-version-facade.md. Cite as: Shallbetter, Z. (2026). Runtime-version facade experiment. CUDA Compatibility. https://cudacompat.com/research/runtime-version-facade.html. Project-maintained research, not peer reviewed or endorsed by NVIDIA.
 
 ---
 
@@ -1444,7 +1446,7 @@ Inference evidence is limited to GPU 2, two small model families, batch sizes up
 
 CLC-010 packaged the adapter and its CUDA/driver source in the Python wheel. On Linux x86_64, cuda-legacy-compat run --llvm-root <LLVM-23.1.4> --cuda-root <CUDA-12.4> -- <script.py> [args...] compiles PTX, the driver bridge, and the runtime-version facade into a temporary directory, then starts the caller's Python interpreter with an opt-in sitecustomize hook. The hook confirms all visible devices are sm_52, registers the compatibility implementations described above, and sets the runtime version facade to 13.0 while keeping hardware capability truthful. Child arguments, stdio, and exit status pass through; temporary build output is removed after exit. This packaging/launch path does not claim arbitrary PyTorch CUDA 13 model support.
 
-Source record: docs/research/pytorch-cu130-maxwell.md. Cite as: Shallbetter, Z. (2026). PyTorch 2.14 CUDA 13 wheel on Maxwell. CUDA Compatibility. https://cudacompat.com/research/pytorch-cu130-maxwell.html. Project-maintained research, not peer reviewed or endorsed by NVIDIA.
+Source: docs/research/pytorch-cu130-maxwell.md. Cite as: Shallbetter, Z. (2026). PyTorch 2.14 CUDA 13 wheel on Maxwell. CUDA Compatibility. https://cudacompat.com/research/pytorch-cu130-maxwell.html. Project-maintained research, not peer reviewed or endorsed by NVIDIA.
 
 ---
 
@@ -1551,7 +1553,7 @@ Do not collapse Python ATen dispatch, runtime/driver ABI interposition, PTX lowe
 
 All recommendations are hypotheses or planned improvements until tested; existing execution claims refer to repository-recorded evidence.
 
-Source record: docs/research/implementation-gap-audit-2026-11-01.md. Cite as: Shallbetter, Z. (2026). Implementation gap audit: current prototype vs platform ambition. CUDA Compatibility. https://cudacompat.com/research/implementation-gap-audit-2026-11.html. Project-maintained research, not peer reviewed or endorsed by NVIDIA.
+Source: docs/research/implementation-gap-audit-2026-11-01.md. Cite as: Shallbetter, Z. (2026). Implementation gap audit: current prototype vs platform ambition. CUDA Compatibility. https://cudacompat.com/research/implementation-gap-audit-2026-11.html. Project-maintained research, not peer reviewed or endorsed by NVIDIA.
 
 ---
 
@@ -1637,7 +1639,7 @@ On Google, the project appeared in first-page results in 14 of 36 runs only thro
 - Scoring. One scorer, judging against the project's own claim register; the register is self-authored project evidence. Fact counts depend on the atomic split stated above.
 - Descriptive only. These results record what the products said on this date. They make no causal claim about why any product answered as it did.
 
-Source record: docs/research/attribution-pilot/RESULTS.md. Cite as: Shallbetter, Z. (2026). AI answer attribution pilot, baseline results (issue #55). CUDA Compatibility. https://cudacompat.com/research/attribution-pilot.html. Project-maintained research, not peer reviewed or endorsed by NVIDIA.
+Source: docs/research/attribution-pilot/RESULTS.md. Cite as: Shallbetter, Z. (2026). AI answer attribution pilot, baseline results (issue #55). CUDA Compatibility. https://cudacompat.com/research/attribution-pilot.html. Project-maintained research, not peer reviewed or endorsed by NVIDIA.
 
 ---
 
@@ -1730,4 +1732,56 @@ The status at the top of this document refers only to this 12.9-versus-13.0 arti
 
 Driver distinction: the 13.x minor-version compatibility floor (R580) is not identical to the CUDA 13.0 GA toolkit's bundled/development driver version. Compare these as distinct policies, and do not assume driver-version equality proves a GPU's library-kernel support.
 
-Source record: docs/compatibility/cuda-12.9-to-13.0-primary-source-diff.md. Cite as: Shallbetter, Z. (2026). CUDA 12.9 GA → CUDA 13.0 GA: primary-source change register (v0.1). CUDA Compatibility. https://cudacompat.com/research/cuda-12-9-to-13-0-changes.html. Project-maintained research, not peer reviewed or endorsed by NVIDIA.
+Source: docs/compatibility/cuda-12.9-to-13.0-primary-source-diff.md. Cite as: Shallbetter, Z. (2026). CUDA 12.9 GA → CUDA 13.0 GA: primary-source change register (v0.1). CUDA Compatibility. https://cudacompat.com/research/cuda-12-9-to-13-0-changes.html. Project-maintained research, not peer reviewed or endorsed by NVIDIA.
+
+---
+
+Source: https://cudacompat.com/articles/pytorch-cuda-13-on-maxwell.html
+
+Article
+
+# Running PyTorch's CUDA 13 wheel on a 2015 Maxwell GPU, and where it stops
+
+How a 2015 GTX TITAN X runs part of PyTorch's CUDA 13 wheel: kernels built for the real chip, a capped CPU fallback, what was shown, and where it stops.
+
+By Zach Shallbetter · Published 3 November 2026 · Updated 3 November 2026
+
+CUDA 13 dropped support for Maxwell, Pascal and Volta GPUs. The official PyTorch 2.14 CUDA 13 wheel is built for compute capability 7.5 and newer. On a GTX TITAN X (GM200, compute capability 5.2) it still imports and sees the card, but real work fails: matrix multiplication stops at cublasCreate with CUBLAS_STATUS_ARCH_MISMATCH, and ReLU reports that no kernel image is available (CLC-006, CLC-009).
+
+CUDA Compatibility is an experiment in getting a narrow, checked subset of that wheel working on the older card without changing the driver, the CUDA install or the wheel itself. It is independent research, not affiliated with NVIDIA.
+
+## How it works
+
+cuda-legacy run -- app.py starts one Python process with three pieces in place, built fresh in a temporary directory and removed when the process exits (CLC-010):
+
+- Kernels compiled for the real card. LLVM/Clang 23.1.4 compiles the project's kernels to PTX for sm_52 at launch (CLC-004, CLC-007). A small CUDA Driver API bridge loads that PTX and launches it on PyTorch's current stream (CLC-008).
+- PyTorch registrations. Through torch.library, the adapter registers native Maxwell implementations for six operation families: addition, arange, embedding, layer normalization, matrix multiplication and ReLU. Each has explicit dtype, layout and size limits (CLC-025).
+- Bounded CPU fallback. Eleven more operations, and any operation that fails with a recognized "wrong architecture" error, are copied to the CPU, computed there and copied back. Each copy is capped at 64 MiB in and 64 MiB out. Operations that mutate or alias their inputs refuse to fall back rather than risk wrong results (CLC-025).
+
+A fourth piece is a version facade. One CUDA Runtime query, cudaRuntimeGetVersion, returns 13000 inside that process only (CLC-005). The device name and compute capability are left untouched. The project never pretends the card is newer than it is.
+
+## What has been shown
+
+- On all three reference cards, an operator suite and a small two-layer MLP matched CPU results (CLC-009).
+- On one card, an owner-supplied transformer checkpoint matched CPU output across six batch and sequence configurations (CLC-011). The checkpoint is not public.
+- On two cards, first-order gradients and seven SGD steps of a 2×2 linear→ReLU→sum model matched the CPU reference (CLC-025).
+- A public example, run from release v0.1.0 in a new environment, reproduced each operation's route and CPU comparison on two cards with identical output (GH-50-public-example-sm52-mlp).
+
+## Where it stops
+
+- Creating a tensor directly on the GPU (torch.ones(..., device="cuda")) still fails: no Maxwell kernel exists, and there is no GPU input to fall back from (GH-50-public-example-sm52-mlp).
+- Native matrix multiplication stops at 256 in any dimension and refuses larger inputs rather than falling back (GH-50-public-example-sm52-mlp).
+- Convolution works in one tested classifier only by running on the CPU (CLC-012).
+- General cuDNN, cuBLAS, NCCL or Triton support, broad autograd, other optimizers, and performance parity are not established (CLC-CLAIM-008).
+- The launcher requires Linux x86_64 and only sm_52 GPUs visible. Other Maxwell variants and Pascal cards are unverified (CLC-CLAIM-006).
+- The tiny training run took 2.360 ms and 7.296 ms per step on two cards. Those numbers are diagnostic, not a benchmark (CLC-025).
+
+## Why publish something this narrow
+
+Each limit above is a specific missing kernel or library path, not a vague "may not work". That makes it a work list. The engineering tickets track the blocker corpus and the replacement kernels, and nothing gets claimed until it has been reproduced on hardware.
+
+## Try it
+
+You need Linux, a GM200 or other compute capability 5.2 card, your own NVIDIA driver, CUDA 12.4 headers and LLVM 23.1.4. The project ships no NVIDIA files. The public example gives the exact commands and expected output. Pass or fail, a reproduction report is the most useful thing you can send.
+
+Source: docs/publishing/article.md. Cite as: Shallbetter, Z. (2026). Running PyTorch's CUDA 13 wheel on a 2015 Maxwell GPU, and where it stops. CUDA Compatibility. https://cudacompat.com/articles/pytorch-cuda-13-on-maxwell.html. Independent project writing, not peer reviewed or endorsed by NVIDIA.

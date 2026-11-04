@@ -1,6 +1,6 @@
-# Draft: Running PyTorch's CUDA 13 wheel on a 2015 Maxwell GPU, and where it stops
+# Running PyTorch's CUDA 13 wheel on a 2015 Maxwell GPU, and where it stops
 
-**State:** Draft, not published. **Source revision:** `main` at the commit that adds this file. **Canonical link:** https://cudacompat.com/
+**State:** Published at https://cudacompat.com/articles/pytorch-cuda-13-on-maxwell.html on 2026-11-03. **Source revision:** `main` at the commit that adds this file. **Canonical link:** https://cudacompat.com/
 **Next action for readers:** run the [public example](https://github.com/zachshallbetter/cuda-compatibility/tree/main/examples/sm52-mlp) and send a [reproduction report](https://github.com/zachshallbetter/cuda-compatibility/issues/new?template=reproduction-report.yml).
 
 Every factual sentence below names its evidence record in `.agents/records/evidence.jsonl`. Keep those IDs when editing, and remove a sentence rather than soften its limit.

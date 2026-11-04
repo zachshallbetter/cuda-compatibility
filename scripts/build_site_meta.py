@@ -165,6 +165,18 @@ def markdown(md: str, link) -> tuple[str, str, list[tuple[str, str]]]:
 
 # ---------- Pages ----------
 
+def citation_tags(page: dict) -> str:
+    """Scholarly-index tags, for research papers only."""
+    if page["kind"] != "paper":
+        return ""
+    return (f'<meta name="citation_title" content="{escape(page["h1"])}">\n'
+            '<meta name="citation_author" content="Shallbetter, Zach">\n'
+            f'<meta name="citation_publication_date" content="{page["published"][:10].replace("-", "/")}">\n'
+            f'<meta name="citation_online_date" content="{page["source_modified"][:10].replace("-", "/")}">\n'
+            '<meta name="citation_publisher" content="CUDA Compatibility">\n'
+            f'<meta name="citation_public_url" content="{page["url"]}">\n')
+
+
 def head_meta(page: dict, root: str, data: dict, extra: str = "") -> str:
     """The shared head for generated paper pages."""
     t, x = escape(page["share_title"]), escape(page["excerpt"])
@@ -188,17 +200,11 @@ def head_meta(page: dict, root: str, data: dict, extra: str = "") -> str:
 <link rel="canonical" href="{page["url"]}">
 <meta name="author" content="Zach Shallbetter">
 <meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1">
-<meta name="citation_title" content="{escape(page["h1"])}">
-<meta name="citation_author" content="Shallbetter, Zach">
-<meta name="citation_publication_date" content="{page["published"][:10].replace("-", "/")}">
-<meta name="citation_online_date" content="{page["source_modified"][:10].replace("-", "/")}">
-<meta name="citation_publisher" content="CUDA Compatibility">
-<meta name="citation_public_url" content="{page["url"]}">
-<meta property="og:type" content="article">
+{citation_tags(page)}<meta property="og:type" content="article">
 <meta property="article:published_time" content="{page["published"]}">
 <meta property="article:modified_time" content="{page["source_modified"]}">
 <meta property="article:author" content="https://zachshallbetter.com/">
-<meta property="article:section" content="Research">
+<meta property="article:section" content="{"Research" if page["kind"] == "paper" else "Articles"}">
 <meta property="og:site_name" content="CUDA Compatibility">
 <meta property="og:url" content="{page["url"]}">
 <meta property="og:locale" content="en_US">
@@ -240,19 +246,26 @@ def paper_graph(page: dict, data: dict) -> dict:
          "datePublished": page["published"], "dateModified": page["source_modified"]},
         {"@type": "ImageObject", "@id": img, "url": img, "contentUrl": img, "width": 1200, "height": 630,
          "caption": page["alt"], "encodingFormat": "image/png"},
-        {"@type": "ScholarlyArticle", "@id": url + "#article", "headline": page["h1"], "name": page["share_title"],
+        {"@type": "ScholarlyArticle" if page["kind"] == "paper" else "Article", "@id": url + "#article", "headline": page["h1"], "name": page["share_title"],
          "abstract": page["excerpt"], "description": page["excerpt"], "url": url, "mainEntityOfPage": {"@id": url},
          "image": {"@id": img}, "inLanguage": "en", "datePublished": page["published"], "dateModified": page["source_modified"],
          "author": {"@id": ORIGIN + "#author"}, "publisher": {"@id": ORIGIN + "#author"},
          "copyrightHolder": {"@id": ORIGIN + "#author"}, "copyrightYear": int(page["published"][:4]), "license": LICENSE,
          "isAccessibleForFree": True, "isPartOf": {"@id": ORIGIN + "#website"}, "about": {"@id": ORIGIN + "#software"},
-         "isBasedOn": f"{REPO}/blob/main/{page['source']}", "articleSection": "Research", "position": int(page["chip"].split()[1]),
-         "creativeWorkStatus": "Published", "genre": "Research record"},
+         "isBasedOn": f"{REPO}/blob/main/{page['source']}", "articleSection": "Research" if page["kind"] == "paper" else "Articles",
+         "position": int(chip_no(page)) if page["kind"] == "paper" else 1,
+         "creativeWorkStatus": "Published", "genre": "Research record" if page["kind"] == "paper" else "Article"},
         {"@type": "BreadcrumbList", "@id": url + "#breadcrumb", "itemListElement": [
             {"@type": "ListItem", "position": 1, "name": "Home", "item": ORIGIN},
             {"@type": "ListItem", "position": 2, "name": "Research and evidence", "item": research},
             {"@type": "ListItem", "position": 3, "name": page["share_title"], "item": url}]},
     ]}
+
+
+def chip_no(page: dict) -> str:
+    """The number on a chip like "PAPER 03 / 08"; an article's chip has none."""
+    parts = page["chip"].split()
+    return parts[1] if len(parts) > 1 else "01"
 
 
 def human_date(iso: str) -> str:
@@ -275,8 +288,15 @@ def paper_page(page: dict, data: dict, papers: list[dict]) -> str:
         kind = "tree" if (ROOT / resolved).is_dir() else "blob"
         return f"{REPO}/{kind}/main/{resolved}" + (f"#{frag}" if frag else "")
 
-    h1, body, toc = markdown(src.read_text(encoding="utf-8"), link)
+    text = src.read_text(encoding="utf-8")
+    if page["kind"] == "article" and "\n---\n" in text:
+        # Drafts carry an editorial preamble above the rule; readers get the title and the body.
+        text = text.splitlines()[0] + "\n\n" + text.split("\n---\n", 1)[1]
+    h1, body, toc = markdown(text, link)
+    h1 = re.sub(r"^Draft:\s*", "", h1)
     page["h1"] = h1
+    paper = page["kind"] == "paper"
+    word = "Paper" if paper else "Article"
     index = papers.index(page)
     prev, nxt = (papers[index - 1] if index else None), (papers[index + 1] if index + 1 < len(papers) else None)
     rels = (f'<link rel="prev" href="{Path(prev["path"]).name}">\n' if prev else "") + \
@@ -288,10 +308,11 @@ def paper_page(page: dict, data: dict, papers: list[dict]) -> str:
     side = side.replace(' class="current" aria-current="page"', "").replace(
         '<a href="../docs/research.html">', '<a class="current" aria-current="true" href="../docs/research.html">')
     foot = template[template.index('<footer class="foot">'):template.index("</footer>") + len("</footer>")]
-    number = page["chip"].split()[1]
-    foot = re.sub(r"<span>Sheet</span><span>[^<]*</span>", f"<span>Paper</span><span>{number} / {len(papers):02d}, {escape(page['share_title'])}</span>", foot)
+    number = chip_no(page)
+    position = f"{number} / {len(papers):02d}, " if paper else ""
+    foot = re.sub(r"<span>Sheet</span><span>[^<]*</span>", f"<span>{word}</span><span>{position}{escape(page['share_title'])}</span>", foot)
     foot = re.sub(r"<span>Correct this sheet</span><span><a href=\"[^\"]*\">",
-                  f'<span>Correct this paper</span><span><a href="{REPO}/issues/new?title=Correction%3A%20paper%20{number}%20{Path(page["path"]).stem}">', foot)
+                  f'<span>Correct this {word.lower()}</span><span><a href="{REPO}/issues/new?title=Correction%3A%20{word.lower()}%20{Path(page["path"]).stem}">', foot)
     foot = re.sub(r'<table class="rev".*?</table>',
                   '<table class="rev" aria-label="Revision table"><thead><tr><th scope="col">Rev</th><th scope="col">Date</th><th scope="col">Change</th><th scope="col">By</th></tr></thead><tbody>'
                   f'<tr><td>A</td><td>{page["published"][:10]}</td><td>First recorded</td><td>ZS</td></tr>'
@@ -299,10 +320,10 @@ def paper_page(page: dict, data: dict, papers: list[dict]) -> str:
                   + '</tbody></table>', foot, flags=re.S)
     on_page = "".join(f'<li><a href="#{a}"><i>{chr(65 + k) if k < 26 else k}</i>{escape(t)}</a></li>' for k, (a, t) in enumerate(toc))
     current = ' class="current" aria-current="page"'
-    others = "".join(f'<li><a{current if p is page else ""} href="{Path(p["path"]).name}"><i>{p["chip"].split()[1]}</i>{escape(p["share_title"])}</a></li>' for p in papers)
+    others = "".join(f'<li><a{current if p is page else ""} href="{Path(p["path"]).name}"><i>{chip_no(p)}</i>{escape(p["share_title"])}</a></li>' for p in papers)
 
     def pager_link(p, word):
-        return (f'<a rel="{word.lower()}" href="{Path(p["path"]).name}"><span class="sheet">{word} · paper {p["chip"].split()[1]}</span>'
+        return (f'<a rel="{word.lower()}" href="{Path(p["path"]).name}"><span class="sheet">{word} · paper {chip_no(p)}</span>'
                 f'<span class="pager-title">{escape(p["share_title"])}</span></a>')
     pager = ('<nav class="pager" aria-label="Papers, previous and next">' + (pager_link(prev, "Previous") if prev else "<span></span>")
              + (pager_link(nxt, "Next") if nxt else '<a href="../docs/research.html"><span class="sheet">Back to</span><span class="pager-title">Research and evidence</span></a>') + "</nav>")
@@ -312,23 +333,21 @@ f"""<main id="main">
 <article id="article" aria-labelledby="title">
 <header class="band">
 <div class="wrap" style="padding-top:56px;padding-bottom:56px;display:flex;flex-direction:column;gap:18px">
-<nav aria-label="Breadcrumb" class="crumbs"><ol><li><a href="../index.html">Home</a></li><li><a href="../docs/research.html">Research and evidence</a></li><li aria-current="page">Paper {number} / {len(papers):02d}</li></ol></nav>
+<nav aria-label="Breadcrumb" class="crumbs"><ol><li><a href="../index.html">Home</a></li><li><a href="../docs/research.html">Research and evidence</a></li><li aria-current="page">{f"Paper {number} / {len(papers):02d}" if paper else "Article"}</li></ol></nav>
 <p class="sheet" style="margin:0">{escape(page["eyebrow"])}</p>
 <h1 id="title" class="disp" style="font-size:clamp(36px,4.2vw,58px);max-width:22ch">{escape(h1)}</h1>
 <p class="excerpt" style="margin:0;font-size:20px;line-height:1.45;max-width:60ch;font-weight:500">{escape(page["excerpt"])}</p>
-<p class="byline">By <a rel="author" href="https://zachshallbetter.com/">Zach Shallbetter</a> · Paper {number} of {len(papers):02d} · First recorded <time datetime="{page["published"][:10]}">{human_date(page["published"])}</time> · Updated <time datetime="{page["source_modified"][:10]}">{human_date(page["source_modified"])}</time></p>
+<p class="byline">By <a rel="author" href="https://zachshallbetter.com/">Zach Shallbetter</a> · {f"Paper {number} of {len(papers):02d} · First recorded" if paper else "Published"} <time datetime="{page["published"][:10]}">{human_date(page["published"])}</time> · Updated <time datetime="{page["source_modified"][:10]}">{human_date(page["source_modified"])}</time></p>
 </div>
 </header>
 <div class="wrap body" style="padding-top:56px;padding-bottom:96px">
 {side}
-<p class="sheet" style="margin:12px 0 0">Papers</p>
-<ul class="side" style="border-top-width:1px">{others}</ul>
-<p class="sheet" style="margin:12px 0 0">On this paper</p>
+{f'<p class="sheet" style="margin:12px 0 0">Papers</p>{chr(10)}<ul class="side" style="border-top-width:1px">{others}</ul>{chr(10)}' if paper else ""}<p class="sheet" style="margin:12px 0 0">On this {word.lower()}</p>
 <ul class="side" style="border-top-width:1px">{on_page}</ul>
 </nav>
 <div class="prose" style="display:flex;flex-direction:column;gap:20px;min-width:0">
 {body}
-<aside class="note" aria-label="Source and citation"><p style="margin:0;font-size:15px">Source record: <a href="{REPO}/blob/main/{page["source"]}">{page["source"]}</a>. Cite as: {cite}. Project-maintained research, not peer reviewed or endorsed by NVIDIA.</p></aside>
+<aside class="note" aria-label="Source and citation"><p style="margin:0;font-size:15px">Source: <a href="{REPO}/blob/main/{page["source"]}">{page["source"]}</a>. Cite as: {cite}. {"Project-maintained research" if paper else "Independent project writing"}, not peer reviewed or endorsed by NVIDIA.</p></aside>
 {pager}
 </div>
 </div>
@@ -415,7 +434,7 @@ def feed(pages: list[dict], published: dict[str, str]) -> str:
     <published>{p.get("published") or published[p["path"]]}</published>
     <updated>{p.get("source_modified", data_modified)}</updated>
     <summary>{xml_escape(p["excerpt"])}</summary>
-    <category term="{"Research" if p["kind"] == "paper" else "Documentation"}"/>
+    <category term="{ {"paper": "Research", "article": "Articles"}.get(p["kind"], "Documentation") }"/>
     <link rel="enclosure" type="image/png" href="{p["image"]}"/>
   </entry>
 """ for p in pages)
@@ -435,11 +454,16 @@ def feed(pages: list[dict], published: dict[str, str]) -> str:
 """
 
 
-def llms(s: str, papers: list[dict]) -> str:
-    block = "## Research papers\n" + "".join(f'- [{p["share_title"]}]({p["url"]}): {p["excerpt"]}\n' for p in papers) + "\n"
-    if "## Research papers\n" in s:
-        return re.sub(r"## Research papers\n.*?\n\n", lambda _: block, s, count=1, flags=re.S)
-    return s.replace("## Machine-readable files\n", block + "## Machine-readable files\n", 1)
+def llms(s: str, papers: list[dict], articles: list[dict] = ()) -> str:
+    for heading, items in (("## Articles", articles), ("## Research papers", papers)):
+        if not items:
+            continue
+        block = heading + "\n" + "".join(f'- [{p["share_title"]}]({p["url"]}): {p["excerpt"]}\n' for p in items) + "\n"
+        if heading + "\n" in s:
+            s = re.sub(re.escape(heading) + r"\n.*?\n\n", lambda _: block, s, count=1, flags=re.S)
+        else:
+            s = s.replace("## Machine-readable files\n", block + "## Machine-readable files\n", 1)
+    return s
 
 
 data_modified = ""
@@ -452,17 +476,21 @@ def build() -> dict[Path, str]:
     data_modified = data["modified"]
     pages = data["pages"]
     papers = [p for p in pages if p["kind"] == "paper"]
+    articles = [p for p in pages if p["kind"] == "article"]
     out: dict[Path, str] = {}
     for p in papers:
         out[SITE / p["file"]] = paper_page(p, data, papers)
+    for p in pages:
+        if p["kind"] == "article":
+            out[SITE / p["file"]] = paper_page(p, data, [p])
     published: dict[str, str] = {}
     for p in pages:
-        if p["kind"] == "paper":
+        if p["kind"] in ("paper", "article"):
             continue
         path = SITE / p["file"]
         s = path.read_text(encoding="utf-8")
         if p["path"] == "docs/research.html":
-            s = research_sheet_index(link_papers_from_research_sheet(s, papers), papers)
+            s = research_sheet_index(link_papers_from_research_sheet(s, papers), articles + papers)
         s = apply_meta(s, p)
         s = re.sub(r'<meta property="article:modified_time" content="[^"]*">', f'<meta property="article:modified_time" content="{data_modified}">', s)
         found = re.search(r'<meta property="article:published_time" content="([^"]+)"', s)
@@ -470,7 +498,7 @@ def build() -> dict[Path, str]:
         out[path] = s
     out[SITE / "sitemap.xml"] = sitemap(pages)
     out[SITE / "feed.xml"] = feed(pages, published)
-    out[SITE / "llms.txt"] = llms((SITE / "llms.txt").read_text(encoding="utf-8"), papers)
+    out[SITE / "llms.txt"] = llms((SITE / "llms.txt").read_text(encoding="utf-8"), papers, articles)
     return out
 
 

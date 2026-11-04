@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="only light"><meta name="theme-color" content="#F2F2EE"><meta name="description" content="How a 2015 GTX TITAN X runs part of PyTorch&#x27;s CUDA 13 wheel: kernels built for the real chip, a capped CPU fallback, what was shown, and where it stops.">
+<link rel="icon" href="../favicon.ico" sizes="32x32">
+<link rel="icon" type="image/svg+xml" href="../favicon.svg">
+<link rel="apple-touch-icon" href="../apple-touch-icon.png">
+<link rel="mask-icon" href="../mask-icon.svg" color="#000000">
+<link rel="manifest" href="../manifest.webmanifest">
+<link rel="alternate" type="application/atom+xml" title="CUDA Compatibility sheets" href="../feed.xml">
+<link rel="author" href="../humans.txt">
+<link rel="license" href="https://github.com/zachshallbetter/cuda-compatibility/blob/main/LICENSE-MIT">
+<meta name="application-name" content="CUDA Compatibility">
+<meta name="apple-mobile-web-app-title" content="CUDA Compat">
+<meta name="format-detection" content="telephone=no">
+<title>Running PyTorch CUDA 13 on a 2015 Maxwell GPU | CUDA Compatibility</title>
+<link rel="canonical" href="https://cudacompat.com/articles/pytorch-cuda-13-on-maxwell.html">
+<meta name="author" content="Zach Shallbetter">
+<meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1">
+<meta property="og:type" content="article">
+<meta property="article:published_time" content="2026-11-03T16:30:00-08:00">
+<meta property="article:modified_time" content="2026-11-03T16:30:00-08:00">
+<meta property="article:author" content="https://zachshallbetter.com/">
+<meta property="article:section" content="Articles">
+<meta property="og:site_name" content="CUDA Compatibility">
+<meta property="og:url" content="https://cudacompat.com/articles/pytorch-cuda-13-on-maxwell.html">
+<meta property="og:locale" content="en_US">
+<meta property="og:title" content="Running PyTorch&#x27;s CUDA 13 wheel on a 2015 Maxwell GPU">
+<meta property="og:description" content="How a 2015 GTX TITAN X runs part of PyTorch&#x27;s CUDA 13 wheel: kernels built for the real chip, a capped CPU fallback, what was shown, and where it stops.">
+<meta property="og:image" content="https://cudacompat.com/assets/social/pytorch-cuda-13-on-maxwell.png">
+<meta property="og:image:type" content="image/png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Share card: Running PyTorch&#x27;s CUDA 13 wheel on a 2015 Maxwell GPU. Article, Article, CUDA Compatibility, cudacompat.com, beside a wireframe of a GM200 graphics card">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Running PyTorch&#x27;s CUDA 13 wheel on a 2015 Maxwell GPU">
+<meta name="twitter:description" content="How a 2015 GTX TITAN X runs part of PyTorch&#x27;s CUDA 13 wheel: kernels built for the real chip, a capped CPU fallback, what was shown, and where it stops.">
+<meta name="twitter:image" content="https://cudacompat.com/assets/social/pytorch-cuda-13-on-maxwell.png">
+<meta name="twitter:image:alt" content="Share card: Running PyTorch&#x27;s CUDA 13 wheel on a 2015 Maxwell GPU. Article, Article, CUDA Compatibility, cudacompat.com, beside a wireframe of a GM200 graphics card">
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"WebSite","@id":"https://cudacompat.com/#website","url":"https://cudacompat.com/","name":"CUDA Compatibility","alternateName":"cudacompat.com","inLanguage":"en","publisher":{"@id":"https://cudacompat.com/#author"},"copyrightHolder":{"@id":"https://cudacompat.com/#author"},"license":"https://github.com/zachshallbetter/cuda-compatibility/blob/main/LICENSE-MIT"},{"@type":"Person","@id":"https://cudacompat.com/#author","name":"Zach Shallbetter","url":"https://zachshallbetter.com/","sameAs":["https://github.com/zachshallbetter"],"jobTitle":"Systems engineer and independent researcher","description":"Zach Shallbetter is a systems engineer and independent researcher based in Spokane, Washington. His work spans applied AI, computer vision, embedded systems, and developer tooling. Through Snack Studio, he builds software that connects modern workflows with existing hardware, with an emphasis on compatibility, performance, and keeping useful systems operational.","homeLocation":{"@type":"Place","name":"Spokane, Washington"},"worksFor":{"@id":"https://cudacompat.com/#org"}},{"@type":"Organization","@id":"https://cudacompat.com/#org","name":"Snack Studio","url":"https://snackstud.io/","founder":{"@id":"https://cudacompat.com/#author"}},{"@type":"SoftwareApplication","@id":"https://cudacompat.com/#software","name":"CUDA Compatibility","url":"https://cudacompat.com/","applicationCategory":"DeveloperApplication","operatingSystem":"Linux x86_64","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}},{"@type":"WebPage","@id":"https://cudacompat.com/articles/pytorch-cuda-13-on-maxwell.html","url":"https://cudacompat.com/articles/pytorch-cuda-13-on-maxwell.html","name":"Running PyTorch's CUDA 13 wheel on a 2015 Maxwell GPU","description":"How a 2015 GTX TITAN X runs part of PyTorch's CUDA 13 wheel: kernels built for the real chip, a capped CPU fallback, what was shown, and where it stops.","inLanguage":"en","isPartOf":{"@id":"https://cudacompat.com/#website"},"breadcrumb":{"@id":"https://cudacompat.com/articles/pytorch-cuda-13-on-maxwell.html#breadcrumb"},"primaryImageOfPage":{"@id":"https://cudacompat.com/assets/social/pytorch-cuda-13-on-maxwell.png"},"mainEntity":{"@id":"https://cudacompat.com/articles/pytorch-cuda-13-on-maxwell.html#article"},"datePublished":"2026-11-03T16:30:00-08:00","dateModified":"2026-11-03T16:30:00-08:00"},{"@type":"ImageObject","@id":"https://cudacompat.com/assets/social/pytorch-cuda-13-on-maxwell.png","url":"https://cudacompat.com/assets/social/pytorch-cuda-13-on-maxwell.png","contentUrl":"https://cudacompat.com/assets/social/pytorch-cuda-13-on-maxwell.png","width":1200,"height":630,"caption":"Share card: Running PyTorch's CUDA 13 wheel on a 2015 Maxwell GPU. Article, Article, CUDA Compatibility, cudacompat.com, beside a wireframe of a GM200 graphics card","encodingFormat":"image/png"},{"@type":"Article","@id":"https://cudacompat.com/articles/pytorch-cuda-13-on-maxwell.html#article","headline":"Running PyTorch's CUDA 13 wheel on a 2015 Maxwell GPU, and where it stops","name":"Running PyTorch's CUDA 13 wheel on a 2015 Maxwell GPU","abstract":"How a 2015 GTX TITAN X runs part of PyTorch's CUDA 13 wheel: kernels built for the real chip, a capped CPU fallback, what was shown, and where it stops.","description":"How a 2015 GTX TITAN X runs part of PyTorch's CUDA 13 wheel: kernels built for the real chip, a capped CPU fallback, what was shown, and where it stops.","url":"https://cudacompat.com/articles/pytorch-cuda-13-on-maxwell.html","mainEntityOfPage":{"@id":"https://cudacompat.com/articles/pytorch-cuda-13-on-maxwell.html"},"image":{"@id":"https://cudacompat.com/assets/social/pytorch-cuda-13-on-maxwell.png"},"inLanguage":"en","datePublished":"2026-11-03T16:30:00-08:00","dateModified":"2026-11-03T16:30:00-08:00","author":{"@id":"https://cudacompat.com/#author"},"publisher":{"@id":"https://cudacompat.com/#author"},"copyrightHolder":{"@id":"https://cudacompat.com/#author"},"copyrightYear":2026,"license":"https://github.com/zachshallbetter/cuda-compatibility/blob/main/LICENSE-MIT","isAccessibleForFree":true,"isPartOf":{"@id":"https://cudacompat.com/#website"},"about":{"@id":"https://cudacompat.com/#software"},"isBasedOn":"https://github.com/zachshallbetter/cuda-compatibility/blob/main/docs/publishing/article.md","articleSection":"Articles","position":1,"creativeWorkStatus":"Published","genre":"Article"},{"@type":"BreadcrumbList","@id":"https://cudacompat.com/articles/pytorch-cuda-13-on-maxwell.html#breadcrumb","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://cudacompat.com/"},{"@type":"ListItem","position":2,"name":"Research and evidence","item":"https://cudacompat.com/docs/research.html"},{"@type":"ListItem","position":3,"name":"Running PyTorch's CUDA 13 wheel on a 2015 Maxwell GPU","item":"https://cudacompat.com/articles/pytorch-cuda-13-on-maxwell.html"}]}]}</script>
+<link rel="stylesheet" href="../styles.css">
+<link rel="stylesheet" href="../docs.css">
+</head>
+<body>
+<div style="display:flex;flex-direction:column;min-height:100%">
+<a class="skip-link" href="#main">Skip to content</a>
+<header style="border-bottom:1px solid currentColor">
+<svg class="reg l" aria-hidden="true" viewBox="0 0 16 16"><circle cx="8" cy="8" r="5" fill="none" stroke="currentColor" stroke-width="1.2"/><path d="M8 0v16M0 8h16" stroke="currentColor" stroke-width="1.2"/></svg><svg class="reg r" aria-hidden="true" viewBox="0 0 16 16"><circle cx="8" cy="8" r="5" fill="none" stroke="currentColor" stroke-width="1.2"/><path d="M8 0v16M0 8h16" stroke="currentColor" stroke-width="1.2"/></svg>
+<div class="wrap" style="padding-top:18px;padding-bottom:18px;display:flex;justify-content:space-between;align-items:center;gap:24px;flex-wrap:wrap">
+<a href="../index.html" style="text-decoration:none;color:inherit;font-stretch:110%;font-weight:800;font-size:17px;letter-spacing:-0.02em;display:inline-flex;align-items:center;gap:12px"><svg aria-hidden="true" width="26" height="26" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="3"><rect x="5" y="5" width="22" height="22"></rect><rect x="12" y="12" width="8" height="8" fill="currentColor" stroke="none"></rect></svg>CUDA Compatibility</a>
+<div style="display:flex;align-items:center;gap:32px;flex-wrap:wrap">
+<nav class="nav" aria-label="Main navigation">
+<a href="../index.html#works">What works</a>
+<a href="../index.html#stack">How it works</a>
+<a href="../index.html#hardware">Hardware</a>
+<a href="../index.html#install">Install</a>
+<a href="../docs/index.html" aria-current="true" style="color:var(--link)">Docs</a>
+<a href="https://github.com/zachshallbetter/cuda-compatibility/releases">Releases</a>
+</nav>
+<a class="repo" href="https://github.com/zachshallbetter/cuda-compatibility">Repository<svg aria-hidden="true" width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 10 10 2M4 2h6v6"></path></svg></a>
+</div>
+</div>
+</header>
+
+<main id="main">
+<article id="article" aria-labelledby="title">
+<header class="band">
+<div class="wrap" style="padding-top:56px;padding-bottom:56px;display:flex;flex-direction:column;gap:18px">
+<nav aria-label="Breadcrumb" class="crumbs"><ol><li><a href="../index.html">Home</a></li><li><a href="../docs/research.html">Research and evidence</a></li><li aria-current="page">Article</li></ol></nav>
+<p class="sheet" style="margin:0">Article</p>
+<h1 id="title" class="disp" style="font-size:clamp(36px,4.2vw,58px);max-width:22ch">Running PyTorch&#x27;s CUDA 13 wheel on a 2015 Maxwell GPU, and where it stops</h1>
+<p class="excerpt" style="margin:0;font-size:20px;line-height:1.45;max-width:60ch;font-weight:500">How a 2015 GTX TITAN X runs part of PyTorch&#x27;s CUDA 13 wheel: kernels built for the real chip, a capped CPU fallback, what was shown, and where it stops.</p>
+<p class="byline">By <a rel="author" href="https://zachshallbetter.com/">Zach Shallbetter</a> · Published <time datetime="2026-11-03">3 November 2026</time> · Updated <time datetime="2026-11-03">3 November 2026</time></p>
+</div>
+</header>
+<div class="wrap body" style="padding-top:56px;padding-bottom:96px">
+<nav aria-label="Documentation" style="display:flex;flex-direction:column;gap:12px">
+<p class="sheet" style="margin:0">Sheets</p>
+<ul class="side">
+<li><a href="../docs/index.html"><i>02</i>Documentation home</a></li>
+<li><a href="../docs/getting-started.html"><i>03</i>Install and run</a></li>
+<li><a href="../docs/compatibility.html"><i>04</i>Support matrix</a></li>
+<li><a href="../docs/architecture.html"><i>05</i>How it works</a></li>
+<li><a href="../docs/cli.html"><i>06</i>Command line</a></li>
+<li><a class="current" aria-current="true" href="../docs/research.html"><i>07</i>Research and evidence</a></li>
+<li><a href="../gpu-catalog.html"><i>08</i>Legacy GPU catalog</a></li>
+<li><a href="../docs/discovery.html"><i>09</i>Search and AI discovery</a></li>
+<li><a href="../docs/privacy.html"><i>10</i>Privacy and measurement</a></li>
+</ul>
+<p class="sheet" style="margin:12px 0 0">On this article</p>
+<ul class="side" style="border-top-width:1px"><li><a href="#how-it-works"><i>A</i>How it works</a></li><li><a href="#what-has-been-shown"><i>B</i>What has been shown</a></li><li><a href="#where-it-stops"><i>C</i>Where it stops</a></li><li><a href="#why-publish-something-this-narrow"><i>D</i>Why publish something this narrow</a></li><li><a href="#try-it"><i>E</i>Try it</a></li></ul>
+</nav>
+<div class="prose" style="display:flex;flex-direction:column;gap:20px;min-width:0">
+<p>CUDA 13 dropped support for Maxwell, Pascal and Volta GPUs. The official PyTorch 2.14 CUDA 13 wheel is built for compute capability 7.5 and newer. On a GTX TITAN X (GM200, compute capability 5.2) it still imports and sees the card, but real work fails: matrix multiplication stops at <code>cublasCreate</code> with <code>CUBLAS_STATUS_ARCH_MISMATCH</code>, and ReLU reports that no kernel image is available (<code>CLC-006</code>, <code>CLC-009</code>).</p>
+<p>CUDA Compatibility is an experiment in getting a narrow, checked subset of that wheel working on the older card without changing the driver, the CUDA install or the wheel itself. It is independent research, not affiliated with NVIDIA.</p>
+<h2 id="how-it-works">How it works</h2>
+<p><code>cuda-legacy run -- app.py</code> starts one Python process with three pieces in place, built fresh in a temporary directory and removed when the process exits (<code>CLC-010</code>):</p>
+<ol class="list"><li><strong>Kernels compiled for the real card.</strong> LLVM/Clang 23.1.4 compiles the project's kernels to PTX for <code>sm_52</code> at launch (<code>CLC-004</code>, <code>CLC-007</code>). A small CUDA Driver API bridge loads that PTX and launches it on PyTorch's current stream (<code>CLC-008</code>).</li><li><strong>PyTorch registrations.</strong> Through <code>torch.library</code>, the adapter registers native Maxwell implementations for six operation families: addition, arange, embedding, layer normalization, matrix multiplication and ReLU. Each has explicit dtype, layout and size limits (<code>CLC-025</code>).</li><li><strong>Bounded CPU fallback.</strong> Eleven more operations, and any operation that fails with a recognized "wrong architecture" error, are copied to the CPU, computed there and copied back. Each copy is capped at 64 MiB in and 64 MiB out. Operations that mutate or alias their inputs refuse to fall back rather than risk wrong results (<code>CLC-025</code>).</li></ol>
+<p>A fourth piece is a version facade. One CUDA Runtime query, <code>cudaRuntimeGetVersion</code>, returns 13000 inside that process only (<code>CLC-005</code>). The device name and compute capability are left untouched. The project never pretends the card is newer than it is.</p>
+<h2 id="what-has-been-shown">What has been shown</h2>
+<ul class="list"><li>On all three reference cards, an operator suite and a small two-layer MLP matched CPU results (<code>CLC-009</code>).</li><li>On one card, an owner-supplied transformer checkpoint matched CPU output across six batch and sequence configurations (<code>CLC-011</code>). The checkpoint is not public.</li><li>On two cards, first-order gradients and seven SGD steps of a 2×2 linear→ReLU→sum model matched the CPU reference (<code>CLC-025</code>).</li><li>A public example, run from release <code>v0.1.0</code> in a new environment, reproduced each operation's route and CPU comparison on two cards with identical output (<code>GH-50-public-example-sm52-mlp</code>).</li></ul>
+<h2 id="where-it-stops">Where it stops</h2>
+<ul class="list"><li>Creating a tensor directly on the GPU (<code>torch.ones(..., device=&quot;cuda&quot;)</code>) still fails: no Maxwell kernel exists, and there is no GPU input to fall back from (<code>GH-50-public-example-sm52-mlp</code>).</li><li>Native matrix multiplication stops at 256 in any dimension and refuses larger inputs rather than falling back (<code>GH-50-public-example-sm52-mlp</code>).</li><li>Convolution works in one tested classifier only by running on the CPU (<code>CLC-012</code>).</li><li>General cuDNN, cuBLAS, NCCL or Triton support, broad autograd, other optimizers, and performance parity are not established (<code>CLC-CLAIM-008</code>).</li><li>The launcher requires Linux x86_64 and only <code>sm_52</code> GPUs visible. Other Maxwell variants and Pascal cards are unverified (<code>CLC-CLAIM-006</code>).</li><li>The tiny training run took 2.360 ms and 7.296 ms per step on two cards. Those numbers are diagnostic, not a benchmark (<code>CLC-025</code>).</li></ul>
+<h2 id="why-publish-something-this-narrow">Why publish something this narrow</h2>
+<p>Each limit above is a specific missing kernel or library path, not a vague "may not work". That makes it a work list. The engineering tickets track the blocker corpus and the replacement kernels, and nothing gets claimed until it has been reproduced on hardware.</p>
+<h2 id="try-it">Try it</h2>
+<p>You need Linux, a GM200 or other compute capability 5.2 card, your own NVIDIA driver, CUDA 12.4 headers and LLVM 23.1.4. The project ships no NVIDIA files. The <a href="https://github.com/zachshallbetter/cuda-compatibility/tree/main/examples/sm52-mlp">public example</a> gives the exact commands and expected output. Pass or fail, a <a href="https://github.com/zachshallbetter/cuda-compatibility/issues/new?template=reproduction-report.yml">reproduction report</a> is the most useful thing you can send.</p>
+<aside class="note" aria-label="Source and citation"><p style="margin:0;font-size:15px">Source: <a href="https://github.com/zachshallbetter/cuda-compatibility/blob/main/docs/publishing/article.md">docs/publishing/article.md</a>. Cite as: Shallbetter, Z. (2026). Running PyTorch&#x27;s CUDA 13 wheel on a 2015 Maxwell GPU, and where it stops. CUDA Compatibility. https://cudacompat.com/articles/pytorch-cuda-13-on-maxwell.html. Independent project writing, not peer reviewed or endorsed by NVIDIA.</p></aside>
+<nav class="pager" aria-label="Papers, previous and next"><span></span><a href="../docs/research.html"><span class="sheet">Back to</span><span class="pager-title">Research and evidence</span></a></nav>
+</div>
+</div>
+</article>
+</main>
+
+<footer class="foot">
+<div class="wrap" style="padding-top:40px;padding-bottom:40px;display:flex;flex-direction:column;gap:20px;font-size:15px">
+<div class="tb" role="group" aria-label="Title block">
+<div><span>Project</span><span>CUDA Compatibility</span></div>
+<div><span>Drawn by</span><span><a href="https://zachshallbetter.com/">Zach Shallbetter</a></span></div>
+<div><span>Project version</span><span>0.1.0</span></div>
+<div><span>License</span><span>MIT or Apache-2.0</span></div>
+<div><span>Status</span><span>Active research</span></div>
+<div><span>Article</span><span>Running PyTorch&#x27;s CUDA 13 wheel on a 2015 Maxwell GPU</span></div>
+<div><span>Correct this article</span><span><a href="https://github.com/zachshallbetter/cuda-compatibility/issues/new?title=Correction%3A%20article%20pytorch-cuda-13-on-maxwell">Open an issue naming the record</a></span></div>
+</div>
+<table class="rev" aria-label="Revision table"><thead><tr><th scope="col">Rev</th><th scope="col">Date</th><th scope="col">Change</th><th scope="col">By</th></tr></thead><tbody><tr><td>A</td><td>2026-11-03</td><td>First recorded</td><td>ZS</td></tr></tbody></table>
+<div style="display:flex;justify-content:space-between;gap:24px;flex-wrap:wrap"><span>Independent research, not affiliated with NVIDIA. Hardware identity stays real.</span><div style="display:flex;gap:20px;flex-wrap:wrap"><a href="https://github.com/zachshallbetter">GitHub</a><a href="https://linkedin.com/in/zachshallbetter">LinkedIn</a><a href="../docs/privacy.html">Privacy and analytics</a></div></div>
+</div>
+</footer>
+
+</div>
+<script src="../site.js" defer></script>
+<script src="../analytics.js" defer></script>
+</body>
+</html>

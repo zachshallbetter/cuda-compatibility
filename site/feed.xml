@@ -5,7 +5,7 @@
   <link rel="self" type="application/atom+xml" href="https://cudacompat.com/feed.xml"/>
   <link rel="alternate" type="text/html" href="https://cudacompat.com/"/>
   <id>https://cudacompat.com/</id>
-  <updated>2026-11-03T15:15:00-08:00</updated>
+  <updated>2026-11-03T16:30:00-08:00</updated>
   <author><name>Zach Shallbetter</name><uri>https://zachshallbetter.com/</uri></author>
   <rights>Text MIT or Apache-2.0, at your option. Copyright 2026 Zach Shallbetter.</rights>
   <icon>https://cudacompat.com/icon-192.png</icon>
@@ -189,5 +189,15 @@
     <summary>The CUDA 12.9 to 13.0 toolkit changes that matter for older GPUs, taken from NVIDIA's release notes, with component versions and what still needs checking.</summary>
     <category term="Research"/>
     <link rel="enclosure" type="image/png" href="https://cudacompat.com/assets/social/cuda-12-9-to-13-0-changes.png"/>
+  </entry>
+  <entry>
+    <title>Running PyTorch's CUDA 13 wheel on a 2015 Maxwell GPU</title>
+    <link rel="alternate" type="text/html" href="https://cudacompat.com/articles/pytorch-cuda-13-on-maxwell.html"/>
+    <id>https://cudacompat.com/articles/pytorch-cuda-13-on-maxwell.html</id>
+    <published>2026-11-03T16:30:00-08:00</published>
+    <updated>2026-11-03T16:30:00-08:00</updated>
+    <summary>How a 2015 GTX TITAN X runs part of PyTorch's CUDA 13 wheel: kernels built for the real chip, a capped CPU fallback, what was shown, and where it stops.</summary>
+    <category term="Articles"/>
+    <link rel="enclosure" type="image/png" href="https://cudacompat.com/assets/social/pytorch-cuda-13-on-maxwell.png"/>
   </entry>
 </feed>
