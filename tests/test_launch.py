@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import os
 import sys
 import tempfile
 import unittest
@@ -50,9 +51,9 @@ class LauncherPreflightTests(unittest.TestCase):
             artifacts = (root / "a.ptx", root / "bridge.so", root / "facade.so")
             artifacts[0].write_text("ptx")
             with patch.object(launch_module, "build_adapter", return_value=artifacts), patch.object(
-                launch_module.subprocess, "run"
+                launch_module.subprocess, "Popen"
             ) as run:
-                run.return_value.returncode = 0
+                run.return_value.wait.return_value = 0
                 launch_module.launch(
                     script, ["--x"], llvm_root=root / "llvm", cuda_root=root / "cuda",
                     python=sys.executable,
@@ -74,8 +75,8 @@ class LauncherPreflightTests(unittest.TestCase):
             ]
             for kwargs, args, expected in cases:
                 with self.subTest(kwargs=kwargs), patch.object(launch_module, "build_adapter", return_value=artifacts), \
-                        patch.object(launch_module.subprocess, "run") as run:
-                    run.return_value.returncode = 0
+                        patch.object(launch_module.subprocess, "Popen") as run:
+                    run.return_value.wait.return_value = 0
                     script_arg = kwargs.pop("script")
                     launch_module.launch(script_arg, args, llvm_root=root / "llvm", cuda_root=root / "cuda",
                                          python=sys.executable, **kwargs)
@@ -84,6 +85,61 @@ class LauncherPreflightTests(unittest.TestCase):
                 with self.assertRaisesRegex(LaunchError, "name a script"):
                     launch_module.launch(None, [], llvm_root=root / "llvm", cuda_root=root / "cuda", python=sys.executable)
                 build.assert_not_called()
+
+    @unittest.skipIf(sys.platform == "win32", "POSIX signals")
+    def test_ctrl_c_reaches_the_program_and_sigterm_is_passed_on(self) -> None:
+        # A real launcher process and program (#217); the build is stubbed, and the interpreter wrapper drops the
+        # adapter's switch, so no GPU is needed. The program catches SIGINT to "save a checkpoint" for half a second.
+        import signal
+        import subprocess
+        import textwrap
+        with tempfile.TemporaryDirectory() as temp_dir:
+            root = Path(temp_dir)
+            (root / "program.py").write_text(textwrap.dedent("""
+                import signal, sys, time
+                def save(signum, frame):
+                    time.sleep(0.5)
+                    open(sys.argv[1], "w").write(str(signum))
+                    sys.exit(42)
+                signal.signal(signal.SIGINT, save)
+                signal.signal(signal.SIGTERM, save)
+                print("ready", flush=True)
+                time.sleep(30)
+            """))
+            (root / "python").write_text(f"#!/bin/sh\nunset CUDA_COMPAT_ENABLE\nexec {sys.executable} \"$@\"\n")
+            (root / "python").chmod(0o755)
+            (root / "launcher.py").write_text(textwrap.dedent(f"""
+                import sys
+                from pathlib import Path
+                from unittest import mock
+                from cuda_legacy_compat import launch
+                root = Path({str(root)!r}); artifacts = (root / "a.ptx", root / "b.so", root / "f.so")
+                artifacts[0].write_text("ptx")
+                with mock.patch.object(launch, "build_adapter", return_value=artifacts):
+                    sys.exit(launch.launch(root / "program.py", [sys.argv[1]], llvm_root=root, cuda_root=root,
+                                           python=str(root / "python")))
+            """))
+            src = str(Path(__file__).parents[1] / "src")
+            for name, signum, to_group in (("ctrl-c", signal.SIGINT, True), ("sigterm", signal.SIGTERM, False)):
+                with self.subTest(name):
+                    flag = root / f"{name}.flag"
+                    launcher = subprocess.Popen([sys.executable, str(root / "launcher.py"), str(flag)],
+                                                env={**os.environ, "PYTHONPATH": src}, stdout=subprocess.PIPE,
+                                                stderr=subprocess.PIPE, text=True, start_new_session=True)
+                    try:
+                        self.assertEqual(launcher.stdout.readline().strip(), "ready")
+                        if to_group:
+                            os.killpg(launcher.pid, signum)   # what a terminal and Jupyter do
+                        else:
+                            launcher.send_signal(signum)      # kill <launcher pid>
+                        _, err = launcher.communicate(timeout=20)
+                    finally:
+                        if launcher.poll() is None:
+                            os.killpg(launcher.pid, signal.SIGKILL)
+                            launcher.communicate()
+                    self.assertEqual(flag.read_text() if flag.exists() else None, str(int(signum)))   # handler finished
+                    self.assertEqual(launcher.returncode, 42, err)
+                    self.assertNotIn("KeyboardInterrupt", err)
 
     def test_package_import_does_not_eagerly_import_torch(self) -> None:
         init_source = (Path(__file__).parents[1] / "src/cuda_legacy_compat/__init__.py").read_text()

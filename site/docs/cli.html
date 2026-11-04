@@ -132,7 +132,7 @@ cuda-legacy run --python /path/to/other-env/bin/python -- path/to/app.py</code><
 <div class="exit" style="padding:14px 0;border-bottom:1px solid currentColor"><b>doctor</b><span style="font-size:16px"><code>0</code> when checked prerequisites are ready; <code>1</code> when setup needs attention.</span></div>
 <div class="exit" style="padding:14px 0;border-bottom:1px solid currentColor"><b>audit</b><span style="font-size:16px"><code>0</code> compatible against recorded profile fields; <code>1</code> incompatible; <code>2</code> invalid or unreadable profile; <code>3</code> required facts unknown.</span></div>
 <div class="exit" style="padding:14px 0;border-bottom:1px solid currentColor"><b>profiles</b><span style="font-size:16px"><code>0</code> on success; <code>2</code> when a profile cannot be read or resolved.</span></div>
-<div class="exit" style="padding:14px 0;border-bottom:3px solid currentColor"><b>run</b><span style="font-size:16px">Returns the child application’s exit code; launcher preflight or build errors return <code>2</code>.</span></div>
+<div class="exit" style="padding:14px 0;border-bottom:3px solid currentColor"><b>run</b><span style="font-size:16px">Returns the child application’s exit code, or <code>128 + N</code> when signal N ended it, as a shell does; launcher preflight or build errors return <code>2</code>. Ctrl-C and Jupyter’s interrupt reach the program, which decides what to do; <code>SIGTERM</code> or <code>SIGHUP</code> sent to the launcher is passed on.</span></div>
 </div>
 <div class="note"><p style="margin:0;font-size:15px">“Compatible” and “ready” refer only to fields each command checks. Neither is an operator or workload certification.</p></div>
 </div>

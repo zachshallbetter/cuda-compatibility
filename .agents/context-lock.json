@@ -6,7 +6,7 @@
   "selectedPaths": [],
   "sourceSelection": {
     "includedCount": 284,
-    "includedBytes": 2885199,
+    "includedBytes": 2890080,
     "excludedCounts": {
       "extension": 65,
       "generated-or-transient-file": 2
@@ -18,14 +18,14 @@
     "repositories": [
       {
         "path": ".",
-        "commit": "bc03ec9f941122fc91058396737ec5d5b2f3b16b",
-        "branch": "chore/release-0.2.14",
+        "commit": "5a5544a65022f8b17266bd381cc94ee48a00aec2",
+        "branch": null,
         "dirty": true,
         "remote": "https://github.com/zachshallbetter/cuda-compatibility.git"
       }
     ]
   },
-  "aggregateSourceDigest": "885c90a372661f70f82227a1946c82d0ad4daf2af13a2397caacf72e3cdb5cfc",
+  "aggregateSourceDigest": "fb066ac0b7726c1226457eea3d7118f68d9b41f9aa49b2aa12c99b79236f078c",
   "sources": [
     {
       "path": ".agents/acp/README.md",
@@ -879,8 +879,8 @@
     },
     {
       "path": "docs/user-guide.md",
-      "bytes": 16569,
-      "sha256": "a2231b90cd294103cc1c619c6f1753cf3cfdae35a9a307b12afd77fe7c141a52"
+      "bytes": 16799,
+      "sha256": "202648ec1b27eac4fa4c5a3246e89c86899e82abb6e75cf7f13cb12359b4abbe"
     },
     {
       "path": "examples/dpp/availability-2026-11-03.json",
@@ -1134,8 +1134,8 @@
     },
     {
       "path": "site/docs/cli.html",
-      "bytes": 22385,
-      "sha256": "9201ef9da7d561998826682fc7d311cc0b64d010d341342e718a7127aaa11839"
+      "bytes": 22607,
+      "sha256": "53e0bade1cc53099ae07bc42d75004bc2575e0c3cc1edecdc6ea3680e8ba3576"
     },
     {
       "path": "site/docs/compatibility.html",
@@ -1284,8 +1284,8 @@
     },
     {
       "path": "src/cuda_legacy_compat/launch.py",
-      "bytes": 6905,
-      "sha256": "4dcac1c23b94f01358775344a1a3753ce061b8c5b47cfb5b1040a045952a115e"
+      "bytes": 8011,
+      "sha256": "a9e6913942ef5ec86668b0082514956bbba946df296f13a318d5cfe8f332bdc1"
     },
     {
       "path": "src/cuda_legacy_compat/profiles.py",
@@ -1369,8 +1369,8 @@
     },
     {
       "path": "tests/test_launch.py",
-      "bytes": 4868,
-      "sha256": "f3f91ec7c4ec680fb23cd004ee4963e3d486b8142f196c28fa9a9e51e52e6766"
+      "bytes": 8191,
+      "sha256": "367e8bcdb88cd88b78a3404b2a1604e7b8bc32399a97b587dadf19b9be93a4ea"
     },
     {
       "path": "tests/test_native_fallback.py",
