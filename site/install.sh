@@ -27,7 +27,7 @@
 VERSION=0.2.0
 ARCHIVE_URL="https://github.com/zachshallbetter/cuda-compatibility/archive/refs/tags/v$VERSION.tar.gz"
 # SHA-256 of ARCHIVE_URL, written by the release. Empty means no release is pinned yet.
-ARCHIVE_SHA256=
+ARCHIVE_SHA256=d4cc7295914349ba2dbe643db55061d3903cf8490339fc77fe20837d989fe66e
 PACKAGE=cuda-legacy-compat
 TORCH_HINT="python3 -m venv ~/torch-cu130 && ~/torch-cu130/bin/pip install torch --index-url https://download.pytorch.org/whl/cu130"
 
@@ -67,9 +67,17 @@ Exit codes: 0 ready; 1 installed, but setup lists what still needs attention; 2 
 EOF
 }
 
+# The installed torch version, read from package metadata: importing torch is slow and noisy.
+torch_version() {
+    "$1" -c 'from importlib.metadata import version; print(version("torch"))' 2>/dev/null
+}
+
 # True when the interpreter holds a CUDA build of PyTorch (its version contains "+cu").
 has_cuda_torch() {
-    "$1" -c 'import sys, torch; sys.exit(0 if "+cu" in torch.__version__ else 3)' >/dev/null 2>&1
+    case $(torch_version "$1") in
+        *+cu*) return 0 ;;
+        *) return 1 ;;
+    esac
 }
 
 has_package() {
@@ -159,7 +167,7 @@ do_install() {
         "Looked at CUDA_COMPAT_PYTHON, the active virtualenv or conda env, and python3 on PATH." \
         "Install one into a virtual environment, then rerun with --python:" "$TORCH_HINT"
     check_python "$py"
-    note "$py ($("$py" -c 'import torch; print("torch", torch.__version__)'))"
+    note "$py (torch $(torch_version "$py"))"
 
     if [ "$YES" = 0 ] && ! (: </dev/tty) 2>/dev/null; then
         stop "There is no terminal to ask on before setup downloads LLVM (about 1.2 GB)." \

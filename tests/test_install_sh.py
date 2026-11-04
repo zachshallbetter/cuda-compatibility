@@ -52,6 +52,9 @@ class InstallScriptTests(unittest.TestCase):
                               check=True, capture_output=True, text=True).stdout.strip()
         (Path(site) / "torch").mkdir()
         (Path(site) / "torch" / "__init__.py").write_text('__version__ = "2.14.0+cu130"\n', encoding="utf-8")
+        info = Path(site) / "torch-2.14.0+cu130.dist-info"
+        info.mkdir()
+        (info / "METADATA").write_text("Metadata-Version: 2.1\nName: torch\nVersion: 2.14.0+cu130\n", encoding="utf-8")
         return env
 
     @classmethod
