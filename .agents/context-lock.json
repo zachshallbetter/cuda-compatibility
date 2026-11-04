@@ -18,7 +18,7 @@
     "repositories": [
       {
         "path": ".",
-        "commit": "a8c04f63aa01d6c6e0190f6b1f8b385ca5d843bd",
+        "commit": "efdf4b681a2a7cbe5297f3f209df6fc54240c8c3",
         "branch": "feat/fused-rnn-cells",
         "dirty": true,
         "remote": "https://github.com/zachshallbetter/cuda-compatibility.git"
