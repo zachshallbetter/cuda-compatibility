@@ -72,7 +72,21 @@ class InplaceFallbackTests(unittest.TestCase):
     def test_what_cannot_be_copied_back_fails_closed(self) -> None:
         torch, aten = self.torch, self.torch.ops.aten
         with self.assertRaisesRegex(NotImplementedError, "view of a contiguous tensor"):
-            self.dispatch(aten.zero_.default, torch.empty_strided((2, 2), (1, 2)))
+            self.dispatch(aten.zero_.default, torch.empty_strided((2, 2), (1, 1)))  # overlapping: no dense order
+
+    def test_a_column_major_target_or_its_diagonal_is_staged_in_contiguous_order(self) -> None:
+        torch, aten = self.torch, self.torch.ops.aten
+        identity = torch.empty_strided((3, 3), (1, 3))  # how torch.linalg builds its identity
+        self.dispatch(aten.zero_.default, identity)
+        self.dispatch(aten.fill_.Scalar, identity.diagonal(), 1.0)
+        self.assertEqual(identity.tolist(), torch.eye(3).tolist())
+
+    def test_a_view_without_a_base_is_staged_through_its_whole_storage(self) -> None:
+        torch, aten = self.torch, self.torch.ops.aten
+        storage = torch.zeros(9)
+        diagonal = torch.empty(0).set_(storage.untyped_storage(), 0, (3,), (4,))  # no _base, as linalg makes it
+        self.dispatch(aten.fill_.Scalar, diagonal, 1.0)
+        self.assertEqual(storage.view(3, 3).tolist(), torch.eye(3).tolist())
         with self.assertRaisesRegex(NotImplementedError, "only supports value updates"):
             self.dispatch(aten.resize_.default, torch.zeros(4), [2, 2])
         self.assertIsNotNone(self.unrouted._recorded)

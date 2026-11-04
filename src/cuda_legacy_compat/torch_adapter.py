@@ -1594,6 +1594,9 @@ def _is_architecture_failure(error: Exception) -> bool:
             "cublas_status_arch_mismatch",
             "cudnn_status_arch_mismatch",
             "unable to find an engine to execute this computation",
+            # cuFFT and cuSOLVER in the CUDA 13 wheels have no sm_52 support: plans and handles fail to create.
+            "cufft_invalid_device",
+            "cusolver_status_internal_error, when calling `cusolverdncreate",
         )
     )
 
@@ -1623,6 +1626,16 @@ def _writes_only_self(schema) -> bool:
     return _written_arguments(schema) is not None
 
 
+def _non_overlapping(tensor: torch.Tensor) -> bool:
+    """True when no two elements of a strided tensor share memory, so writing it back cannot race itself."""
+    extent = 1
+    for stride, size in sorted((stride, size) for size, stride in zip(tensor.shape, tensor.stride()) if size > 1):
+        if stride < extent:
+            return False
+        extent = stride * (size - 1) + extent
+    return True
+
+
 def _inplace_on_cpu(operation, name: str, args: tuple, kwargs: dict, schema=None) -> Any:
     """Run an in-place operator on CPU copies of the CUDA tensors it writes and copy the results back.
 
@@ -1650,7 +1663,16 @@ def _inplace_on_cpu(operation, name: str, args: tuple, kwargs: dict, schema=None
     for target in targets:
         if id(target) in staged:
             continue
-        home = target if target.is_contiguous() else target._base
+        home = target if target.is_contiguous() else (target._base if target._base is not None else target)
+        if home is not None and not home.is_contiguous() and home.layout == torch.strided:
+            # A dense tensor in another memory order (column-major, as linalg builds), or a view of one: its
+            # permutation to contiguous order is the same storage, so stage that and view the target from it.
+            order = sorted(range(home.dim()), key=lambda d: -home.stride(d))
+            permuted = home.permute(order)
+            home = permuted if permuted.is_contiguous() else None
+        if home is None and target.layout == torch.strided and _non_overlapping(target):
+            # A view torch made internally (linalg's diagonal of an identity) has no _base: stage its whole storage.
+            home = target.as_strided((target.untyped_storage().nbytes() // target.element_size(),), (1,), 0)
         if target.layout != torch.strided or home is None or not home.is_contiguous() or home.dtype != target.dtype:
             raise NotImplementedError(
                 f"Maxwell in-place fallback for {name} requires a contiguous target or a view of a contiguous tensor")
