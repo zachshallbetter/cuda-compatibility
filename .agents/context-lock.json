@@ -5,8 +5,8 @@
   "validityBasis": "aggregate-source-digest",
   "selectedPaths": [],
   "sourceSelection": {
-    "includedCount": 268,
-    "includedBytes": 2721552,
+    "includedCount": 270,
+    "includedBytes": 2725405,
     "excludedCounts": {
       "extension": 65,
       "generated-or-transient-file": 2
@@ -18,14 +18,14 @@
     "repositories": [
       {
         "path": ".",
-        "commit": "097749e9ad73d14cce2407398f04cebbb0a00a39",
-        "branch": "docs/compat-sheet-current",
-        "dirty": false,
+        "commit": "dd5a05a93e5a05338e642de6ffc3a6c11ed0c43b",
+        "branch": "research/reprobe-contradicted",
+        "dirty": true,
         "remote": "https://github.com/zachshallbetter/cuda-compatibility.git"
       }
     ]
   },
-  "aggregateSourceDigest": "706d268f74b1fca16e688e35ad6737ef007e3f3aa4a9a447967c7ba8ee520e45",
+  "aggregateSourceDigest": "86d98193ea87fffb50c59d69c9633e379f142bee4fe7f6e4fca00019ae78a47e",
   "sources": [
     {
       "path": ".agents/acp/README.md",
@@ -729,8 +729,8 @@
     },
     {
       "path": "docs/SITE_PROTOCOL.md",
-      "bytes": 15915,
-      "sha256": "eb515e3695c89f8ab620e82faa82614bb5ea2c710202465015edfa0b3a4b40d3"
+      "bytes": 16132,
+      "sha256": "df0642bf26d372188e51ad1efa62b06a3f1ddc91e3f44a74ab526b403359fb1b"
     },
     {
       "path": "docs/WORK_ITEMS.md",
@@ -1026,6 +1026,11 @@
       "path": "scripts/indexnow.py",
       "bytes": 4679,
       "sha256": "ba050c1c8f28d272e63791a8725a649f90ae459052d2709d2f7501ce5559bbbf"
+    },
+    {
+      "path": "scripts/reprobe_stock.py",
+      "bytes": 2535,
+      "sha256": "d31bc2c3c68d0f8e65d7464dccb42ffc6bd6c186ce605c3ead37dc62232d2252"
     },
     {
       "path": "scripts/site_checks.py",
@@ -1326,6 +1331,11 @@
       "path": "tests/test_profiles.py",
       "bytes": 3345,
       "sha256": "9a92fd997602430510315925d3037f3cd5cc39172c0671f6cbc6fbd4ade4bdfd"
+    },
+    {
+      "path": "tests/test_reprobe_stock.py",
+      "bytes": 1101,
+      "sha256": "32b7d8540995f8b63774421c57c927c183336ab444ec8f289834658c2227e1e2"
     },
     {
       "path": "tests/test_routes.py",
