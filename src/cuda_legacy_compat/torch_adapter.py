@@ -132,9 +132,10 @@ def _load_bridge() -> tuple[ctypes.CDLL, bytes]:
     return bridge, os.fsencode(ptx_path)
 
 
-def _falls_back_to_cpu(operation_name: str):
+def _falls_back_to_cpu(operation_name: str, oversize: Callable[..., Any] | None = None):
     """A native kernel that refuses a case it has no Maxwell kernel for (another dtype, a strided input, a size
-    past its limit) hands it to the CPU fallback instead, like every unregistered operator."""
+    past its limit) hands it to the CPU fallback instead, like every unregistered operator. `oversize`, when given,
+    takes the cases whose CUDA inputs exceed the fallback limit (embedding: only the looked-up rows move, #175)."""
     def wrap(kernel: Callable[..., Any]) -> Callable[..., Any]:
         @functools.wraps(kernel)
         def run(*args: Any, **kwargs: Any) -> Any:
@@ -147,6 +148,8 @@ def _falls_back_to_cpu(operation_name: str):
                     if result is None:
                         raise
                     return result
+                if oversize is not None and _over_fallback_limit(args, kwargs):
+                    return oversize(*args, **kwargs)
                 return _cpu_fallback(operation, operation_name.split(".")[0])(*args, **kwargs)
         return run
     return wrap
@@ -171,6 +174,7 @@ def _record_stream(tensors: tuple[torch.Tensor, ...], stream: Any) -> None:
         tensor.record_stream(stream)
 
 
+@_falls_back_to_cpu("add.Tensor")
 def _add(self: torch.Tensor, other: torch.Tensor, *, alpha: int | float = 1) -> torch.Tensor:
     global _bridge
     if not isinstance(other, torch.Tensor) or (other.dim() == 0 and not other.is_cuda):
@@ -455,7 +459,39 @@ def _arange(
     return output
 
 
-@_falls_back_to_cpu("embedding")
+def _embedding_rows_on_cpu(
+    weight: torch.Tensor,
+    indices: torch.Tensor,
+    padding_idx: int = -1,
+    scale_grad_by_freq: bool = False,
+    sparse: bool = False,
+) -> torch.Tensor:
+    """Look up only the rows the indices name (#175): a 2D contiguous weight's rows, sorted and copied in
+    consecutive runs, are plain memory copies, so a vocabulary larger than the fallback limit still works when the
+    rows it touches fit under it. The backward is PyTorch's own (embedding_dense_backward)."""
+    if weight.dim() != 2 or not weight.is_contiguous():
+        raise NotImplementedError("Maxwell CPU fallback for embedding is limited to 64 MiB of CUDA inputs")
+    cpu_indices = _cuda_tensor_to_cpu(indices) if _is_cuda(indices) else indices
+    rows, inverse = torch.unique(cpu_indices, return_inverse=True)
+    if rows.numel() * weight.shape[1] * weight.element_size() > _CPU_FALLBACK_MAX_BYTES:
+        raise NotImplementedError("Maxwell CPU fallback for embedding is limited to 64 MiB of looked-up rows")
+    picked = torch.empty((rows.numel(), weight.shape[1]), dtype=weight.dtype)
+    numbers = rows.tolist()
+    start = 0
+    with torch.no_grad():
+        while start < len(numbers):
+            end = start + 1
+            while end < len(numbers) and numbers[end] == numbers[end - 1] + 1:
+                end += 1
+            first = numbers[start]
+            picked[start:end] = _cuda_tensor_to_cpu(weight[first:first + end - start])
+            start = end
+    output = torch.nn.functional.embedding(inverse, picked)
+    _dispatch_state.last_path = "cpu-fallback-embedding-rows"
+    return output.to(weight.device)
+
+
+@_falls_back_to_cpu("embedding", oversize=_embedding_rows_on_cpu)
 def _embedding(
     weight: torch.Tensor,
     indices: torch.Tensor,
@@ -982,6 +1018,114 @@ def _factory_on_cpu(operation, schema, name: str, args: tuple, kwargs: dict) -> 
     return result
 
 
+# Foreach operators that reduce each tensor: they may be split between tensors, never inside one.
+_FOREACH_REDUCTIONS = {"aten::_foreach_norm", "aten::_foreach_max"}
+
+
+def _foreach_in_pieces(operation, name: str, args: tuple, kwargs: dict, schema, inplace: bool) -> Any:
+    """Run a foreach operator whose CUDA tensors exceed the fallback limit as several calls under it (#174).
+
+    Each list element is independent, so the lists are split between elements; an element too big on its own is
+    split into flat ranges when the operator is elementwise (every in-place foreach operator is) and every tensor
+    at that position is contiguous with the same number of elements. Results come back in the original order.
+    """
+    names = [argument.name for argument in schema.arguments]
+    kinds = [str(argument.type) for argument in schema.arguments]
+
+    def value_at(index: int) -> Any:
+        return args[index] if index < len(args) else kwargs.get(names[index])
+
+    lists = [index for index, kind in enumerate(kinds) if kind == "List[Tensor]" and value_at(index) is not None]
+    scalar_lists = [index for index, kind in enumerate(kinds) if kind.startswith("List[") and index not in lists
+                    and isinstance(value_at(index), (list, tuple))]
+    per_element = [index for index, kind in enumerate(kinds) if kind == "Tensor" and names[index] == "scalars"]
+    count = len(value_at(lists[0]))
+    if any(len(value_at(index)) != count for index in lists):
+        raise NotImplementedError(f"Maxwell CPU fallback for {name} needs tensor lists of one length")
+    listed = {id(tensor) for index in lists for tensor in value_at(index)}
+    shared = sum(_cuda_tensor_transfer_bytes(tensor) for tensor in _cuda_tensors((args, kwargs)) if id(tensor) not in listed)
+    room = _CPU_FALLBACK_MAX_BYTES - shared
+
+    def element_bytes(position: int) -> int:
+        return sum(_cuda_tensor_transfer_bytes(value_at(index)[position]) for index in lists
+                   if _is_cuda(value_at(index)[position]))
+
+    pieces: list[list[tuple[int, int | None, int | None]]] = []   # (element, flat start, flat end)
+    current, used = [], 0
+    for position in range(count):
+        size = element_bytes(position)
+        if size <= room:
+            if used + size > room:
+                pieces.append(current)
+                current, used = [], 0
+            current.append((position, None, None))
+            used += size
+            continue
+        tensors = [value_at(index)[position] for index in lists]
+        if (name in _FOREACH_REDUCTIONS or any(not tensor.is_contiguous() for tensor in tensors)
+                or len({tensor.numel() for tensor in tensors}) != 1):
+            raise NotImplementedError(f"Maxwell CPU fallback for {name} is limited to 64 MiB of CUDA inputs")
+        if current:
+            pieces.append(current)
+            current, used = [], 0
+        numel = tensors[0].numel()
+        step = max(1, room // max(1, sum(tensor.element_size() for tensor in tensors)))
+        pieces.extend([(position, start, min(numel, start + step))] for start in range(0, numel, step))
+    if current:
+        pieces.append(current)
+
+    results: list[list[Any]] = [[] for _ in range(count)]
+    for piece in pieces:
+        call = list(args) + [None] * max(0, len(names) - len(args))
+        call_kwargs = dict(kwargs)
+        for index, kind in enumerate(kinds):
+            if index not in lists and index not in scalar_lists and index not in per_element:
+                continue
+            value = value_at(index)
+            if value is None:
+                continue
+            if index in lists:
+                part = [value[p] if start is None else value[p].reshape(-1)[start:end] for p, start, end in piece]
+            elif index in scalar_lists:
+                part = [value[p] for p, _, _ in piece]
+            else:
+                # A piece covers consecutive elements, so its scalars are a slice (a view, no kernel).
+                part = value[piece[0][0]:piece[-1][0] + 1] if value.dim() else value
+            if index < len(args):
+                call[index] = part
+            else:
+                call_kwargs[names[index]] = part
+        call = tuple(call[:len(args)])
+        if inplace:
+            _inplace_on_cpu(operation, name, call, call_kwargs, schema)
+            continue
+        out = _cpu_fallback(operation, name)(*call, **call_kwargs)
+        for (p, start, end), tensor in zip(piece, out, strict=True):
+            results[p].append((start, end, tensor))
+    _dispatch_state.last_path = f"cpu-fallback-pieces-{name}"
+    if inplace:
+        written = _written_arguments(schema) or [0]
+        return None if not schema.returns else value_at(written[0])
+    assembled = []
+    for position, parts in enumerate(results):
+        if len(parts) == 1 and parts[0][0] is None:
+            assembled.append(parts[0][2])
+            continue
+        model = value_at(lists[0])[position]
+        whole = torch.empty(model.numel(), dtype=parts[0][2].dtype, device=parts[0][2].device)
+        for start, end, tensor in parts:
+            whole[start:end].copy_(tensor.reshape(-1))   # same dtype, same device: a plain memory copy
+        assembled.append(whole.view(model.shape))
+    return assembled
+
+
+def _over_fallback_limit(args: tuple, kwargs: dict) -> bool:
+    try:
+        return sum(_cuda_tensor_transfer_bytes(tensor) for tensor in _cuda_tensors((args, kwargs))) > _CPU_FALLBACK_MAX_BYTES
+    except NotImplementedError:
+        return False
+
+
 class _MaxwellInferenceFallback(TorchDispatchMode):
     def __torch_dispatch__(self, operation, types, args=(), kwargs=None):
         kwargs = kwargs or {}
@@ -1008,6 +1152,12 @@ class _MaxwellInferenceFallback(TorchDispatchMode):
         except Exception as exc:
             if not _is_architecture_failure(exc):
                 raise
+            if name.startswith("aten::_foreach_") and schema is not None and _over_fallback_limit(args, kwargs):
+                try:
+                    return _foreach_in_pieces(operation, name, args, kwargs, schema, _writes_only_self(schema))
+                except NotImplementedError as error:
+                    unrouted.record(name, error)
+                    raise error from exc
             if _writes_only_self(schema):
                 try:
                     return _inplace_on_cpu(operation, name, args, kwargs)
