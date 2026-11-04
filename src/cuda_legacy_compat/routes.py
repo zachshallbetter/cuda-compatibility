@@ -43,7 +43,9 @@ NOTES = (
     "builds it on the CPU and copies it over, within the 64 MiB output limit. Random values come from the CPU "
     "generator: torch.manual_seed keeps them reproducible, but they differ from a GPU that has kernels.",
     "First-order gradients and SGD are verified only for a small float32 linear -> ReLU -> sum workload.",
-    "Mutating and alias-returning operators fail closed, except the float32 add_ path.",
+    "In-place operators that update only their target (x += 1, mul_, zero_, fill_, x[i] = v, relu_, "
+    "nn.ReLU(inplace=True)) run on a CPU copy and are copied back, within the 64 MiB limit, when the target is "
+    "contiguous. Other mutating or alias-returning operators, and in-place updates of strided views, fail closed.",
 )
 
 

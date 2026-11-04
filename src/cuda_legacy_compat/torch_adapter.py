@@ -275,7 +275,7 @@ def _add_inplace(
     self: torch.Tensor, other: torch.Tensor, *, alpha: int | float = 1
 ) -> torch.Tensor:
     if not isinstance(other, torch.Tensor):
-        raise NotImplementedError("Maxwell in-place addition does not support scalar operands")
+        return _inplace_on_cpu(torch.ops.aten.add_.Tensor, "add_", (self, other), {"alpha": alpha})
     if torch.is_grad_enabled() and (self.requires_grad or other.requires_grad):
         raise NotImplementedError(
             "Maxwell in-place addition does not implement autograd; optimizer updates require no_grad"
@@ -289,12 +289,9 @@ def _add_inplace(
         or self.shape != other.shape
         or not self.is_contiguous()
         or not other.is_contiguous()
-    ):
-        raise NotImplementedError(
-            "Maxwell in-place addition supports same-shape contiguous float32 CUDA tensors"
-        )
-    if self.numel() > 1048576:
-        raise NotImplementedError("Maxwell in-place addition is limited to 1,048,576 elements")
+    ) or self.numel() > 1048576:
+        # No Maxwell kernel for this case: compute on the CPU and write the result back.
+        return _inplace_on_cpu(torch.ops.aten.add_.Tensor, "add_", (self, other), {"alpha": alpha})
     left_start = self.data_ptr()
     right_start = other.data_ptr()
     byte_count = self.numel() * self.element_size()
@@ -788,6 +785,57 @@ def _is_architecture_failure(error: Exception) -> bool:
     )
 
 
+def _is_cuda(tensor: torch.Tensor) -> bool:
+    return tensor.is_cuda
+
+
+def _writes_only_self(schema) -> bool:
+    """True for an in-place operator: it writes its first argument, nothing else, and returns it."""
+    if schema is None or not schema.arguments or not schema.returns:
+        return False
+    first = schema.arguments[0].alias_info
+    if first is None or not first.is_write:
+        return False
+    if any(argument.alias_info is not None and argument.alias_info.is_write for argument in schema.arguments[1:]):
+        return False
+    return all(result.alias_info is not None and result.alias_info.before_set == first.before_set
+               for result in schema.returns)
+
+
+def _inplace_on_cpu(operation, name: str, args: tuple, kwargs: dict) -> torch.Tensor:
+    """Run an in-place operator on a CPU copy of its CUDA target and copy the result back into the target."""
+    target = args[0]
+    if not isinstance(target, torch.Tensor) or not _is_cuda(target):
+        raise NotImplementedError(f"Maxwell in-place fallback for {name} requires a CUDA target tensor")
+    if target.layout != torch.strided or not target.is_contiguous():
+        raise NotImplementedError(f"Maxwell in-place fallback for {name} requires a contiguous target")
+    tensors = _tensor_inputs((args, kwargs))
+    cuda_tensors = [tensor for tensor in tensors if _is_cuda(tensor)]
+    if len({tensor.device for tensor in cuda_tensors}) != 1:
+        raise NotImplementedError(f"Maxwell in-place fallback for {name} requires tensors from one CUDA device")
+    if sum(_cuda_tensor_transfer_bytes(tensor) for tensor in cuda_tensors) > _CPU_FALLBACK_MAX_BYTES:
+        raise NotImplementedError(f"Maxwell in-place fallback for {name} is limited to 64 MiB of CUDA inputs")
+
+    def move_to_cpu(value: Any) -> Any:
+        if isinstance(value, torch.Tensor):
+            return _cuda_tensor_to_cpu(value) if _is_cuda(value) else value
+        if isinstance(value, (tuple, list)):
+            return type(value)(move_to_cpu(item) for item in value)
+        if isinstance(value, Mapping):
+            return {key: move_to_cpu(item) for key, item in value.items()}
+        return value
+
+    cpu_args, cpu_kwargs = move_to_cpu(args), move_to_cpu(kwargs)
+    operation(*cpu_args, **cpu_kwargs)
+    if cpu_args[0].shape != target.shape or cpu_args[0].dtype != target.dtype:
+        # Operators such as resize_ or transpose_ change metadata, not values; those cannot be copied back.
+        raise NotImplementedError(f"Maxwell in-place fallback for {name} only supports value updates")
+    # A same-dtype copy from host memory into a contiguous CUDA tensor is a plain memory copy, no kernel.
+    target.copy_(cpu_args[0])
+    _dispatch_state.last_path = f"cpu-fallback-inplace-{name}"
+    return target
+
+
 def _factory_on_cpu(operation, schema, name: str, args: tuple, kwargs: dict) -> Any:
     """Build a CUDA factory's result on the CPU and copy it to its device, or None when it is not a factory."""
     device = kwargs.get("device")
@@ -833,6 +881,12 @@ class _MaxwellInferenceFallback(TorchDispatchMode):
         except Exception as exc:
             if not _is_architecture_failure(exc):
                 raise
+            if _writes_only_self(schema):
+                try:
+                    return _inplace_on_cpu(operation, name, args, kwargs)
+                except NotImplementedError as error:
+                    unrouted.record(name, error)
+                    raise error from exc
             if schema is not None and (
                 schema.is_mutable
                 or any(result.alias_info is not None for result in schema.returns)
