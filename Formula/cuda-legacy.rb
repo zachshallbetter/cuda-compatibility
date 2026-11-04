@@ -6,8 +6,8 @@ class CudaLegacy < Formula
 
   desc "Inspect and adapt newer CUDA workloads for older NVIDIA GPUs"
   homepage "https://cudacompat.com/"
-  url "https://github.com/zachshallbetter/cuda-compatibility/archive/refs/tags/v0.2.16.tar.gz"
-  sha256 "70e0f9bbe3a2fbabf2809b58914b80af503aa3d177a72d6f7d9eaee3bda936c6"
+  url "https://github.com/zachshallbetter/cuda-compatibility/archive/refs/tags/v0.2.17.tar.gz"
+  sha256 "f254068bebf341b5d64ef204113163880e260adaf608d4d89467755935b598a1"
   license any_of: ["MIT", "Apache-2.0"]
   head "https://github.com/zachshallbetter/cuda-compatibility.git", branch: "main"
 
