@@ -91,9 +91,9 @@ GPU, sm_52
 
 Experimental
 
-### CPU fallback and a training slice
+### CPU fallback and everyday training
 
-Selected CPU fallbacks preserve first-order gradients for a tested linear → ReLU → sum path. A small SGD update runs through a native float32 in-place add kernel. Each fallback is limited to 64 MiB of inputs and 64 MiB of outputs.
+Selected CPU fallbacks keep first-order gradients. Small MLPs with SGD, Adam or AdamW and a BatchNorm CNN train with parameters matching the CPU, and tensors created with device="cuda" and simple in-place updates work. Each fallback is limited to 64 MiB of inputs and 64 MiB of outputs. Transformer and LayerNorm training is not supported yet.
 
 - **Training evidence** 2×2 linear, 7 SGD steps, GPUs 1 and 2
 - **Median step latency** 2.360 ms on GPU 2, 7.296 ms on GPU 1
@@ -146,7 +146,7 @@ Operation / CPU implementation
 
 These use PyTorch’s CPU implementation with differentiable host and device transfers on selected first-order gradient paths. The dispatcher can also retry eligible out-of-place operations after recognized missing-image, architecture-mismatch, or cuDNN no-engine errors.
 
-Fallback requires one CUDA device. Training evidence is limited to linear → ReLU → sum with float32 SGD (foreach=False); other autograd and optimizer paths are unverified.
+Fallback requires one CUDA device. Training evidence covers small MLPs (SGD, momentum SGD, Adam, AdamW) and a Conv2d/BatchNorm2d CNN; Transformer and LayerNorm training, AMP and higher-order gradients are unverified.
 
 ### Scope
 
@@ -508,7 +508,7 @@ The current target is useful, bounded PyTorch CUDA 13 execution on Linux x86_64 
 
 Native or verified Experimental or bounded Contradicted, observation kept Not supported or not verified
 
-By Zach Shallbetter · Sheet 04 of 10 · Updated 3 November 2026
+By Zach Shallbetter · Sheet 04 of 10 · Updated 4 November 2026
 
 ## Native GPU implementations
 sm_52 kernel
@@ -523,7 +523,7 @@ These 8 registered cases cover 6 operation families (addition, range creation, e
 | 04 | Range creation | CUDA int64 arange, up to 1,048,576 values. |
 | 05 | Embedding | Inference only. Contiguous float32 weight, int64 CUDA indices in 1D or 2D, and up to 1,048,576 output values. |
 | 06 | Layer normalization | Inference only. Contiguous float32 input normalized over the last dimension with contiguous float32 weight and bias; up to 1,048,576 values. |
-| 07 | Matrix multiplication | 2D float32 matrices with nonnegative strides; each dimension at most 256 and at most 16,777,216 multiply-accumulate steps. |
+| 07 | Matrix multiplication | 2D float32 matrices with nonnegative strides; each dimension at most 256 and at most 16,777,216 multiply-accumulate steps. Larger inputs are refused, not sent to the CPU. |
 | 08 | ReLU | Contiguous float32 tensors up to 1,048,576 values. |
 
 Native forward kernels do not record autograd formulas. For grad-enabled inputs, eligible operations use the differentiable CPU transfer path; unsupported backward operators still fail explicitly.
@@ -533,20 +533,23 @@ Bounded autograd
 
 These 11 registered fallback routes, plus the CPU path that addition takes outside its native limits, use PyTorch’s CPU implementation and copy results back to the original CUDA device:
 
-- linear and bmm
+- linear and bmm (batched matrix multiplication)
 - softmax and scaled_dot_product_attention
-- GELU
-- addition, multiplication, and division
-- sum and clamp_min
-- concatenation and contiguous copies
+- gelu
+- mul and div, with addition outside its native limits
+- sum over dimensions and clamp_min
+- cat (concatenation) and contiguous copies
 
 Limits
 
-- First-order gradient and SGD training are experimentally verified only for a small float32 linear → ReLU → sum workload, with foreach=False, on GPUs 1 and 2.
+- Training is verified against the CPU, with matching parameters, for small Linear/GELU MLPs with SGD, momentum SGD, Adam and AdamW (their default foreach updates included) and for a Conv2d → BatchNorm2d → MaxPool CNN with momentum SGD. CLC-146-training-workflows-reference-host
+- cuDNN is switched off while the adapter is active: the CUDA 13 wheels' cuDNN has no Maxwell support, so convolution and normalization use PyTorch's own kernels and the CPU fallback.
+- layer_norm, scaled_dot_product_attention and contiguous run only without autograd, so training a Transformer or anything with LayerNorm stops with one plain error; inference works (#148).
 - Seven steps measured 2.360 ms median latency on GPU 2 and 7.296 ms on GPU 1, with 67,180,032 bytes peak allocated on each; timing includes CPU fallback and synchronization and is not representative performance.
 - One CUDA device per fallback operation.
 - Maximum 64 MiB of CUDA input transfers and 64 MiB of output per operation.
-- Mutating and alias-returning operators fail closed except the registered float32 add_ path.
+- In-place operators that update only a contiguous target (x += 1, mul_, zero_, fill_, x[i] = v, relu_, nn.ReLU(inplace=True)) run on a CPU copy and are copied back. In-place updates of strided views and alias-returning operators still fail closed (#155). CLC-inplace-fallback-reference-host
+- Creating a tensor directly on the GPU (torch.zeros, ones, full, rand, randn, eye and similar with device="cuda") builds it on the CPU and copies it over. Random values come from the CPU generator: torch.manual_seed keeps them reproducible, but they differ from a GPU that has kernels. CLC-113-factory-fallback-reference-host
 
 The dispatcher may retry eligible out-of-place operations after recognized missing-image, architecture-mismatch, cuDNN no-engine, or missing CUDA-kernel errors. A fallback is rejected if it cannot preserve the operator’s semantics.
 
@@ -572,7 +575,7 @@ D2 Stock float32 torch.relu on the same wheel reports no kernel image for the de
 
 CLC-009-stock-relu-no-kernel-image
 
-General CUDA 13 APIs, arbitrary prebuilt binaries, broad cuDNN, cuBLAS, NCCL, or Triton coverage, arbitrary models or optimizers, higher-order gradients, AMP, mixed visible architectures, other compute capabilities, performance parity, and machine-wide interposition are not established. Only the documented first-order training slice has been validated, on broker-selected GPUs 1 and 2.
+General CUDA 13 APIs, arbitrary prebuilt binaries, broad cuDNN, cuBLAS, NCCL, or Triton coverage, arbitrary models or optimizers, higher-order gradients (#154), AMP training (#153), mixed visible architectures, other compute capabilities, performance parity, and machine-wide interposition are not established. Only the training workloads listed in section B have been validated, on broker-selected GPUs 1 and 2. Re-running the two contradicted probes on each new wheel is tracked in #152.
 
 Sources: PyTorch 2.14 release matrix, CUDA 13 release notes, project architecture record.
 
@@ -591,7 +594,7 @@ Source: https://cudacompat.com/docs/architecture.html
 
 The adapter has four boundaries. Each keeps the actual GPU visible and routes only operations with an implementation.
 
-By Zach Shallbetter · Sheet 05 of 10 · Updated 3 November 2026
+By Zach Shallbetter · Sheet 05 of 10 · Updated 4 November 2026
 
 ## Compatibility path
 
@@ -639,9 +642,9 @@ Native operator registrations cover selected addition, range creation, embedding
 
 ### CPU fallback and training
 
-For selected operations, PyTorch executes on CPU after a known compatibility failure or a direct fallback registration. Grad-enabled tensors use differentiable framework transfers, and the verified first-order backward path computes the small linear workload on CPU. A separate float32 in-place Maxwell add implements the tested SGD update.
+For selected operations, PyTorch executes on CPU after a known compatibility failure or a direct fallback registration. Grad-enabled tensors use differentiable framework transfers, and first-order backward runs on CPU. cuDNN is switched off under the adapter, optimizer foreach updates and simple in-place operators run on a CPU copy that is copied back, and tensors created on the GPU are built on CPU.
 
-Fallback requires one CUDA device and the 64 MiB input and output limits. Mutating and alias-returning operations fail closed except the bounded float32 add_ route. Training evidence is limited to a 2×2 linear → ReLU → sum model and seven SGD steps on GPUs 1 and 2; arbitrary backward graphs and optimizers remain unverified.
+Fallback requires one CUDA device and the 64 MiB input and output limits. In-place updates of strided views and alias-returning operations fail closed. Training evidence covers small MLPs with SGD, momentum SGD, Adam and AdamW and a Conv2d/BatchNorm2d CNN on GPUs 1 and 2; Transformer and LayerNorm training and arbitrary backward graphs remain unverified.
 
 ### CUDA API and library boundaries
 
@@ -743,7 +746,7 @@ Source: https://cudacompat.com/docs/research.html
 
 This sheet reports implementation and test evidence with its limits. It does not claim a CUDA 13 conformance certification, general PyTorch support, or real-world search visibility.
 
-By Zach Shallbetter · Sheet 07 of 10 · Updated 3 November 2026
+By Zach Shallbetter · Sheet 07 of 10 · Updated 4 November 2026
 
 ## Research papers
 
@@ -802,7 +805,7 @@ Records in the repository
 Not established
 
 - No general CUDA 13 runtime or API replacement or binary translator.
-- Only one small first-order float32 linear → ReLU → sum workload with seven non-foreach SGD steps is verified on GPUs 1 and 2; arbitrary autograd graphs and optimizers remain unverified.
+- Training is verified only for small MLPs (SGD, momentum SGD, Adam, AdamW) and a Conv2d/BatchNorm2d CNN on GPUs 1 and 2; Transformer and LayerNorm training, AMP, higher-order gradients and arbitrary autograd graphs remain unverified.
 - CUDA Runtime, cuBLAS/cuBLASLt, NVRTC, cuDNN, NCCL, PyTorch CUDA, the Driver API, and R580 library paths were observed in a bounded process-map probe; broad symbol and API compatibility is not established.
 - The seven-step diagnostic measured 2.360 ms median end-to-end latency on GPU 2 and 7.296 ms on GPU 1, with 67,180,032 bytes peak allocated on each; this tiny workload does not predict application performance.
 - Candidate GPU models remain unverified unless specifically identified as reference hardware.

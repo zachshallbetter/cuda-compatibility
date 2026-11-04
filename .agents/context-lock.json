@@ -6,7 +6,7 @@
   "selectedPaths": [],
   "sourceSelection": {
     "includedCount": 268,
-    "includedBytes": 2717630,
+    "includedBytes": 2721552,
     "excludedCounts": {
       "extension": 65,
       "generated-or-transient-file": 2
@@ -18,14 +18,14 @@
     "repositories": [
       {
         "path": ".",
-        "commit": "75853c6d5c3d908c659e84ae309c7e99900ffbcb",
-        "branch": "chore/repin-0.2.4",
-        "dirty": true,
+        "commit": "097749e9ad73d14cce2407398f04cebbb0a00a39",
+        "branch": "docs/compat-sheet-current",
+        "dirty": false,
         "remote": "https://github.com/zachshallbetter/cuda-compatibility.git"
       }
     ]
   },
-  "aggregateSourceDigest": "e653b9cb5443bcd48908413c265e2977ab427300569e51c80ea8ff72b2ae0637",
+  "aggregateSourceDigest": "706d268f74b1fca16e688e35ad6737ef007e3f3aa4a9a447967c7ba8ee520e45",
   "sources": [
     {
       "path": ".agents/acp/README.md",
@@ -715,7 +715,7 @@
     {
       "path": "content/pages.json",
       "bytes": 10808,
-      "sha256": "404a8a45768b4dff7281ad7cba4a2b354502ab95b8ed5c490d60171d6b02a727"
+      "sha256": "6a6b2ca22cb669246482b7b75a6540285ac94db6c780733515ec494c09c78d3b"
     },
     {
       "path": "docs/DPP_IMPLEMENTATION.md",
@@ -879,8 +879,8 @@
     },
     {
       "path": "docs/user-guide.md",
-      "bytes": 15286,
-      "sha256": "ab56f23ab096bc4555030e567776e608224ac133fe93e9ec18ca218282b59e42"
+      "bytes": 15332,
+      "sha256": "2963d5c55fbe47939a4f05f26eb6efed494bf08a7cc75dd06cd17c6c0a06b339"
     },
     {
       "path": "examples/dpp/availability-2026-11-03.json",
@@ -1089,48 +1089,48 @@
     },
     {
       "path": "site/docs/architecture.html",
-      "bytes": 23924,
-      "sha256": "d90abe7f7c4361edfc1adf76c65f336f1a76446f011599a7fe4abd8c67445cfb"
+      "bytes": 24013,
+      "sha256": "903b7825c7c5c7305300492f85dd2a62b42c76c8636e39fc23fea75aefc33a5a"
     },
     {
       "path": "site/docs/cli.html",
       "bytes": 22027,
-      "sha256": "7ca67f9da2a90da9cbaa33a9dc999a20bccaff894d429da11d84f0e2f77e5c4e"
+      "sha256": "f2014b397e435a8391cd1f343c648851e549b96d7d5e3f5ed0a57b26ae8735e7"
     },
     {
       "path": "site/docs/compatibility.html",
-      "bytes": 26358,
-      "sha256": "787976e2ad04128eeddec5a84e0c7732af3a36e0a3f7b257689b670e85f61280"
+      "bytes": 28771,
+      "sha256": "7e617f6fe1e42fcd306c4d9d27b9f9899c4495588b218f6d19ce55db474f7bcc"
     },
     {
       "path": "site/docs/discovery.html",
       "bytes": 25347,
-      "sha256": "b14148501ad633066db708afe503a3eecb5a951c0230289e1466f50ed29b31fb"
+      "sha256": "ee3eed0a912bc80e489b3df5272f305233ca869ad8a173476ea0bd8538642e32"
     },
     {
       "path": "site/docs/getting-started.html",
       "bytes": 24383,
-      "sha256": "8ee9a5a590f241de48bd43d4a4b06a098e20044e4e1edf9ecf6baf1c44f40a66"
+      "sha256": "821f1f309439a70fe681ad1b80ac9f9faa752dfe36facc0ce0cd379beb7459a5"
     },
     {
       "path": "site/docs/index.html",
       "bytes": 20849,
-      "sha256": "a931192555b3bf83c9ae3088e96438cc9c15161a8689eb339fc86856bbbd2077"
+      "sha256": "770a7c306662c6f60f8e1c382203ff1b156e8896d3918d8dee6378b806006b37"
     },
     {
       "path": "site/docs/privacy.html",
       "bytes": 26846,
-      "sha256": "c3859f508875c8c97b0804a7d8f07bef70f27fc28af9c757cf59fe4b9bd9ede4"
+      "sha256": "1dce6a7033e85fde234a3b9637c0f79e85a160a408db81dbd4ae88e870bd5d0a"
     },
     {
       "path": "site/docs/research.html",
-      "bytes": 37327,
-      "sha256": "d3297a58733aa1fa524dd84f1250122c1d7db49c86af950e9a8d1328f76a4a2c"
+      "bytes": 37370,
+      "sha256": "21ffbb9c80e5f7ce34a5510441f7f001432238de43c8ca2d3a1443e1f9b5379a"
     },
     {
       "path": "site/gpu-catalog.html",
       "bytes": 28749,
-      "sha256": "5f86615b04e0984490fa3599800cf7de082f80b2d12dac72b2ac5f5aea1a1621"
+      "sha256": "bc29763bb57ee241f4d369870043092731fcbb28cb477317663b4ceed783514c"
     },
     {
       "path": "site/home.css",
@@ -1144,8 +1144,8 @@
     },
     {
       "path": "site/index.html",
-      "bytes": 54364,
-      "sha256": "11d80e138f225a975798dbf2a043cc954c5bb92cb7c2de351da17626aaa28983"
+      "bytes": 54515,
+      "sha256": "6fcb85302c730b90784bdf21a92a7be6a291dec29c8db9f82643ac09a97fbf54"
     },
     {
       "path": "site/install.sh",
@@ -1329,8 +1329,8 @@
     },
     {
       "path": "tests/test_routes.py",
-      "bytes": 1846,
-      "sha256": "810cbf439bdf892eeff726c1d6a93f9f1d0087fcbbef242082e045be9a154171"
+      "bytes": 3026,
+      "sha256": "a0ef024e2eb9e7e298b1d0e2d67a69a6b8affbcda00f059a7198989e41ddff32"
     },
     {
       "path": "tests/test_setup.py",

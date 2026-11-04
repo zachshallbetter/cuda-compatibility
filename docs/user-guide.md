@@ -126,7 +126,7 @@ All listed model outputs matched CPU references at the tolerances recorded in th
 | GPU architecture unsupported | The current adapter accepts only visible `sm_52` devices. | On a mixed-GPU host, set numeric `CUDA_VISIBLE_DEVICES` indices for only the supported cards before both `doctor` and `run`; the tool does not spoof compute capability. |
 | `audit` returns `unknown` | The machine could not supply one or more facts required by the package profile. | Read the JSON `issues` and resolve the missing inventory; do not treat unknown as compatible. |
 | PyTorch reports no kernel image / architecture mismatch | The wheel lacks an image for that operation, and the adapter has no compatible path for it. When this ends the script, `run` prints one line after the traceback naming the operation, for example `aten::ones`. | Check whether the operation is covered by the evidence; otherwise it remains unsupported. To ask for it, file a reproduction report with that operation name. |
-| CPU fallback exceeds 64 MiB | The fallback safety/behavior boundary was reached. | Reduce the operation's input size or use a supported native path. Other than the documented training slice, autograd may remain unsupported. |
+| CPU fallback exceeds 64 MiB | The fallback safety/behavior boundary was reached. | Reduce the operation's input size or use a supported native path. Training is verified only for the workloads listed on the compatibility sheet; other autograd graphs may be unsupported. |
 
 Use `cuda-legacy help`, `cuda-legacy help <command>`, or `<command> --help` for command syntax. Report bugs with the command, environment versions, exact failing operation, and a small reproducer; do not include model weights, secrets, or private input data.
 

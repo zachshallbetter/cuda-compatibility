@@ -168,8 +168,8 @@
 <div style="display:flex;flex-direction:column;gap:10px;align-items:center"><span class="balloon" aria-hidden="true">4</span><svg class="glyph" role="img" aria-label="CPU fallback" viewBox="0 0 44 44" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="4" y="4" width="18" height="18"></rect><path d="M22 13h12v27M28 34l6 6 6-6"></path><path d="M9 9h8v8H9z" fill="currentColor" stroke="none"></path></svg></div>
 <span><span class="state exp"><i class="sw half" aria-hidden="true" style="width:10px;height:10px;margin-right:7px;"></i>Experimental</span></span>
 <div style="display:flex;flex-direction:column;gap:10px">
-<h3 style="font-size:26px">CPU fallback and a training slice</h3>
-<p style="margin:0">Selected CPU fallbacks preserve first-order gradients for a tested linear → ReLU → sum path. A small SGD update runs through a native float32 in-place add kernel. Each fallback is limited to 64 MiB of inputs and 64 MiB of outputs.</p>
+<h3 style="font-size:26px">CPU fallback and everyday training</h3>
+<p style="margin:0">Selected CPU fallbacks keep first-order gradients. Small MLPs with SGD, Adam or AdamW and a BatchNorm CNN train with parameters matching the CPU, and tensors created with <code>device="cuda"</code> and simple in-place updates work. Each fallback is limited to 64 MiB of inputs and 64 MiB of outputs. Transformer and LayerNorm training is not supported yet.</p>
 <dl class="ledger" style="margin-top:8px;max-width:640px;border-top:1px solid currentColor">
 <dt class="mute">Training evidence</dt><dd>2×2 linear, 7 SGD steps, GPUs 1 and 2</dd>
 <dt class="mute">Median step latency</dt><dd>2.360 ms on GPU 2, 7.296 ms on GPU 1</dd>
@@ -226,7 +226,7 @@
 <li><strong>Layout</strong><span class="soft"><code>concatenate</code>, <code>contiguous</code></span></li>
 </ul>
 <p style="margin:0;font-size:15px">These use PyTorch’s CPU implementation with differentiable host and device transfers on selected first-order gradient paths. The dispatcher can also retry eligible out-of-place operations after recognized missing-image, architecture-mismatch, or cuDNN no-engine errors.</p>
-<p class="mute" style="margin:0;font-size:15px">Fallback requires one CUDA device. Training evidence is limited to linear → ReLU → sum with float32 SGD (<code>foreach=False</code>); other autograd and optimizer paths are unverified.</p>
+<p class="mute" style="margin:0;font-size:15px">Fallback requires one CUDA device. Training evidence covers small MLPs (SGD, momentum SGD, Adam, AdamW) and a Conv2d/BatchNorm2d CNN; Transformer and LayerNorm training, AMP and higher-order gradients are unverified.</p>
 </div>
 </div>
 

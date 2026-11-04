@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
-  <url><loc>https://cudacompat.com/</loc><lastmod>2026-11-03</lastmod><image:image><image:loc>https://cudacompat.com/assets/social-card.png</image:loc></image:image></url>
-  <url><loc>https://cudacompat.com/docs/</loc><lastmod>2026-11-03</lastmod><image:image><image:loc>https://cudacompat.com/assets/social/docs.png</image:loc></image:image></url>
-  <url><loc>https://cudacompat.com/docs/getting-started.html</loc><lastmod>2026-11-03</lastmod><image:image><image:loc>https://cudacompat.com/assets/social/getting-started.png</image:loc></image:image></url>
-  <url><loc>https://cudacompat.com/docs/compatibility.html</loc><lastmod>2026-11-03</lastmod><image:image><image:loc>https://cudacompat.com/assets/social/compatibility.png</image:loc></image:image></url>
-  <url><loc>https://cudacompat.com/docs/architecture.html</loc><lastmod>2026-11-03</lastmod><image:image><image:loc>https://cudacompat.com/assets/social/architecture.png</image:loc></image:image></url>
-  <url><loc>https://cudacompat.com/docs/cli.html</loc><lastmod>2026-11-03</lastmod><image:image><image:loc>https://cudacompat.com/assets/social/cli.png</image:loc></image:image></url>
-  <url><loc>https://cudacompat.com/docs/research.html</loc><lastmod>2026-11-03</lastmod><image:image><image:loc>https://cudacompat.com/assets/social/research.png</image:loc></image:image></url>
-  <url><loc>https://cudacompat.com/gpu-catalog.html</loc><lastmod>2026-11-03</lastmod><image:image><image:loc>https://cudacompat.com/assets/social/gpu-catalog.png</image:loc></image:image></url>
-  <url><loc>https://cudacompat.com/docs/discovery.html</loc><lastmod>2026-11-03</lastmod><image:image><image:loc>https://cudacompat.com/assets/social/discovery.png</image:loc></image:image></url>
-  <url><loc>https://cudacompat.com/docs/privacy.html</loc><lastmod>2026-11-03</lastmod><image:image><image:loc>https://cudacompat.com/assets/social/privacy.png</image:loc></image:image></url>
+  <url><loc>https://cudacompat.com/</loc><lastmod>2026-11-04</lastmod><image:image><image:loc>https://cudacompat.com/assets/social-card.png</image:loc></image:image></url>
+  <url><loc>https://cudacompat.com/docs/</loc><lastmod>2026-11-04</lastmod><image:image><image:loc>https://cudacompat.com/assets/social/docs.png</image:loc></image:image></url>
+  <url><loc>https://cudacompat.com/docs/getting-started.html</loc><lastmod>2026-11-04</lastmod><image:image><image:loc>https://cudacompat.com/assets/social/getting-started.png</image:loc></image:image></url>
+  <url><loc>https://cudacompat.com/docs/compatibility.html</loc><lastmod>2026-11-04</lastmod><image:image><image:loc>https://cudacompat.com/assets/social/compatibility.png</image:loc></image:image></url>
+  <url><loc>https://cudacompat.com/docs/architecture.html</loc><lastmod>2026-11-04</lastmod><image:image><image:loc>https://cudacompat.com/assets/social/architecture.png</image:loc></image:image></url>
+  <url><loc>https://cudacompat.com/docs/cli.html</loc><lastmod>2026-11-04</lastmod><image:image><image:loc>https://cudacompat.com/assets/social/cli.png</image:loc></image:image></url>
+  <url><loc>https://cudacompat.com/docs/research.html</loc><lastmod>2026-11-04</lastmod><image:image><image:loc>https://cudacompat.com/assets/social/research.png</image:loc></image:image></url>
+  <url><loc>https://cudacompat.com/gpu-catalog.html</loc><lastmod>2026-11-04</lastmod><image:image><image:loc>https://cudacompat.com/assets/social/gpu-catalog.png</image:loc></image:image></url>
+  <url><loc>https://cudacompat.com/docs/discovery.html</loc><lastmod>2026-11-04</lastmod><image:image><image:loc>https://cudacompat.com/assets/social/discovery.png</image:loc></image:image></url>
+  <url><loc>https://cudacompat.com/docs/privacy.html</loc><lastmod>2026-11-04</lastmod><image:image><image:loc>https://cudacompat.com/assets/social/privacy.png</image:loc></image:image></url>
   <url><loc>https://cudacompat.com/research/research-program.html</loc><lastmod>2026-11-03</lastmod><image:image><image:loc>https://cudacompat.com/assets/social/research-program.png</image:loc></image:image></url>
   <url><loc>https://cudacompat.com/research/maxwell-baseline.html</loc><lastmod>2026-11-01</lastmod><image:image><image:loc>https://cudacompat.com/assets/social/maxwell-baseline.png</image:loc></image:image></url>
   <url><loc>https://cudacompat.com/research/llvm-nvptx.html</loc><lastmod>2026-11-01</lastmod><image:image><image:loc>https://cudacompat.com/assets/social/llvm-nvptx.png</image:loc></image:image></url>

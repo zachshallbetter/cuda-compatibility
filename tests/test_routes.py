@@ -10,6 +10,7 @@ from pathlib import Path
 from cuda_legacy_compat import cli, routes
 
 ADAPTER = Path(__file__).resolve().parents[1] / "src" / "cuda_legacy_compat" / "torch_adapter.py"
+SHEET = Path(__file__).resolve().parents[1] / "site" / "docs" / "compatibility.html"
 
 
 class RoutesTests(unittest.TestCase):
@@ -21,6 +22,22 @@ class RoutesTests(unittest.TestCase):
 
     def test_counts_match_the_published_support_matrix(self) -> None:
         self.assertEqual(len(routes.CPU_FALLBACK), 11)
+
+    def test_the_compatibility_sheet_names_every_route(self) -> None:
+        sheet = SHEET.read_text(encoding="utf-8")
+        labels = set(re.findall(r'<td class="op"[^>]*>([^<]+)</td>', sheet))
+        codes = set(re.findall(r"<code>([^<]+)</code>", sheet))
+        self.assertEqual({operation for _, operation, _ in routes.NATIVE} - labels, set())
+        self.assertEqual({name.split(".")[0].lstrip("_") for name, _ in routes.CPU_FALLBACK} - codes, set())
+        self.assertIn(f"These {len(routes.CPU_FALLBACK)} registered fallback routes", sheet)
+
+    def test_the_compatibility_sheet_states_each_general_rule(self) -> None:
+        # One phrase per routes.NOTES rule; a new rule needs a line here and on the sheet.
+        sheet = SHEET.read_text(encoding="utf-8")
+        for phrase in ("cuDNN is switched off", "<code>foreach</code>", 'device="cuda"', "<code>x += 1</code>",
+                       "run only without autograd"):
+            self.assertTrue(phrase in sheet, phrase)
+        self.assertEqual(len(routes.NOTES), 5, "routes.NOTES changed: update the sheet and this list")
 
     def test_ops_prints_both_groups_and_json(self) -> None:
         out = io.StringIO()
