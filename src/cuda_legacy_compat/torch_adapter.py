@@ -2188,6 +2188,36 @@ class _MaxwellInferenceFallback(TorchDispatchMode):
         return _cpu_fallback(_CPU_ONLY_HERE.get(name, operation), name)(*args, **kwargs)
 
 
+def _fused_by_default(params: list, defaults: dict) -> bool:
+    """Whether Adam/AdamW left to choose should take the one-launch fused step (#257): the caller passed neither
+    fused nor foreach, nothing the fused path refuses (capturable, differentiable, a tensor lr), and every
+    parameter is float32 on one CUDA device."""
+    if defaults.get("fused") is not None or defaults.get("foreach") is not None \
+            or defaults.get("capturable") or defaults.get("differentiable") or isinstance(defaults.get("lr"), torch.Tensor):
+        return False
+    tensors = [t for item in params for t in (item["params"] if isinstance(item, dict) else [item])]
+    tensors = [t[1] if isinstance(t, tuple) else t for t in tensors]
+    return bool(tensors) and all(isinstance(t, torch.Tensor) and t.is_cuda and t.dtype == torch.float32
+                                 for t in tensors) and len({t.device for t in tensors}) == 1
+
+
+def _default_adam_to_fused() -> None:
+    """Under the adapter, torch.optim.Adam and AdamW pick fused=True when the caller leaves it open (#257)."""
+    adam = torch.optim.Adam
+    if getattr(adam.__init__, "_cuda_legacy_fused_default", False):
+        return
+    original = adam.__init__
+
+    @functools.wraps(original)
+    def init(self, params, *args, **kwargs):
+        params = list(params)
+        if _fused_by_default(params, {**kwargs, "lr": args[0] if args else kwargs.get("lr")}):
+            kwargs["fused"] = True
+        original(self, params, *args, **kwargs)
+    init._cuda_legacy_fused_default = True
+    adam.__init__ = init
+
+
 def install() -> None:
     """Install the opt-in operator adapter only on a homogeneous sm_52 process."""
     global _fallback_mode, _library, _autograd_library
@@ -2261,6 +2291,7 @@ def install() -> None:
     # cuDNN in the CUDA 13 wheels has no Maxwell support and fails with CUDNN_STATUS_EXECUTION_FAILED_CUDART;
     # without it, convolution and batch norm use PyTorch's own kernels, which fall back to the CPU when missing.
     torch.backends.cudnn.enabled = False
+    _default_adam_to_fused()
     # Training through the composite overrides goes through their decompositions (with real backward formulas).
     _autograd_library = torch.library.Library("aten", "IMPL", "AutogradCUDA")
     for name in sorted(_INFERENCE_ONLY):
