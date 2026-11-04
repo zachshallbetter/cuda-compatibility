@@ -18,9 +18,9 @@
     "repositories": [
       {
         "path": ".",
-        "commit": "b633576915d73937fd51910ede4f05a67eb52e88",
+        "commit": "3e8586010b7bbbd96da85268b945d91a23681c59",
         "branch": "feat/pointwise-inplace",
-        "dirty": true,
+        "dirty": false,
         "remote": "https://github.com/zachshallbetter/cuda-compatibility.git"
       }
     ]
