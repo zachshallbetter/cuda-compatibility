@@ -45,8 +45,9 @@ NOTES = (
     "Training is verified against the CPU for small Linear/GELU MLPs with SGD, momentum SGD, Adam and AdamW "
     "(their default foreach updates included) and for a Conv2d/BatchNorm2d/MaxPool CNN with momentum SGD. "
     "cuDNN is switched off under the adapter: it has no Maxwell support in the CUDA 13 wheels.",
-    "layer_norm, scaled_dot_product_attention and contiguous run only without autograd, so training a "
-    "Transformer or anything with LayerNorm stops with a plain error; inference works.",
+    "Training through layer_norm, scaled_dot_product_attention and contiguous uses PyTorch's own "
+    "decomposition, so Transformers, attention and LayerNorm models train; attention uses the math backend. "
+    "Inference keeps the adapter's kernels for them.",
     "In-place operators that update only their target (x += 1, mul_, zero_, fill_, x[i] = v, relu_, "
     "nn.ReLU(inplace=True)) run on a CPU copy and are copied back, within the 64 MiB limit, when the target is "
     "contiguous. Other mutating or alias-returning operators, and in-place updates of strided views, fail closed.",

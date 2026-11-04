@@ -18,6 +18,7 @@ _bridge: ctypes.CDLL | None = None
 _fallback_mode: TorchDispatchMode | None = None
 _dispatch_state = threading.local()
 _CPU_FALLBACK_MAX_BYTES = 64 * 1024 * 1024
+_autograd_library: torch.library.Library | None = None
 
 
 def _load_bridge() -> tuple[ctypes.CDLL, bytes]:
@@ -684,8 +685,19 @@ _UNDECLARED_WRITES = {
 }
 
 # Overrides of CompositeImplicitAutograd operators. Autograd differentiates those through PyTorch's own
-# decomposition, so with a CUDA kernel in its place the backward pass would be silently wrong: refuse instead.
+# decomposition, so a CUDA kernel in its place has no backward: _composite_autograd sends training through the
+# decomposition, and _inference_only refuses if anything still reaches the kernel needing a gradient.
 _INFERENCE_ONLY = {"contiguous", "layer_norm", "scaled_dot_product_attention"}
+
+
+def _composite_autograd(operation) -> Callable[..., Any]:
+    """An AutogradCUDA kernel: decompose when a gradient is needed, otherwise use the CUDA override."""
+    def run(*args: Any, **kwargs: Any) -> Any:
+        if torch.is_grad_enabled() and any(tensor.requires_grad for tensor in _tensor_inputs((args, kwargs))):
+            return operation.decompose(*args, **kwargs)
+        with torch._C._AutoDispatchBelowAutograd():
+            return operation(*args, **kwargs)
+    return run
 
 
 def _inference_only(kernel: Callable[..., Any], name: str) -> Callable[..., Any]:
@@ -937,7 +949,7 @@ class _MaxwellInferenceFallback(TorchDispatchMode):
 
 def install() -> None:
     """Install the opt-in operator adapter only on a homogeneous sm_52 process."""
-    global _fallback_mode, _library
+    global _fallback_mode, _library, _autograd_library
     if _library is not None:
         return
     if not torch.cuda.is_available():
@@ -974,6 +986,15 @@ def install() -> None:
     # cuDNN in the CUDA 13 wheels has no Maxwell support and fails with CUDNN_STATUS_EXECUTION_FAILED_CUDART;
     # without it, convolution and batch norm use PyTorch's own kernels, which fall back to the CPU when missing.
     torch.backends.cudnn.enabled = False
+    # Training through the composite overrides goes through their decompositions (with real backward formulas).
+    _autograd_library = torch.library.Library("aten", "IMPL", "AutogradCUDA")
+    for name in sorted(_INFERENCE_ONLY):
+        _autograd_library.impl(name, _composite_autograd(getattr(torch.ops.aten, name).default))
+    # Attention decomposes by device: for CUDA tensors PyTorch would pick fused kernels that exist on neither
+    # Maxwell nor the CPU fallback, so only the math backend (bmm, softmax) is left on.
+    for backend in ("enable_flash_sdp", "enable_mem_efficient_sdp", "enable_cudnn_sdp"):
+        getattr(torch.backends.cuda, backend)(False)
+    torch.backends.cuda.enable_math_sdp(True)
     _fallback_mode = _MaxwellInferenceFallback()
     _fallback_mode.__enter__()
 

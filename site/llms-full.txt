@@ -544,7 +544,7 @@ Limits
 
 - Training is verified against the CPU, with matching parameters, for small Linear/GELU MLPs with SGD, momentum SGD, Adam and AdamW (their default foreach updates included) and for a Conv2d → BatchNorm2d → MaxPool CNN with momentum SGD. CLC-146-training-workflows-reference-host
 - cuDNN is switched off while the adapter is active: the CUDA 13 wheels' cuDNN has no Maxwell support, so convolution and normalization use PyTorch's own kernels and the CPU fallback.
-- layer_norm, scaled_dot_product_attention and contiguous run only without autograd, so training a Transformer or anything with LayerNorm stops with one plain error; inference works (#148).
+- Training through layer_norm, scaled_dot_product_attention and contiguous uses PyTorch's own decomposition, so Transformers, attention and LayerNorm models train, with attention on the math backend; inference keeps the adapter's kernels (#148). A TransformerEncoderLayer matched a CPU copy to 1.5×10⁻⁸ in its first-step gradients.
 - Seven steps measured 2.360 ms median latency on GPU 2 and 7.296 ms on GPU 1, with 67,180,032 bytes peak allocated on each; timing includes CPU fallback and synchronization and is not representative performance.
 - One CUDA device per fallback operation.
 - Maximum 64 MiB of CUDA input transfers and 64 MiB of output per operation.

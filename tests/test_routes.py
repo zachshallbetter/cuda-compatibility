@@ -35,7 +35,7 @@ class RoutesTests(unittest.TestCase):
         # One phrase per routes.NOTES rule; a new rule needs a line here and on the sheet.
         sheet = SHEET.read_text(encoding="utf-8")
         for phrase in ("cuDNN is switched off", "<code>foreach</code>", 'device="cuda"', "<code>x += 1</code>",
-                       "run only without autograd"):
+                       "PyTorch's own decomposition"):
             self.assertTrue(phrase in sheet, phrase)
         self.assertEqual(len(routes.NOTES), 5, "routes.NOTES changed: update the sheet and this list")
 
