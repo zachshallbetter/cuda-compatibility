@@ -6,7 +6,7 @@
   "selectedPaths": [],
   "sourceSelection": {
     "includedCount": 274,
-    "includedBytes": 2765592,
+    "includedBytes": 2769383,
     "excludedCounts": {
       "extension": 65,
       "generated-or-transient-file": 2
@@ -18,14 +18,14 @@
     "repositories": [
       {
         "path": ".",
-        "commit": "a8c04f63aa01d6c6e0190f6b1f8b385ca5d843bd",
+        "commit": "fdf9b6bb8b4fa8bbb278b3813d332735cd8e4631",
         "branch": "feat/real-size-models",
         "dirty": true,
         "remote": "https://github.com/zachshallbetter/cuda-compatibility.git"
       }
     ]
   },
-  "aggregateSourceDigest": "e85267db69c38750260da2f41e15b24d74f70a7dba303f2f4ac6ae8ee910c9ea",
+  "aggregateSourceDigest": "07f6a7acbb2e044ce15d6058711edabe65aefd7d5a03910cf7d666f3bab659e8",
   "sources": [
     {
       "path": ".agents/acp/README.md",
@@ -1109,8 +1109,8 @@
     },
     {
       "path": "site/docs/compatibility.html",
-      "bytes": 30814,
-      "sha256": "f642372198731a4678907a43a5679dae201cf18a01771ad3ee4e7bb46a995f2b"
+      "bytes": 30993,
+      "sha256": "b4e882f476f30f44fb77f1e960413350b9ec391fc6613795d3146c534fba36f9"
     },
     {
       "path": "site/docs/discovery.html",
@@ -1264,8 +1264,8 @@
     },
     {
       "path": "src/cuda_legacy_compat/routes.py",
-      "bytes": 5415,
-      "sha256": "a987f4d71d17121e38741dbeaeaac2262ccde5002f5ed05ce41aad8ea8c9a9bf"
+      "bytes": 5481,
+      "sha256": "454a765bf55e83f558dc7a44cf43f65ce12c14efcae0871ae0f12675413849ef"
     },
     {
       "path": "src/cuda_legacy_compat/settings.py",
@@ -1279,8 +1279,8 @@
     },
     {
       "path": "src/cuda_legacy_compat/torch_adapter.py",
-      "bytes": 54518,
-      "sha256": "75754a1cb579bd73fcbb2b09e0059bdc317daddd2fffc278ef45b640405cb57a"
+      "bytes": 56608,
+      "sha256": "03f01a86071b16184c49b65853843b21360b2306814e5b93be83cc0d1ade86da"
     },
     {
       "path": "src/cuda_legacy_compat/unrouted.py",
@@ -1349,8 +1349,8 @@
     },
     {
       "path": "tests/test_real_size_fallback.py",
-      "bytes": 7250,
-      "sha256": "961bf34d1ed645c6a8ffab28b5781f17414a4471c40d1d4037881918b2269760"
+      "bytes": 8706,
+      "sha256": "b3b6b3a16f387af8df94591a495f76d7d095427d6b7950893bf527945a8ad7e1"
     },
     {
       "path": "tests/test_reprobe_stock.py",

@@ -490,6 +490,36 @@ def _embedding_rows_on_cpu(
     return output.to(weight.device)
 
 
+def _linear(input: torch.Tensor, weight: torch.Tensor, bias: torch.Tensor | None = None) -> torch.Tensor:
+    """linear through the CPU fallback. A weight over the fallback limit (a large vocabulary's output layer) is
+    split by output features for inference: each slice of rows is a plain copy, the pieces are joined on the CPU,
+    and the output moves once (#175). Training through such a layer is #178."""
+    fallback = _cpu_fallback(torch.ops.aten.linear.default, "linear")
+    if not _over_fallback_limit((input, weight, bias), {}):
+        return fallback(input, weight, bias)
+    if torch.is_grad_enabled() and any(tensor.requires_grad for tensor in _tensor_inputs((input, weight, bias))):
+        raise NotImplementedError("Maxwell linear with more than 64 MiB of weights runs only without autograd; "
+                                  "training through it is #178")
+    if weight.dim() != 2 or not weight.is_contiguous() or (bias is not None and not bias.is_contiguous()):
+        raise NotImplementedError("Maxwell CPU fallback for linear is limited to 64 MiB of CUDA inputs")
+    cpu_input = _cuda_tensor_to_cpu(input)
+    out_features, in_features = weight.shape
+    row_bytes = (in_features + (1 if bias is not None else 0)) * weight.element_size()
+    rows = (_CPU_FALLBACK_MAX_BYTES - cpu_input.numel() * cpu_input.element_size()) // row_bytes
+    if rows < 1:
+        raise NotImplementedError("Maxwell CPU fallback for linear is limited to 64 MiB of CUDA inputs")
+    if cpu_input.numel() // max(1, in_features) * out_features * weight.element_size() > _CPU_FALLBACK_MAX_BYTES:
+        raise NotImplementedError("Maxwell CPU fallback for linear is limited to 64 MiB of outputs")
+    pieces = []
+    for start in range(0, out_features, rows):
+        part = _cuda_tensor_to_cpu(weight[start:start + rows])
+        part_bias = _cuda_tensor_to_cpu(bias[start:start + rows]) if bias is not None else None
+        pieces.append(torch.nn.functional.linear(cpu_input, part, part_bias))
+    result = torch.cat(pieces, dim=-1).to(input.device)
+    _dispatch_state.last_path = "cpu-fallback-linear-pieces"
+    return result
+
+
 @_falls_back_to_cpu("embedding", oversize=_embedding_rows_on_cpu)
 def _embedding(
     weight: torch.Tensor,
@@ -1247,7 +1277,7 @@ def install() -> None:
     _library.impl("embedding", _embedding)
     _library.impl("layer_norm", _inference_only(_layer_norm, "layer_norm"))
     _library.impl("contiguous", _inference_only(_contiguous, "contiguous"))
-    _library.impl("linear", _cpu_fallback(torch.ops.aten.linear.default, "linear"))
+    _library.impl("linear", _linear)
     _library.impl("mm", _mm)
     _library.impl("bmm", _cpu_fallback(torch.ops.aten.bmm.default, "bmm"))
     _library.impl("_softmax", _cpu_fallback(torch.ops.aten._softmax.default, "softmax"))
