@@ -1014,8 +1014,9 @@ def _gemm(left: torch.Tensor, right: torch.Tensor, output: torch.Tensor, bias: t
         _bridge, ptx_path = _load_bridge()
     else:
         ptx_path = os.fsencode(os.environ["CUDA_COMPAT_VECTOR_ADD_PTX"])
+    # The kernel runs on the current stream, where these tensors are used, as PyTorch's own kernels do; record_stream
+    # is for a tensor used on another stream, and on every launch it cost about 40 us of a small mm's Python (#243).
     current_stream = torch.cuda.current_stream(output.device)
-    _record_stream(tuple(tensors), current_stream)
     _ensure_context()
     result = _bridge.cuda_compat_launch_matrix_multiply_f32(
         ptx_path, left.data_ptr(), right.data_ptr(), bias_pointer, output.data_ptr(), batch, rows, columns, inner,
