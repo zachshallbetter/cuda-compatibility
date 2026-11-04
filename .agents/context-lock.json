@@ -6,7 +6,7 @@
   "selectedPaths": [],
   "sourceSelection": {
     "includedCount": 275,
-    "includedBytes": 2777377,
+    "includedBytes": 2777692,
     "excludedCounts": {
       "extension": 65,
       "generated-or-transient-file": 2
@@ -18,14 +18,14 @@
     "repositories": [
       {
         "path": ".",
-        "commit": "adde7e50378fa86f05385ab1f51a645ce383c5e5",
+        "commit": "a73b4b82edeedd80ca71e2be16fd471723c4f1a7",
         "branch": "feat/fallback-in-pieces",
         "dirty": true,
         "remote": "https://github.com/zachshallbetter/cuda-compatibility.git"
       }
     ]
   },
-  "aggregateSourceDigest": "8ae1324a0efb9bc5511947c794554be9c6377ab93cf64f0dc46e995df9a2c554",
+  "aggregateSourceDigest": "a1473eee965daab7c1d50d8360083b6b02b0500e8ba48a51db3cd279364c83db",
   "sources": [
     {
       "path": ".agents/acp/README.md",
@@ -734,8 +734,8 @@
     },
     {
       "path": "docs/WORK_ITEMS.md",
-      "bytes": 118427,
-      "sha256": "b05b3d114e3a7d0c9ce68f697a462044a6eb203222f4a71dc73dc53c311fe53c"
+      "bytes": 118677,
+      "sha256": "5d37544f2e32866856779efe721a5d259f3a0e30d836040bc643d55a832048ad"
     },
     {
       "path": "docs/architecture.md",
@@ -879,8 +879,8 @@
     },
     {
       "path": "docs/user-guide.md",
-      "bytes": 15673,
-      "sha256": "ff949e9f2a5a42e2f9161166869c5ef06f23d8e79919d7909a5591984779297d"
+      "bytes": 15830,
+      "sha256": "c25ec356e098891df19bffbffb4e9387146b60aea916c3cc0edcd8e140b005be"
     },
     {
       "path": "examples/dpp/availability-2026-11-03.json",
@@ -1109,8 +1109,8 @@
     },
     {
       "path": "site/docs/compatibility.html",
-      "bytes": 31196,
-      "sha256": "b05360b40cbf9c002c58db9b710f48905a41214812440cacfef089fc26410ca2"
+      "bytes": 31125,
+      "sha256": "b3f60fddd7ac5a73132824cc9c387d0225a3da01fec353aa1bc5ca1c91ed8d5a"
     },
     {
       "path": "site/docs/discovery.html",
@@ -1264,8 +1264,8 @@
     },
     {
       "path": "src/cuda_legacy_compat/routes.py",
-      "bytes": 5557,
-      "sha256": "794ee7bdc4fae5bc089e1e1df3650cbad0014ec5cb23c33366671573e3ca0343"
+      "bytes": 5536,
+      "sha256": "0a6be55a2e5d5bb6772cf9699ad291f96ad199b1f4e3ffa630c509c232ba319a"
     },
     {
       "path": "src/cuda_legacy_compat/settings.py",

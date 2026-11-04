@@ -8,9 +8,9 @@ from __future__ import annotations
 import textwrap
 from typing import Any
 
-CPU_FALLBACK_LIMIT = ("at most 64 MiB of CUDA inputs and 64 MiB of output per operation, one CUDA device per "
-                      "operation; optimizer foreach steps over it run in pieces under it, an embedding moves only the "
-                      "rows it looks up, and a linear layer over it is split by output features for inference")
+CPU_FALLBACK_LIMIT = ("each copy between the GPU and host memory at most 64 MiB (larger tensors move in pieces), at "
+                      "most 1 GiB staged per operation (CUDA_COMPAT_FALLBACK_TOTAL_MIB), one CUDA device per "
+                      "operation; an embedding over 64 MiB moves only the rows it looks up")
 
 # (aten registrations, operation, supported case)
 NATIVE = (
