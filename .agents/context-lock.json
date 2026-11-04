@@ -18,9 +18,9 @@
     "repositories": [
       {
         "path": ".",
-        "commit": "edbca3cd2b691937fefe11a8713c5d790134d01f",
+        "commit": "0427444e3bd9f4f3c240af890ff67d8e555da7b4",
         "branch": "feat/speed-sweep",
-        "dirty": true,
+        "dirty": false,
         "remote": "https://github.com/zachshallbetter/cuda-compatibility.git"
       }
     ]
