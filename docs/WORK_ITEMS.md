@@ -518,7 +518,7 @@ The first work item is being executed under the user's explicit request to creat
 - **Acceptance:** On the reference host, in a sandboxed home, setup reports doctor ready and the public example runs with no flags and matches the CPU; remove leaves nothing; make check and make test pass.
 - **Evidence required:** The end-to-end log on the reference host; test output; release digest.
 - **Permissions:** E1 local changes; merges to `main` deploy production; release tags by the owner's standing approval.
-- **Progress (2026-11-04):** #95 merged (setup, saved settings, doctor next steps, quieter adapter warnings). Release v0.2.0 tagged. The reference-host run passed (evidence `CLC-036-setup-reference-host`). The installer (#91) is in review.
+- **Progress (2026-11-04):** #95 merged (setup, saved settings, doctor next steps, quieter adapter warnings). Release v0.2.0 tagged. The reference-host run passed (evidence `CLC-036-setup-reference-host`). The one-command installer (#91) passed on the reference host from the real v0.2.0 URL, from dry run through uninstall (evidence `CLC-036-installer-reference-host`).
 
 ## CLC-035 — Make every sheet readable and self-describing on its own
 
