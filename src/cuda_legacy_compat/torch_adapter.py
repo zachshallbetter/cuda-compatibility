@@ -654,7 +654,9 @@ def _launch(name: str, grid: int, *arguments, block: int = 256, device: torch.de
         _bridge, ptx_path = _load_bridge()
     else:
         ptx_path = os.fsencode(os.environ["CUDA_COMPAT_VECTOR_ADD_PTX"])
-    pointers = (ctypes.c_void_p * len(arguments))(*[ctypes.cast(ctypes.pointer(a), ctypes.c_void_p) for a in arguments])
+    # Each argument's own address: an RNN step makes thousands of launches, and cast(pointer(...)) per argument was
+    # about half of a launch's Python cost (#243).
+    pointers = (ctypes.c_void_p * len(arguments))(*map(ctypes.addressof, arguments))
     index = device.index if device is not None and device.index is not None else torch.cuda.current_device()
     stream = torch.cuda.current_stream(index).cuda_stream
     result = _bridge.cuda_compat_launch_named(ptx_path, name.encode(), index, max(1, grid), 1, 1, block, 1, 1, 0,
@@ -711,7 +713,9 @@ def _binary(left: torch.Tensor, right: Any, op: int, alpha: float = 1.0,
         op, value = {0: (4, alpha * scalar), 1: (4, -alpha * scalar), 2: (5, scalar), 3: (6, scalar)}[op]
     else:
         _f32(left, right)
-        shape, other, value = torch.broadcast_shapes(left.shape, right.shape), right, 0.0
+        # Same shapes are the common case; torch.broadcast_shapes runs PyTorch's Python reference (#243).
+        shape = left.shape if left.shape == right.shape else torch.broadcast_shapes(left.shape, right.shape)
+        other, value = right, 0.0
     if out is None:
         output = torch.empty(shape, dtype=torch.float32, device=left.device)
     else:
@@ -722,8 +726,8 @@ def _binary(left: torch.Tensor, right: Any, op: int, alpha: float = 1.0,
         output = out
     count = output.numel()
     if count:
-        lv = left.expand(shape)
-        rv = other.expand(shape) if other is not None else lv
+        lv = left if left.shape == shape else left.expand(shape)
+        rv = lv if other is None else other if other.shape == shape else other.expand(shape)
         _launch("compat_binary_f32", _blocks(count), _ptr(lv), _ptr(rv), _ptr(output), ctypes.c_int64(count),
                 ctypes.c_int(len(shape)), _shape(shape, lv.stride(), rv.stride()), ctypes.c_int(op),
                 ctypes.c_float(alpha), ctypes.c_float(value), device=lv.device)
@@ -2111,79 +2115,77 @@ def _over_fallback_limit(args: tuple, kwargs: dict, limit: int | None = None) ->
 class _MaxwellInferenceFallback(TorchDispatchMode):
     def __torch_dispatch__(self, operation, types, args=(), kwargs=None):
         kwargs = kwargs or {}
+        # Every route starts by running the operator as it is, so do that first: the routing below (walking the
+        # arguments, the schema) is only needed when it fails, and an RNN step makes thousands of calls (#243).
+        try:
+            return operation(*args, **kwargs)
+        except Exception as failure:
+            if not _is_architecture_failure(failure):
+                raise
+            exc = failure
         schema = getattr(operation, "_schema", None)
         name = schema.name if schema is not None else str(operation)
         if not _cuda_tensors((args, kwargs)):
             # No CUDA tensor input: a factory such as torch.ones(device="cuda") is built on the CPU and copied over.
             try:
-                return operation(*args, **kwargs)
-            except Exception as exc:
-                if not _is_architecture_failure(exc):
-                    raise
-                try:
-                    result = _factory_on_cpu(operation, schema, name, args, kwargs)
-                except NotImplementedError as error:
-                    unrouted.record(name, error)
-                    raise error from exc
-                if result is None:
-                    unrouted.record(name, exc)
-                    raise
-                return result
-        try:
-            return operation(*args, **kwargs)
-        except Exception as exc:
-            if not _is_architecture_failure(exc):
-                raise
-            if name.startswith("aten::_foreach_") and schema is not None and _over_fallback_limit(args, kwargs):
-                try:
-                    return _foreach_in_pieces(operation, name, args, kwargs, schema, _writes_only_self(schema))
-                except NotImplementedError as error:
-                    unrouted.record(name, error)
-                    raise error from exc
-            handled, result = _single_as_foreach(operation, args, kwargs)
-            if handled:
-                return result
-            if str(operation) == "aten.relu_.default" and isinstance(args[0], torch.Tensor) and args[0].is_cuda:
-                try:  # ReLU(inplace=True) in a CNN: the native kernel in place, not a CPU round trip of the activation
-                    return _relu.__wrapped__(args[0], args[0])
-                except NotImplementedError:
-                    pass
-            if str(operation) in ("aten.convolution.default", "aten.convolution_backward.default"):
-                try:
-                    handled, result = _conv_on_gpu(str(operation), args)
-                except Exception as error:  # a step with no Maxwell kernel: keep the CPU route below
-                    if not (isinstance(error, (NotImplementedError, RuntimeError))):
-                        raise
-                    handled = False
-                if handled:
-                    _dispatch_state.last_path = "llvm-sm52-conv2d-gemm"
-                    return result
-            if str(operation) in ("aten.native_batch_norm.default", "aten.native_batch_norm_backward.default"):
-                try:
-                    handled, result = _batch_norm_on_gpu(str(operation), args, kwargs)
-                except Exception as error:  # a step with no Maxwell kernel: keep the CPU route below
-                    if not (isinstance(error, NotImplementedError) or _is_architecture_failure(error)):
-                        raise
-                    handled = False
-                if handled:
-                    _dispatch_state.last_path = "llvm-sm52-batch-norm-f32"
-                    return result
-            if _writes_only_self(schema):
-                try:
-                    return _inplace_on_cpu(operation, name, args, kwargs)
-                except NotImplementedError as error:
-                    unrouted.record(name, error)
-                    raise error from exc
-            if schema is not None and (
-                schema.is_mutable
-                or any(result.alias_info is not None for result in schema.returns)
-            ):
-                error = NotImplementedError(
-                    f"CUDA operator {operation} has no Maxwell image and its aliasing semantics cannot use CPU fallback"
-                )
+                result = _factory_on_cpu(operation, schema, name, args, kwargs)
+            except NotImplementedError as error:
                 unrouted.record(name, error)
                 raise error from exc
-            return _cpu_fallback(_CPU_ONLY_HERE.get(name, operation), name)(*args, **kwargs)
+            if result is None:
+                unrouted.record(name, exc)
+                raise exc
+            return result
+        if name.startswith("aten::_foreach_") and schema is not None and _over_fallback_limit(args, kwargs):
+            try:
+                return _foreach_in_pieces(operation, name, args, kwargs, schema, _writes_only_self(schema))
+            except NotImplementedError as error:
+                unrouted.record(name, error)
+                raise error from exc
+        handled, result = _single_as_foreach(operation, args, kwargs)
+        if handled:
+            return result
+        if str(operation) == "aten.relu_.default" and isinstance(args[0], torch.Tensor) and args[0].is_cuda:
+            try:  # ReLU(inplace=True) in a CNN: the native kernel in place, not a CPU round trip of the activation
+                return _relu.__wrapped__(args[0], args[0])
+            except NotImplementedError:
+                pass
+        if str(operation) in ("aten.convolution.default", "aten.convolution_backward.default"):
+            try:
+                handled, result = _conv_on_gpu(str(operation), args)
+            except Exception as error:  # a step with no Maxwell kernel: keep the CPU route below
+                if not (isinstance(error, (NotImplementedError, RuntimeError))):
+                    raise
+                handled = False
+            if handled:
+                _dispatch_state.last_path = "llvm-sm52-conv2d-gemm"
+                return result
+        if str(operation) in ("aten.native_batch_norm.default", "aten.native_batch_norm_backward.default"):
+            try:
+                handled, result = _batch_norm_on_gpu(str(operation), args, kwargs)
+            except Exception as error:  # a step with no Maxwell kernel: keep the CPU route below
+                if not (isinstance(error, NotImplementedError) or _is_architecture_failure(error)):
+                    raise
+                handled = False
+            if handled:
+                _dispatch_state.last_path = "llvm-sm52-batch-norm-f32"
+                return result
+        if _writes_only_self(schema):
+            try:
+                return _inplace_on_cpu(operation, name, args, kwargs)
+            except NotImplementedError as error:
+                unrouted.record(name, error)
+                raise error from exc
+        if schema is not None and (
+            schema.is_mutable
+            or any(result.alias_info is not None for result in schema.returns)
+        ):
+            error = NotImplementedError(
+                f"CUDA operator {operation} has no Maxwell image and its aliasing semantics cannot use CPU fallback"
+            )
+            unrouted.record(name, error)
+            raise error from exc
+        return _cpu_fallback(_CPU_ONLY_HERE.get(name, operation), name)(*args, **kwargs)
 
 
 def install() -> None:
