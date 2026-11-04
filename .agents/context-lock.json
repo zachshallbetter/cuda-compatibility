@@ -5,8 +5,8 @@
   "validityBasis": "aggregate-source-digest",
   "selectedPaths": [],
   "sourceSelection": {
-    "includedCount": 283,
-    "includedBytes": 2864498,
+    "includedCount": 284,
+    "includedBytes": 2865548,
     "excludedCounts": {
       "extension": 65,
       "generated-or-transient-file": 2
@@ -18,14 +18,14 @@
     "repositories": [
       {
         "path": ".",
-        "commit": "578460b1623e6850d4b9d5e85bc6ddcf96060ac9",
-        "branch": "fix/evidence-markers",
+        "commit": "96e80cb8b9a4e614f288a908f254873707b0d27b",
+        "branch": "test/records-parse",
         "dirty": true,
         "remote": "https://github.com/zachshallbetter/cuda-compatibility.git"
       }
     ]
   },
-  "aggregateSourceDigest": "61006a52c97fd07c09fb280fc0db26d13b015a06f22ed60781550cc51c14d78b",
+  "aggregateSourceDigest": "552a3676b891c89ed622c638829b9c9cf1df244a5cdbca679600ae1dfd779b6b",
   "sources": [
     {
       "path": ".agents/acp/README.md",
@@ -1386,6 +1386,11 @@
       "path": "tests/test_real_size_fallback.py",
       "bytes": 8773,
       "sha256": "70a2f340f39506f9ab2abed19e3612111f1e7af17c05802f9f34636b995ce087"
+    },
+    {
+      "path": "tests/test_records_parse.py",
+      "bytes": 1050,
+      "sha256": "fdb44bee1d42805bb81725d4c32acb9a4c9ea363bdbf7f156f8d4372587e2e57"
     },
     {
       "path": "tests/test_reprobe_stock.py",
