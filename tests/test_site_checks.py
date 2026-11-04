@@ -97,7 +97,8 @@ class SiteDiscoveryChecksTests(unittest.TestCase):
         self.assertIn("bmm", native)   # the tiled kernel (#184)
         self.assertIn("_softmax", native)
         self.assertIn("cat", fallback)
-        self.assertNotIn("contiguous", native)
+        self.assertIn("contiguous", native)   # the strided copy kernel (#184 B)
+        self.assertNotIn("contiguous", fallback)
 
     def test_rejects_home_count_that_drifts_from_adapter(self) -> None:
         with tempfile.TemporaryDirectory() as directory:

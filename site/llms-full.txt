@@ -22,7 +22,7 @@ GM200 reference card, compute capability 5.2. The only hardware tested so far. E
 
 - **Reference cards** 3
 
-- **Native operators** 23
+- **Native operators** 29
 
 - **Claims of universal support** 0
 
@@ -517,37 +517,39 @@ By Zach Shallbetter · Sheet 04 of 10 · Updated 4 November 2026
 ## Native GPU implementations
 sm_52 kernel
 
-These 16 registered cases cover 23 native operators: addition, subtraction, multiplication and division with broadcasting, range creation, embedding, layer normalization (inference and training), matrix multiplication with and without bias, batched matrix multiplication, ReLU, GELU, softmax and log-softmax, sum over dimensions and fill, with the gradients of each. They run through LLVM-generated PTX targeting the real Maxwell device and the CUDA Driver API bridge; other dtypes and layouts take the CPU fallback below.
+These 18 registered cases cover 29 native operators: addition (in place too, SGD’s step included), subtraction, multiplication and division with broadcasting, range creation, embedding, layer normalization (inference and training), negative log likelihood, copies of strided views, matrix multiplication with and without bias, batched matrix multiplication, ReLU, GELU, softmax, safe softmax and log-softmax, sum over dimensions and fill, with the gradients of each. They run through LLVM-generated PTX targeting the real Maxwell device and the CUDA Driver API bridge; other dtypes and layouts take the CPU fallback below.
 
 | No. | Operation | Supported case |
 | --- | --- | --- |
 | 01 | Tensor addition | float32 of any size with broadcasting (up to six dimensions), any alpha, or a number; int32 same-shape contiguous tensors up to 2,147,483,647 elements. |
 | 02 | Float16 tensor addition | Same-device, same-shape contiguous float16 up to 1,048,576 values, with alpha=1; edge values match exactly. |
-| 03 | Float32 in-place addition | Same-shape contiguous float32 CUDA tensors up to 1,048,576 values; scaled updates are used by the verified SGD case. |
+| 03 | Float32 in-place addition | A contiguous float32 tensor of any size updated by a broadcast float32 tensor or a number, with any alpha: SGD’s foreach step and gradient accumulation stay on the GPU (#184). Other cases are computed on the CPU and written back. |
 | 04 | Range creation | CUDA int64 arange, up to 1,048,576 values. Other cases use the CPU fallback. |
-| 05 | Embedding | Contiguous float32 weight, int64 CUDA indices in 1D or 2D, and up to 1,048,576 output values. Other cases, and training, use the CPU fallback. |
-| 06 | Layer normalization | Contiguous float32 input normalized over the last dimension with contiguous float32 weight and bias; up to 1,048,576 values. Other cases use the CPU fallback; training uses PyTorch's decomposition. |
+| 05 | Embedding | Contiguous float32 weight of any size and int64 CUDA indices in 1D or 2D, in training too: the weight gradient (padding_idx included) stays on the GPU. scale_grad_by_freq uses the CPU fallback. |
+| 06 | Layer normalization | Inference: contiguous float32 normalized over the trailing dimensions, any size, with or without weight and bias. Training uses PyTorch's decomposition onto row 13. |
 | 07 | Matrix multiplication | 2D float32 of any size with nonnegative strides, transposed views included, on a tiled kernel; training uses it too (#184). Other dtypes use the CPU fallback. |
 | 08 | Matrix multiplication with bias | As above, with alpha and a bias of any broadcastable shape. Linear layers run through it. |
 | 09 | Batched matrix multiplication | 3D float32 batches (up to 65,535) of any size with nonnegative strides. Attention runs through it. |
 | 10 | Subtraction, multiplication and division | float32 of any size with broadcasting (up to six dimensions), or a number (1.0 - x included). Other dtypes use the CPU fallback (#184). |
 | 11 | GELU | Contiguous float32, exact or tanh, and its gradient. |
-| 12 | Softmax and log-softmax | Contiguous float32 over the last dimension, masked (-inf) entries included, and their gradients. |
+| 12 | Softmax and log-softmax | Contiguous float32 over the last dimension, masked (-inf) entries included, and their gradients. Safe softmax (attention with a mask) gives zeros for a fully masked row. |
 | 13 | Layer normalization in training | Contiguous float32 over the trailing dimensions, with or without weight and bias, and its gradients. |
 | 14 | Sum over dimensions | float32, any dimensions (up to six), keepdim or not. |
 | 15 | Fill | Contiguous float32 tensors (fill_, zero_). Other dtypes are filled in place on the CPU. |
 | 16 | ReLU | Contiguous float32 tensors up to 1,048,576 values. Other cases, and training, use the CPU fallback. |
+| 17 | Negative log likelihood | 1D or 2D float32 log-probabilities with int64 CUDA targets: mean, sum or none, ignore_index and class weights, and its gradient. cross_entropy runs through it; a target out of range raises IndexError. |
+| 18 | Copies of strided views | clone and contiguous of any 1-, 2-, 4- or 8-byte dtype, up to six dimensions: transposes, slices and broadcasts stay on the GPU. |
 
-Native forward kernels do not record autograd formulas. For grad-enabled inputs, eligible operations use the differentiable CPU transfer path; unsupported backward operators still fail explicitly.
+Autograd runs above these kernels: training reaches them through PyTorch’s own backward formulas, and layer_norm, scaled_dot_product_attention and contiguous decompose first. Unsupported backward operators still fail explicitly.
 
 ## Registered CPU fallback operations
 Bounded autograd
 
-These 4 registered fallback routes, plus the CPU path that addition takes outside its native limits, use PyTorch’s CPU implementation and copy results back to the original CUDA device:
+These 3 registered fallback routes, plus the CPU path that addition takes outside its native limits, use PyTorch’s CPU implementation and copy results back to the original CUDA device:
 
 - scaled_dot_product_attention (training decomposes it into native matrix multiplication and softmax)
 - clamp_min
-- cat (concatenation) and contiguous copies
+- cat (concatenation)
 
 Limits
 

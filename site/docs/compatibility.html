@@ -101,41 +101,43 @@ td.n{font-family:"Martian Mono",monospace;font-size:12px;color:var(--mute);width
 <div style="display:flex;flex-direction:column;gap:56px">
 <div id="native" style="display:flex;flex-direction:column;gap:20px">
 <div class="sec"><span class="cut" aria-hidden="true">A</span><h2 class="h2">Native GPU implementations</h2><span class="plane" aria-hidden="true"></span><span class="state ok"><i class="sw full" aria-hidden="true" style="border-color:var(--on-ok);background:var(--on-ok)"></i>sm_52 kernel</span></div>
-<p class="soft" style="margin:0;font-size:16px;max-width:72ch">These 16 registered cases cover 23 native operators: addition, subtraction, multiplication and division with broadcasting, range creation, embedding, layer normalization (inference and training), matrix multiplication with and without bias, batched matrix multiplication, ReLU, GELU, softmax and log-softmax, sum over dimensions and fill, with the gradients of each. They run through LLVM-generated PTX targeting the real Maxwell device and the CUDA Driver API bridge; other dtypes and layouts take the CPU fallback below.</p>
+<p class="soft" style="margin:0;font-size:16px;max-width:72ch">These 18 registered cases cover 29 native operators: addition (in place too, SGD’s step included), subtraction, multiplication and division with broadcasting, range creation, embedding, layer normalization (inference and training), negative log likelihood, copies of strided views, matrix multiplication with and without bias, batched matrix multiplication, ReLU, GELU, softmax, safe softmax and log-softmax, sum over dimensions and fill, with the gradients of each. They run through LLVM-generated PTX targeting the real Maxwell device and the CUDA Driver API bridge; other dtypes and layouts take the CPU fallback below.</p>
 <div class="scroll" role="region" aria-label="Native GPU implementations (scrolls sideways)" tabindex="0" style="overflow-x:auto">
 <table aria-label="Native GPU implementations">
 <thead><tr><th scope="col" style="width:32px">No.</th><th scope="col">Operation</th><th scope="col">Supported case</th></tr></thead>
 <tbody>
 <tr><td class="n">01</td><td class="op">Tensor addition</td><td>float32 of any size with broadcasting (up to six dimensions), any <code>alpha</code>, or a number; int32 same-shape contiguous tensors up to 2,147,483,647 elements.</td></tr>
 <tr><td class="n">02</td><td class="op">Float16 tensor addition</td><td>Same-device, same-shape contiguous float16 up to 1,048,576 values, with <code>alpha=1</code>; edge values match exactly.</td></tr>
-<tr><td class="n">03</td><td class="op">Float32 in-place addition</td><td>Same-shape contiguous float32 CUDA tensors up to 1,048,576 values; scaled updates are used by the verified SGD case.</td></tr>
+<tr><td class="n">03</td><td class="op">Float32 in-place addition</td><td>A contiguous float32 tensor of any size updated by a broadcast float32 tensor or a number, with any <code>alpha</code>: SGD’s <code>foreach</code> step and gradient accumulation stay on the GPU (<a href="https://github.com/zachshallbetter/cuda-compatibility/issues/184">#184</a>). Other cases are computed on the CPU and written back.</td></tr>
 <tr><td class="n">04</td><td class="op">Range creation</td><td>CUDA int64 <code>arange</code>, up to 1,048,576 values. Other cases use the CPU fallback.</td></tr>
-<tr><td class="n">05</td><td class="op">Embedding</td><td>Contiguous float32 weight, int64 CUDA indices in 1D or 2D, and up to 1,048,576 output values. Other cases, and training, use the CPU fallback.</td></tr>
-<tr><td class="n">06</td><td class="op">Layer normalization</td><td>Contiguous float32 input normalized over the last dimension with contiguous float32 weight and bias; up to 1,048,576 values. Other cases use the CPU fallback; training uses PyTorch's decomposition.</td></tr>
+<tr><td class="n">05</td><td class="op">Embedding</td><td>Contiguous float32 weight of any size and int64 CUDA indices in 1D or 2D, in training too: the weight gradient (<code>padding_idx</code> included) stays on the GPU. <code>scale_grad_by_freq</code> uses the CPU fallback.</td></tr>
+<tr><td class="n">06</td><td class="op">Layer normalization</td><td>Inference: contiguous float32 normalized over the trailing dimensions, any size, with or without weight and bias. Training uses PyTorch's decomposition onto row 13.</td></tr>
 <tr><td class="n">07</td><td class="op">Matrix multiplication</td><td>2D float32 of any size with nonnegative strides, transposed views included, on a tiled kernel; training uses it too (<a href="https://github.com/zachshallbetter/cuda-compatibility/issues/184">#184</a>). Other dtypes use the CPU fallback.</td></tr>
 <tr><td class="n">08</td><td class="op">Matrix multiplication with bias</td><td>As above, with <code>alpha</code> and a bias of any broadcastable shape. Linear layers run through it.</td></tr>
 <tr><td class="n">09</td><td class="op">Batched matrix multiplication</td><td>3D float32 batches (up to 65,535) of any size with nonnegative strides. Attention runs through it.</td></tr>
 <tr><td class="n">10</td><td class="op">Subtraction, multiplication and division</td><td>float32 of any size with broadcasting (up to six dimensions), or a number (<code>1.0 - x</code> included). Other dtypes use the CPU fallback (<a href="https://github.com/zachshallbetter/cuda-compatibility/issues/184">#184</a>).</td></tr>
 <tr><td class="n">11</td><td class="op">GELU</td><td>Contiguous float32, exact or tanh, and its gradient.</td></tr>
-<tr><td class="n">12</td><td class="op">Softmax and log-softmax</td><td>Contiguous float32 over the last dimension, masked (<code>-inf</code>) entries included, and their gradients.</td></tr>
+<tr><td class="n">12</td><td class="op">Softmax and log-softmax</td><td>Contiguous float32 over the last dimension, masked (<code>-inf</code>) entries included, and their gradients. Safe softmax (attention with a mask) gives zeros for a fully masked row.</td></tr>
 <tr><td class="n">13</td><td class="op">Layer normalization in training</td><td>Contiguous float32 over the trailing dimensions, with or without weight and bias, and its gradients.</td></tr>
 <tr><td class="n">14</td><td class="op">Sum over dimensions</td><td>float32, any dimensions (up to six), keepdim or not.</td></tr>
 <tr><td class="n">15</td><td class="op">Fill</td><td>Contiguous float32 tensors (<code>fill_</code>, <code>zero_</code>). Other dtypes are filled in place on the CPU.</td></tr>
-<tr><td class="n" style="border-bottom-width:3px">16</td><td class="op" style="border-bottom-width:3px">ReLU</td><td style="border-bottom-width:3px">Contiguous float32 tensors up to 1,048,576 values. Other cases, and training, use the CPU fallback.</td></tr>
+<tr><td class="n">16</td><td class="op">ReLU</td><td>Contiguous float32 tensors up to 1,048,576 values. Other cases, and training, use the CPU fallback.</td></tr>
+<tr><td class="n">17</td><td class="op">Negative log likelihood</td><td>1D or 2D float32 log-probabilities with int64 CUDA targets: mean, sum or none, <code>ignore_index</code> and class weights, and its gradient. <code>cross_entropy</code> runs through it; a target out of range raises <code>IndexError</code>.</td></tr>
+<tr><td class="n" style="border-bottom-width:3px">18</td><td class="op" style="border-bottom-width:3px">Copies of strided views</td><td style="border-bottom-width:3px"><code>clone</code> and <code>contiguous</code> of any 1-, 2-, 4- or 8-byte dtype, up to six dimensions: transposes, slices and broadcasts stay on the GPU.</td></tr>
 </tbody>
 </table>
 </div>
-<p class="mute" style="margin:0;font-size:15px;max-width:72ch">Native forward kernels do not record autograd formulas. For grad-enabled inputs, eligible operations use the differentiable CPU transfer path; unsupported backward operators still fail explicitly.</p>
+<p class="mute" style="margin:0;font-size:15px;max-width:72ch">Autograd runs above these kernels: training reaches them through PyTorch’s own backward formulas, and <code>layer_norm</code>, <code>scaled_dot_product_attention</code> and <code>contiguous</code> decompose first. Unsupported backward operators still fail explicitly.</p>
 </div>
 
 <div id="fallback" style="display:flex;flex-direction:column;gap:20px">
 <div class="sec"><span class="cut" aria-hidden="true">B</span><h2 class="h2">Registered CPU fallback operations</h2><span class="plane" aria-hidden="true"></span><span class="state exp"><i class="sw half" aria-hidden="true"></i>Bounded autograd</span></div>
-<p class="soft" style="margin:0;font-size:16px;max-width:72ch">These 4 registered fallback routes, plus the CPU path that addition takes outside its native limits, use PyTorch’s CPU implementation and copy results back to the original CUDA device:</p>
+<p class="soft" style="margin:0;font-size:16px;max-width:72ch">These 3 registered fallback routes, plus the CPU path that addition takes outside its native limits, use PyTorch’s CPU implementation and copy results back to the original CUDA device:</p>
 <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(360px,100%),1fr));gap:48px;align-items:start">
 <ul class="list">
 <li><code>scaled_dot_product_attention</code> (training decomposes it into native matrix multiplication and softmax)</li>
 <li><code>clamp_min</code></li>
-<li><code>cat</code> (concatenation) and <code>contiguous</code> copies</li>
+<li><code>cat</code> (concatenation)</li>
 </ul>
 <div style="display:flex;flex-direction:column;gap:16px">
 <div class="dim"><span>Limits</span></div>

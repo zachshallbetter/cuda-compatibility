@@ -247,8 +247,9 @@ __device__ inline float compat_block_reduce(float value, float* scratch, bool ta
   return result;
 }
 
+// mode: 0 softmax, 1 log-softmax, 2 safe softmax (a row that is all -inf, fully masked, gives zeros, not NaN).
 extern "C" __global__ void compat_softmax_rows_f32(const float* input, float* output, int64_t rows, int64_t columns,
-                                                   int log_softmax) {
+                                                   int mode) {
   __shared__ float scratch[256];
   const int64_t row = blockIdx.x;
   if (row >= rows) return;
@@ -257,12 +258,16 @@ extern "C" __global__ void compat_softmax_rows_f32(const float* input, float* ou
   float m = -__int_as_float(0x7f800000);
   for (int64_t c = threadIdx.x; c < columns; c += blockDim.x) m = fmaxf(m, x[c]);
   m = compat_block_reduce(m, scratch, true);
+  if (mode == 2 && m == -__int_as_float(0x7f800000)) {   // every thread sees the same m, so all leave together
+    for (int64_t c = threadIdx.x; c < columns; c += blockDim.x) y[c] = 0.0f;
+    return;
+  }
   float s = 0.0f;
   for (int64_t c = threadIdx.x; c < columns; c += blockDim.x) s += expf(x[c] - m);
   s = compat_block_reduce(s, scratch, false);
   const float log_s = logf(s);
   for (int64_t c = threadIdx.x; c < columns; c += blockDim.x)
-    y[c] = log_softmax ? x[c] - m - log_s : expf(x[c] - m) / s;
+    y[c] = mode == 1 ? x[c] - m - log_s : expf(x[c] - m) / s;
 }
 
 extern "C" __global__ void compat_softmax_backward_rows_f32(const float* grad, const float* output, float* grad_input,
@@ -370,4 +375,78 @@ extern "C" __global__ void compat_reduce_sum_f32(const float* input, float* outp
   }
   s = compat_block_reduce(s, scratch, false);
   if (threadIdx.x == 0) output[o] = s;
+}
+
+// ── Fewer copies (#184 part B) ────────────────────────────────────────────────────────────────────────────────
+// Any 1-, 2-, 4- or 8-byte element type, from strides `a` (input) to strides `b` (output): clone and contiguous.
+extern "C" __global__ void compat_strided_copy(const char* input, char* output, int64_t count, int ndim,
+                                               CompatShape shape, int element_size) {
+  for (int64_t i = blockIdx.x * static_cast<int64_t>(blockDim.x) + threadIdx.x; i < count;
+       i += static_cast<int64_t>(gridDim.x) * blockDim.x) {
+    int64_t a, b;
+    compat_offsets(i, shape, ndim, &a, &b);
+    switch (element_size) {
+      case 1: output[b] = input[a]; break;
+      case 2: reinterpret_cast<int16_t*>(output)[b] = reinterpret_cast<const int16_t*>(input)[a]; break;
+      case 4: reinterpret_cast<int32_t*>(output)[b] = reinterpret_cast<const int32_t*>(input)[a]; break;
+      default: reinterpret_cast<int64_t*>(output)[b] = reinterpret_cast<const int64_t*>(input)[a]; break;
+    }
+  }
+}
+
+// The embedding's weight gradient: each looked-up row adds its gradient row (grad_weight starts at zero). Rows
+// outside the table or equal to padding_idx add nothing.
+extern "C" __global__ void compat_embedding_backward_f32(const float* grad, const int64_t* indices, float* grad_weight,
+                                                         int64_t tokens, int64_t columns, int64_t rows,
+                                                         int64_t padding_idx) {
+  for (int64_t i = blockIdx.x * static_cast<int64_t>(blockDim.x) + threadIdx.x; i < tokens * columns;
+       i += static_cast<int64_t>(gridDim.x) * blockDim.x) {
+    const int64_t token = i / columns;
+    const int64_t row = indices[token];
+    if (row == padding_idx || row < 0 || row >= rows) continue;
+    atomicAdd(grad_weight + row * columns + (i - token * columns), grad[i]);
+  }
+}
+
+// Negative log likelihood in one 256-thread block. reduction: 0 none (a loss per row), 1 mean, 2 sum.
+// total_weight is the summed weight of the rows not ignored (0 for a batch with no reduction, as PyTorch's CPU).
+extern "C" __global__ void compat_nll_loss_forward_f32(const float* input, const int64_t* target, const float* weight,
+                                                       float* output, float* total_weight, int64_t rows,
+                                                       int64_t columns, int64_t ignore_index, int reduction,
+                                                       int batched) {
+  __shared__ float scratch[256];
+  float s = 0.0f, w = 0.0f;
+  for (int64_t n = threadIdx.x; n < rows; n += blockDim.x) {
+    const int64_t t = target[n];
+    float loss = 0.0f;
+    if (t != ignore_index) {
+      const float wt = weight != nullptr ? weight[t] : 1.0f;
+      loss = -input[n * columns + t] * wt;
+      w += wt;
+    }
+    if (reduction == 0) output[n] = loss;
+    s += loss;
+  }
+  s = compat_block_reduce(s, scratch, false);
+  w = compat_block_reduce(w, scratch, false);
+  if (threadIdx.x == 0) {
+    if (reduction != 0) output[0] = reduction == 1 ? s / w : s;
+    total_weight[0] = reduction == 0 && batched ? 0.0f : w;
+  }
+}
+
+// grad_input starts at zero; each row not ignored gets -weight * grad at its target (divided by the total weight
+// for a mean).
+extern "C" __global__ void compat_nll_loss_backward_f32(const float* grad_output, const int64_t* target,
+                                                        const float* weight, const float* total_weight,
+                                                        float* grad_input, int64_t rows, int64_t columns,
+                                                        int64_t ignore_index, int reduction) {
+  for (int64_t n = blockIdx.x * static_cast<int64_t>(blockDim.x) + threadIdx.x; n < rows;
+       n += static_cast<int64_t>(gridDim.x) * blockDim.x) {
+    const int64_t t = target[n];
+    if (t == ignore_index) continue;
+    float g = reduction == 0 ? grad_output[n] : grad_output[0];
+    if (reduction == 1) g /= total_weight[0];
+    grad_input[n * columns + t] = -(weight != nullptr ? weight[t] : 1.0f) * g;
+  }
 }
