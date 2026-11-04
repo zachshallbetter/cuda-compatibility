@@ -6,7 +6,7 @@
   "selectedPaths": [],
   "sourceSelection": {
     "includedCount": 262,
-    "includedBytes": 2665674,
+    "includedBytes": 2668172,
     "excludedCounts": {
       "extension": 65,
       "generated-or-transient-file": 2
@@ -18,14 +18,14 @@
     "repositories": [
       {
         "path": ".",
-        "commit": "6ac032528a338e2e16673a83c9d5a4af144ad96d",
-        "branch": "chore/release-0.2.1",
+        "commit": "793545dcbfcc4c2eb38b82f0bdde671c5a155e59",
+        "branch": "fix/repin-0.2.1",
         "dirty": true,
         "remote": "https://github.com/zachshallbetter/cuda-compatibility.git"
       }
     ]
   },
-  "aggregateSourceDigest": "37d7a52fb8a09a1dcde008a24d9ae5604c4181f810429d36e2a446ff56397573",
+  "aggregateSourceDigest": "0d2c3666c996b4bdb994ceb585185b5f576f04bad80d1b0e8ddf30f2ab52c61c",
   "sources": [
     {
       "path": ".agents/acp/README.md",
@@ -1019,8 +1019,8 @@
     },
     {
       "path": "scripts/site_live_audit.py",
-      "bytes": 5068,
-      "sha256": "115bc19145d3bc193fa4349b6b2d24e2efea820370d3a332e54e22109c7e4526"
+      "bytes": 6264,
+      "sha256": "ef850dcac7761e46baf8582c403d4554241dfb77d818c75548e883d719705f78"
     },
     {
       "path": "scripts/smoke_install.sh",
@@ -1135,7 +1135,7 @@
     {
       "path": "site/install.sh",
       "bytes": 12308,
-      "sha256": "dda6cbe2152db4547516dbaa7f86b917b4c9d64654187d8a7b3cdd9afb0fcfe7"
+      "sha256": "ae8e8e80277590efef584798d6acd4d711c47a882fb8055edf3208c821efc497"
     },
     {
       "path": "site/research/attribution-pilot.html",
@@ -1284,8 +1284,8 @@
     },
     {
       "path": "tests/test_install_sh.py",
-      "bytes": 11368,
-      "sha256": "55ff1e12e34e498e1b9f86cfcd552520bbfd4a450294591efefd59696fa3a5d5"
+      "bytes": 11717,
+      "sha256": "c8b5fab24208b0c34dfd24a15ce1a0817c9b362620f423eb3427186303c45c78"
     },
     {
       "path": "tests/test_inventory.py",
@@ -1319,8 +1319,8 @@
     },
     {
       "path": "tests/test_site_live_audit.py",
-      "bytes": 2431,
-      "sha256": "6a31be868873c2c061623933ca8226cc00aa11b5758e776ad184462d918a66e6"
+      "bytes": 3384,
+      "sha256": "e0d1eebe27ae7599fcb2982a619d05ec7bd2f5ab1d51f8b2f9e898349029076a"
     },
     {
       "path": "tests/test_site_meta.py",

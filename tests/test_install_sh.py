@@ -97,6 +97,12 @@ class InstallScriptTests(unittest.TestCase):
             # Until the release is cut, the script names the version that release will carry.
             self.assertGreaterEqual(as_tuple(pinned), as_tuple(version))
 
+    def test_the_formula_pins_the_same_release(self) -> None:
+        formula = (ROOT / "Formula" / "cuda-legacy.rb").read_text(encoding="utf-8")
+        pinned, sha = _script_value("VERSION"), _script_value("ARCHIVE_SHA256")
+        self.assertIn(f'/archive/refs/tags/v{pinned}.tar.gz"', formula)
+        self.assertIn(f'sha256 "{sha}"', formula)
+
     def test_a_partial_download_runs_nothing(self) -> None:
         lines = SCRIPT.read_text(encoding="utf-8").splitlines(keepends=True)
         cuts = range(1, len(lines))

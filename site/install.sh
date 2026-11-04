@@ -27,7 +27,7 @@
 VERSION=0.2.1
 ARCHIVE_URL="https://github.com/zachshallbetter/cuda-compatibility/archive/refs/tags/v$VERSION.tar.gz"
 # SHA-256 of ARCHIVE_URL, written by the release. Empty means no release is pinned yet.
-ARCHIVE_SHA256=d4cc7295914349ba2dbe643db55061d3903cf8490339fc77fe20837d989fe66e
+ARCHIVE_SHA256=271515e083a00302c53ef7e4d363016bfb9555658b2cbf12e07bd1dccc45dd73
 PACKAGE=cuda-legacy-compat
 TORCH_HINT="python3 -m venv ~/torch-cu130 && ~/torch-cu130/bin/pip install torch --index-url https://download.pytorch.org/whl/cu130"
 

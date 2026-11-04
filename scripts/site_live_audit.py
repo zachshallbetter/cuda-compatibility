@@ -2,12 +2,14 @@
 
 Usage: python3 scripts/site_live_audit.py [--origin URL] [--json]
 Every canonical page and site file must return 200 with the right type and serve exactly the committed bytes;
-each page's canonical, og:url and share image must resolve; security.txt must not have expired.
+each page's canonical, og:url and share image must resolve; security.txt must not have expired; and the
+release archive the installer pins must download with exactly the pinned SHA-256.
 Exit 0 when everything matches, 1 otherwise. Read-only: it sends GET requests and nothing else.
 """
 from __future__ import annotations
 
 import argparse
+import hashlib
 from datetime import datetime, timezone
 import json
 from pathlib import Path
@@ -37,9 +39,12 @@ FILES = {
     "favicon.svg": "image/svg+xml",
     "apple-touch-icon.png": "image/png",
     "03dd79a90f0607e442d7c5e89bd241ee.txt": "text/plain",
+    "install.sh": "text/plain",
+    "install.sh.sha256": "text/plain",
 }
 
 Fetch = Callable[[str], tuple[int, str, bytes]]
+Digest = Callable[[str], "str | None"]
 
 
 def fetch(url: str) -> tuple[int, str, bytes]:
@@ -53,12 +58,29 @@ def fetch(url: str) -> tuple[int, str, bytes]:
         return 0, "", b""
 
 
+def archive_digest(url: str) -> str | None:
+    """The SHA-256 of a release archive, or None when it cannot be downloaded."""
+    try:
+        with urlopen(Request(url), timeout=120) as response:
+            return hashlib.sha256(response.read()).hexdigest()
+    except (HTTPError, URLError, TimeoutError):
+        return None
+
+
+def installer_pin(site: Path) -> tuple[str, str]:
+    """The archive URL and SHA-256 the committed installer pins."""
+    text = (site / "install.sh").read_text(encoding="utf-8")
+    value = lambda name: re.search(rf'(?m)^{name}="?([^"\n]*)"?$', text)[1]
+    return value("ARCHIVE_URL").replace("$VERSION", value("VERSION")), value("ARCHIVE_SHA256")
+
+
 def page_file(url: str, origin: str) -> Path:
     rel = url[len(origin):]
     return SITE / (rel + "index.html" if rel == "" or rel.endswith("/") else rel)
 
 
-def audit(get: Fetch = fetch, origin: str = ORIGIN, site: Path = SITE, now: datetime | None = None) -> list[str]:
+def audit(get: Fetch = fetch, origin: str = ORIGIN, site: Path = SITE, now: datetime | None = None,
+          digest: Digest = archive_digest) -> list[str]:
     errors: list[str] = []
     pages = [n.text or "" for n in ElementTree.parse(site / "sitemap.xml").getroot().findall("{*}url/{*}loc")]
     images: set[str] = set()
@@ -96,6 +118,11 @@ def audit(get: Fetch = fetch, origin: str = ORIGIN, site: Path = SITE, now: date
         when = datetime.fromisoformat(expires[1].decode().replace("Z", "+00:00"))
         if when <= (now or datetime.now(timezone.utc)):
             errors.append("security.txt has expired; move Expires forward")
+    url, pinned = installer_pin(site)
+    received = digest(url)
+    if received != pinned:
+        errors.append(f"install.sh pins {pinned} for {url}, but the archive "
+                      + (f"is {received}" if received else "could not be downloaded"))
     return errors
 
 
