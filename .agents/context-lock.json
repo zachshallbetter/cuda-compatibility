@@ -18,9 +18,9 @@
     "repositories": [
       {
         "path": ".",
-        "commit": "f0a027d49e6eb487531ce0a78b01a9ca95fdc5aa",
-        "branch": "docs/remove-after-020",
-        "dirty": true,
+        "commit": "1fde2755df3a1c75a49210b42c2f81bd82761b8b",
+        "branch": "records/conda-evidence",
+        "dirty": false,
         "remote": "https://github.com/zachshallbetter/cuda-compatibility.git"
       }
     ]
