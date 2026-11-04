@@ -123,10 +123,29 @@ class InstallScriptTests(unittest.TestCase):
         self.assertEqual(result.returncode, 2)
         self.assertIn("Unknown option: --frobnicate", result.stderr)
 
-    def test_refuses_root(self) -> None:
-        result = self.run_script("--dry-run", FAKE_UID="0")
+    def test_refuses_root_outside_a_container(self) -> None:
+        result = self.run_script("--dry-run", FAKE_UID="0", CUDA_LEGACY_CONTAINER_MARKERS="")
         self.assertEqual(result.returncode, 2)
-        self.assertIn("not root or sudo", result.stderr)
+        self.assertIn("Run this as your own user, not root.", result.stderr)
+        self.assertIn("pass --allow-root", result.stderr)
+
+    def test_accepts_root_inside_a_container_or_with_allow_root(self) -> None:
+        marker = self.tmp / "dockerenv"
+        marker.touch()
+        for args, env, said in (
+            ((), {"CUDA_LEGACY_CONTAINER_MARKERS": str(marker)}, "Running as root inside a container."),
+            ((), {"CUDA_LEGACY_CONTAINER_MARKERS": "", "container": "podman"}, "Running as root inside a container."),
+            (("--allow-root",), {"CUDA_LEGACY_CONTAINER_MARKERS": ""}, "Running as root (--allow-root)."),
+        ):
+            result = self.run_script("--dry-run", "--yes", *args, FAKE_UID="0", VIRTUAL_ENV=str(self.env),
+                                     CUDA_LEGACY_ARCHIVE_SHA256="0" * 64, **env)
+            self.assertEqual(result.returncode, 0, result.stderr)
+            self.assertIn(said, result.stdout)
+
+    def test_refuses_sudo_even_in_a_container(self) -> None:
+        result = self.run_script("--dry-run", "--allow-root", FAKE_UID="0", SUDO_USER="someone", container="docker")
+        self.assertEqual(result.returncode, 2)
+        self.assertIn("without sudo", result.stderr)
 
     def test_refuses_other_platforms(self) -> None:
         result = self.run_script("--dry-run", FAKE_OS="Darwin", FAKE_ARCH="arm64")
