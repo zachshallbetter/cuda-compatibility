@@ -36,6 +36,9 @@ class InstallScriptTests(unittest.TestCase):
             stub = cls.bin / name
             stub.write_text(body, encoding="utf-8")
             stub.chmod(0o755)
+        # python3 on PATH is this interpreter (3.10+, no PyTorch), whatever the host's own python3 is.
+        (cls.bin / "python3").write_text(f'#!/bin/sh\nexec {sys.executable} "$@"\n', encoding="utf-8")
+        (cls.bin / "python3").chmod(0o755)
         # A virtual environment whose "torch" is a CUDA build, as far as the installer can tell.
         # Only the end-to-end test runs pip, so the shared environment is made without it.
         cls.env = cls.make_torch_env("torch-env", with_pip=False)
@@ -158,6 +161,43 @@ class InstallScriptTests(unittest.TestCase):
         self.assertEqual(result.returncode, 2)
         self.assertIn("has no PyTorch CUDA wheel", result.stderr)
         self.assertIn("download.pytorch.org/whl/cu130", result.stderr)
+
+    def test_offers_to_create_the_pytorch_environment(self) -> None:
+        # No environment holds PyTorch and nothing was named: the installer offers ~/torch-cu130 (#202).
+        env = self.home / "torch-cu130"
+        result = self.run_script("--dry-run", "--yes")
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertIn("No Python with a PyTorch CUDA wheel was found", result.stdout)
+        self.assertIn(f"-m venv {env}", result.stdout)
+        self.assertIn(f"{env}/bin/python -m pip install --no-input torch==2.14.0+cu130 numpy --index-url "
+                      "https://download.pytorch.org/whl/cu130", result.stdout)
+        self.assertIn("Dry run: nothing was changed", result.stdout)
+        self.assertTrue(self.home_is_empty())
+
+    def test_asks_before_creating_it_and_says_how_without_a_terminal(self) -> None:
+        result = self.run_script()
+        self.assertEqual(result.returncode, 2)
+        self.assertIn("no terminal to ask on before downloading PyTorch", result.stderr)
+        self.assertIn("sh -s -- --yes", result.stderr)
+        self.assertIn("sh -s -- --python PATH", result.stderr)
+        self.assertTrue(self.home_is_empty())
+
+    def test_will_not_reuse_a_path_that_is_not_an_environment(self) -> None:
+        (self.home / "torch-cu130").write_text("not a venv", encoding="utf-8")
+        result = self.run_script("--yes")
+        self.assertEqual(result.returncode, 2)
+        self.assertIn("exists and is not a virtual environment", result.stderr)
+
+    def test_says_how_to_get_venv_when_python_lacks_it(self) -> None:
+        # Debian and Ubuntu ship python3 without venv: a python3 whose venv fails, the real one otherwise.
+        shim = Path(tempfile.mkdtemp(dir=self.tmp, prefix="novenv-"))
+        (shim / "python3").write_text(
+            f'#!/bin/sh\n[ "$1" = -m ] && [ "$2" = venv ] && exit 1\nexec {sys.executable} "$@"\n', encoding="utf-8")
+        (shim / "python3").chmod(0o755)
+        result = self.run_script("--yes", PATH=f"{shim}:{self.bin}:/usr/bin:/bin")
+        self.assertEqual(result.returncode, 2)
+        self.assertIn("sudo apt install python3-venv", result.stderr)
+        self.assertFalse((self.home / "torch-cu130").exists())
 
     def test_finds_the_active_environment(self) -> None:
         result = self.run_script("--dry-run", "--yes", VIRTUAL_ENV=str(self.env), CUDA_LEGACY_ARCHIVE_SHA256="0" * 64)

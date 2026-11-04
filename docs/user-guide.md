@@ -4,7 +4,7 @@ CUDA Compatibility is an experimental tool for running selected PyTorch CUDA 13 
 
 ## 1. Install and set up
 
-On Linux x86_64, one command installs the release into the environment that holds your PyTorch CUDA wheel and runs `cuda-legacy setup`:
+On Linux x86_64, one command installs the release into the environment that holds your PyTorch CUDA wheel and runs `cuda-legacy setup`. With no such environment, it offers to create `~/torch-cu130` with torch 2.14.0+cu130, the wheel the adapter is qualified on (about 3 GB to download, 5.3 GB on disk):
 
 ```sh
 curl -fsSL https://cudacompat.com/install.sh | sh
@@ -16,7 +16,7 @@ The installer checks the release archive's SHA-256 before installing it and neve
 |---|---|
 | `--dry-run` | Print each step without changing anything |
 | `--python PATH` | Use this environment's Python instead of the one the installer finds |
-| `--yes` | Don't ask before setup downloads LLVM |
+| `--yes` | Don't ask before downloading PyTorch (when no environment has it) or LLVM |
 | `--uninstall` | Remove what setup created, then uninstall the package |
 | `--allow-root` | Run as root outside a container, on a disposable machine; never accepted with `sudo` |
 

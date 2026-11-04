@@ -10,15 +10,16 @@
 #
 # Options:
 #   --python PATH   the Python of the environment that holds PyTorch (default: found)
-#   --yes           do not ask before downloading LLVM during setup
+#   --yes           do not ask before downloading PyTorch (when no environment has it) or LLVM
 #   --dry-run       print each step without changing anything
 #   --uninstall     remove what setup created, then uninstall the package
 #   --allow-root    run as root outside a container (a disposable VM, say); never with sudo
 #   --version       print the release this script installs
 #   -- ARGS         pass the remaining arguments to `cuda-legacy setup`
 #
-# Needs Linux x86_64, Python 3.10+ in a virtualenv or conda environment with a PyTorch CUDA
-# wheel, and curl or wget. Run it as your own user; root is accepted only inside a container
+# Needs Linux x86_64, Python 3.10+ and curl or wget. It uses the virtualenv or conda environment
+# that holds your PyTorch CUDA wheel; with none, it offers to create ~/torch-cu130 with the
+# qualified wheel. Run it as your own user; root is accepted only inside a container
 # or with --allow-root. It never uses sudo, and it never changes drivers, the system CUDA
 # install or the system Python.
 #
@@ -31,7 +32,10 @@ ARCHIVE_URL="https://github.com/zachshallbetter/cuda-compatibility/archive/refs/
 # SHA-256 of ARCHIVE_URL, written by the release. Empty means no release is pinned yet.
 ARCHIVE_SHA256=f86dd7488dc49ea4a3883160f873e8578f20d8f2ce02a5572ee6a38b73afad92
 PACKAGE=cuda-legacy-compat
-TORCH_HINT="python3 -m venv ~/torch-cu130 && ~/torch-cu130/bin/pip install torch --index-url https://download.pytorch.org/whl/cu130"
+# The PyTorch build the adapter is qualified on, and where the installer puts it when you have none (#202).
+TORCH_VERSION=2.14.0+cu130
+TORCH_INDEX=https://download.pytorch.org/whl/cu130
+TORCH_HINT="python3 -m venv ~/torch-cu130 && ~/torch-cu130/bin/pip install torch==$TORCH_VERSION --index-url $TORCH_INDEX"
 
 say() { printf '==> %s\n' "$*"; }
 note() { printf '    %s\n' "$*"; }
@@ -85,7 +89,7 @@ then run its guided setup.
 Usage: curl -fsSL https://cudacompat.com/install.sh | sh -s -- [options] [-- setup-args]
 
   --python PATH   the Python of the environment that holds PyTorch (default: found)
-  --yes           do not ask before downloading LLVM during setup
+  --yes           do not ask before downloading PyTorch (when no environment has it) or LLVM
   --dry-run       print each step without changing anything
   --uninstall     remove what setup created, then uninstall the package
   --allow-root    run as root outside a container (a disposable VM, say); never with sudo
@@ -176,6 +180,53 @@ check_python() {
         "Use an environment you own."
 }
 
+# No environment holds a PyTorch CUDA wheel: offer to create one with the qualified wheel, asking first as for
+# LLVM. Sets py to its Python. In a dry run it prints the steps and the rest of the install, and returns 1.
+create_torch_env() {
+    env=${CUDA_LEGACY_TORCH_ENV:-$HOME/torch-cu130}
+    say "No Python with a PyTorch CUDA wheel was found"
+    note "Looked at CUDA_COMPAT_PYTHON, the active virtualenv or conda env, and python3 on PATH."
+    note "This installer can create one: a virtual environment at $env with torch $TORCH_VERSION"
+    note "(the CUDA 13 wheel the adapter is qualified on) and numpy from $TORCH_INDEX:"
+    note "about 3 GB to download, 5.3 GB on disk."
+    note "To use an environment you already have instead, rerun with --python PATH."
+    if [ "$YES" = 0 ]; then
+        (: </dev/tty) 2>/dev/null || stop "There is no terminal to ask on before downloading PyTorch." \
+            "To create $env, rerun with --yes: curl -fsSL https://cudacompat.com/install.sh | sh -s -- --yes" \
+            "To use an environment you have, rerun with: curl -fsSL https://cudacompat.com/install.sh | sh -s -- --python PATH"
+        printf '    Create it? [y/N] '
+        read -r answer </dev/tty || answer=
+        case $answer in
+            y | Y | yes | Yes | YES) ;;
+            *) stop "Nothing was changed." "Or set up PyTorch yourself, then rerun with --python:" "$TORCH_HINT" ;;
+        esac
+    fi
+    base=$(command -v python3) || stop "python3 was not found." "Install Python 3.10 or newer from your distribution."
+    "$base" -c 'import sys; sys.exit(0 if sys.version_info >= (3, 10) else 1)' 2>/dev/null ||
+        stop "$base is older than Python 3.10." "Install a newer Python, then rerun with --python, or put it first on PATH."
+    if [ -e "$env" ] && [ ! -x "$env/bin/python" ]; then
+        stop "$env exists and is not a virtual environment." "Move it aside, or rerun with --python PATH."
+    fi
+    say "Creating $env"
+    if [ ! -x "$env/bin/python" ]; then
+        step "$base" -m venv "$env" || stop "python3 could not create a virtual environment at $env." \
+            "On Debian and Ubuntu, venv is a separate package: sudo apt install python3-venv" \
+            "Then rerun the same command."
+    fi
+    # Without --quiet: the download takes minutes, and pip shows its progress. numpy too: the wheel doesn't need it,
+    # but without it every script's first line is PyTorch's "Failed to initialize NumPy" warning.
+    step "$env/bin/python" -m pip install --no-input "torch==$TORCH_VERSION" numpy --index-url "$TORCH_INDEX" ||
+        stop "pip could not install torch $TORCH_VERSION into $env." "pip's message is above." \
+            "Rerunning the same command resumes into the same environment."
+    py=$env/bin/python
+    CREATED_ENV=$env
+    if [ "$DRY_RUN" = 1 ]; then
+        note "Then cuda-legacy $VERSION installs into $env and setup runs there."
+        say "Dry run: nothing was changed"
+        return 1
+    fi
+}
+
 scripts_dir() {
     "$1" -c 'import sysconfig; print(sysconfig.get_path("scripts"))'
 }
@@ -216,9 +267,9 @@ do_install() {
         warn "nvidia-smi was not found. Install the NVIDIA driver before running workloads; setup checks it."
 
     say "Finding the Python environment that holds PyTorch"
-    py=$(find_python has_cuda_torch) || stop "No Python with a PyTorch CUDA wheel was found." \
-        "Looked at CUDA_COMPAT_PYTHON, the active virtualenv or conda env, and python3 on PATH." \
-        "Install one into a virtual environment, then rerun with --python:" "$TORCH_HINT"
+    if ! py=$(find_python has_cuda_torch); then
+        create_torch_env || return 0
+    fi
     check_python "$py"
     note "$py (torch $(torch_version "$py"))"
 
@@ -271,7 +322,12 @@ do_install() {
     case $status in
         0)
             say "Ready"
-            note "Run a script: $bin run app.py"
+            if [ -n "$CREATED_ENV" ]; then
+                note "Use the new environment in a shell: . $CREATED_ENV/bin/activate"
+                note "Then run a script: cuda-legacy run app.py"
+            else
+                note "Run a script: $bin run app.py"
+            fi
             note "Upgrade later: run the same command again"
             note "Remove it all: curl -fsSL https://cudacompat.com/install.sh | sh -s -- --uninstall"
             ;;
@@ -313,6 +369,7 @@ main() {
     PIP_DISABLE_PIP_VERSION_CHECK=1
     export PIP_NO_CACHE_DIR PIP_DISABLE_PIP_VERSION_CHECK
     PYTHON=
+    CREATED_ENV=
     ALLOW_ROOT=0
     YES=0
     DRY_RUN=0
