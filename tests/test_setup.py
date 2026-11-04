@@ -41,6 +41,24 @@ def fake_llvm_archive(path: Path, version: str = "23.1.4") -> Path:
     return path
 
 
+def fake_cuda_wheels(directory: Path) -> list[Path]:
+    """Two wheels shaped like NVIDIA's: headers under nvidia/<package>/include, libdevice under nvvm, and members
+    setup must not keep (a library, an escape)."""
+    import zipfile
+    directory.mkdir(parents=True, exist_ok=True)
+    runtime, nvcc = directory / "nvidia_cuda_runtime_fixture.whl", directory / "nvidia_cuda_nvcc_fixture.whl"
+    with zipfile.ZipFile(runtime, "w") as wheel:
+        wheel.writestr("nvidia/cuda_runtime/include/cuda.h", "#define CUDA_VERSION 12040\n")
+        wheel.writestr("nvidia/cuda_runtime/include/cuda_runtime.h", "/* fixture */\n")
+        wheel.writestr("nvidia/cuda_runtime/lib/libcudart.so.12", "not kept")
+        wheel.writestr("nvidia/../../escape.h", "never written")
+    with zipfile.ZipFile(nvcc, "w") as wheel:
+        wheel.writestr("nvidia/cuda_nvcc/nvvm/libdevice/libdevice.10.bc", "bitcode")
+        wheel.writestr("nvidia/cuda_nvcc/include/crt/host_defines.h", "/* fixture */\n")
+        wheel.writestr("nvidia/cuda_nvcc/bin/ptxas", "not kept")
+    return [runtime, nvcc]
+
+
 def archive_for(path: Path) -> toolchain.Archive:
     return toolchain.Archive(path.as_uri(), hashlib.sha256(path.read_bytes()).hexdigest(), path.stat().st_size, None)
 
@@ -56,8 +74,12 @@ class IsolatedHome(unittest.TestCase):
         self.env.start()
         for name in ("CUDA_COMPAT_LLVM_ROOT", "CUDA_COMPAT_CUDA_ROOT", "CUDA_COMPAT_PYTHON", "VIRTUAL_ENV", "CONDA_PREFIX"):
             os.environ.pop(name, None)
+        # No test downloads NVIDIA's real wheels: tests that want the CUDA download patch in fixtures (#204).
+        self.no_wheels = mock.patch.object(toolchain, "CUDA_WHEELS", ())
+        self.no_wheels.start()
 
     def tearDown(self) -> None:
+        self.no_wheels.stop()
         self.env.stop()
         import shutil
         shutil.rmtree(self.tmp, ignore_errors=True)
@@ -173,6 +195,56 @@ class SetupCommandTests(IsolatedHome):
         self.assertFalse(toolchain.managed_llvm_dir().exists())
         self.assertFalse(settings.config_path().exists())
         self.assertFalse(settings.data_dir().exists())
+
+    def test_without_cuda_headers_setup_assembles_them_from_the_wheels_and_remove_undoes_it(self) -> None:
+        source = fake_llvm_archive(self.tmp / "src.tar.xz")
+        wheels = tuple(archive_for(path) for path in fake_cuda_wheels(self.tmp / "wheels"))
+        with mock.patch.object(toolchain, "LLVM_ARCHIVES", (archive_for(source),)), \
+                mock.patch.object(toolchain, "CUDA_WHEELS", wheels), mock.patch.object(toolchain, "_CUDA_CANDIDATES", ()), \
+                mock.patch.object(toolchain, "find_python", return_value=toolchain.Found("/env/bin/python", "fixture")):
+            code, out, err = self._run("setup", "--yes")
+        self.assertEqual(code, 0, err)
+        root = toolchain.managed_cuda_dir()
+        saved = settings.load()
+        self.assertEqual(saved["cuda_root"], str(root))
+        self.assertTrue(saved["cuda_managed"])
+        self.assertIn("NVIDIA's CUDA 12.4 wheels", out)
+        for kept in ("include/cuda.h", "include/cuda_runtime.h", "include/crt/host_defines.h",
+                     "nvvm/libdevice/libdevice.10.bc"):
+            self.assertTrue((root / kept).is_file(), kept)
+        self.assertTrue((root / "bin").is_dir())
+        self.assertFalse((root / "lib").exists())
+        self.assertFalse((root / "bin" / "ptxas").exists())
+        self.assertEqual(list(self.tmp.rglob("escape.h")), [])
+        self.assertEqual(list(root.parent.glob("*.whl")), [])
+
+        code, _, _ = self._run("setup", "--remove")
+        self.assertEqual(code, 0)
+        self.assertFalse(root.exists())
+        self.assertFalse(settings.data_dir().exists())
+
+    def test_dry_run_plans_the_cuda_download_and_an_explicit_root_never_downloads(self) -> None:
+        source = fake_llvm_archive(self.tmp / "src.tar.xz")
+        wheels = tuple(archive_for(path) for path in fake_cuda_wheels(self.tmp / "wheels"))
+        with mock.patch.object(toolchain, "LLVM_ARCHIVES", (archive_for(source),)), \
+                mock.patch.object(toolchain, "CUDA_WHEELS", wheels), mock.patch.object(toolchain, "_CUDA_CANDIDATES", ()), \
+                mock.patch.object(toolchain, "find_python", return_value=toolchain.Found("/env/bin/python", "fixture")):
+            code, out, _ = self._run("setup", "--dry-run", "--json")
+            self.assertEqual(code, 0)
+            result = json.loads(out)
+            self.assertEqual(result["would"], "ready")
+            self.assertEqual(result["plan"]["cuda_download"]["bytes"], sum(w.size for w in wheels))
+            code, out, _ = self._run("setup", "--dry-run", "--json", "--cuda-root", str(self.tmp / "nowhere"))
+            self.assertEqual(json.loads(out)["plan"]["cuda_download"], None)
+            self.assertEqual(json.loads(out)["would"], "needs_attention")
+        self.assertFalse(toolchain.managed_cuda_dir().exists())
+
+    def test_remove_never_deletes_cuda_headers_it_did_not_create(self) -> None:
+        own = toolchain.managed_cuda_dir()
+        (own / "include").mkdir(parents=True)
+        (own / "include" / "cuda.h").write_text("mine")
+        self._run("setup", "--remove")
+        self.assertTrue((own / "include" / "cuda.h").is_file())
 
     def test_remove_never_deletes_an_llvm_it_did_not_create(self) -> None:
         own = toolchain.managed_llvm_dir()
