@@ -6,7 +6,7 @@
   "selectedPaths": [],
   "sourceSelection": {
     "includedCount": 284,
-    "includedBytes": 2877337,
+    "includedBytes": 2877411,
     "excludedCounts": {
       "extension": 65,
       "generated-or-transient-file": 2
@@ -18,14 +18,14 @@
     "repositories": [
       {
         "path": ".",
-        "commit": "999ae3b0df26cc4d3f8bdd28da0ca489e00d4097",
-        "branch": null,
+        "commit": "e790bc64aee76aa0360445c86357ddc311fbc401",
+        "branch": "feat/204-cuda-headers-v2",
         "dirty": true,
         "remote": "https://github.com/zachshallbetter/cuda-compatibility.git"
       }
     ]
   },
-  "aggregateSourceDigest": "0ccc3f18f0da09273c2c3ad82eb5f0176e0d9a068db51220aa7328ee8b3e60c3",
+  "aggregateSourceDigest": "1f1c78490a0f08b3dacd0ee64837f3b08240426b25984dabeda7245f3cb8636c",
   "sources": [
     {
       "path": ".agents/acp/README.md",
@@ -1259,8 +1259,8 @@
     },
     {
       "path": "src/cuda_legacy_compat/cli.py",
-      "bytes": 27467,
-      "sha256": "a33b3a9f28f0674db209f49f855810c057c5c83bfa03b53a1c7b6825912f1473"
+      "bytes": 27541,
+      "sha256": "3612aec8f8e5a888e05422f76dc0e7ae29a32316628aeb1ecf270e45bbbfdd7a"
     },
     {
       "path": "src/cuda_legacy_compat/compat/cuda_runtime_version_facade.cpp",

@@ -73,6 +73,10 @@ def _profile_summaries() -> list[dict[str, Any]]:
     return [profiles[profile_id] for profile_id in sorted(profiles)]
 
 
+_INSTALL_GXX = ("Install g++ and its C++ standard library headers: `sudo apt install g++` (Debian, Ubuntu) or "
+                "`sudo dnf install gcc-c++` (Fedora, RHEL).")
+
+
 def _doctor_check(
     check_id: str,
     status: str,
@@ -329,14 +333,14 @@ def _doctor_report(llvm_root: str | None, cuda_root: str, python: str | None = N
                         if version_ok and version
                         else f"could not query g++ version at {cxx}: {version_error}"
                     ),
-                    "Install g++ and its C++ standard library development headers.",
+                    _INSTALL_GXX,
                 )
             )
     else:
         checks.append(
             _doctor_check(
                 "cxx_compiler", "not_ready", "g++ was not found on PATH",
-                "Install g++ and its C++ standard library development headers.",
+                _INSTALL_GXX,
             )
         )
 
