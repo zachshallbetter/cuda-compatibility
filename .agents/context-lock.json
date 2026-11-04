@@ -6,7 +6,7 @@
   "selectedPaths": [],
   "sourceSelection": {
     "includedCount": 262,
-    "includedBytes": 2669574,
+    "includedBytes": 2669782,
     "excludedCounts": {
       "extension": 65,
       "generated-or-transient-file": 2
@@ -18,14 +18,14 @@
     "repositories": [
       {
         "path": ".",
-        "commit": "11cf7580a5572c0aca3f9bee4e095922499be8a3",
-        "branch": "docs/install-fallback",
-        "dirty": false,
+        "commit": "8cd00900617bdcca2f48195041b28a4f8b097f3e",
+        "branch": "docs/remove-driver-cache",
+        "dirty": true,
         "remote": "https://github.com/zachshallbetter/cuda-compatibility.git"
       }
     ]
   },
-  "aggregateSourceDigest": "3d95b1811c6de6179b7c25d7f40997d9a217d4a192f324c34249f9648f958429",
+  "aggregateSourceDigest": "c1ddfefebcce0f3acda6a73a0159288bd0e06179f9ddd8dab1abc4bc26bf1bbb",
   "sources": [
     {
       "path": ".agents/acp/README.md",
@@ -874,8 +874,8 @@
     },
     {
       "path": "docs/user-guide.md",
-      "bytes": 13509,
-      "sha256": "8de57f3e51db486b96cd516da07251da9b997685d3a394bb9c2ac08e9588a4f0"
+      "bytes": 13639,
+      "sha256": "b54de59d864b799af2fdfea654749fe4424c8a31feea8f31fbd7b812391f37ce"
     },
     {
       "path": "examples/dpp/availability-2026-11-03.json",
@@ -1079,8 +1079,8 @@
     },
     {
       "path": "site/docs/cli.html",
-      "bytes": 21799,
-      "sha256": "6c9dc2ae7f1be3c2dd34743eb973fdc9f31c47d9cf50ff13177b87033a78bde5"
+      "bytes": 21877,
+      "sha256": "ac86e9676401e0374f67c58a8225586b9545764afe0f723ae54783f6e8294783"
     },
     {
       "path": "site/docs/compatibility.html",

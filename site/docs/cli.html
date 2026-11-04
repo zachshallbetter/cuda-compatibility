@@ -102,7 +102,7 @@ td.cmd code{font-size:13px;background:none;padding:0;font-weight:500}
 <tr><td class="cmd"><code>cuda-legacy profiles list [--json]</code></td><td>List bundled versioned compatibility profiles.</td></tr>
 <tr><td class="cmd"><code>cuda-legacy profiles show PROFILE [--json]</code></td><td>Explain a profile’s source and requirements.</td></tr>
 <tr><td class="cmd"><code>cuda-legacy setup [--yes] [--dry-run] [--json] [--python PATH] [--cuda-root PATH] [--llvm-root PATH]</code></td><td>Find or download what the launcher needs (LLVM 23.1.4 is SHA-256 checked), save it, and run doctor. Run it once.</td></tr>
-<tr><td class="cmd"><code>cuda-legacy setup --remove</code></td><td>Delete exactly what setup created: its LLVM copy and the saved setup.</td></tr>
+<tr><td class="cmd"><code>cuda-legacy setup --remove</code></td><td>Delete exactly what setup created: its LLVM copy and the saved setup. The NVIDIA driver's shared compile cache in <code>~/.nv</code> is left alone.</td></tr>
 <tr><td class="cmd"><code>cuda-legacy doctor [--llvm-root PATH] [--cuda-root PATH] [--python PATH] [--json]</code></td><td>Check prerequisites for the experimental launcher; each missing item names its next step.</td></tr>
 <tr><td class="cmd"><code>cuda-legacy ops [--json]</code></td><td>List what the adapter runs natively on sm_52, what it runs through the CPU fallback, and each limit.</td></tr>
 <tr><td class="cmd"><code>cuda-legacy audit PROFILE [--json]</code></td><td>Compare available machine facts against a target profile.</td></tr>

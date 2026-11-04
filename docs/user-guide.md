@@ -39,7 +39,7 @@ python -m pip install .
 cuda-legacy setup
 ```
 
-`setup` finds the PyTorch environment and CUDA 12.4 headers. It uses LLVM 23.1.4 if you have it, or downloads it after asking, with a SHA-256 check. It saves the result, so `doctor` and `run` need no flags afterwards. `cuda-legacy setup --dry-run` shows the plan first. `cuda-legacy setup --remove` deletes exactly what setup created.
+`setup` finds the PyTorch environment and CUDA 12.4 headers. It uses LLVM 23.1.4 if you have it, or downloads it after asking, with a SHA-256 check. It saves the result, so `doctor` and `run` need no flags afterwards. `cuda-legacy setup --dry-run` shows the plan first. `cuda-legacy setup --remove` deletes exactly what setup created. It leaves `~/.nv/ComputeCache`, the NVIDIA driver's compile cache that every CUDA program shares; delete it yourself if you want.
 
 For development, use `python -m pip install -e .`. The package has no Python runtime dependencies and bundles no NVIDIA files. Install it into the same environment as the PyTorch CUDA wheel you want to run; the launcher uses that environment's Python interpreter.
 

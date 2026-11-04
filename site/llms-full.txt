@@ -687,7 +687,7 @@ By Zach Shallbetter · Sheet 06 of 10 · Updated 3 November 2026
 | cuda-legacy profiles list [--json] | List bundled versioned compatibility profiles. |
 | cuda-legacy profiles show PROFILE [--json] | Explain a profile’s source and requirements. |
 | cuda-legacy setup [--yes] [--dry-run] [--json] [--python PATH] [--cuda-root PATH] [--llvm-root PATH] | Find or download what the launcher needs (LLVM 23.1.4 is SHA-256 checked), save it, and run doctor. Run it once. |
-| cuda-legacy setup --remove | Delete exactly what setup created: its LLVM copy and the saved setup. |
+| cuda-legacy setup --remove | Delete exactly what setup created: its LLVM copy and the saved setup. The NVIDIA driver's shared compile cache in ~/.nv is left alone. |
 | cuda-legacy doctor [--llvm-root PATH] [--cuda-root PATH] [--python PATH] [--json] | Check prerequisites for the experimental launcher; each missing item names its next step. |
 | cuda-legacy ops [--json] | List what the adapter runs natively on sm_52, what it runs through the CPU fallback, and each limit. |
 | cuda-legacy audit PROFILE [--json] | Compare available machine facts against a target profile. |
