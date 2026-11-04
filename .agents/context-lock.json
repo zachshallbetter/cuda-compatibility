@@ -5,8 +5,8 @@
   "validityBasis": "aggregate-source-digest",
   "selectedPaths": [],
   "sourceSelection": {
-    "includedCount": 275,
-    "includedBytes": 2781815,
+    "includedCount": 276,
+    "includedBytes": 2784716,
     "excludedCounts": {
       "extension": 65,
       "generated-or-transient-file": 2
@@ -18,14 +18,14 @@
     "repositories": [
       {
         "path": ".",
-        "commit": "83650ae08810506b31dadbda341cc3e5e32cfa36",
+        "commit": "0d288c99a18c154a4277d8d446c09873a01813ac",
         "branch": "feat/native-gemm",
         "dirty": true,
         "remote": "https://github.com/zachshallbetter/cuda-compatibility.git"
       }
     ]
   },
-  "aggregateSourceDigest": "b0f6451c671e1ce9e94f93017d2be0ed450e6e68b70f8196b04385abb9a286ca",
+  "aggregateSourceDigest": "f186cc9659bc5ee66ec12cdf6961c5cb7b5e0410447007f5f4d5e545f8f058a2",
   "sources": [
     {
       "path": ".agents/acp/README.md",
@@ -1021,6 +1021,11 @@
       "path": "scripts/dpp_measurement.py",
       "bytes": 8187,
       "sha256": "233072b558e2962e14520d25c1e6c846af0497214cf5761e9bedf2345fd38aff"
+    },
+    {
+      "path": "scripts/gemm_check.py",
+      "bytes": 2901,
+      "sha256": "47ae2006be044a3d0ac66d4c218e1dcc80439f7cdc865e2aa3c39b6cc20567e7"
     },
     {
       "path": "scripts/indexnow.py",
