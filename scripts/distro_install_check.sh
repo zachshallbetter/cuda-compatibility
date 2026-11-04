@@ -5,7 +5,7 @@
 #
 #   sh scripts/distro_install_check.sh PYTHON
 #
-# PYTHON is the distribution's python3. Run from a checkout; the installer is site/install.sh, which downloads
+# PYTHON is the distribution's python3. Run it as a normal user: the installer refuses root. Run from a checkout; the installer is site/install.sh, which downloads
 # the release archive it pins. Needs network access. Used by .github/workflows/installer-distros.yml.
 set -eu
 
@@ -21,6 +21,7 @@ distro=$(sed -n 's/^PRETTY_NAME=//p' /etc/os-release | tr -d '"')
 
 echo "== $distro, $("$python" --version)"
 "$python" -m venv "$work/venv"
+"$work/venv/bin/python" -m pip install --quiet --no-input --upgrade pip
 "$work/venv/bin/python" -m pip install --quiet --no-input torch==2.14.0 --index-url https://download.pytorch.org/whl/cu130
 export VIRTUAL_ENV="$work/venv" PATH="$work/venv/bin:$PATH"
 
