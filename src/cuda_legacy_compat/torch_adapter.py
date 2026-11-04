@@ -11,6 +11,8 @@ from typing import Any, Callable
 import torch
 from torch.utils._python_dispatch import TorchDispatchMode
 
+from cuda_legacy_compat import unrouted
+
 _library: torch.library.Library | None = None
 _bridge: ctypes.CDLL | None = None
 _fallback_mode: TorchDispatchMode | None = None
@@ -789,22 +791,30 @@ def _is_architecture_failure(error: Exception) -> bool:
 class _MaxwellInferenceFallback(TorchDispatchMode):
     def __torch_dispatch__(self, operation, types, args=(), kwargs=None):
         kwargs = kwargs or {}
+        schema = getattr(operation, "_schema", None)
+        name = schema.name if schema is not None else str(operation)
         if not _cuda_tensors((args, kwargs)):
-            return operation(*args, **kwargs)
+            # No CUDA tensor to copy to the CPU (a factory such as torch.ones(device="cuda")): no route.
+            try:
+                return operation(*args, **kwargs)
+            except Exception as exc:
+                if _is_architecture_failure(exc):
+                    unrouted.record(name, exc)
+                raise
         try:
             return operation(*args, **kwargs)
         except Exception as exc:
             if not _is_architecture_failure(exc):
                 raise
-            schema = getattr(operation, "_schema", None)
             if schema is not None and (
                 schema.is_mutable
                 or any(result.alias_info is not None for result in schema.returns)
             ):
-                raise NotImplementedError(
+                error = NotImplementedError(
                     f"CUDA operator {operation} has no Maxwell image and its aliasing semantics cannot use CPU fallback"
-                ) from exc
-            name = schema.name if schema is not None else str(operation)
+                )
+                unrouted.record(name, error)
+                raise error from exc
             return _cpu_fallback(operation, name)(*args, **kwargs)
 
 

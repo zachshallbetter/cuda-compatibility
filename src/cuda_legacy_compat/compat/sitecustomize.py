@@ -17,8 +17,10 @@ if os.environ.get("CUDA_COMPAT_ENABLE") == "1":
               "others fail as before. Set CUDA_COMPAT_VERBOSE=1 to see PyTorch's own warnings.", file=sys.stderr)
     try:
         from cuda_legacy_compat.torch_adapter import install
+        from cuda_legacy_compat.unrouted import install_excepthook
 
         install()
+        install_excepthook()
     except BaseException as exc:
         print(f"cuda-legacy-compat: adapter startup failed: {exc}", file=sys.stderr)
         raise SystemExit(78) from exc
