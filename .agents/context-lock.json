@@ -6,7 +6,7 @@
   "selectedPaths": [],
   "sourceSelection": {
     "includedCount": 266,
-    "includedBytes": 2700211,
+    "includedBytes": 2701740,
     "excludedCounts": {
       "extension": 65,
       "generated-or-transient-file": 2
@@ -18,14 +18,14 @@
     "repositories": [
       {
         "path": ".",
-        "commit": "51ed209c226fba0a2dafeb73b2be017037b42b23",
-        "branch": "fix/research-code-links",
+        "commit": "ab09f8f8cb9382850d16efa7daefcf4f9752fa01",
+        "branch": "ci/conda-installer",
         "dirty": true,
         "remote": "https://github.com/zachshallbetter/cuda-compatibility.git"
       }
     ]
   },
-  "aggregateSourceDigest": "76d50d581dfac54bd00ef14b5a4530acabf6eb3af46e3002782d58da8de0f4b3",
+  "aggregateSourceDigest": "42a0e897bcda1c341f91dfb4d11788ce28382c95ed7aa96098219ea6216bf688",
   "sources": [
     {
       "path": ".agents/acp/README.md",
@@ -689,8 +689,8 @@
     },
     {
       "path": ".github/workflows/installer-distros.yml",
-      "bytes": 2116,
-      "sha256": "94e803808a139dd0d440e580ad6559cc1d09a514f4981afa284264e532cd7eb4"
+      "bytes": 2533,
+      "sha256": "48af7cd318e022c14a2db9c1747455ee7bd839f6c7bc39547c27d454bca270bc"
     },
     {
       "path": ".github/workflows/verify.yml",
@@ -1014,8 +1014,8 @@
     },
     {
       "path": "scripts/distro_install_check.sh",
-      "bytes": 2872,
-      "sha256": "cc54e9651ffd0f7d2566dddf7aa4b697328013f8ea766b25518efe0eb2a05189"
+      "bytes": 3984,
+      "sha256": "a2ad21b9a6600d4129080fc197bec016fd5ed519df05c4f799a411f54482a721"
     },
     {
       "path": "scripts/dpp_measurement.py",

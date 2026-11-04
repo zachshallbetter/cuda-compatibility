@@ -19,13 +19,31 @@ export HOME="$work/home" XDG_CONFIG_HOME='' XDG_DATA_HOME='' PIP_CACHE_DIR="$wor
 mkdir -p "$HOME"
 distro=$(sed -n 's/^PRETTY_NAME=//p' /etc/os-release | tr -d '"')
 
-echo "== $distro, $("$python" --version)"
-"$python" -m venv "$work/venv"
-"$work/venv/bin/python" -m pip install --quiet --no-input --upgrade pip
-"$work/venv/bin/python" -m pip install --quiet --no-input torch==2.14.0 --index-url https://download.pytorch.org/whl/cu130
-export VIRTUAL_ENV="$work/venv" PATH="$work/venv/bin:$PATH"
+# CHECK_ENV=conda checks a micromamba environment found only through CONDA_PREFIX; the default is a virtualenv.
+MICROMAMBA_URL=https://github.com/mamba-org/micromamba-releases/releases/download/2.10.0-0/micromamba-linux-64
+MICROMAMBA_SHA256=701f39c06f8e6a670a0e186c8479b9e5c0502a2f0cda6cef65d83bdd2875e8bd
+if [ "${CHECK_ENV:-venv}" = conda ]; then
+    echo "== $distro, conda environment (micromamba 2.10.0)"
+    curl -fsSL -o "$work/micromamba" "$MICROMAMBA_URL"
+    echo "$MICROMAMBA_SHA256  $work/micromamba" | sha256sum -c - >/dev/null || fail "micromamba checksum mismatch"
+    chmod +x "$work/micromamba"
+    MAMBA_ROOT_PREFIX="$work/mamba" "$work/micromamba" create --yes --quiet --prefix "$work/env" -c conda-forge python=3.10 pip >/dev/null
+    env_python="$work/env/bin/python"
+    "$env_python" -m pip install --quiet --no-input torch==2.14.0 --index-url https://download.pytorch.org/whl/cu130
+    unset VIRTUAL_ENV
+    export CONDA_PREFIX="$work/env" PATH="$work/env/bin:$PATH"
+    found_through=CONDA_PREFIX
+else
+    echo "== $distro, $("$python" --version)"
+    "$python" -m venv "$work/env"
+    env_python="$work/env/bin/python"
+    "$env_python" -m pip install --quiet --no-input --upgrade pip
+    "$env_python" -m pip install --quiet --no-input torch==2.14.0 --index-url https://download.pytorch.org/whl/cu130
+    export VIRTUAL_ENV="$work/env" PATH="$work/env/bin:$PATH"
+    found_through=VIRTUAL_ENV
+fi
 
-echo "== install (found through VIRTUAL_ENV)"
+echo "== install (found through $found_through)"
 set +e
 sh "$root/site/install.sh" --yes </dev/null >"$work/install.txt" 2>&1
 code=$?
@@ -33,7 +51,7 @@ set -e
 cat "$work/install.txt"
 # No GPU and no CUDA headers here, so setup lists what still needs attention (exit 1); 2 means it stopped.
 [ "$code" -eq 1 ] || [ "$code" -eq 0 ] || fail "installer exited $code"
-grep -q "$work/venv/bin/python" "$work/install.txt" || fail "installer did not use the active virtualenv"
+grep -q "$env_python" "$work/install.txt" || fail "installer did not use the environment named by $found_through"
 if [ "$(id -u)" = 0 ]; then
     grep -q "Running as root inside a container." "$work/install.txt" || fail "installer did not accept root in this container"
 fi
@@ -53,9 +71,9 @@ set -e
 
 echo "== uninstall"
 sh "$root/site/install.sh" --uninstall --yes </dev/null
-if "$work/venv/bin/python" -m pip show cuda-legacy-compat >/dev/null 2>&1; then
+if "$env_python" -m pip show cuda-legacy-compat >/dev/null 2>&1; then
     fail "package still installed"
 fi
 left=$(find "$HOME" -path "*cuda-legacy*")
 [ -z "$left" ] || fail "uninstall left: $left"
-echo "OK $distro: install, status, ops, doctor and uninstall"
+echo "OK $distro ($found_through): install, status, ops, doctor and uninstall"

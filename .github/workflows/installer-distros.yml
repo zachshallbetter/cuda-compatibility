@@ -19,7 +19,7 @@ concurrency:
 
 jobs:
   install:
-    name: Install on ${{ matrix.image }} as ${{ matrix.user }}
+    name: Install on ${{ matrix.image }} as ${{ matrix.user }} (${{ matrix.env || 'venv' }})
     runs-on: ubuntu-24.04
     timeout-minutes: 45
     container: ${{ matrix.image }}
@@ -37,6 +37,11 @@ jobs:
           - image: ubuntu:24.04
             user: root
             deps: apt-get update -qq && apt-get install -y -qq python3 python3-venv curl ca-certificates tar gzip zstd xz-utils g++
+          # A conda environment found only through CONDA_PREFIX (#115).
+          - image: ubuntu:24.04
+            user: tester
+            env: conda
+            deps: apt-get update -qq && apt-get install -y -qq python3 curl ca-certificates tar gzip zstd xz-utils bzip2 g++ && useradd -m tester
           - image: fedora:41
             user: tester
             deps: dnf install -y -q python3 curl tar gzip zstd xz gcc-c++ findutils util-linux shadow-utils && useradd -m tester
@@ -47,9 +52,11 @@ jobs:
         uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
       - name: Install, use and remove cuda-legacy
         # As an ordinary user, the way a workstation runs it; the root job checks the container path (#125).
+        env:
+          CHECK_ENV: ${{ matrix.env || 'venv' }}
         run: |
           if [ "${{ matrix.user }}" = root ]; then
             sh scripts/distro_install_check.sh python3
           else
-            runuser -u "${{ matrix.user }}" -- sh scripts/distro_install_check.sh python3
+            runuser -u "${{ matrix.user }}" -- env CHECK_ENV="$CHECK_ENV" sh scripts/distro_install_check.sh python3
           fi
