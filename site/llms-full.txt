@@ -461,9 +461,9 @@ cuda-legacy ops lists what runs natively on sm_52 and what is copied to the CPU.
 The adapter is opt-in and affects only the child Python process. It sets LD_PRELOAD and a Python startup hook, builds temporary bridge and kernel files, and removes those files when the child exits. Use the launcher only with scripts you trust.
 
 ## Homebrew on Linux
-Release 0.2.12
+Release 0.2.13
 
-Homebrew on Linux can install the command line tool in its own environment instead of steps 1 and 2. The formula installs the tagged 0.2.12 release; add --HEAD to build the current main branch instead.
+Homebrew on Linux can install the command line tool in its own environment instead of steps 1 and 2. The formula installs the tagged 0.2.13 release; add --HEAD to build the current main branch instead.
 
 ```
 brew tap zachshallbetter/cuda-compatibility https://github.com/zachshallbetter/cuda-compatibility
