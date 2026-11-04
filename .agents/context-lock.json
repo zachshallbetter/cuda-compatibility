@@ -18,8 +18,8 @@
     "repositories": [
       {
         "path": ".",
-        "commit": "f5b356b0f4bd987e256f4d5cecd4f53655673ed7",
-        "branch": "site/card-safe-zone",
+        "commit": "a454231d310593cafd734f96e095ba0ea97e4f29",
+        "branch": "records/tag-decisions-v2",
         "dirty": true,
         "remote": "https://github.com/zachshallbetter/cuda-compatibility.git"
       }
