@@ -13,7 +13,7 @@ This example takes one supported workload from the [claim register](../../docs/D
 | `relu` 8×32 | `llvm-sm52-relu-f32` (native) | Identical |
 | `mm` 8×32 @ 32×8 | `llvm-sm52-mm-f32` (native) | Within the same bound |
 | `softmax` 8×8 | `cpu-fallback-softmax` (copied to the CPU, capped at 64 MiB) | Identical |
-| `mm` 1×257 @ 257×1 | Rejected: native `mm` stops at 256 dimensions and does not fall back | Must raise `NotImplementedError` |
+| `mm` 1×257 @ 257×1 | `cpu-fallback-mm` (past the native 256-dimension limit, copied to the CPU) | Within the same bound |
 | `torch.ones(..., device="cuda")` | `cpu-fallback-aten::ones` (built on the CPU and copied, capped at 64 MiB) | Identical |
 
 The matmul bound is the standard forward error bound for an `n`-term float32 dot product, doubled because the CPU reference is also rounded. It was set before the passing run and not fitted to the data. An earlier run compared the whole chained network with fixed `rtol=1e-5, atol=1e-6`; one element of the second matmul differed by 7.63×10⁻⁶ and failed. That is a float32 summation-order difference, kept as a negative result in `.agents/records/negative-results.jsonl`.

@@ -65,10 +65,15 @@
       "max_abs_error": 0.0
     },
     {
-      "case": "mm 1x257 @ 257x1 (unsupported)",
-      "route": "rejected",
-      "fails_closed": true,
-      "error": "Maxwell float32 matrix multiplication is limited to 256 dimensions"
+      "case": "mm 1x257 @ 257x1 (CPU fallback)",
+      "route": "cpu-fallback-mm",
+      "shape": [
+        1,
+        1
+      ],
+      "criterion": "float32 dot-product bound 2*n*u*(|A|@|B|)",
+      "matches_cpu": true,
+      "max_abs_error": 0.0
     },
     {
       "case": "torch.ones on the GPU (CPU fallback)",

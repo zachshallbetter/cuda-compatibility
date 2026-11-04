@@ -109,11 +109,11 @@ td.n{font-family:"Martian Mono",monospace;font-size:12px;color:var(--mute);width
 <tr><td class="n">01</td><td class="op">Tensor addition</td><td>Same-device, same-shape contiguous float32 (up to 1,048,576 values) or int32 (up to 2,147,483,647 elements), with <code>alpha=1</code>.</td></tr>
 <tr><td class="n">02</td><td class="op">Float16 tensor addition</td><td>Same-device, same-shape contiguous float16 up to 1,048,576 values, with <code>alpha=1</code>; edge values match exactly.</td></tr>
 <tr><td class="n">03</td><td class="op">Float32 in-place addition</td><td>Same-shape contiguous float32 CUDA tensors up to 1,048,576 values; scaled updates are used by the verified SGD case.</td></tr>
-<tr><td class="n">04</td><td class="op">Range creation</td><td>CUDA int64 <code>arange</code>, up to 1,048,576 values.</td></tr>
-<tr><td class="n">05</td><td class="op">Embedding</td><td>Inference only. Contiguous float32 weight, int64 CUDA indices in 1D or 2D, and up to 1,048,576 output values.</td></tr>
-<tr><td class="n">06</td><td class="op">Layer normalization</td><td>Inference only. Contiguous float32 input normalized over the last dimension with contiguous float32 weight and bias; up to 1,048,576 values.</td></tr>
-<tr><td class="n">07</td><td class="op">Matrix multiplication</td><td>2D float32 matrices with nonnegative strides; each dimension at most 256 and at most 16,777,216 multiply-accumulate steps. Larger inputs are refused, not sent to the CPU.</td></tr>
-<tr><td class="n" style="border-bottom-width:3px">08</td><td class="op" style="border-bottom-width:3px">ReLU</td><td style="border-bottom-width:3px">Contiguous float32 tensors up to 1,048,576 values.</td></tr>
+<tr><td class="n">04</td><td class="op">Range creation</td><td>CUDA int64 <code>arange</code>, up to 1,048,576 values. Other cases use the CPU fallback.</td></tr>
+<tr><td class="n">05</td><td class="op">Embedding</td><td>Contiguous float32 weight, int64 CUDA indices in 1D or 2D, and up to 1,048,576 output values. Other cases, and training, use the CPU fallback.</td></tr>
+<tr><td class="n">06</td><td class="op">Layer normalization</td><td>Contiguous float32 input normalized over the last dimension with contiguous float32 weight and bias; up to 1,048,576 values. Other cases use the CPU fallback; training uses PyTorch's decomposition.</td></tr>
+<tr><td class="n">07</td><td class="op">Matrix multiplication</td><td>2D float32 matrices with nonnegative strides; each dimension at most 256 and at most 16,777,216 multiply-accumulate steps. Other dtypes and larger inputs use the CPU fallback.</td></tr>
+<tr><td class="n" style="border-bottom-width:3px">08</td><td class="op" style="border-bottom-width:3px">ReLU</td><td style="border-bottom-width:3px">Contiguous float32 tensors up to 1,048,576 values. Other cases, and training, use the CPU fallback.</td></tr>
 </tbody>
 </table>
 </div>

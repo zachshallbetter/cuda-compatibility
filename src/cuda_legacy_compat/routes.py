@@ -17,16 +17,17 @@ NATIVE = (
      "alpha=1. float16 up to 1,048,576 values, alpha=1. Other cases use the CPU fallback."),
     (("add_.Tensor",), "Float32 in-place addition",
      "Same-shape contiguous float32 CUDA tensors up to 1,048,576 values; scaled updates as in the verified SGD case."),
-    (("arange",), "Range creation", "CUDA int64 arange, up to 1,048,576 values."),
+    (("arange",), "Range creation", "CUDA int64 arange, up to 1,048,576 values. Other cases use the CPU fallback."),
     (("embedding",), "Embedding",
-     "Inference only. Contiguous float32 weight, int64 CUDA indices in 1D or 2D, up to 1,048,576 output values."),
+     "Contiguous float32 weight, int64 CUDA indices in 1D or 2D, up to 1,048,576 output values. "
+     "Other cases, and training, use the CPU fallback."),
     (("layer_norm",), "Layer normalization",
-     "Inference only. Contiguous float32 input normalized over the last dimension, float32 weight and bias, "
-     "up to 1,048,576 values."),
+     "Contiguous float32 input normalized over the last dimension, float32 weight and bias, up to 1,048,576 "
+     "values. Other cases use the CPU fallback; training uses PyTorch's decomposition."),
     (("mm",), "Matrix multiplication",
      "2D float32 with nonnegative strides; each dimension at most 256 and at most 16,777,216 multiply-accumulates. "
-     "Larger inputs are refused, not sent to the CPU."),
-    (("relu",), "ReLU", "Contiguous float32 tensors up to 1,048,576 values."),
+     "Other dtypes and larger inputs use the CPU fallback."),
+    (("relu",), "ReLU", "Contiguous float32 tensors up to 1,048,576 values. Other cases, and training, use the CPU fallback."),
 )
 
 # (aten registration, operation)

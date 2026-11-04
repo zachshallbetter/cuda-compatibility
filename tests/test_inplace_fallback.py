@@ -86,7 +86,8 @@ class InplaceFallbackTests(unittest.TestCase):
         aten, qualifies = self.torch.ops.aten, self.adapter._writes_only_self
         for operation in (aten.add_.Tensor, aten.mul_.Scalar, aten.zero_.default, aten.fill_.Tensor, aten.relu_.default):
             self.assertTrue(qualifies(operation._schema), operation)
-        for operation in (aten.add.out, aten.view.default, aten.add.Tensor, aten.copy.default):
+        self.assertTrue(qualifies(aten.add.out._schema))  # out= writes a tensor argument too
+        for operation in (aten.view.default, aten.add.Tensor, aten.copy.default):
             self.assertFalse(qualifies(operation._schema), operation)
 
 

@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import ctypes
+import functools
 import os
 import threading
 from collections.abc import Mapping
@@ -129,6 +130,31 @@ def _load_bridge() -> tuple[ctypes.CDLL, bytes]:
     bridge.cuda_compat_cached_context_count.argtypes = []
     bridge.cuda_compat_cached_context_count.restype = ctypes.c_size_t
     return bridge, os.fsencode(ptx_path)
+
+
+def _falls_back_to_cpu(operation_name: str):
+    """A native kernel that refuses a case it has no Maxwell kernel for (another dtype, a strided input, a size
+    past its limit) hands it to the CPU fallback instead, like every unregistered operator."""
+    def wrap(kernel: Callable[..., Any]) -> Callable[..., Any]:
+        @functools.wraps(kernel)
+        def run(*args: Any, **kwargs: Any) -> Any:
+            try:
+                return kernel(*args, **kwargs)
+            except NotImplementedError:
+                operation = _resolve(operation_name)
+                if not _cuda_tensors((args, kwargs)):
+                    result = _factory_on_cpu(operation, operation._schema, f"aten::{operation_name}", args, kwargs)
+                    if result is None:
+                        raise
+                    return result
+                return _cpu_fallback(operation, operation_name.split(".")[0])(*args, **kwargs)
+        return run
+    return wrap
+
+
+def _resolve(operation_name: str):
+    name, _, overload = operation_name.partition(".")
+    return getattr(getattr(torch.ops.aten, name), overload or "default")
 
 
 def _validate_pair(left: torch.Tensor, right: torch.Tensor, operation: str) -> None:
@@ -331,6 +357,7 @@ def _add_inplace(
     return self
 
 
+@_falls_back_to_cpu("mm")
 def _mm(self: torch.Tensor, other: torch.Tensor) -> torch.Tensor:
     if self.requires_grad or other.requires_grad:
         return _cpu_fallback(torch.ops.aten.mm.default, "mm")(self, other)
@@ -389,6 +416,7 @@ def _mm(self: torch.Tensor, other: torch.Tensor) -> torch.Tensor:
     return output
 
 
+@_falls_back_to_cpu("arange")
 def _arange(
     end: int,
     *,
@@ -427,6 +455,7 @@ def _arange(
     return output
 
 
+@_falls_back_to_cpu("embedding")
 def _embedding(
     weight: torch.Tensor,
     indices: torch.Tensor,
@@ -516,6 +545,7 @@ def _embedding(
     return output
 
 
+@_falls_back_to_cpu("layer_norm")
 def _layer_norm(
     input: torch.Tensor,
     normalized_shape: list[int],
@@ -586,6 +616,7 @@ def _layer_norm(
     return output
 
 
+@_falls_back_to_cpu("relu")
 def _relu(self: torch.Tensor) -> torch.Tensor:
     if not self.is_cuda:
         raise NotImplementedError("Maxwell ReLU requires a CUDA tensor")
@@ -843,7 +874,7 @@ def _written_arguments(schema) -> list[int] | None:
         return None
     written = [index for index, argument in enumerate(schema.arguments)
                if argument.alias_info is not None and argument.alias_info.is_write]
-    if not written or written[0] != 0:
+    if not written:
         return None
     if any(not str(schema.arguments[index].type).startswith(("Tensor", "List[Tensor]")) for index in written):
         return None

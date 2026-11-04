@@ -86,12 +86,9 @@ def adapted(device: torch.device) -> list[dict]:
     probabilities = torch.softmax(output, dim=1)
     cases.append(_case("softmax 8x8 (CPU fallback)", probabilities, torch.softmax(output.cpu(), dim=1), _route()))
 
-    # Documented limits. Native matrix multiplication stops at 256 dimensions and does not fall back.
-    try:
-        torch.mm(torch.ones(1, 257).to(device), torch.ones(257, 1).to(device))
-        cases.append({"case": "mm 1x257 @ 257x1 (unsupported)", "route": _route(), "fails_closed": False})
-    except NotImplementedError as error:
-        cases.append({"case": "mm 1x257 @ 257x1 (unsupported)", "route": "rejected", "fails_closed": True, "error": str(error)})
+    # Past the native kernel's 256-dimension limit, matrix multiplication uses the CPU fallback.
+    case, _ = _mm_case("mm 1x257 @ 257x1 (CPU fallback)", torch.ones(1, 257).to(device), torch.ones(257, 1).to(device))
+    cases.append(case)
     # Constructors that fill memory on the GPU have no Maxwell image; the adapter builds them on the CPU and copies.
     ones = torch.ones(2, 2, device=device)
     cases.append(_case("torch.ones on the GPU (CPU fallback)", ones, torch.ones(2, 2), _route()))
