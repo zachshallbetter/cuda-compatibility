@@ -18,7 +18,7 @@
     "repositories": [
       {
         "path": ".",
-        "commit": "63a1d67ff3b4354d7d8a27a5f6d8725a7643aa7f",
+        "commit": "50bf78533d5ef6a86dd464684554cef6574bc1f6",
         "branch": "feat/native-fallback",
         "dirty": true,
         "remote": "https://github.com/zachshallbetter/cuda-compatibility.git"
