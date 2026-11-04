@@ -1,6 +1,6 @@
 # Drafts: short videos, LinkedIn and X
 
-**State:** Drafts, none published. Each draft carries one next action and the canonical link. All facts come from [the article draft](article.md) and keep its evidence IDs. Before posting, re-check every number against `.agents/records/evidence.jsonl` at the revision you post from, and record the placement in the ledger (see [README](README.md)).
+**State:** LinkedIn and X posted on 2026-11-03, each linking https://cudacompat.com/articles/pytorch-cuda-13-on-maxwell.html (receipts in the ledger). The video scripts are drafts. Each draft carries one next action and the canonical link. All facts come from [the article draft](article.md) and keep its evidence IDs. Before posting, re-check every number against `.agents/records/evidence.jsonl` at the revision you post from, and record the placement in the ledger (see [README](README.md)).
 
 ## Reveal short (about 45 seconds)
 

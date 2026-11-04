@@ -6,9 +6,9 @@
   "selectedPaths": [],
   "sourceSelection": {
     "includedCount": 251,
-    "includedBytes": 2568825,
+    "includedBytes": 2570013,
     "excludedCounts": {
-      "extension": 63,
+      "extension": 64,
       "generated-or-transient-file": 2
     }
   },
@@ -18,14 +18,14 @@
     "repositories": [
       {
         "path": ".",
-        "commit": "41cfee907c5b6f6de38c960f74f5e05353ddd146",
-        "branch": "site/publish-article",
+        "commit": "ed6c7219b0846f7d8360f56065065f45da8d1d7d",
+        "branch": "docs/record-placements",
         "dirty": true,
         "remote": "https://github.com/zachshallbetter/cuda-compatibility.git"
       }
     ]
   },
-  "aggregateSourceDigest": "72f2b254f827c43fe9dfcac95442b67565df404e2197fbc0ca6a98f8a43b7832",
+  "aggregateSourceDigest": "cb488ef3c7d5fa3a45b7e14b4c9582b4aba423dd338bf2aee8c6cb5d24392ad8",
   "sources": [
     {
       "path": ".agents/acp/README.md",
@@ -714,8 +714,8 @@
     },
     {
       "path": "docs/DPP_IMPLEMENTATION.md",
-      "bytes": 34741,
-      "sha256": "66e3233622f09bda98e4974baa8f04a05ffc51ee0b24491bc33219030158fc02"
+      "bytes": 35571,
+      "sha256": "8006b17a8a9aae81ad0e5f7711945b5971891ae69a1ae136876941dfdd1e696b"
     },
     {
       "path": "docs/PROJECT_MILESTONES.md",
@@ -784,8 +784,8 @@
     },
     {
       "path": "docs/publishing/README.md",
-      "bytes": 4761,
-      "sha256": "37c68b02be230813b8feaebe08863ad9fe07dbcf738165925f5410b56a259eb2"
+      "bytes": 5027,
+      "sha256": "02e01b54935403559ed140ab14454206d209bb9e712e5dcf63625a6b1986bca9"
     },
     {
       "path": "docs/publishing/article.md",
@@ -794,13 +794,13 @@
     },
     {
       "path": "docs/publishing/channels.md",
-      "bytes": 4099,
-      "sha256": "c762ea23909d6e001aa81be46a8734e0569d698968e99cc2dcf714087521b01f"
+      "bytes": 4045,
+      "sha256": "b3419d6b992cf865f750f4d781de2a5ab45a5b29d3cd7729654366ea2d565a3a"
     },
     {
       "path": "docs/publishing/social.md",
-      "bytes": 4465,
-      "sha256": "ad2a9872e5c6c1ca67ae05bea70b700cf854ec4c66e0fb801ec9c229e6ac801d"
+      "bytes": 4611,
+      "sha256": "a6a72f81c52e164c4101d6ccc087b2496138eca65cecaa5e7b5f675a00b26b25"
     },
     {
       "path": "docs/research/RESEARCH_PROGRAM.md",
