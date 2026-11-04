@@ -129,7 +129,8 @@ def _adapter_registry(source: Path) -> tuple[set[str], set[str]] | None:
         return None
     native: set[str] = set()
     fallback: set[str] = set()
-    for name, handler in re.findall(r'_library\.impl\(\s*"([^"]+)",\s*(_cpu_fallback\(|_[a-z0-9_]+)', code):
+    # A registration may be wrapped in _inference_only(...), which guards autograd and changes no route.
+    for name, handler in re.findall(r'_library\.impl\(\s*"([^"]+)",\s*(?:_inference_only\(\s*)?(_cpu_fallback\(|_[a-z0-9_]+)', code):
         if handler == "_cpu_fallback(":
             fallback.add(name)
             continue

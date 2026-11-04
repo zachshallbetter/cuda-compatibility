@@ -42,7 +42,11 @@ NOTES = (
     "Creating a tensor directly on the GPU (torch.zeros, ones, full, rand, randn, eye, ... with device='cuda') "
     "builds it on the CPU and copies it over, within the 64 MiB output limit. Random values come from the CPU "
     "generator: torch.manual_seed keeps them reproducible, but they differ from a GPU that has kernels.",
-    "First-order gradients and SGD are verified only for a small float32 linear -> ReLU -> sum workload.",
+    "Training is verified against the CPU for small Linear/GELU MLPs with SGD, momentum SGD, Adam and AdamW "
+    "(their default foreach updates included) and for a Conv2d/BatchNorm2d/MaxPool CNN with momentum SGD. "
+    "cuDNN is switched off under the adapter: it has no Maxwell support in the CUDA 13 wheels.",
+    "layer_norm, scaled_dot_product_attention and contiguous run only without autograd, so training a "
+    "Transformer or anything with LayerNorm stops with a plain error; inference works.",
     "In-place operators that update only their target (x += 1, mul_, zero_, fill_, x[i] = v, relu_, "
     "nn.ReLU(inplace=True)) run on a CPU copy and are copied back, within the 64 MiB limit, when the target is "
     "contiguous. Other mutating or alias-returning operators, and in-place updates of strided views, fail closed.",

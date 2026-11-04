@@ -653,8 +653,8 @@ def _contiguous(
     input: torch.Tensor,
     memory_format: torch.memory_format = torch.contiguous_format,
 ) -> torch.Tensor:
-    if not input.is_cuda or torch.is_grad_enabled():
-        raise NotImplementedError("Maxwell contiguous fallback requires CUDA inference tensors")
+    if not input.is_cuda:
+        raise NotImplementedError("Maxwell contiguous fallback requires a CUDA tensor")
     if memory_format != torch.contiguous_format:
         raise NotImplementedError("Maxwell contiguous fallback supports contiguous_format only")
     if input.is_contiguous(memory_format=memory_format):
@@ -675,6 +675,28 @@ def _tensor_inputs(value: Any) -> list[torch.Tensor]:
     if isinstance(value, Mapping):
         return [tensor for item in value.values() for tensor in _tensor_inputs(item)]
     return []
+
+
+# Operators that write some inputs without declaring it: (positions written, position of the "training" flag).
+_UNDECLARED_WRITES = {
+    "aten::native_batch_norm": ((3, 4), 5),
+    "aten::_native_batch_norm_legit": ((3, 4), 5),
+}
+
+# Overrides of CompositeImplicitAutograd operators. Autograd differentiates those through PyTorch's own
+# decomposition, so with a CUDA kernel in its place the backward pass would be silently wrong: refuse instead.
+_INFERENCE_ONLY = {"contiguous", "layer_norm", "scaled_dot_product_attention"}
+
+
+def _inference_only(kernel: Callable[..., Any], name: str) -> Callable[..., Any]:
+    def run(*args: Any, **kwargs: Any) -> Any:
+        if torch.is_grad_enabled() and any(tensor.requires_grad for tensor in _tensor_inputs((args, kwargs))):
+            error = NotImplementedError(
+                f"Maxwell {name} runs only without autograd; training through it is not supported yet")
+            unrouted.record(f"aten::{name}", error)
+            raise error
+        return kernel(*args, **kwargs)
+    return run
 
 
 def _cpu_fallback(operation: Callable[..., Any], name: str) -> Callable[..., Any]:
@@ -716,6 +738,15 @@ def _cpu_fallback(operation: Callable[..., Any], name: str) -> Callable[..., Any
             cpu_result = (grad_input, grad_weight, grad_bias)
         else:
             cpu_result = operation(*cpu_args, **cpu_kwargs)
+        # Batch norm in training updates its running statistics in place without declaring it in its schema,
+        # and the CPU kernel writes them directly: copy the CPU statistics back into the CUDA buffers.
+        if name in _UNDECLARED_WRITES and cpu_args[_UNDECLARED_WRITES[name][1]]:
+            for index in _UNDECLARED_WRITES[name][0]:
+                original, updated = args[index], cpu_args[index]
+                if isinstance(original, torch.Tensor) and original.is_cuda:
+                    if not original.is_contiguous():
+                        raise NotImplementedError(f"Maxwell CPU fallback for {name} cannot copy back a strided buffer")
+                    original.copy_(updated)
 
         def result_bytes(value: Any) -> int:
             if isinstance(value, torch.Tensor):
@@ -790,24 +821,27 @@ def _is_cuda(tensor: torch.Tensor) -> bool:
 
 
 def _writes_only_self(schema) -> bool:
-    """True for an in-place operator: it writes its first argument, nothing else, and returns it."""
-    if schema is None or not schema.arguments or not schema.returns:
+    """True for an in-place operator: it writes its first argument, nothing else, and returns it (or nothing,
+    for the list-of-tensors operators behind torch.optim's foreach paths)."""
+    if schema is None or not schema.arguments:
         return False
     first = schema.arguments[0].alias_info
     if first is None or not first.is_write:
         return False
     if any(argument.alias_info is not None and argument.alias_info.is_write for argument in schema.arguments[1:]):
         return False
+    if not schema.returns:
+        return str(schema.arguments[0].type).startswith("List[Tensor]")
     return all(result.alias_info is not None and result.alias_info.before_set == first.before_set
                for result in schema.returns)
 
 
-def _inplace_on_cpu(operation, name: str, args: tuple, kwargs: dict) -> torch.Tensor:
-    """Run an in-place operator on a CPU copy of its CUDA target and copy the result back into the target."""
-    target = args[0]
-    if not isinstance(target, torch.Tensor) or not _is_cuda(target):
-        raise NotImplementedError(f"Maxwell in-place fallback for {name} requires a CUDA target tensor")
-    if target.layout != torch.strided or not target.is_contiguous():
+def _inplace_on_cpu(operation, name: str, args: tuple, kwargs: dict) -> Any:
+    """Run an in-place operator on CPU copies of its CUDA targets and copy the results back into them."""
+    targets = list(args[0]) if isinstance(args[0], (list, tuple)) else [args[0]]
+    if not targets or any(not isinstance(target, torch.Tensor) or not _is_cuda(target) for target in targets):
+        raise NotImplementedError(f"Maxwell in-place fallback for {name} requires CUDA target tensors")
+    if any(target.layout != torch.strided or not target.is_contiguous() for target in targets):
         raise NotImplementedError(f"Maxwell in-place fallback for {name} requires a contiguous target")
     tensors = _tensor_inputs((args, kwargs))
     cuda_tensors = [tensor for tensor in tensors if _is_cuda(tensor)]
@@ -827,13 +861,15 @@ def _inplace_on_cpu(operation, name: str, args: tuple, kwargs: dict) -> torch.Te
 
     cpu_args, cpu_kwargs = move_to_cpu(args), move_to_cpu(kwargs)
     operation(*cpu_args, **cpu_kwargs)
-    if cpu_args[0].shape != target.shape or cpu_args[0].dtype != target.dtype:
+    updated = list(cpu_args[0]) if isinstance(args[0], (list, tuple)) else [cpu_args[0]]
+    if any(cpu.shape != target.shape or cpu.dtype != target.dtype for cpu, target in zip(updated, targets)):
         # Operators such as resize_ or transpose_ change metadata, not values; those cannot be copied back.
         raise NotImplementedError(f"Maxwell in-place fallback for {name} only supports value updates")
     # A same-dtype copy from host memory into a contiguous CUDA tensor is a plain memory copy, no kernel.
-    target.copy_(cpu_args[0])
+    for cpu, target in zip(updated, targets):
+        target.copy_(cpu)
     _dispatch_state.last_path = f"cpu-fallback-inplace-{name}"
-    return target
+    return None if isinstance(args[0], (list, tuple)) else args[0]
 
 
 def _factory_on_cpu(operation, schema, name: str, args: tuple, kwargs: dict) -> Any:
@@ -914,18 +950,18 @@ def install() -> None:
     _library.impl("add_.Tensor", _add_inplace)
     _library.impl("arange", _arange)
     _library.impl("embedding", _embedding)
-    _library.impl("layer_norm", _layer_norm)
-    _library.impl("contiguous", _contiguous)
+    _library.impl("layer_norm", _inference_only(_layer_norm, "layer_norm"))
+    _library.impl("contiguous", _inference_only(_contiguous, "contiguous"))
     _library.impl("linear", _cpu_fallback(torch.ops.aten.linear.default, "linear"))
     _library.impl("mm", _mm)
     _library.impl("bmm", _cpu_fallback(torch.ops.aten.bmm.default, "bmm"))
     _library.impl("_softmax", _cpu_fallback(torch.ops.aten._softmax.default, "softmax"))
     _library.impl(
         "scaled_dot_product_attention",
-        _cpu_fallback(
+        _inference_only(_cpu_fallback(
             torch.ops.aten.scaled_dot_product_attention.default,
             "scaled_dot_product_attention",
-        ),
+        ), "scaled_dot_product_attention"),
     )
     _library.impl("gelu", _cpu_fallback(torch.ops.aten.gelu.default, "gelu"))
     _library.impl("mul.Tensor", _cpu_fallback(torch.ops.aten.mul.Tensor, "mul"))
@@ -935,6 +971,9 @@ def install() -> None:
     _library.impl("cat", _cpu_fallback(torch.ops.aten.cat.default, "cat"))
     _library.impl("relu", _relu)
     torch.backends.mha.set_fastpath_enabled(False)
+    # cuDNN in the CUDA 13 wheels has no Maxwell support and fails with CUDNN_STATUS_EXECUTION_FAILED_CUDART;
+    # without it, convolution and batch norm use PyTorch's own kernels, which fall back to the CPU when missing.
+    torch.backends.cudnn.enabled = False
     _fallback_mode = _MaxwellInferenceFallback()
     _fallback_mode.__enter__()
 
