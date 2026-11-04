@@ -47,6 +47,7 @@ body main table.rev td:nth-child(3){grid-column:2}
 }
 /* Long inline identifiers wrap only when they would otherwise overflow */
 body p code,body li code,body td code,body span code,body dd code{white-space:normal;overflow-wrap:anywhere}
+body p a,body li a,body td a,body dd a{overflow-wrap:anywhere}
 @media (max-width:560px){body .con-row{grid-template-columns:40px minmax(0,1fr)}body .con-row>.state{grid-column:2;justify-self:start}}
 @media (max-width:480px){
 body .note.y[style*="grid-template-columns:36px"]{grid-template-columns:minmax(0,1fr)!important}

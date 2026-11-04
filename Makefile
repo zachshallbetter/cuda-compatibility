@@ -1,7 +1,7 @@
 PYTHON ?= python3
 PROJECT_ROOT := $(abspath $(dir $(lastword $(MAKEFILE_LIST))))
 
-.PHONY: check test context site cards live-audit smoke
+.PHONY: check test context site cards phone-width live-audit smoke
 
 context:
 	$(PYTHON) $(PROJECT_ROOT)/.agents/bootstrap/scripts/gen-context.py
@@ -24,6 +24,10 @@ site:
 # Share cards and the no-JavaScript wireframe; needs Google Chrome and Pillow.
 cards:
 	$(PYTHON) $(PROJECT_ROOT)/scripts/build_social_cards.py
+
+# Needs Google Chrome: every page must fit a 390 px phone, light and dark, with no literal Markdown links.
+phone-width:
+	$(PYTHON) $(PROJECT_ROOT)/scripts/check_phone_width.py
 
 # After a merge has deployed: the public site must serve this checkout exactly.
 live-audit:

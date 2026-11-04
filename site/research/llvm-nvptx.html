@@ -106,7 +106,7 @@
 <h2 id="environment">Environment</h2>
 <ul class="list"><li>Linux <code>reference GPU host</code>, x86_64, Ubuntu 22.04 userspace, glibc 2.35.</li><li>Three GTX TITAN X GM200 devices, compute capability 5.2.</li><li>NVIDIA driver 580.178.04 and CUDA Toolkit 12.4.131.</li><li>Official LLVM 23.1.4 Linux x86_64 release archive, unpacked under <code>/tmp</code>; it registers both <code>nvptx</code> and <code>nvptx64</code> targets.</li><li>The LLVM <code>.tar.zst</code> artifact passed offline GitHub attestation verification against <code>llvm/llvm-project</code>; local and remote SHA-256 matched: <code>efdd1dbd089b99bfcfcde7b8eb1236163f2e88df5a981cca4f783ec9cb5e0378</code>.</li></ul>
 <h2 id="reproduction">Reproduction</h2>
-<p>The experiment uses the native baseline kernel in [<code>vector_add.cu</code>](../../experiments/maxwell/vector_add.cu) and the driver API runner in [<code>run_vector_add.sh</code>](../../experiments/llvm-nvptx/run_vector_add.sh). On the reference host:</p>
+<p>The experiment uses the native baseline kernel in <a href="https://github.com/zachshallbetter/cuda-compatibility/blob/main/experiments/maxwell/vector_add.cu"><code>vector_add.cu</code></a> and the driver API runner in <a href="https://github.com/zachshallbetter/cuda-compatibility/blob/main/experiments/llvm-nvptx/run_vector_add.sh"><code>run_vector_add.sh</code></a>. On the reference host:</p>
 <pre aria-label="Shell commands"><code>LLVM_ROOT=/path/to/LLVM-23.1.4-Linux-X64 \
 CUDA_ROOT=/usr/local/cuda-12.4 \
 bash experiments/llvm-nvptx/run_vector_add.sh</code></pre>

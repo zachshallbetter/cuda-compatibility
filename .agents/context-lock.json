@@ -5,8 +5,8 @@
   "validityBasis": "aggregate-source-digest",
   "selectedPaths": [],
   "sourceSelection": {
-    "includedCount": 265,
-    "includedBytes": 2692124,
+    "includedCount": 266,
+    "includedBytes": 2700211,
     "excludedCounts": {
       "extension": 65,
       "generated-or-transient-file": 2
@@ -18,14 +18,14 @@
     "repositories": [
       {
         "path": ".",
-        "commit": "abff8cd7661a1818847488c9d87c16c11faa8e90",
-        "branch": "feat/root-in-containers-3",
+        "commit": "51ed209c226fba0a2dafeb73b2be017037b42b23",
+        "branch": "fix/research-code-links",
         "dirty": true,
         "remote": "https://github.com/zachshallbetter/cuda-compatibility.git"
       }
     ]
   },
-  "aggregateSourceDigest": "71d8a9325af135870dbad00308bf731e74235aa0058bf28c6cb9d89697cf9d84",
+  "aggregateSourceDigest": "76d50d581dfac54bd00ef14b5a4530acabf6eb3af46e3002782d58da8de0f4b3",
   "sources": [
     {
       "path": ".agents/acp/README.md",
@@ -729,8 +729,8 @@
     },
     {
       "path": "docs/SITE_PROTOCOL.md",
-      "bytes": 15413,
-      "sha256": "77318654afc02b7565df2ccc35577c05c66c65d229bb34e16b15c4cd2d1c40f0"
+      "bytes": 15561,
+      "sha256": "10e0a49576c147b49545fa8ef176d5dea11f52172a15df19d369110e9babd187"
     },
     {
       "path": "docs/WORK_ITEMS.md",
@@ -999,13 +999,18 @@
     },
     {
       "path": "scripts/build_site_meta.py",
-      "bytes": 29084,
-      "sha256": "b2472a6707a5c1910a3903f937c3e3fb6169d1b6bbc631a69df178f216cb3641"
+      "bytes": 29605,
+      "sha256": "0ce1ba51c64d666d076d53dd3eacc3d868478025705111dcf9710b8e036f636b"
     },
     {
       "path": "scripts/build_social_cards.py",
       "bytes": 9936,
       "sha256": "0e23cf1e3e9aad129f6969fdf2ef7015d0f40485137e98c38408518d62e0f152"
+    },
+    {
+      "path": "scripts/check_phone_width.py",
+      "bytes": 4702,
+      "sha256": "8ba89186014899c1526881e8cf7f563cd5d41489bb11c0cf01bf1db9b0b71c3b"
     },
     {
       "path": "scripts/distro_install_check.sh",
@@ -1149,8 +1154,8 @@
     },
     {
       "path": "site/research/attribution-pilot.html",
-      "bytes": 27244,
-      "sha256": "cd44a35d915fc35eeb53d2149628460371f95b75066cdb6f8352e3c807a58090"
+      "bytes": 27531,
+      "sha256": "07e093abf054ec14457c41ded8c72d4eb6f8f319c94a8e6a7d0e859d18197ba9"
     },
     {
       "path": "site/research/cuda-12-9-to-13-0-changes.html",
@@ -1159,23 +1164,23 @@
     },
     {
       "path": "site/research/implementation-gap-audit-2026-11.html",
-      "bytes": 30455,
-      "sha256": "4c4a3b700c873f758e7043dd7e6f9af52a9642d0b120c3bfab96ddf13db7ff65"
+      "bytes": 31490,
+      "sha256": "99bd79c718cecdfb1c5c75f83fd65243c6a47c42431936995f20ce68d69482e6"
     },
     {
       "path": "site/research/llvm-nvptx.html",
-      "bytes": 20006,
-      "sha256": "7dfbaaede370319a4fc5991ed85019a4d88c9d3d14cc2875b70239705d5792fb"
+      "bytes": 20144,
+      "sha256": "8eccbc9b0f20d2ba8d02528b71acbe90259f4e309c74ab6effa8f568893d944a"
     },
     {
       "path": "site/research/maxwell-baseline.html",
-      "bytes": 21142,
-      "sha256": "b8442c707aea42aa547e7fc8933ae3fed4dbda16ce0892b7ad8c8382ed239b7d"
+      "bytes": 21280,
+      "sha256": "13335adab51058c8e72427bd68aa4e6a3ead268c2ba1421dc8cfc810e2d6c92d"
     },
     {
       "path": "site/research/pytorch-cu130-maxwell.html",
-      "bytes": 35143,
-      "sha256": "4d06910b1ca5da52c65d89bf4171aeb0653104a4f4a3bd63ea7014b633e9f4b5"
+      "bytes": 35281,
+      "sha256": "ce20ec1078a574484b56c1f002eedb8056a81a683e4ddee95195d7fb2186a0c6"
     },
     {
       "path": "site/research/research-program.html",
@@ -1184,8 +1189,8 @@
     },
     {
       "path": "site/research/runtime-version-facade.html",
-      "bytes": 20456,
-      "sha256": "1015d329073bf1a8942e9b57f96b4d387ba9ae11e7bd142e716aa37b882228b8"
+      "bytes": 20525,
+      "sha256": "c7543b03e54cd3fb09b0083e437bb104ce6216c7a5195f24187c52999ef4b1bb"
     },
     {
       "path": "site/robots.txt",
@@ -1199,8 +1204,8 @@
     },
     {
       "path": "site/styles.css",
-      "bytes": 8920,
-      "sha256": "cf85fb8acf41a2a442d4214e3a324ef2ea316e79ec7359371053b089c5ff72a7"
+      "bytes": 8983,
+      "sha256": "892fa5da8a2e7b230ec99089f5297c62b945766fe941e0b54fe06574c0ee7510"
     },
     {
       "path": "site/vercel.json",
@@ -1339,8 +1344,8 @@
     },
     {
       "path": "tests/test_site_meta.py",
-      "bytes": 3100,
-      "sha256": "65e5f63c6da44218a75ae46c97957cfeab621a951120c76668c9888eb9e59c3b"
+      "bytes": 3948,
+      "sha256": "5be9d777692799035925994f3ad91a6b0a6ca830670d4061968f16ce38ab96a2"
     },
     {
       "path": "tests/test_sitecustomize.py",
