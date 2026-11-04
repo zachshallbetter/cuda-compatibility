@@ -1776,7 +1776,7 @@ A fourth piece is a version facade. One CUDA Runtime query, cudaRuntimeGetVersio
 
 ## Where it stops
 
-- Creating a tensor directly on the GPU (torch.ones(..., device="cuda")) still fails: no Maxwell kernel exists, and there is no GPU input to fall back from (GH-50-public-example-sm52-mlp).
+- Creating a tensor directly on the GPU (torch.ones(..., device="cuda")) still fails: no Maxwell kernel exists, and there is no GPU input to fall back from (GH-50-public-example-sm52-mlp). Update, 0.2.2: the adapter now builds such tensors on the CPU and copies them over (#113).
 - Native matrix multiplication stops at 256 in any dimension and refuses larger inputs rather than falling back (GH-50-public-example-sm52-mlp).
 - Convolution works in one tested classifier only by running on the CPU (CLC-012).
 - General cuDNN, cuBLAS, NCCL or Triton support, broad autograd, other optimizers, and performance parity are not established (CLC-CLAIM-008).
