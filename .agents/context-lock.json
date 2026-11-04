@@ -18,7 +18,7 @@
     "repositories": [
       {
         "path": ".",
-        "commit": "82497b4ec814c8b64055d0e8e044f02fe386d689",
+        "commit": "a633d38b53bf456574e95194292822b4944104fd",
         "branch": "perf/mean-native",
         "dirty": true,
         "remote": "https://github.com/zachshallbetter/cuda-compatibility.git"
