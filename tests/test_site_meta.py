@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import re
 import unittest
 from unittest import mock
 
@@ -30,6 +31,19 @@ class MarkdownTests(unittest.TestCase):
     def test_bare_urls_become_links(self) -> None:
         _, body, _ = meta.markdown("- https://docs.nvidia.com/cuda/x.html\n", same)
         self.assertIn('<a href="https://docs.nvidia.com/cuda/x.html">https://docs.nvidia.com/cuda/x.html</a>', body)
+
+
+    def test_link_text_may_be_code(self) -> None:
+        _, body, _ = meta.markdown("See [`run.sh`](../run.sh) and [`a` and `b`](y.md?x=1&y=2).\n", same)
+        self.assertIn('<a href="../run.sh"><code>run.sh</code></a>', body)
+        self.assertIn('<a href="y.md?x=1&amp;y=2"><code>a</code> and <code>b</code></a>', body)
+        self.assertNotIn("](", body)
+
+    def test_generated_pages_hold_no_literal_markdown_links(self) -> None:
+        root = meta.ROOT / "site"
+        for page in [*root.glob("research/*.html"), *root.glob("articles/*.html")]:
+            text = re.sub(r"<(pre|code)\b.*?</\1>", "", page.read_text(encoding="utf-8"), flags=re.S)
+            self.assertNotIn("](", text, page.name)
 
 
 class RegistryTests(unittest.TestCase):

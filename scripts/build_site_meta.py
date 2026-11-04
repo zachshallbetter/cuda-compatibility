@@ -56,6 +56,14 @@ def card_path(page: dict) -> str:
 # ---------- Markdown (the subset the research papers use) ----------
 
 def _inline(text: str, link) -> str:
+    # Links first, so link text may itself hold code spans: [`name`](path).
+    links: list[str] = []
+
+    def stash(m: re.Match) -> str:
+        links.append(f'<a href="{escape(link(m[2]))}">{_inline(m[1], link)}</a>')
+        return f"\0{len(links) - 1}\0"
+
+    text = re.sub(r"\[((?:`[^`]+`|[^\]`])+)\]\(([^)\s]+)\)", stash, text)
     parts = re.split(r"(`[^`]+`)", text)
     out = []
     for part in parts:
@@ -63,12 +71,11 @@ def _inline(text: str, link) -> str:
             out.append(f"<code>{escape(part[1:-1])}</code>")
             continue
         s = escape(part, quote=False).replace("&lt;br&gt;", "<br>")
-        s = re.sub(r"\[([^\]]+)\]\(([^)\s]+)\)", lambda m: f'<a href="{escape(link(m[2]))}">{m[1]}</a>', s)
         s = re.sub(r'(?<!["=>])\b(https?://[^\s<)]+[^\s<).,;:])', lambda m: f'<a href="{m[1]}">{m[1]}</a>', s)
         s = re.sub(r"\*\*(.+?)\*\*", r"<strong>\1</strong>", s)
         s = re.sub(r"(?<![\w*])\*(?!\s)(.+?)(?<!\s)\*(?![\w*])", r"<em>\1</em>", s)
         out.append(s)
-    return "".join(out)
+    return re.sub(r"\0(\d+)\0", lambda m: links[int(m[1])], "".join(out))
 
 
 def slugify(text: str) -> str:

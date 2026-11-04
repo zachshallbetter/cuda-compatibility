@@ -108,6 +108,7 @@ table.rev{min-width:0}
 /* Research papers rendered from docs/ (scripts/build_site_meta.py): the sheet language for plain Markdown. */
 .prose>h2{font-size:30px;font-stretch:110%;font-weight:800;letter-spacing:-0.02em;line-height:1.05;margin:20px 0 0;padding-top:16px;border-top:3px solid var(--line)}.prose>h3{font-size:21px;font-weight:700;margin:8px 0 0}.prose>h4{font-size:17px;font-weight:700;margin:4px 0 0}
 .prose>p,.prose>ul,.prose>ol,.prose>blockquote{margin:0;max-width:72ch;font-size:17px;line-height:1.6}.prose>ul,.prose>ol{padding-left:22px}.prose li+li{margin-top:6px}.prose blockquote{border-left:3px solid var(--line);padding-left:16px}
+.prose,.note{overflow-wrap:break-word}
 .prose pre{margin:0;overflow-x:auto;padding:16px;border:1px solid var(--line);font-size:14px;line-height:1.5}.prose table{font-size:15px}.prose td,.prose th{vertical-align:top}
 .papers li{padding:10px 0}.papers .mute{font-size:15px}
 .note pre{background:var(--bg)}

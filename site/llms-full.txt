@@ -1202,7 +1202,7 @@ The Python 3.10.12 reference host successfully ran the project inspector from te
 
 ## Kernel and command
 
-[vector_add.cu](../../experiments/maxwell/vector_add.cu) initializes two one-million-element integer vectors, launches a bounds-checked addition kernel, copies results back, and compares every element. [run_native_baseline.sh](../../experiments/maxwell/run_native_baseline.sh) compiles with CUDA 12.4 and -arch=sm_52, then runs a separate process selecting each device with CUDA_VISIBLE_DEVICES. It deletes the temporary executable at exit.
+vector_add.cu initializes two one-million-element integer vectors, launches a bounds-checked addition kernel, copies results back, and compares every element. run_native_baseline.sh compiles with CUDA 12.4 and -arch=sm_52, then runs a separate process selecting each device with CUDA_VISIBLE_DEVICES. It deletes the temporary executable at exit.
 
 Reproduced on the target by copying the source and runner into /tmp and running:
 
@@ -1258,7 +1258,7 @@ Scope: LLVM 23.1.4 CUDA frontend → PTX 8.4 (sm_52) → CUDA 12.4.131 ptxas and
 
 ## Reproduction
 
-The experiment uses the native baseline kernel in [vector_add.cu](../../experiments/maxwell/vector_add.cu) and the driver API runner in [run_vector_add.sh](../../experiments/llvm-nvptx/run_vector_add.sh). On the reference host:
+The experiment uses the native baseline kernel in vector_add.cu and the driver API runner in run_vector_add.sh. On the reference host:
 
 ```
 LLVM_ROOT=/path/to/LLVM-23.1.4-Linux-X64 \
@@ -1299,7 +1299,7 @@ Scope: Opt-in interposition of one CUDA Runtime API query; CUDA 12.4.131 and R58
 
 ## Behavior
 
-[cuda_runtime_version_facade.cpp](../../src/cuda_legacy_compat/compat/cuda_runtime_version_facade.cpp) interposes cudaRuntimeGetVersion for a process using LD_PRELOAD. With CUDA_COMPAT_RUNTIME_VERSION=13000, that call returns the CUDA 13.0.0 version integer. Only the exact supported value is accepted. With the variable unset, the shim calls the real function through RTLD_NEXT. No other CUDA API is interposed.
+cuda_runtime_version_facade.cpp interposes cudaRuntimeGetVersion for a process using LD_PRELOAD. With CUDA_COMPAT_RUNTIME_VERSION=13000, that call returns the CUDA 13.0.0 version integer. Only the exact supported value is accepted. With the variable unset, the shim calls the real function through RTLD_NEXT. No other CUDA API is interposed.
 
 The probe confirms that CUDA Driver API version reporting, device name, and physical compute capability remain from the installed NVIDIA stack. The tested device reports NVIDIA GeForce GTX TITAN X, compute capability 5.2; driver=13000 is the CUDA Driver API compatibility integer (13.0), not the NVIDIA driver release number. The installed NVIDIA driver release is R580 / 580.178.04.
 
@@ -1377,7 +1377,7 @@ The same result occurred on physical devices 0, 1, and 2. Running with CUDA_COMP
 
 ## First compatibility adapter
 
-[run_operator_adapter.sh](../../experiments/pytorch-cu130/run_operator_adapter.sh) generates PTX from the existing CUDA vector-add kernel with LLVM 23.1.4, builds a small CUDA Driver API bridge, and installs an explicit process-local Python dispatcher override for aten::add.Tensor. The adapter requires the visible devices to be sm_52 and does not modify the PyTorch wheel.
+run_operator_adapter.sh generates PTX from the existing CUDA vector-add kernel with LLVM 23.1.4, builds a small CUDA Driver API bridge, and installs an explicit process-local Python dispatcher override for aten::add.Tensor. The adapter requires the visible devices to be sm_52 and does not modify the PyTorch wheel.
 
 Reproduce inside the disposable PyTorch environment after placing the verified LLVM release under /tmp:
 
@@ -1437,7 +1437,7 @@ First-order gradients and an optimizer step passed for a 2×2 float32 linear →
 | cuMemcpyDtoH | Bounded fallback and embedding-index validation code | Explicit driver copy; some differentiable paths use PyTorch's device transfers instead. |
 | cuBLAS initialization (cublasCreate) | Stock official wheel reports CUBLAS_STATUS_ARCH_MISMATCH on mm | Bypassed for the registered bounded float32 matrix kernel; other cuBLAS operations remain unverified. |
 | cuDNN engine selection | Earlier convolution probe reports no engine for its CNN case | That convolution uses CPU fallback; general cuDNN compatibility is not implemented. |
-| CUDA wheel and driver library files | [library_path_probe.py](../../experiments/pytorch-cu130/library_path_probe.py) inspected /proc/self/maps after bounded matrix and convolution calls | Observed wheel paths under site-packages/nvidia/cu13/lib/ for libcudart.so.13, libcublas.so.13, libcublasLt.so.13, and libnvrtc.so.13; under site-packages/nvidia/cudnn/lib/ for cuDNN 9 libraries; under site-packages/nvidia/nccl/lib/ for libnccl.so.2; plus torch/lib/libtorch_cuda.so. The installed driver mapped as /usr/lib/x86_64-linux-gnu/libcuda.so.580.178.04. |
+| CUDA wheel and driver library files | library_path_probe.py inspected /proc/self/maps after bounded matrix and convolution calls | Observed wheel paths under site-packages/nvidia/cu13/lib/ for libcudart.so.13, libcublas.so.13, libcublasLt.so.13, and libnvrtc.so.13; under site-packages/nvidia/cudnn/lib/ for cuDNN 9 libraries; under site-packages/nvidia/nccl/lib/ for libnccl.so.2; plus torch/lib/libtorch_cuda.so. The installed driver mapped as /usr/lib/x86_64-linux-gnu/libcuda.so.580.178.04. |
 | Missing CUDA kernel image | Stock ReLU failure and fallback-dispatch probes | Replaced only for registered kernels or eligible bounded CPU fallback cases. |
 | NCCL, Triton, arbitrary runtime APIs | No supporting trace or workload evidence | Not mapped or claimed compatible. |
 
@@ -1477,16 +1477,16 @@ The project already has a working, bounded PyTorch dispatcher-level compatibilit
 
 | Capability | Source implementation | Observed evidence | Important boundary | Recommended action |
 | --- | --- | --- | --- | --- |
-| GPU inventory | [inventory.py](../../src/cuda_legacy_compat/inventory.py), [cli.py](../../src/cuda_legacy_compat/cli.py) | three physical GM200 devices | not a full device/driver conformance check | enrich provenance, UUID mapping |
-| Profile browsing and audit | [profiles.py](../../src/cuda_legacy_compat/profiles.py), [cli.py](../../src/cuda_legacy_compat/cli.py) | package architecture gates | profile 'compatible' does not certify execution | distinguish preflight and workload evidence |
-| Doctor | [cli.py](../../src/cuda_legacy_compat/cli.py) | checks OS/Python/torch/GPU/LLVM/headers/driver | ready only prerequisites | machine-readable remediation and confidence |
-| Per-process launcher | [launch.py](../../src/cuda_legacy_compat/launch.py) | PyTorch wheel probes | Python-only; compiles every launch; modifies child env | preserve CLI, add artifact caching and rollback tests |
-| NVPTX compilation | [launch.py](../../src/cuda_legacy_compat/launch.py), [compat_kernels.cu](../../src/cuda_legacy_compat/compat/compat_kernels.cu) | LLVM 23.1.4 PTX 8.4 for sm_52 | exact toolchain pinned; CUDA 12.4 headers | reproducible build manifest and multi-toolchain tests |
-| CUDA driver bridge | [driver_add_bridge.cpp](../../src/cuda_legacy_compat/compat/driver_add_bridge.cpp) | module caching, streams and GPU kernels | custom per-operation ABI, not general runtime translation | typed operation ABI and resource ownership tests |
-| Runtime version facade | [cuda_runtime_version_facade.cpp](../../src/cuda_legacy_compat/compat/cuda_runtime_version_facade.cpp) | process-local CUDA 13 version response | one query is not CUDA 13 semantics | gate facade by supported profile; disclose behavior |
-| PyTorch dispatcher adapter | [torch_adapter.py](../../src/cuda_legacy_compat/torch_adapter.py) | selected add/mm/relu/etc | tied to ATen, shape/dtype limits | extract reusable semantic operation registry |
-| Native kernel execution | [compat_kernels.cu](../../src/cuda_legacy_compat/compat/compat_kernels.cu) | selected float16/float32/int32 and small MLP | not general kernel-image translation | operator-by-operator conformance |
-| CPU fallback | [torch_adapter.py](../../src/cuda_legacy_compat/torch_adapter.py) | bounded inference, tiny autograd path | max 64 MiB, may be slow; not GPU execution | policy-controlled, report every transfer and fallback |
+| GPU inventory | inventory.py, cli.py | three physical GM200 devices | not a full device/driver conformance check | enrich provenance, UUID mapping |
+| Profile browsing and audit | profiles.py, cli.py | package architecture gates | profile 'compatible' does not certify execution | distinguish preflight and workload evidence |
+| Doctor | cli.py | checks OS/Python/torch/GPU/LLVM/headers/driver | ready only prerequisites | machine-readable remediation and confidence |
+| Per-process launcher | launch.py | PyTorch wheel probes | Python-only; compiles every launch; modifies child env | preserve CLI, add artifact caching and rollback tests |
+| NVPTX compilation | launch.py, compat_kernels.cu | LLVM 23.1.4 PTX 8.4 for sm_52 | exact toolchain pinned; CUDA 12.4 headers | reproducible build manifest and multi-toolchain tests |
+| CUDA driver bridge | driver_add_bridge.cpp | module caching, streams and GPU kernels | custom per-operation ABI, not general runtime translation | typed operation ABI and resource ownership tests |
+| Runtime version facade | cuda_runtime_version_facade.cpp | process-local CUDA 13 version response | one query is not CUDA 13 semantics | gate facade by supported profile; disclose behavior |
+| PyTorch dispatcher adapter | torch_adapter.py | selected add/mm/relu/etc | tied to ATen, shape/dtype limits | extract reusable semantic operation registry |
+| Native kernel execution | compat_kernels.cu | selected float16/float32/int32 and small MLP | not general kernel-image translation | operator-by-operator conformance |
+| CPU fallback | torch_adapter.py | bounded inference, tiny autograd path | max 64 MiB, may be slow; not GPU execution | policy-controlled, report every transfer and fallback |
 | cuBLAS | stock cublasCreate error recorded | CUBLAS_STATUS_ARCH_MISMATCH | no broad cuBLAS adapter | prioritize BLAS contract mapping |
 | cuDNN | stock engine selection failure recorded | one CNN with CPU fallback | no native convolution path proven | prioritize NPP/convolution primitive feasibility |
 | Multi-GPU | separate per-card tests | physical P2P unknown, PHB topology | no logical pooled memory or scheduling | explicit peer queries and scaling tests |
@@ -1523,10 +1523,10 @@ Do not collapse Python ATen dispatch, runtime/driver ABI interposition, PTX lowe
 
 ## Specific technical risks to investigate
 
-- [launch.py](../../src/cuda_legacy_compat/launch.py) compiles kernels and native shared libraries in a fresh temporary directory on every invocation. Measure startup costs and design a safe content-addressed cache; preserve temporary isolation and cleanup.
+- launch.py compiles kernels and native shared libraries in a fresh temporary directory on every invocation. Measure startup costs and design a safe content-addressed cache; preserve temporary isolation and cleanup.
 - The driver bridge uses custom ctypes function declarations per operator; mismatched signatures, pointer lifetime, stream ownership and module caching are high-risk boundaries. Add ABI and concurrency tests before large-scale expansion.
 - LD_PRELOAD is inherited only by the launched child but may affect its subprocesses; scope and document this behavior. Existing inherited LD_PRELOAD and PYTHONPATH need explicit compatibility and security tests.
-- The [torch_adapter.py](../../src/cuda_legacy_compat/torch_adapter.py) module combines operation semantics, dispatch policy, bridge invocation and CPU fallback. Refactor only with characterization tests to preserve proven behavior.
+- The torch_adapter.py module combines operation semantics, dispatch policy, bridge invocation and CPU fallback. Refactor only with characterization tests to preserve proven behavior.
 - CPU fallback can preserve some numerical results while introducing transfers, synchronization and autograd differences. Report both GPU execution fraction and end-to-end performance; never label a CPU-backed workload GPU-native.
 - The current adapter requires every visible GPU to be sm_52; heterogeneous hosts and UUID-based selection are separate qualification tasks.
 - Avoid a universal 'CUDA 13 supported' status; pin PyTorch wheel, driver, toolkit, GPU, operation, shape, dtype and fallback policy.
@@ -1574,9 +1574,9 @@ Research paper
 
 By Zach Shallbetter · Paper 07 of 08 · First recorded 3 November 2026 · Updated 3 November 2026
 
-Date: 2026-11-03. Protocol: v0.1.1. Raw answers: [raw/](raw/). Per-answer scores: [scores.jsonl](scores.jsonl) (108 lines, one per product × prompt × run).
+Date: 2026-11-03. Protocol: v0.1.1. Raw answers: raw/. Per-answer scores: scores.jsonl (108 lines, one per product × prompt × run).
 
-Scored against the claim register in [docs/DPP_IMPLEMENTATION.md](../../DPP_IMPLEMENTATION.md) and the README "Current status" section. Results are descriptive only.
+Scored against the claim register in docs/DPP_IMPLEMENTATION.md and the README "Current status" section. Results are descriptive only.
 
 ## Scoring conventions
 

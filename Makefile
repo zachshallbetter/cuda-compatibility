@@ -1,7 +1,7 @@
 PYTHON ?= python3
 PROJECT_ROOT := $(abspath $(dir $(lastword $(MAKEFILE_LIST))))
 
-.PHONY: check test context site cards live-audit smoke
+.PHONY: check test context site cards mobile live-audit smoke
 
 context:
 	$(PYTHON) $(PROJECT_ROOT)/.agents/bootstrap/scripts/gen-context.py
@@ -26,6 +26,10 @@ cards:
 	$(PYTHON) $(PROJECT_ROOT)/scripts/build_social_cards.py
 
 # After a merge has deployed: the public site must serve this checkout exactly.
+# Local only (needs Chrome): no page may scroll sideways on a 390 px screen.
+mobile:
+	$(PYTHON) $(PROJECT_ROOT)/scripts/check_mobile_width.py
+
 live-audit:
 	$(PYTHON) $(PROJECT_ROOT)/scripts/site_live_audit.py
 
