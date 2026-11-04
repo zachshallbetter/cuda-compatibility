@@ -6,7 +6,7 @@
   "selectedPaths": [],
   "sourceSelection": {
     "includedCount": 263,
-    "includedBytes": 2675404,
+    "includedBytes": 2675631,
     "excludedCounts": {
       "extension": 65,
       "generated-or-transient-file": 2
@@ -18,14 +18,14 @@
     "repositories": [
       {
         "path": ".",
-        "commit": "a855f186bffa007f2404f1b26722d4bde94b7f66",
-        "branch": "feat/factory-fallback",
+        "commit": "f0a027d49e6eb487531ce0a78b01a9ca95fdc5aa",
+        "branch": "docs/remove-after-020",
         "dirty": true,
         "remote": "https://github.com/zachshallbetter/cuda-compatibility.git"
       }
     ]
   },
-  "aggregateSourceDigest": "5ba6819ff57262870dc039db1518952c4a134be7f7c596ad913d784383bd424d",
+  "aggregateSourceDigest": "d43cc26ae6b850388e16452a44db7191891626618ccedce73baed15cfa415598",
   "sources": [
     {
       "path": ".agents/acp/README.md",
@@ -874,8 +874,8 @@
     },
     {
       "path": "docs/user-guide.md",
-      "bytes": 13971,
-      "sha256": "f24afec56fffe39ecca0456f2c96db0b5ecfc5d016f54caff96f0b5ed5e4be32"
+      "bytes": 14198,
+      "sha256": "5b41a152d1f89b74177127bc0fdf1700a18d943a4c7fa005bc06cac9831c1be7"
     },
     {
       "path": "examples/dpp/availability-2026-11-03.json",
