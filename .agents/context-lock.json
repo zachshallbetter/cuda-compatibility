@@ -6,7 +6,7 @@
   "selectedPaths": [],
   "sourceSelection": {
     "includedCount": 285,
-    "includedBytes": 2888751,
+    "includedBytes": 2889203,
     "excludedCounts": {
       "extension": 65,
       "generated-or-transient-file": 2
@@ -18,14 +18,14 @@
     "repositories": [
       {
         "path": ".",
-        "commit": "3e375145096898c0f891241c504344b3d7a0f6e6",
-        "branch": "chore/release-0.2.15",
+        "commit": "03a64d02a7fca977c5857b23039f5212b8a32245",
+        "branch": "docs/217-run-signals",
         "dirty": true,
         "remote": "https://github.com/zachshallbetter/cuda-compatibility.git"
       }
     ]
   },
-  "aggregateSourceDigest": "05d050a658c25b1d68ad6fe4826a4c30e184397b6fd89904807dd511303fbcdb",
+  "aggregateSourceDigest": "3275cbbaff90490cf4aa9066e0399a7494cfcc25ba5ed0ba99c13dbe3fc1655b",
   "sources": [
     {
       "path": ".agents/acp/README.md",
@@ -879,8 +879,8 @@
     },
     {
       "path": "docs/user-guide.md",
-      "bytes": 16569,
-      "sha256": "a2231b90cd294103cc1c619c6f1753cf3cfdae35a9a307b12afd77fe7c141a52"
+      "bytes": 16799,
+      "sha256": "202648ec1b27eac4fa4c5a3246e89c86899e82abb6e75cf7f13cb12359b4abbe"
     },
     {
       "path": "examples/dpp/availability-2026-11-03.json",
@@ -1134,8 +1134,8 @@
     },
     {
       "path": "site/docs/cli.html",
-      "bytes": 22385,
-      "sha256": "11101532772e3aeaae28cfed2f3e5be78a100cf0a5e45fa3a7ec9bff6eeee756"
+      "bytes": 22607,
+      "sha256": "6f6f82c0f70ec0f47f95ee9739e996f7150a8fd4301b2c0749cbe0d56326ce14"
     },
     {
       "path": "site/docs/compatibility.html",
