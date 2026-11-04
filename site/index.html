@@ -102,13 +102,13 @@
 <div class="qs">
 <div style="display:flex;flex-direction:column;gap:10px;min-width:0">
 <h2 style="font-size:30px;font-stretch:110%;font-weight:800;letter-spacing:-0.02em;line-height:1">Get it running</h2>
-<p class="soft" style="margin:0;font-size:16px;max-width:40ch">Two commands from a checkout, inside the Python environment that already holds the CUDA 13 PyTorch wheel. Linux x86_64, visible sm_52 GPUs only. No PyPI package yet; <a href="docs/getting-started.html#brew">Homebrew on Linux</a> installs release 0.1.0.</p>
-<div style="display:flex;gap:14px;flex-wrap:wrap;align-items:center"><a href="docs/getting-started.html" style="font-weight:700;font-size:15px">Full install sheet</a><a href="https://github.com/zachshallbetter/cuda-compatibility/releases" style="font-weight:700;font-size:15px">Releases</a><a href="https://github.com/zachshallbetter/cuda-compatibility/archive/refs/heads/main.zip" style="font-weight:700;font-size:15px">Download zip</a></div>
+<p class="soft" style="margin:0;font-size:16px;max-width:40ch">One command on Linux x86_64 with visible sm_52 GPUs. It finds the Python environment that holds the CUDA 13 PyTorch wheel, installs the pinned release after checking its SHA-256, and runs setup. It never uses sudo. Run it again to upgrade.</p>
+<div style="display:flex;gap:14px;flex-wrap:wrap;align-items:center"><a href="docs/getting-started.html" style="font-weight:700;font-size:15px">Full install sheet</a><a href="install.sh" style="font-weight:700;font-size:15px">Read install.sh</a><a href="https://github.com/zachshallbetter/cuda-compatibility/releases/latest" style="font-weight:700;font-size:15px">Latest release</a></div>
 </div>
 <div style="display:flex;flex-direction:column;gap:10px;min-width:0">
-<div class="cmd"><span class="sheet">1 · clone</span><code>git clone https://github.com/zachshallbetter/cuda-compatibility.git</code><button type="button" class="copy" data-copy="clone" hidden aria-label="Copy clone command">Copy</button></div>
-<div class="cmd"><span class="sheet">2 · install</span><code>cd cuda-compatibility &amp;&amp; python -m pip install .</code><button type="button" class="copy" data-copy="install" hidden aria-label="Copy install command">Copy</button></div>
-<div class="cmd"><span class="sheet">3 · set up</span><code>cuda-legacy setup</code><button type="button" class="copy" data-copy="check" hidden aria-label="Copy setup command">Copy</button></div>
+<div class="cmd"><span class="sheet">1 · install</span><code>curl -fsSL https://cudacompat.com/install.sh | sh</code><button type="button" class="copy" data-copy="installer" hidden aria-label="Copy install command">Copy</button></div>
+<div class="cmd"><span class="sheet">2 · run</span><code>cuda-legacy run app.py</code><button type="button" class="copy" data-copy="run" hidden aria-label="Copy run command">Copy</button></div>
+<div class="cmd"><span class="sheet">3 · see what ran</span><code>cuda-legacy ops</code><button type="button" class="copy" data-copy="ops" hidden aria-label="Copy ops command">Copy</button></div>
 </div>
 </div>
 </section>

@@ -28,15 +28,15 @@ GM200 reference card, compute capability 5.2. The only hardware tested so far. E
 
 ## Get it running
 
-Two commands from a checkout, inside the Python environment that already holds the CUDA 13 PyTorch wheel. Linux x86_64, visible sm_52 GPUs only. No PyPI package yet; Homebrew on Linux installs release 0.1.0.
+One command on Linux x86_64 with visible sm_52 GPUs. It finds the Python environment that holds the CUDA 13 PyTorch wheel, installs the pinned release after checking its SHA-256, and runs setup. It never uses sudo. Run it again to upgrade.
 
-Full install sheet Releases Download zip
+Full install sheet Read install.sh Latest release
 
-1 · clone git clone https://github.com/zachshallbetter/cuda-compatibility.git
+1 · install curl -fsSL https://cudacompat.com/install.sh | sh
 
-2 · install cd cuda-compatibility && python -m pip install .
+2 · run cuda-legacy run app.py
 
-3 · set up cuda-legacy setup
+3 · see what ran cuda-legacy ops
 
 - **GPU** GM200 Maxwell, 3 cards
 

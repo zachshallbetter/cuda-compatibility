@@ -6,7 +6,7 @@
   "selectedPaths": [],
   "sourceSelection": {
     "includedCount": 265,
-    "includedBytes": 2687917,
+    "includedBytes": 2687793,
     "excludedCounts": {
       "extension": 65,
       "generated-or-transient-file": 2
@@ -18,14 +18,14 @@
     "repositories": [
       {
         "path": ".",
-        "commit": "553854608e8c7492c801ddc80cff7f34722679f4",
-        "branch": null,
+        "commit": "dbe3f78f8ea6e5a6c46605c126b9ee45b7db79c7",
+        "branch": "site/home-quickstart",
         "dirty": true,
         "remote": "https://github.com/zachshallbetter/cuda-compatibility.git"
       }
     ]
   },
-  "aggregateSourceDigest": "ab6cae0ba52d7482cc3b9c6ab14a877ff7dfa27bca150926edb28b5df77ecb95",
+  "aggregateSourceDigest": "0faf798867172aabac71a6b58a64315219a64b31d38460693955bd455bfb84a2",
   "sources": [
     {
       "path": ".agents/acp/README.md",
@@ -1139,8 +1139,8 @@
     },
     {
       "path": "site/index.html",
-      "bytes": 54488,
-      "sha256": "a23ede8cc24413b5e04f8ce0dde171157a1dc7de3539fa3c84127188784bd9a8"
+      "bytes": 54364,
+      "sha256": "0ef82974cf26f6161164f7738899361ca9559b5f48110461b3f9b5d089a5f31c"
     },
     {
       "path": "site/install.sh",
