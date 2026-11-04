@@ -18,8 +18,8 @@
     "repositories": [
       {
         "path": ".",
-        "commit": "a855f186bffa007f2404f1b26722d4bde94b7f66",
-        "branch": "feat/factory-fallback",
+        "commit": "f0a027d49e6eb487531ce0a78b01a9ca95fdc5aa",
+        "branch": "records/conda-evidence",
         "dirty": true,
         "remote": "https://github.com/zachshallbetter/cuda-compatibility.git"
       }
