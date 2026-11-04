@@ -37,7 +37,7 @@ No timing is measured or claimed.
 Use Linux x86_64 with only `sm_52` GPUs visible. Install your own NVIDIA driver, CUDA 12.4 headers and LLVM 23.1.4; this project ships none of them.
 
 ```sh
-git clone --branch v0.2.18 https://github.com/zachshallbetter/cuda-compatibility
+git clone --branch v0.2.19 https://github.com/zachshallbetter/cuda-compatibility
 python3.10 -m venv venv
 venv/bin/python -m pip install torch==2.14.0 --index-url https://download.pytorch.org/whl/cu130
 venv/bin/python -m pip install ./cuda-compatibility
