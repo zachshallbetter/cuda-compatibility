@@ -6,7 +6,7 @@
   "selectedPaths": [],
   "sourceSelection": {
     "includedCount": 262,
-    "includedBytes": 2665674,
+    "includedBytes": 2667076,
     "excludedCounts": {
       "extension": 65,
       "generated-or-transient-file": 2
@@ -18,14 +18,14 @@
     "repositories": [
       {
         "path": ".",
-        "commit": "6ac032528a338e2e16673a83c9d5a4af144ad96d",
-        "branch": "chore/release-0.2.1",
+        "commit": "793545dcbfcc4c2eb38b82f0bdde671c5a155e59",
+        "branch": "docs/install-fallback",
         "dirty": true,
         "remote": "https://github.com/zachshallbetter/cuda-compatibility.git"
       }
     ]
   },
-  "aggregateSourceDigest": "37d7a52fb8a09a1dcde008a24d9ae5604c4181f810429d36e2a446ff56397573",
+  "aggregateSourceDigest": "b97461514cd74558933e630f95045de797d71ba349fc2bcd3b85f7b01f3f508b",
   "sources": [
     {
       "path": ".agents/acp/README.md",
@@ -699,8 +699,8 @@
     },
     {
       "path": "README.md",
-      "bytes": 12310,
-      "sha256": "c7840104326b138eb09ceb595c2ece391deca2b26ef670ddb9f516ff5a617779"
+      "bytes": 12760,
+      "sha256": "d6cead15986cdeeb6904b171e8c66812afb9bb7baf74cb2c8c3a5e73591bb9c0"
     },
     {
       "path": "SECURITY.md",
@@ -874,8 +874,8 @@
     },
     {
       "path": "docs/user-guide.md",
-      "bytes": 13059,
-      "sha256": "271c90037ebde8930a9c1728ae5425e4f5871b0292cba40b8a5e6916fd68d23d"
+      "bytes": 13509,
+      "sha256": "8de57f3e51db486b96cd516da07251da9b997685d3a394bb9c2ac08e9588a4f0"
     },
     {
       "path": "examples/dpp/availability-2026-11-03.json",
@@ -1094,8 +1094,8 @@
     },
     {
       "path": "site/docs/getting-started.html",
-      "bytes": 23484,
-      "sha256": "a84c6ff7d1018cece62af673a9a2d151a3312dc87de92cf235abe3e019b21991"
+      "bytes": 23986,
+      "sha256": "219a23127406dbffd7c704651d918b45171a8251a076e21c579e0783f53d2a41"
     },
     {
       "path": "site/docs/index.html",
