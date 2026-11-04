@@ -1,6 +1,6 @@
 # Launch and distribution workflow
 
-This folder prepares publication around one reproducible result: the [public `sm_52` example](../../examples/sm52-mlp/README.md) and the evidence behind it. It holds drafts and plans only. **Posting, outreach and spending each need the owner's specific approval; nothing here has been posted.**
+This folder prepares publication around one reproducible result: the [public `sm_52` example](../../examples/sm52-mlp/README.md) and the evidence behind it. It holds drafts and plans only. **Posting, outreach and spending each need the owner's approval. Placements so far are in the ledger.**
 
 | File | Contents |
 |---|---|
@@ -36,7 +36,7 @@ Drafts and placements are tracked separately. A draft can be ready while no plac
 | Posted | URL, timestamp and the exact text posted are recorded in the ledger |
 | Removed or corrected | What changed and why, with the earlier receipt kept |
 
-Current state: all drafts are **Draft**; no placements exist.
+Current state (2026-11-03): the article is published on cudacompat.com, and the LinkedIn post and X thread are **Posted**. The owner granted standing approval to post, and saw the exact text before it went out. The video scripts are still **Draft**. Reviews below run at D+7 (2026-11-10), D+28 (2026-12-01) and D+90 (2027-02-01).
 
 ## Reviews after a post
 
