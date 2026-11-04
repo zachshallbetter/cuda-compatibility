@@ -32,7 +32,7 @@
       ]
     },
     {
-      "source": "/(llms.txt|llms-full.txt|robots.txt)",
+      "source": "/(llms.txt|llms-full.txt|robots.txt|install.sh|install.sh.sha256)",
       "headers": [
         {
           "key": "Content-Type",

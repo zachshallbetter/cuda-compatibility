@@ -24,6 +24,8 @@ jobs:
         run: make context
       - name: Run release checks
         run: make check
+      - name: Lint the installer
+        run: shellcheck -s sh site/install.sh
       - name: Run test suite
         run: make test
 

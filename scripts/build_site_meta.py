@@ -11,6 +11,7 @@ Standard library only, so CI can run it.
 from __future__ import annotations
 
 import argparse
+import hashlib
 from html import escape
 import json
 from pathlib import Path
@@ -499,6 +500,8 @@ def build() -> dict[Path, str]:
     out[SITE / "sitemap.xml"] = sitemap(pages)
     out[SITE / "feed.xml"] = feed(pages, published)
     out[SITE / "llms.txt"] = llms((SITE / "llms.txt").read_text(encoding="utf-8"), papers, articles)
+    # The checksum readers compare against before piping the installer into sh.
+    out[SITE / "install.sh.sha256"] = f'{hashlib.sha256((SITE / "install.sh").read_bytes()).hexdigest()}  install.sh\n'
     return out
 
 
