@@ -18,9 +18,9 @@ class RealSizeFallbackTests(unittest.TestCase):
 
         self.torch, self.adapter, self.unrouted = torch, torch_adapter, unrouted
         unrouted._recorded = None
-        # No GPU here: every tensor counts as a CUDA tensor, the device copy is a clone, and the limit is 64 bytes.
+        # No GPU here: every tensor counts as a CUDA tensor, the device copy is a clone, and both limits are 64 bytes.
         for target, value in (("_is_cuda", lambda tensor: True), ("_cuda_tensor_to_cpu", lambda tensor: tensor.clone()),
-                              ("_CPU_FALLBACK_MAX_BYTES", 64)):
+                              ("_CPU_FALLBACK_MAX_BYTES", 64), ("_CPU_FALLBACK_TOTAL_BYTES", 64)):
             patcher = mock.patch.object(torch_adapter, target, value)
             patcher.start()
             self.addCleanup(patcher.stop)
@@ -88,7 +88,7 @@ class RealSizeFallbackTests(unittest.TestCase):
 
     def test_a_reduction_is_never_split_inside_a_tensor(self) -> None:
         torch, aten = self.torch, self.torch.ops.aten
-        with self.assertRaisesRegex(NotImplementedError, "limited to 64 MiB"):
+        with self.assertRaisesRegex(NotImplementedError, "limited to .* per operation"):
             self.dispatch(aten._foreach_norm.Scalar, [torch.ones(40)], 2)
         self.assertIsNotNone(self.unrouted._recorded)
         with self.cpu_results():
@@ -118,30 +118,31 @@ class RealSizeFallbackTests(unittest.TestCase):
         with self.assertRaisesRegex(NotImplementedError, "looked-up rows"):
             self.adapter._embedding_rows_on_cpu(torch.zeros(100, 4), torch.arange(10))
 
-    def test_a_large_output_layer_is_split_by_output_features(self) -> None:
-        torch = self.torch
-        torch.manual_seed(0)
-        x, weight, bias = torch.randn(2, 3), torch.randn(40, 3), torch.randn(40)   # a 640-byte weight under a 400-byte limit
-        moved = []
-        to_cpu = self.adapter._cuda_tensor_to_cpu
+    def test_a_copy_over_the_per_copy_limit_moves_in_pieces_and_keeps_its_gradient(self) -> None:
+        torch, adapter = self.torch, self.adapter
+        source = torch.arange(40, dtype=torch.float32, requires_grad=True)   # 160 bytes, 64-byte pieces
+        pieces = []
+        real_copy = torch.Tensor.copy_
 
-        def counting(tensor):
-            moved.append(tensor.numel())
-            return to_cpu(tensor)
-        with torch.no_grad(), mock.patch.object(self.adapter, "_cuda_tensor_to_cpu", counting), \
-                mock.patch.object(self.adapter, "_cuda_tensors", lambda value: self.adapter._tensor_inputs(value)), \
-                mock.patch.object(self.adapter, "_CPU_FALLBACK_MAX_BYTES", 400):
-            out = self.adapter._linear(x, weight, bias)
-        self.assertTrue(torch.allclose(out, torch.nn.functional.linear(x, weight, bias)))
-        self.assertLess(max(moved), weight.numel())   # never the whole weight at once
-        self.assertEqual(self.adapter.last_path(), "cpu-fallback-linear-pieces")
+        def counting(self_, other, *a, **k):
+            pieces.append(other.numel())
+            return real_copy(self_, other, *a, **k)
+        with mock.patch.object(torch.Tensor, "copy_", counting):
+            moved = adapter._move(source, "cpu")
+        self.assertEqual((moved.tolist(), pieces), (source.tolist(), [16, 16, 8]))
+        (moved * 2).sum().backward()
+        self.assertEqual(source.grad.tolist(), [2.0] * 40)
 
-    def test_training_through_a_large_output_layer_refuses_plainly(self) -> None:
-        torch = self.torch
-        weight = torch.randn(40, 3, requires_grad=True)
-        with mock.patch.object(self.adapter, "_cuda_tensors", lambda value: self.adapter._tensor_inputs(value)), \
-                self.assertRaisesRegex(NotImplementedError, "#178"):
-            self.adapter._linear(torch.randn(2, 3), weight)
+    def test_an_operation_over_the_total_refuses_and_names_the_setting(self) -> None:
+        with self.assertRaisesRegex(NotImplementedError, "per operation .CUDA_COMPAT_FALLBACK_TOTAL_MIB."):
+            self.dispatch(self.torch.ops.aten.zero_.default, self.torch.zeros(40))
+
+    def test_the_total_comes_from_the_environment(self) -> None:
+        with mock.patch.dict("os.environ", {"CUDA_COMPAT_FALLBACK_TOTAL_MIB": "2048"}):
+            self.assertEqual(self.adapter._total_limit(), 2048 * 1024 * 1024)
+        for bad in ("", "0", "-5", "lots"):
+            with mock.patch.dict("os.environ", {"CUDA_COMPAT_FALLBACK_TOTAL_MIB": bad}):
+                self.assertEqual(self.adapter._total_limit(), 1024 * 1024 * 1024, bad)
 
     def test_native_add_over_its_size_limit_falls_back(self) -> None:
         seen = []
