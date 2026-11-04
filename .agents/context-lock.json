@@ -18,9 +18,9 @@
     "repositories": [
       {
         "path": ".",
-        "commit": "a784e5ad106a198156d2d6ab9c4accacdbaf011a",
+        "commit": "b927a359655f16c072db5e6f4f98813f15a32e34",
         "branch": "feat/inplace-fallback",
-        "dirty": true,
+        "dirty": false,
         "remote": "https://github.com/zachshallbetter/cuda-compatibility.git"
       }
     ]
