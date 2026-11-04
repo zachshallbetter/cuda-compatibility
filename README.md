@@ -22,6 +22,13 @@ curl -fsSL https://cudacompat.com/install.sh | sh
 
 It never uses sudo and changes no driver, system CUDA install or system Python. Read it before running it: [`site/install.sh`](site/install.sh), published with its checksum at `https://cudacompat.com/install.sh.sha256`. Add `-s -- --dry-run` to print each step, `--yes` to skip the question before the LLVM download, `--python PATH` to choose the environment, or `--uninstall` to remove what it installed. To upgrade, run the same command again: it replaces the package and keeps the saved setup. It exits 0 when ready, 1 when setup lists something still to fix, and 2 when it stopped.
 
+If `cudacompat.com` refuses the download (curl prints an HTTP error such as 403 or 429, and nothing runs), fetch the same script from GitHub and check it against its checksum before running it:
+
+```sh
+curl -fsSLO https://raw.githubusercontent.com/zachshallbetter/cuda-compatibility/main/site/install.sh
+curl -fsSL https://raw.githubusercontent.com/zachshallbetter/cuda-compatibility/main/site/install.sh.sha256 | sha256sum -c - && sh install.sh
+```
+
 To install by hand instead, put the package into a Python environment you control. No NVIDIA files are bundled.
 
 ```sh

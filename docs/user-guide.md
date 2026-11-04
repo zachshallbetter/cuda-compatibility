@@ -21,6 +21,13 @@ The installer checks the release archive's SHA-256 before installing it and neve
 
 Exit code 0 means ready. Exit 1 means the package is installed but setup lists what still needs attention. Exit 2 means it stopped; the message says why. To upgrade, run the same command again: it replaces the package and keeps the saved setup.
 
+If `cudacompat.com` refuses the download (curl prints an HTTP error such as 403 or 429, and nothing runs), fetch the same script from GitHub and check it against its checksum before running it:
+
+```sh
+curl -fsSLO https://raw.githubusercontent.com/zachshallbetter/cuda-compatibility/main/site/install.sh
+curl -fsSL https://raw.githubusercontent.com/zachshallbetter/cuda-compatibility/main/site/install.sh.sha256 | sha256sum -c - && sh install.sh
+```
+
 ### Set up by hand
 
 From a source checkout, install into the environment that holds PyTorch, then run setup once:
