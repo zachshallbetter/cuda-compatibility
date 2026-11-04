@@ -19,7 +19,7 @@ concurrency:
 
 jobs:
   install:
-    name: Install on ${{ matrix.image }}
+    name: Install on ${{ matrix.image }} as ${{ matrix.user }}
     runs-on: ubuntu-24.04
     timeout-minutes: 45
     container: ${{ matrix.image }}
@@ -28,10 +28,17 @@ jobs:
       matrix:
         include:
           - image: debian:12
+            user: tester
             deps: apt-get update -qq && apt-get install -y -qq python3 python3-venv curl ca-certificates tar gzip zstd xz-utils g++ && useradd -m tester
           - image: ubuntu:24.04
+            user: tester
             deps: apt-get update -qq && apt-get install -y -qq python3 python3-venv curl ca-certificates tar gzip zstd xz-utils g++ && useradd -m tester
+          # Containers usually run as root, and the installer accepts that inside one (#125).
+          - image: ubuntu:24.04
+            user: root
+            deps: apt-get update -qq && apt-get install -y -qq python3 python3-venv curl ca-certificates tar gzip zstd xz-utils g++
           - image: fedora:41
+            user: tester
             deps: dnf install -y -q python3 curl tar gzip zstd xz gcc-c++ findutils util-linux shadow-utils && useradd -m tester
     steps:
       - name: Install the distribution's packages
@@ -39,5 +46,10 @@ jobs:
       - name: Check out candidate
         uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
       - name: Install, use and remove cuda-legacy
-        # The installer refuses root, so run it as an ordinary user.
-        run: runuser -u tester -- sh scripts/distro_install_check.sh python3
+        # As an ordinary user, the way a workstation runs it; the root job checks the container path (#125).
+        run: |
+          if [ "${{ matrix.user }}" = root ]; then
+            sh scripts/distro_install_check.sh python3
+          else
+            runuser -u "${{ matrix.user }}" -- sh scripts/distro_install_check.sh python3
+          fi
