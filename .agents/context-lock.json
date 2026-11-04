@@ -6,7 +6,7 @@
   "selectedPaths": [],
   "sourceSelection": {
     "includedCount": 267,
-    "includedBytes": 2710775,
+    "includedBytes": 2710793,
     "excludedCounts": {
       "extension": 65,
       "generated-or-transient-file": 2
@@ -18,14 +18,14 @@
     "repositories": [
       {
         "path": ".",
-        "commit": "e27acb99638a1870b867c6d010e2171db7cb1ee0",
+        "commit": "66c2c96a9be29929b1aef83acdb58ceb5b5a6f49",
         "branch": "site/card-safe-zone",
-        "dirty": false,
+        "dirty": true,
         "remote": "https://github.com/zachshallbetter/cuda-compatibility.git"
       }
     ]
   },
-  "aggregateSourceDigest": "cfeb81b4c0388f114ad8fa5f9c20d0520538ffd12aa76519bcc9e60483c450de",
+  "aggregateSourceDigest": "632714503164e7dcd7b8273b9673c5613402b06ba60f1bbfecbeee059d2252a0",
   "sources": [
     {
       "path": ".agents/acp/README.md",
@@ -1004,8 +1004,8 @@
     },
     {
       "path": "scripts/build_social_cards.py",
-      "bytes": 10895,
-      "sha256": "989ad1903faaa09f42a2a2b05f905830e523de3f5081122c282ba9bee24cd423"
+      "bytes": 10913,
+      "sha256": "e210ad65854a5b70aeb4a650c9ac75703364bcb8ee3de6cde33dc6b3caa00383"
     },
     {
       "path": "scripts/check_phone_width.py",
