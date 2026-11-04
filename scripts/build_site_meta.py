@@ -55,16 +55,17 @@ def card_path(page: dict) -> str:
 
 # ---------- Markdown (the subset the research papers use) ----------
 
-CODE_LINK = re.compile(r"\[`([^`]+)`\]\(([^)\s]+)\)")
+# Link text that holds a code span, alone or mixed with words: [`name`](path), [`a` and `b`](path).
+CODE_LINK = re.compile(r"\[((?:[^\]`]|`[^`]+`)*`[^`]+`(?:[^\]`]|`[^`]+`)*)\]\(([^)\s]+)\)")
 
 
 def _inline(text: str, link) -> str:
-    # A link whose text is a code span, [`name`](path), before code spans are split out of the text.
+    # Links whose text holds a code span are found before code spans are split out of the text.
     if CODE_LINK.search(text):
         out, at = [], 0
         for match in CODE_LINK.finditer(text):
             out.append(_inline(text[at:match.start()], link))
-            out.append(f'<a href="{escape(link(match[2]))}"><code>{escape(match[1])}</code></a>')
+            out.append(f'<a href="{escape(link(match[2]))}">{_inline(match[1], link)}</a>')
             at = match.end()
         out.append(_inline(text[at:], link))
         return "".join(out)

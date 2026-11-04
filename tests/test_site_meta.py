@@ -38,6 +38,12 @@ class MarkdownTests(unittest.TestCase):
         self.assertIn('<a href="y"><code>a&lt;b</code></a>', body)
         self.assertNotIn("](", body)
 
+    def test_link_text_can_mix_code_and_words(self) -> None:
+        _, body, _ = meta.markdown("See [`a` and `b`](y.md), [plain](z.md) then `c`, and `[not](a link)`.\n", same)
+        self.assertIn('<a href="y.md"><code>a</code> and <code>b</code></a>', body)
+        self.assertIn('<a href="z.md">plain</a> then <code>c</code>', body)
+        self.assertIn("<code>[not](a link)</code>", body)
+
     def test_no_generated_page_shows_a_literal_markdown_link(self) -> None:
         import re
         from pathlib import Path

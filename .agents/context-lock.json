@@ -6,7 +6,7 @@
   "selectedPaths": [],
   "sourceSelection": {
     "includedCount": 266,
-    "includedBytes": 2701740,
+    "includedBytes": 2702263,
     "excludedCounts": {
       "extension": 65,
       "generated-or-transient-file": 2
@@ -18,14 +18,14 @@
     "repositories": [
       {
         "path": ".",
-        "commit": "ab09f8f8cb9382850d16efa7daefcf4f9752fa01",
-        "branch": "ci/conda-installer",
+        "commit": "7f51273e45b6dcf1dc578c1e4e3cba80ca5a471e",
+        "branch": "fix/mixed-code-links",
         "dirty": true,
         "remote": "https://github.com/zachshallbetter/cuda-compatibility.git"
       }
     ]
   },
-  "aggregateSourceDigest": "42a0e897bcda1c341f91dfb4d11788ce28382c95ed7aa96098219ea6216bf688",
+  "aggregateSourceDigest": "64742919eb121b548944de58da7405322f677155be92a4bd6ceab1fc0eb4a3d7",
   "sources": [
     {
       "path": ".agents/acp/README.md",
@@ -999,8 +999,8 @@
     },
     {
       "path": "scripts/build_site_meta.py",
-      "bytes": 29605,
-      "sha256": "0ce1ba51c64d666d076d53dd3eacc3d868478025705111dcf9710b8e036f636b"
+      "bytes": 29732,
+      "sha256": "b2505019f1becca3ef695ee74b4d59503d6811ebcf0f32c32c39192e4d24d00e"
     },
     {
       "path": "scripts/build_social_cards.py",
@@ -1344,8 +1344,8 @@
     },
     {
       "path": "tests/test_site_meta.py",
-      "bytes": 3948,
-      "sha256": "5be9d777692799035925994f3ad91a6b0a6ca830670d4061968f16ce38ab96a2"
+      "bytes": 4344,
+      "sha256": "0e281347857381adbd9e1650c8c12c17d652b995eb78f616bdc17a11df72c06b"
     },
     {
       "path": "tests/test_sitecustomize.py",
