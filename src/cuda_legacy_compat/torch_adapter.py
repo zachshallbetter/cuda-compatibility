@@ -527,6 +527,85 @@ def _batch_norm_on_gpu(name: str, args: tuple, kwargs: dict) -> tuple[bool, Any]
     return True, (grad_input if mask[0] else None, grad_weight if mask[1] else None, grad_bias if mask[2] else None)
 
 
+_SELECTIONS: dict[tuple, torch.Tensor] = {}
+
+
+def _selection(rows: int, cols: int, offset: int, step: int, device: torch.device, reverse: bool = False) -> torch.Tensor:
+    """A 0/1 matrix S (rows x cols) with S[offset + step*j, j] = 1 (columns reversed when `reverse`). Multiplying by
+    it pads, zero-inserts or flips exactly, since float32 x*1 + 0 is exact; the native GEMM does it on the GPU."""
+    key = (rows, cols, offset, step, str(device), reverse)
+    if key not in _SELECTIONS:
+        matrix = torch.zeros(rows, cols)
+        for j in range(cols):
+            matrix[offset + step * j, cols - 1 - j if reverse else j] = 1.0
+        _SELECTIONS[key] = matrix.to(device)
+    return _SELECTIONS[key]
+
+
+def _remap(x: torch.Tensor, rows: torch.Tensor, cols: torch.Tensor) -> torch.Tensor:
+    """rows @ x @ cols.T over the last two dimensions of a 4-D tensor, contiguous."""
+    n, c, h, w = x.shape
+    out = torch.matmul(torch.matmul(rows, x.reshape(n * c, h, w)), cols.t())
+    return out.reshape(n, c, rows.shape[0], cols.shape[0]).contiguous()
+
+
+def _conv_valid(xp: torch.Tensor, weight: torch.Tensor, stride, dilation) -> tuple[torch.Tensor, torch.Tensor]:
+    """An unpadded 2-D convolution as im2col (as_strided + the native strided copy) and the native GEMM.
+    Returns (output N x Co x Ho x Wo, the im2col matrix)."""
+    n, c, hp, wp = xp.shape
+    co, _, kh, kw = weight.shape
+    ho = (hp - dilation[0] * (kh - 1) - 1) // stride[0] + 1
+    wo = (wp - dilation[1] * (kw - 1) - 1) // stride[1] + 1
+    cols = xp.as_strided((n, ho, wo, c, kh, kw), (c * hp * wp, stride[0] * wp, stride[1], hp * wp,
+                                                   dilation[0] * wp, dilation[1])).contiguous().reshape(n * ho * wo, -1)
+    out = torch.matmul(cols, weight.reshape(co, -1).t().contiguous())
+    return out.reshape(n, ho, wo, co).permute(0, 3, 1, 2).contiguous(), cols
+
+
+def _conv_on_gpu(name: str, args: tuple) -> tuple[bool, Any]:
+    """aten.convolution and its backward for 2-D, groups=1, float32, from GEMMs and strided copies (#184)."""
+    if name == "aten.convolution.default":
+        x, weight, bias, stride, padding, dilation, transposed, _, groups = args[:9]
+    else:
+        grad, x, weight, _, stride, padding, dilation, transposed, _, groups, mask = args[:11]
+    if transposed or groups != 1 or x.dim() != 4 or len(stride) != 2 or any(
+            t is not None and (t.dtype != torch.float32 or not t.is_cuda) for t in (x, weight)):
+        return False, None
+    with torch.no_grad():
+        n, c, h, w = x.shape
+        co, _, kh, kw = weight.shape
+        device = x.device
+        pad = lambda t, ph, pw: _remap(t.contiguous(), _selection(t.shape[2] + 2 * ph, t.shape[2], ph, 1, device),
+                                       _selection(t.shape[3] + 2 * pw, t.shape[3], pw, 1, device))
+        xp = pad(x, padding[0], padding[1])
+        if name == "aten.convolution.default":
+            out, _ = _conv_valid(xp, weight.contiguous(), stride, dilation)
+            if bias is not None:
+                out = out + bias.reshape(1, -1, 1, 1)
+            return True, out
+        grad = grad.contiguous()
+        _, _, ho, wo = grad.shape
+        _, cols = _conv_valid(xp, weight.contiguous(), stride, dilation)
+        grad_mat = grad.permute(0, 2, 3, 1).contiguous().reshape(n * ho * wo, co)
+        grad_weight = torch.matmul(grad_mat.t().contiguous(), cols).reshape(weight.shape) if mask[1] else None
+        grad_bias = grad.sum([0, 2, 3]) if mask[2] else None
+        grad_input = None
+        if mask[0]:
+            # A transposed convolution: zero-insert by the stride and pad by the dilated kernel extent in one
+            # selection, convolve with the flipped kernel, then crop the padding off.
+            reach = (dilation[0] * (kh - 1), dilation[1] * (kw - 1))
+            extra = (h + 2 * padding[0] - reach[0] - 1 - (ho - 1) * stride[0],
+                     w + 2 * padding[1] - reach[1] - 1 - (wo - 1) * stride[1])
+            rows = _selection((ho - 1) * stride[0] + 1 + 2 * reach[0] + extra[0], ho, reach[0], stride[0], device)
+            colsel = _selection((wo - 1) * stride[1] + 1 + 2 * reach[1] + extra[1], wo, reach[1], stride[1], device)
+            spread = _remap(grad, rows, colsel)
+            flipped = _remap(weight.contiguous(), _selection(kh, kh, 0, 1, device, reverse=True),
+                             _selection(kw, kw, 0, 1, device, reverse=True))
+            full, _ = _conv_valid(spread, flipped.transpose(0, 1).contiguous(), (1, 1), dilation)
+            grad_input = full[:, :, padding[0]:padding[0] + h, padding[1]:padding[1] + w].contiguous()
+        return True, (grad_input, grad_weight, grad_bias)
+
+
 class _Shape(ctypes.Structure):
     """compat_kernels.cu's CompatShape: up to six sizes and two operands' strides, passed by value."""
     _fields_ = [("size", ctypes.c_int64 * 6), ("a", ctypes.c_int64 * 6), ("b", ctypes.c_int64 * 6)]
@@ -1843,6 +1922,16 @@ class _MaxwellInferenceFallback(TorchDispatchMode):
             handled, result = _single_as_foreach(operation, args, kwargs)
             if handled:
                 return result
+            if str(operation) in ("aten.convolution.default", "aten.convolution_backward.default"):
+                try:
+                    handled, result = _conv_on_gpu(str(operation), args)
+                except Exception as error:  # a step with no Maxwell kernel: keep the CPU route below
+                    if not (isinstance(error, (NotImplementedError, RuntimeError))):
+                        raise
+                    handled = False
+                if handled:
+                    _dispatch_state.last_path = "llvm-sm52-conv2d-gemm"
+                    return result
             if str(operation) in ("aten.native_batch_norm.default", "aten.native_batch_norm_backward.default"):
                 try:
                     handled, result = _batch_norm_on_gpu(str(operation), args, kwargs)
