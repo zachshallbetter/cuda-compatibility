@@ -7,7 +7,7 @@ authors:
   - family-names: "Shallbetter"
     given-names: "Zach"
     website: "https://zachshallbetter.com/"
-version: "0.2.14"
+version: "0.2.15"
 date-released: "2026-11-04"
 license:
   - MIT
