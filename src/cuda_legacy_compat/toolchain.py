@@ -225,7 +225,10 @@ def unpack(archive_path: Path, decompressor: str | None, target: Path) -> Path:
     process = None
     try:
         if decompressor:
-            process = subprocess.Popen([decompressor, "-dc", str(archive_path)], stdout=subprocess.PIPE)
+            # llvm-project's .tar.zst uses a 1 GiB window; zstd refuses windows over 128 MiB without --long.
+            window = ["--long=31"] if decompressor == "zstd" else []
+            process = subprocess.Popen([decompressor, "-dc", *window, str(archive_path)],
+                                       stdout=subprocess.PIPE, stderr=subprocess.PIPE)
             stream = tarfile.open(fileobj=process.stdout, mode="r|")
         else:
             stream = tarfile.open(archive_path, mode="r|*")
@@ -260,7 +263,11 @@ def unpack(archive_path: Path, decompressor: str | None, target: Path) -> Path:
         staging.replace(target)
         return target
     except (tarfile.TarError, OSError) as exc:
-        raise SetupError(f"could not unpack {archive_path.name}: {exc}") from exc
+        reason = str(exc)
+        if process and process.stderr and process.poll() not in (None, 0):
+            reason = process.stderr.read().decode(errors="replace").strip().splitlines()[-1:] or [reason]
+            reason = f"{decompressor}: {reason[0]}"
+        raise SetupError(f"could not unpack {archive_path.name}: {reason}") from exc
     finally:
         if process:
             if process.poll() is None:
