@@ -64,6 +64,7 @@ cuda-legacy profiles list
 cuda-legacy profiles show pytorch-2.14-cu130
 cuda-legacy setup
 cuda-legacy doctor --json
+cuda-legacy ops
 cuda-legacy audit profiles/pytorch-2.14-cu130.json
 cuda-legacy help run
 ```

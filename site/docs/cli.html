@@ -104,6 +104,7 @@ td.cmd code{font-size:13px;background:none;padding:0;font-weight:500}
 <tr><td class="cmd"><code>cuda-legacy setup [--yes] [--dry-run] [--json] [--python PATH] [--cuda-root PATH] [--llvm-root PATH]</code></td><td>Find or download what the launcher needs (LLVM 23.1.4 is SHA-256 checked), save it, and run doctor. Run it once.</td></tr>
 <tr><td class="cmd"><code>cuda-legacy setup --remove</code></td><td>Delete exactly what setup created: its LLVM copy and the saved setup.</td></tr>
 <tr><td class="cmd"><code>cuda-legacy doctor [--llvm-root PATH] [--cuda-root PATH] [--python PATH] [--json]</code></td><td>Check prerequisites for the experimental launcher; each missing item names its next step.</td></tr>
+<tr><td class="cmd"><code>cuda-legacy ops [--json]</code></td><td>List what the adapter runs natively on sm_52, what it runs through the CPU fallback, and each limit.</td></tr>
 <tr><td class="cmd"><code>cuda-legacy audit PROFILE [--json]</code></td><td>Compare available machine facts against a target profile.</td></tr>
 <tr><td class="cmd" style="border-bottom-width:3px"><code>cuda-legacy run [options] SCRIPT [args...]</code></td><td style="border-bottom-width:3px">Start a Python script with the opt-in adapter.</td></tr>
 </tbody>

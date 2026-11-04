@@ -15,7 +15,7 @@ import sysconfig
 from pathlib import Path
 from typing import Any, Sequence
 
-from cuda_legacy_compat import __version__, settings, toolchain
+from cuda_legacy_compat import __version__, routes, settings, toolchain
 from cuda_legacy_compat.inventory import inspect_system
 from cuda_legacy_compat.launch import LaunchError, launch
 from cuda_legacy_compat.profiles import ProfileError, audit_profile, load_profile
@@ -435,6 +435,7 @@ def _build_parser(
             f"  {prog} setup          # once: finds or fetches what run needs\n"
             f"  {prog} doctor\n"
             f"  {prog} run app.py\n"
+            f"  {prog} ops            # what runs natively, what falls back\n"
             f"  {prog} inspect\n"
             f"  {prog} audit pytorch-2.14-cu130\n\n"
             "The run command affects only its child Python process. "
@@ -494,23 +495,28 @@ def _build_parser(
     )
     audit_parser.add_argument("profile", help="profile ID, filename, or JSON path")
 
+    ops_parser = commands.add_parser(
+        "ops", help="list the operations the adapter runs natively or through the CPU fallback, with limits"
+    )
+    ops_parser.add_argument("--json", action="store_true", help="print machine-readable JSON")
+
     run_parser = commands.add_parser(
-        "run", help="run a Python script through the opt-in PyTorch Maxwell adapter"
+        "run", help="run a Python script through the opt-in PyTorch Maxwell adapter",
+        usage=f"{prog} run [--python PATH] [--llvm-root PATH] [--cuda-root PATH] SCRIPT [ARGS ...]",
+        description="Run SCRIPT with the selected interpreter and the adapter enabled for that process only. "
+        "Arguments after SCRIPT go to the script; a -- before them is optional.",
     )
     _add_location_flags(run_parser)
+    run_parser.add_argument("script", metavar="SCRIPT", nargs="?", help="the Python script to run")
     run_parser.add_argument(
-        "script", help="Python script to execute with the selected interpreter"
-    )
-    run_parser.add_argument(
-        "script_args", nargs=argparse.REMAINDER,
-        help="arguments forwarded to the script; separate them with --",
+        "script_args", metavar="ARGS", nargs=argparse.REMAINDER, help="arguments passed to the script",
     )
 
     help_parser = commands.add_parser("help", help="show general or command-specific help")
     help_parser.add_argument(
         "topic",
         nargs="?",
-        choices=tuple(command_parsers) + ("profiles", "setup", "doctor", "audit", "run"),
+        choices=tuple(command_parsers) + ("profiles", "setup", "doctor", "audit", "ops", "run"),
     )
     command_parsers.update(
         {
@@ -518,6 +524,7 @@ def _build_parser(
             "setup": setup_parser,
             "doctor": doctor_parser,
             "audit": audit_parser,
+            "ops": ops_parser,
             "run": run_parser,
             "help": help_parser,
         }
@@ -574,6 +581,12 @@ def main(argv: Sequence[str] | None = None) -> int:
             if profile.get("notes"):
                 print(f"Notes: {profile['notes']}")
         return 0
+    if args.command == "ops":
+        if args.json:
+            _print_json(routes.as_json())
+        else:
+            print(routes.render(), end="")
+        return 0
     if args.command == "setup":
         try:
             if args.remove:
@@ -611,6 +624,11 @@ def main(argv: Sequence[str] | None = None) -> int:
             _print_doctor(report)
         return 0 if report["status"] == "ready" else 1
     if args.command == "run":
+        if not args.script:
+            command_parsers["run"].print_usage(sys.stderr)
+            print(f"{_program_name()} run: name the script to run, for example: {_program_name()} run app.py",
+                  file=sys.stderr)
+            return 2
         llvm_root, cuda_root, python = _locations(args)
         if not llvm_root:
             print(

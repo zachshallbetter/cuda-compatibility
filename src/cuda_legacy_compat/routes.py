@@ -1,0 +1,78 @@
+"""What the adapter routes, without importing PyTorch: the source for `cuda-legacy ops` and the support matrix.
+
+tests/test_routes.py checks that every `_library.impl(...)` in torch_adapter.py appears here and nothing else does.
+"""
+
+from __future__ import annotations
+
+import textwrap
+from typing import Any
+
+CPU_FALLBACK_LIMIT = "at most 64 MiB of CUDA inputs and 64 MiB of output per operation, one CUDA device per operation"
+
+# (aten registrations, operation, supported case)
+NATIVE = (
+    (("add.Tensor",), "Tensor addition",
+     "Same-device, same-shape contiguous float32 (up to 1,048,576 values) or int32 (up to 2,147,483,647 elements), "
+     "alpha=1. float16 up to 1,048,576 values, alpha=1. Other cases use the CPU fallback."),
+    (("add_.Tensor",), "Float32 in-place addition",
+     "Same-shape contiguous float32 CUDA tensors up to 1,048,576 values; scaled updates as in the verified SGD case."),
+    (("arange",), "Range creation", "CUDA int64 arange, up to 1,048,576 values."),
+    (("embedding",), "Embedding",
+     "Inference only. Contiguous float32 weight, int64 CUDA indices in 1D or 2D, up to 1,048,576 output values."),
+    (("layer_norm",), "Layer normalization",
+     "Inference only. Contiguous float32 input normalized over the last dimension, float32 weight and bias, "
+     "up to 1,048,576 values."),
+    (("mm",), "Matrix multiplication",
+     "2D float32 with nonnegative strides; each dimension at most 256 and at most 16,777,216 multiply-accumulates. "
+     "Larger inputs are refused, not sent to the CPU."),
+    (("relu",), "ReLU", "Contiguous float32 tensors up to 1,048,576 values."),
+)
+
+# (aten registration, operation)
+CPU_FALLBACK = (
+    ("linear", "linear"), ("bmm", "batched matrix multiplication"), ("_softmax", "softmax"),
+    ("scaled_dot_product_attention", "scaled dot-product attention"), ("gelu", "GELU"),
+    ("mul.Tensor", "multiplication"), ("div.Tensor", "division"), ("sum.dim_IntList", "sum over dimensions"),
+    ("clamp_min", "clamp_min"), ("cat", "concatenation"), ("contiguous", "contiguous copy"),
+)
+
+NOTES = (
+    "Everything else runs as the stock wheel does, and on sm_52 that usually means 'no kernel image is available'.",
+    "Creating a tensor directly on the GPU (torch.ones(..., device='cuda')) is not supported yet.",
+    "First-order gradients and SGD are verified only for a small float32 linear -> ReLU -> sum workload.",
+    "Mutating and alias-returning operators fail closed, except the float32 add_ path.",
+)
+
+
+def registered() -> set[str]:
+    return {name for names, _, _ in NATIVE for name in names} | {name for name, _ in CPU_FALLBACK}
+
+
+def as_json() -> dict[str, Any]:
+    return {
+        "native": [{"aten": list(names), "operation": operation, "supported": case} for names, operation, case in NATIVE],
+        "cpu_fallback": {"limit": CPU_FALLBACK_LIMIT,
+                         "operations": [{"aten": name, "operation": operation} for name, operation in CPU_FALLBACK]},
+        "notes": list(NOTES),
+        "details": "https://cudacompat.com/docs/compatibility.html",
+    }
+
+
+def render() -> str:
+    width = max(len(operation) for operation in [*(n[1] for n in NATIVE), *(f[1] for f in CPU_FALLBACK)]) + 2
+    lines = ["Runs natively on sm_52:"]
+    for names, operation, case in NATIVE:
+        lines.append(f"  {operation:<{width}}{', '.join(names)}")
+        lines.extend(textwrap.wrap(case, width=100, initial_indent=" " * (width + 2),
+                                   subsequent_indent=" " * (width + 2)))
+    lines.append("")
+    lines.append(f"Runs on the CPU and copies back ({len(CPU_FALLBACK)} operations):")
+    lines.extend(textwrap.wrap(f"Limit: {CPU_FALLBACK_LIMIT}.", width=100, initial_indent="  ", subsequent_indent="  "))
+    for name, operation in CPU_FALLBACK:
+        lines.append(f"  {operation:<{width}}{name}")
+    lines.append("")
+    for note in NOTES:
+        lines.extend(textwrap.wrap(note, width=100, initial_indent="Note: ", subsequent_indent="      "))
+    lines.append("Details and evidence: https://cudacompat.com/docs/compatibility.html")
+    return "\n".join(lines) + "\n"
