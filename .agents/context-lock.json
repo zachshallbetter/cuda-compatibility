@@ -18,8 +18,8 @@
     "repositories": [
       {
         "path": ".",
-        "commit": "dd301b24b47d25518fa454f9cee8f1285c8dc8dc",
-        "branch": null,
+        "commit": "2c32d50e6725af107ce70b4be7e9f2f353efd9b7",
+        "branch": "docs/indexing-requests",
         "dirty": true,
         "remote": "https://github.com/zachshallbetter/cuda-compatibility.git"
       }
