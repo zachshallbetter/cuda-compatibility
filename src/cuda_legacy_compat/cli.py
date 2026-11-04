@@ -401,14 +401,14 @@ def _program_name() -> str:
 
 
 def _add_location_flags(command: argparse.ArgumentParser) -> None:
-    command.add_argument("--llvm-root", help="LLVM 23.1.4 root (or CUDA_COMPAT_LLVM_ROOT; default: the saved setup)")
+    command.add_argument("--llvm-root", metavar="DIR", help="LLVM 23.1.4 root (or CUDA_COMPAT_LLVM_ROOT; default: the saved setup)")
     command.add_argument(
-        "--cuda-root",
+        "--cuda-root", metavar="DIR",
         help=f"CUDA development headers root (or CUDA_COMPAT_CUDA_ROOT; default: the saved setup, "
         f"then {settings.DEFAULT_CUDA_ROOT})",
     )
     command.add_argument(
-        "--python",
+        "--python", metavar="PATH",
         help="interpreter of the environment that holds PyTorch "
         "(or CUDA_COMPAT_PYTHON; default: the saved setup, then the interpreter running cuda-legacy)",
     )
@@ -502,7 +502,7 @@ def _build_parser(
 
     run_parser = commands.add_parser(
         "run", help="run a Python script through the opt-in PyTorch Maxwell adapter",
-        usage=f"{prog} run [--python PATH] [--llvm-root PATH] [--cuda-root PATH] SCRIPT [ARGS ...]",
+        usage=f"{prog} run [--python PATH] [--llvm-root DIR] [--cuda-root DIR] SCRIPT [ARGS ...]",
         description="Run SCRIPT with the selected interpreter and the adapter enabled for that process only. "
         "Arguments after SCRIPT go to the script; a -- before them is optional.",
     )

@@ -243,7 +243,8 @@ class CliOutputTests(unittest.TestCase):
         with redirect_stdout(output):
             exit_code = cli.main(["help", "run"])
         self.assertEqual(exit_code, 0)
-        self.assertIn("Python script to execute", output.getvalue())
+        self.assertIn("the Python script to run", output.getvalue())
+        self.assertIn("a -- before them is optional", " ".join(output.getvalue().split()))
 
 
 if __name__ == "__main__":
