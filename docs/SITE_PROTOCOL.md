@@ -152,6 +152,7 @@ After a change ships:
 | Renew `security.txt` `Expires` (one year ahead) | Before 2027-11-03; `make check` fails on that date |
 | Bump `softwareVersion`, the footer `Project version`, `CITATION.cff` and the Homebrew formula together | Every release |
 | Run `scripts/reprobe_stock.py` with the new wheel, without the adapter, on an sm_52 card; record the result, and reopen D1 or D2 on the support matrix if a probe now runs | Each new official PyTorch CUDA 13 wheel |
+| Run `cuda-legacy run scripts/model_sweep.py` on an sm_52 card; record the result, update the support matrix's sweep line, and open an issue for each new blocker it names | Every release, and after any adapter change |
 | Review the Search Console and Bing sitemap and indexing state | Monthly |
 | Re-run LinkedIn Post Inspector on every page | After any card or description change |
 | Re-run the attribution pilot (`docs/research/attribution-pilot/`) | After discovery changes have had time to be recrawled |

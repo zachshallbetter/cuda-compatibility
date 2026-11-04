@@ -5,8 +5,8 @@
   "validityBasis": "aggregate-source-digest",
   "selectedPaths": [],
   "sourceSelection": {
-    "includedCount": 270,
-    "includedBytes": 2728421,
+    "includedCount": 271,
+    "includedBytes": 2739259,
     "excludedCounts": {
       "extension": 65,
       "generated-or-transient-file": 2
@@ -18,14 +18,14 @@
     "repositories": [
       {
         "path": ".",
-        "commit": "00826622c6a9ffef3ac743d74837d771954b37bb",
-        "branch": "feat/composite-autograd",
+        "commit": "54bf7980a788b3c9bbfae62cbbbd4cc899addb49",
+        "branch": "research/model-sweep",
         "dirty": true,
         "remote": "https://github.com/zachshallbetter/cuda-compatibility.git"
       }
     ]
   },
-  "aggregateSourceDigest": "9ec8b2d214c685dcbf6c8b2f15a9661e143b774a892123e1d4b02c20c409a669",
+  "aggregateSourceDigest": "2310324b8422da1bec374190c104652981da00e9a9a91dbf7e35e5b3fcc264d5",
   "sources": [
     {
       "path": ".agents/acp/README.md",
@@ -729,8 +729,8 @@
     },
     {
       "path": "docs/SITE_PROTOCOL.md",
-      "bytes": 16132,
-      "sha256": "df0642bf26d372188e51ad1efa62b06a3f1ddc91e3f44a74ab526b403359fb1b"
+      "bytes": 16352,
+      "sha256": "388edc107f56290f509756045d9c5a15f8eb377ee9c6919ce76c9a37cf6b7f95"
     },
     {
       "path": "docs/WORK_ITEMS.md",
@@ -1028,6 +1028,11 @@
       "sha256": "ba050c1c8f28d272e63791a8725a649f90ae459052d2709d2f7501ce5559bbbf"
     },
     {
+      "path": "scripts/model_sweep.py",
+      "bytes": 9699,
+      "sha256": "9723bbd9ddc724c5af08ee326d1d1be49683c382761ed95342fc6751582b0f19"
+    },
+    {
       "path": "scripts/reprobe_stock.py",
       "bytes": 2535,
       "sha256": "d31bc2c3c68d0f8e65d7464dccb42ffc6bd6c186ce605c3ead37dc62232d2252"
@@ -1104,8 +1109,8 @@
     },
     {
       "path": "site/docs/compatibility.html",
-      "bytes": 28931,
-      "sha256": "acb0d66207ac4a6328add102a2f13b76ea084869cb3683b452596b93e376ea50"
+      "bytes": 29850,
+      "sha256": "51421438d30e18fc4bda9d11272494c97900927e482306a9657de8bfc0243410"
     },
     {
       "path": "site/docs/discovery.html",
