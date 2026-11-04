@@ -54,7 +54,7 @@ cuda-legacy audit pytorch-2.14-cu130
 
 The JSON forms are available as `inspect --json`, `profiles list --json`, `profiles show <profile> --json`, and `doctor --json`. `inspect` always returns JSON. `audit` always returns JSON.
 
-`doctor` uses exit 0 when every prerequisite check is ready and 1 otherwise. Its `ready` status is not a workload certification. `audit` uses 0 for compatible, 1 for incompatible, 2 for an unreadable/invalid profile, and 3 when a required fact is unknown. `profiles` uses 0 on success and 2 when a profile cannot be found or read.
+`setup` exits 0 when it saved everything and doctor is ready, 1 when it saved but doctor still lists items to fix, and 2 when it stopped before saving; `setup --dry-run` returns the code a real run would. A saved setup that can't be read is reported by `doctor` and `run`. `doctor` uses exit 0 when every prerequisite check is ready and 1 otherwise. Its `ready` status is not a workload certification. `audit` uses 0 for compatible, 1 for incompatible, 2 for an unreadable/invalid profile, and 3 when a required fact is unknown. `profiles` uses 0 on success and 2 when a profile cannot be found or read.
 
 ## 3. Run a Python application
 

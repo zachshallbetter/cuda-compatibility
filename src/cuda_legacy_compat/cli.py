@@ -414,6 +414,12 @@ def _add_location_flags(command: argparse.ArgumentParser) -> None:
     )
 
 
+def _saved_setup_warning() -> None:
+    issue = settings.problem()
+    if issue:
+        print(f"warning: {issue}. Run `cuda-legacy setup` to save it again.", file=sys.stderr)
+
+
 def _locations(args: argparse.Namespace) -> tuple[str | None, str, str | None]:
     llvm_root, _ = settings.resolve(args.llvm_root, "CUDA_COMPAT_LLVM_ROOT", "llvm_root")
     cuda_root, _ = settings.resolve(args.cuda_root, "CUDA_COMPAT_CUDA_ROOT", "cuda_root", settings.DEFAULT_CUDA_ROOT)
@@ -604,7 +610,7 @@ def main(argv: Sequence[str] | None = None) -> int:
         if args.dry_run:
             if args.json:
                 _print_json(outcome)
-            return 0
+            return {"ready": 0, "needs_attention": 1, "stop": 2}[outcome["would"]]
         llvm_root, cuda_root, python = _locations(argparse.Namespace(llvm_root=None, cuda_root=None, python=None))
         report = _doctor_report(llvm_root, cuda_root, python)
         if args.json:
@@ -616,6 +622,7 @@ def main(argv: Sequence[str] | None = None) -> int:
                 print("\nReady. Run a script with:  cuda-legacy run app.py")
         return 0 if report["status"] == "ready" else 1
     if args.command == "doctor":
+        _saved_setup_warning()
         llvm_root, cuda_root, python = _locations(args)
         report = _doctor_report(llvm_root, cuda_root, python)
         if args.json:
@@ -629,6 +636,7 @@ def main(argv: Sequence[str] | None = None) -> int:
             print(f"{_program_name()} run: name the script to run, for example: {_program_name()} run app.py",
                   file=sys.stderr)
             return 2
+        _saved_setup_warning()
         llvm_root, cuda_root, python = _locations(args)
         if not llvm_root:
             print(

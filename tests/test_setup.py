@@ -188,7 +188,8 @@ class SetupCommandTests(IsolatedHome):
         with mock.patch.object(toolchain, "LLVM_ARCHIVES", (archive_for(source),)), \
                 mock.patch.object(toolchain, "find_python", return_value=toolchain.Found(None, "none")):
             code, out, _ = self._run("setup", "--dry-run", "--json", "--cuda-root", str(self._cuda_root()))
-        self.assertEqual(code, 0)
+        self.assertEqual(code, 1)  # no PyTorch environment: setup would save but doctor would need attention
+        self.assertEqual(json.loads(out)["would"], "needs_attention")
         plan = json.loads(out)["plan"]
         self.assertEqual(plan["llvm_download"]["sha256"], archive_for(source).sha256)
         self.assertFalse(settings.config_path().exists())
@@ -311,6 +312,39 @@ class TerminalPromptTests(unittest.TestCase):
     def test_asks_on_the_terminal_when_stdin_is_not_one(self) -> None:
         self.assertIn(b"ANSWER=yes", self._ask_in_pty(b"y\n"))
         self.assertIn(b"ANSWER=no", self._ask_in_pty(b"n\n"))
+
+class FailureMessageTests(IsolatedHome):
+    def _run(self, *argv: str) -> tuple[int, str, str]:
+        out, err = io.StringIO(), io.StringIO()
+        with redirect_stdout(out), redirect_stderr(err):
+            code = cli.main(list(argv))
+        return code, out.getvalue(), err.getvalue()
+
+    def test_a_corrupt_saved_setup_is_reported_not_ignored(self) -> None:
+        settings.config_path().parent.mkdir(parents=True)
+        settings.config_path().write_text("{broken")
+        script = self.tmp / "app.py"
+        script.write_text("")
+        code, _, err = self._run("run", str(script))
+        self.assertEqual(code, 2)
+        self.assertIn("can't be read", err)
+        self.assertIn(str(settings.config_path()), err)
+        self.assertIn("cuda-legacy setup", err)
+
+    def test_a_bad_llvm_root_is_named_and_dry_run_says_setup_would_stop(self) -> None:
+        with mock.patch.object(toolchain, "find_python", return_value=toolchain.Found("/env/bin/python", "fixture")):
+            code, out, _ = self._run("setup", "--dry-run", "--llvm-root", "/nonexistent/llvm")
+        self.assertEqual(code, 2)
+        self.assertIn("/nonexistent/llvm/bin/clang++", out)
+        self.assertIn("setup would stop", out)
+
+    def test_an_explicit_python_without_torch_is_named(self) -> None:
+        with mock.patch.object(toolchain, "interpreter_facts", return_value=((3, 10, 12), None, None)), \
+                mock.patch.object(toolchain.shutil, "which", side_effect=lambda p: p):
+            found = toolchain.find_python("/usr/bin/python3")
+        self.assertIsNone(found.value)
+        self.assertIn("/usr/bin/python3", found.detail)
+        self.assertIn("no PyTorch", found.detail)
 
 if __name__ == "__main__":
     unittest.main()

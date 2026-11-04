@@ -697,6 +697,8 @@ After cuda-legacy setup, run and doctor read the saved setup in ~/.config/cuda-l
 
 ## Exit codes
 
+setup 0 saved and ready; 1 saved, but doctor lists items to fix; 2 stopped before saving. --dry-run returns the code a real run would.
+
 doctor 0 when checked prerequisites are ready; 1 when setup needs attention.
 
 audit 0 compatible against recorded profile fields; 1 incompatible; 2 invalid or unreadable profile; 3 required facts unknown.

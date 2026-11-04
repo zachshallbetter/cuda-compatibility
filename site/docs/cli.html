@@ -124,6 +124,7 @@ cuda-legacy run --python /path/to/other-env/bin/python -- path/to/app.py</code><
 <div id="exit" style="display:flex;flex-direction:column;gap:20px">
 <div class="sec"><span class="cut" aria-hidden="true">C</span><h2 class="h2">Exit codes</h2><span class="plane" aria-hidden="true"></span></div>
 <div style="display:flex;flex-direction:column;border-top:2px solid currentColor">
+<div class="exit" style="padding:14px 0;border-bottom:1px solid currentColor"><b>setup</b><span style="font-size:16px"><code>0</code> saved and ready; <code>1</code> saved, but doctor lists items to fix; <code>2</code> stopped before saving. <code>--dry-run</code> returns the code a real run would.</span></div>
 <div class="exit" style="padding:14px 0;border-bottom:1px solid currentColor"><b>doctor</b><span style="font-size:16px"><code>0</code> when checked prerequisites are ready; <code>1</code> when setup needs attention.</span></div>
 <div class="exit" style="padding:14px 0;border-bottom:1px solid currentColor"><b>audit</b><span style="font-size:16px"><code>0</code> compatible against recorded profile fields; <code>1</code> incompatible; <code>2</code> invalid or unreadable profile; <code>3</code> required facts unknown.</span></div>
 <div class="exit" style="padding:14px 0;border-bottom:1px solid currentColor"><b>profiles</b><span style="font-size:16px"><code>0</code> on success; <code>2</code> when a profile cannot be read or resolved.</span></div>

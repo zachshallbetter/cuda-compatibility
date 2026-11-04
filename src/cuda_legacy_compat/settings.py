@@ -23,13 +23,29 @@ def config_path() -> Path:
     return config_dir() / "config.json"
 
 
+def problem() -> str | None:
+    """Why the saved setup exists but can't be used, or None when it is fine or simply absent."""
+    path = config_path()
+    if not path.exists():
+        return None
+    try:
+        data = json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, ValueError) as exc:
+        return f"the saved setup at {path} can't be read ({exc.__class__.__name__}: {exc})"
+    if not isinstance(data, dict) or data.get("schema_version") != SCHEMA_VERSION:
+        return f"the saved setup at {path} is from an unknown version"
+    return None
+
+
 def load() -> dict[str, Any]:
-    """The saved setup, or {} when there is none or it can't be read."""
+    """The saved setup, or {} when there is none or it can't be read (see problem())."""
+    if problem():
+        return {}
     try:
         data = json.loads(config_path().read_text(encoding="utf-8"))
     except (OSError, ValueError):
         return {}
-    return data if isinstance(data, dict) and data.get("schema_version") == SCHEMA_VERSION else {}
+    return data if isinstance(data, dict) else {}
 
 
 def save(settings: dict[str, Any]) -> Path:

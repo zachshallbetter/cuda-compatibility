@@ -16,10 +16,16 @@ fail() { echo "smoke: $1" >&2; exit 1; }
 
 "$bin" | grep -q "Not set up yet" || fail "bare command should say the machine is not set up"
 "$bin" --version | grep -q "^cuda-legacy " || fail "--version should name the short command"
-"$bin" setup --dry-run --json > "$work/plan.json" || fail "setup --dry-run should exit 0"
+set +e
+"$bin" setup --dry-run --json > "$work/plan.json"; code=$?
+set -e
+# No PyTorch in this venv, so a real setup would save but leave doctor needing attention: exit 1.
+[ "$code" -eq 1 ] || fail "setup --dry-run without PyTorch should exit 1 (got $code)"
 "$work/venv/bin/python" - "$work/plan.json" <<'PY' || fail "dry-run plan is wrong"
 import json, sys
-plan = json.load(open(sys.argv[1]))["plan"]
+result = json.load(open(sys.argv[1]))
+assert result["would"] == "needs_attention", result["would"]
+plan = result["plan"]
 download = plan["llvm_download"]
 assert download and len(download["sha256"]) == 64 and download["url"].startswith("https://github.com/llvm/llvm-project/"), download
 PY

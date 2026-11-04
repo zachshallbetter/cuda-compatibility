@@ -122,6 +122,8 @@ def find_python(explicit: str | None = None) -> Found:
             return Found(resolved, f"{resolved} (torch {torch_version}, from {origin})", considered)
         if explicit and origin == "--python":
             break
+    if explicit and considered:
+        return Found(None, considered[0], considered)
     return Found(None, "no Python environment with a CUDA build of PyTorch was found", considered)
 
 
@@ -166,6 +168,9 @@ def find_llvm(explicit: str | None = None) -> Found:
         if llvm_version_ok(Path(candidate)):
             return Found(candidate, f"LLVM {LLVM_VERSION} at {candidate}", considered)
         considered.append(f"{candidate}: no working clang++ {LLVM_VERSION}")
+    if explicit:
+        return Found(None, f"no working clang++ {LLVM_VERSION} under {explicit} (expected {explicit}/bin/clang++)",
+                     considered)
     return Found(None, f"LLVM {LLVM_VERSION} was not found", considered)
 
 
@@ -368,7 +373,17 @@ def run_setup(*, python: str | None, cuda_root: str | None, llvm_root: str | Non
         _say(f"  {'':<21}will download {_human(steps.archive.size)} from llvm-project (SHA-256 checked) and keep "
              f"about 370 MB in {managed_llvm_dir()}", quiet)
     if dry_run:
-        _say("Dry run: nothing was downloaded or saved.", quiet)
+        # Report what a real run would end with: stop (exit 2), saved but not ready (1), or ready (0).
+        if steps.llvm.value is None and (llvm_root or steps.archive is None):
+            result["would"] = "stop"
+        elif steps.python.value is None or steps.cuda.value is None:
+            result["would"] = "needs_attention"
+        else:
+            result["would"] = "ready"
+        verdict = {"stop": "setup would stop: fix the LLVM path above or omit --llvm-root",
+                   "needs_attention": "setup would save this, but doctor would still need the items marked above",
+                   "ready": "setup would finish with everything it needs"}[result["would"]]
+        _say(f"Dry run: nothing was downloaded or saved; {verdict}.", quiet)
         return result
     if steps.llvm.value is None:
         if llvm_root:
