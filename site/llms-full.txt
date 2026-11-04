@@ -443,14 +443,16 @@ setup finds the environment that holds PyTorch and the CUDA 12.4 headers, then u
 cuda-legacy run path/to/app.py --your-option value
 ```
 
+cuda-legacy ops lists what runs natively on sm_52 and what is copied to the CPU. If a script stops on an operation with no sm_52 route, the message names it.
+
 ### Trusted scripts only
 
 The adapter is opt-in and affects only the child Python process. It sets LD_PRELOAD and a Python startup hook, builds temporary bridge and kernel files, and removes those files when the child exits. Use the launcher only with scripts you trust.
 
 ## Homebrew on Linux
-Release 0.2.0
+Release 0.2.1
 
-Homebrew on Linux can install the command line tool in its own environment instead of steps 1 and 2. The formula installs the tagged 0.2.0 release; add --HEAD to build the current main branch instead.
+Homebrew on Linux can install the command line tool in its own environment instead of steps 1 and 2. The formula installs the tagged 0.2.1 release; add --HEAD to build the current main branch instead.
 
 ```
 brew tap zachshallbetter/cuda-compatibility https://github.com/zachshallbetter/cuda-compatibility

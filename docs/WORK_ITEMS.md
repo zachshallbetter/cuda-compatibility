@@ -519,6 +519,7 @@ The first work item is being executed under the user's explicit request to creat
 - **Evidence required:** The end-to-end log on the reference host; test output; release digest.
 - **Permissions:** E1 local changes; merges to `main` deploy production; release tags by the owner's standing approval.
 - **Progress (2026-11-04):** #95 merged (setup, saved settings, doctor next steps, quieter adapter warnings). Release v0.2.0 tagged. The reference-host run passed (evidence `CLC-036-setup-reference-host`). The one-command installer (#91) passed on the reference host from the real v0.2.0 URL, from dry run through uninstall (evidence `CLC-036-installer-reference-host`).
+- **Progress (2026-11-04, 0.2.1):** #105 (installer), #106 (explain unsupported operations) and #107 (clean remove, terminal prompt, `cuda-legacy ops`, clearer setup errors) merged through ACP. Release 0.2.1 re-pins `install.sh` and the formula to the v0.2.1 archive. Footers, `softwareVersion` and `CITATION.cff` are at 0.2.1.
 
 ## CLC-035 — Make every sheet readable and self-describing on its own
 

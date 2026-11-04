@@ -32,7 +32,7 @@ python -m pip install .
 
 For development from a source checkout, use `python -m pip install -e .` instead. To use `run`, install this package into the **same Python environment** that contains the target PyTorch CUDA 13 wheel; the launcher starts the script with that environment's `sys.executable` unless `--python` (or `CUDA_COMPAT_PYTHON`) names another interpreter.
 
-On Linux, Homebrew can install the CLI in its own environment. The formula installs the tagged [0.2.0 release](https://github.com/zachshallbetter/cuda-compatibility/releases/tag/v0.2.0); add `--HEAD` to build `main`:
+On Linux, Homebrew can install the CLI in its own environment. The formula installs the tagged [0.2.1 release](https://github.com/zachshallbetter/cuda-compatibility/releases/tag/v0.2.1); add `--HEAD` to build `main`:
 
 ```sh
 brew tap zachshallbetter/cuda-compatibility https://github.com/zachshallbetter/cuda-compatibility

@@ -2,15 +2,37 @@
 
 CUDA Compatibility is an experimental tool for running selected PyTorch CUDA 13 operations on NVIDIA `sm_52` GPUs. The short command is `cuda-legacy`; `cuda-legacy-compat` remains available as an alias. Today, setup installs a Python package in one environment and `cuda-legacy run` adapts one Python process. It does not install a machine-wide shim or make every CUDA 13 application compatible.
 
-## 1. Install the package
+## 1. Install and set up
 
-From a source checkout, create and activate an environment:
+On Linux x86_64, one command installs the release into the environment that holds your PyTorch CUDA wheel and runs `cuda-legacy setup`:
+
+```sh
+curl -fsSL https://cudacompat.com/install.sh | sh
+```
+
+The installer checks the release archive's SHA-256 before installing it and never uses sudo. It doesn't change drivers, the system CUDA install or the system Python. Read [install.sh](https://cudacompat.com/install.sh) first and compare it with [its checksum](https://cudacompat.com/install.sh.sha256). Options go after `sh -s --`:
+
+| Option | Effect |
+|---|---|
+| `--dry-run` | Print each step without changing anything |
+| `--python PATH` | Use this environment's Python instead of the one the installer finds |
+| `--yes` | Don't ask before setup downloads LLVM |
+| `--uninstall` | Remove what setup created, then uninstall the package |
+
+Exit code 0 means ready. Exit 1 means the package is installed but setup lists what still needs attention. Exit 2 means it stopped; the message says why. To upgrade, run the same command again: it replaces the package and keeps the saved setup.
+
+### Set up by hand
+
+From a source checkout, install into the environment that holds PyTorch, then run setup once:
 
 ```sh
 python3 -m venv .venv
 . .venv/bin/activate
 python -m pip install .
+cuda-legacy setup
 ```
+
+`setup` finds the PyTorch environment and CUDA 12.4 headers. It uses LLVM 23.1.4 if you have it, or downloads it after asking, with a SHA-256 check. It saves the result, so `doctor` and `run` need no flags afterwards. `cuda-legacy setup --dry-run` shows the plan first. `cuda-legacy setup --remove` deletes exactly what setup created.
 
 For development, use `python -m pip install -e .`. The package has no Python runtime dependencies and bundles no NVIDIA files. Install it into the same environment as the PyTorch CUDA wheel you want to run; the launcher uses that environment's Python interpreter.
 
@@ -20,17 +42,16 @@ For development, use `python -m pip install -e .`. The package has no Python run
 - **User site — only when that Python already has PyTorch:** outside a virtual environment, `python3 -m pip install --user .` puts the command in Python's user scripts directory. Find the base with `python3 -m site --user-base`; on many Linux systems the scripts directory is `~/.local/bin`. Add that directory to `PATH` if needed. Python ignores `--user` installs inside an active virtual environment.
 - **System directories:** this project does not install to `/usr/local/bin` or modify system Python. Avoid `sudo pip install`.
 
-`pipx` and Homebrew give the command its own isolated Python environment, which does not contain PyTorch. That works when you point the tool at your PyTorch environment: pass `--python /path/to/your-env/bin/python` to `doctor` and `run`, or set `CUDA_COMPAT_PYTHON`. Without it, `run` starts scripts with the interpreter that runs `cuda-legacy`, and `doctor` inspects that interpreter for PyTorch.
+`pipx` and Homebrew give the command its own isolated Python environment, which does not contain PyTorch. That works when you point the tool at your PyTorch environment once: `cuda-legacy setup --python /path/to/your-env/bin/python` saves it for `doctor` and `run`. A `--python` flag or `CUDA_COMPAT_PYTHON` still overrides the saved setup. Without it, `run` starts scripts with the interpreter that runs `cuda-legacy`, and `doctor` inspects that interpreter for PyTorch.
 
 The inventory and profile commands work without an NVIDIA GPU. The adapter has been tested only on Linux x86_64 with Python 3.10.12, official `torch 2.14.0+cu130`, CUDA Runtime 13.0.96, LLVM/Clang 23.1.4, CUDA 12.4 development headers, the NVIDIA 580.178.04 driver, and GTX TITAN X GM200 cards at `sm_52`. Other combinations are not yet qualified.
 
 ```mermaid
 flowchart LR
-    Install[Install in PyTorch environment] --> Inspect[Inspect hardware and compiler]
-    Inspect --> Doctor[Check launcher prerequisites]
-    Doctor --> Audit[Compare machine with pinned profile]
-    Audit --> Run[Run a Python script through the adapter]
-    Run --> Result[Review output and fallback limits]
+    Install[Install into the PyTorch environment] --> Setup[cuda-legacy setup: find or download the toolchain, save it]
+    Setup --> Doctor[cuda-legacy doctor: ready?]
+    Doctor --> Run[cuda-legacy run app.py]
+    Run --> Ops[cuda-legacy ops: what ran natively, what fell back]
 ```
 
 ## 2. Check the machine and available targets
