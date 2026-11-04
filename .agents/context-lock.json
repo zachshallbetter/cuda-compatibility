@@ -1,12 +1,12 @@
 {
   "format": "2",
-  "generatorVersion": "0.7.3",
+  "generatorVersion": "0.7.4",
   "root": ".",
   "validityBasis": "aggregate-source-digest",
   "selectedPaths": [],
   "sourceSelection": {
     "includedCount": 294,
-    "includedBytes": 2952027,
+    "includedBytes": 2952939,
     "excludedCounts": {
       "extension": 65,
       "generated-or-transient-file": 2
@@ -18,14 +18,14 @@
     "repositories": [
       {
         "path": ".",
-        "commit": "5ffb662ba391b71ad3a2c1509c387cf6d1a508b3",
-        "branch": null,
+        "commit": "f92e348bd8364c58e44972b362d8f3e6427f4513",
+        "branch": "chore/bootstrap-0.7.4",
         "dirty": true,
         "remote": "https://github.com/zachshallbetter/cuda-compatibility.git"
       }
     ]
   },
-  "aggregateSourceDigest": "f0572265cbf72d619157a329aeeab64753587e7d921821a6cc16afda4597c906",
+  "aggregateSourceDigest": "bfaffa4c6c4f66680c7ba58f6dee2a6cb4e5886997fedb81d760ec8614ddc0c9",
   "sources": [
     {
       "path": ".agents/acp/README.md",
@@ -39,8 +39,8 @@
     },
     {
       "path": ".agents/acp/lib/acp.py",
-      "bytes": 62603,
-      "sha256": "b07c3fc0ae6b3d945e62dfaec1428083ab55e54ddb49d57883f34708128035c1"
+      "bytes": 63515,
+      "sha256": "3ec112bc12ac682e75f8b918da70622a80bf30ac95b86ebf97e9a00c157aca76"
     },
     {
       "path": ".agents/acp/lib/acp_commands.py",
@@ -80,7 +80,7 @@
     {
       "path": ".agents/bootstrap/RELEASE.json",
       "bytes": 15368,
-      "sha256": "408a1b489a03be0380c72ec52d144def28515d1064dce5140dc6a76b8ce3d315"
+      "sha256": "da848b8a66ad41b7af9403bda9b561e70ff8658ff5253884ab4463f99e6b7787"
     },
     {
       "path": ".agents/bootstrap/docs/AGENT_CAPABILITIES.md",
@@ -470,7 +470,7 @@
     {
       "path": ".agents/project/installation.json",
       "bytes": 447,
-      "sha256": "139159d653e2c8dbfc7a71df6529d784d40e84a7576f86cd84572f7ac725c66b"
+      "sha256": "2323699e1b4a6be327ac3da333af92dadf10d992953453550b602138c55e77b3"
     },
     {
       "path": ".agents/project/intent.md",
