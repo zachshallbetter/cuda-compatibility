@@ -27,10 +27,10 @@
 #
 # Everything runs inside main(), which the last line calls, so a partial download runs nothing.
 
-VERSION=0.2.14
+VERSION=0.2.15
 ARCHIVE_URL="https://github.com/zachshallbetter/cuda-compatibility/archive/refs/tags/v$VERSION.tar.gz"
 # SHA-256 of ARCHIVE_URL, written by the release. Empty means no release is pinned yet.
-ARCHIVE_SHA256=192b97c6b2b9be5e0faf2446c5b76007af5529321df6db35cfcc731e0d989a76
+ARCHIVE_SHA256=78ea4e023b40ad21a4e8dbc4612f9d7544e5e141d63cfc2832c0563aeed992c5
 PACKAGE=cuda-legacy-compat
 # The PyTorch build the adapter is qualified on, and where the installer puts it when you have none (#202).
 TORCH_VERSION=2.14.0+cu130
