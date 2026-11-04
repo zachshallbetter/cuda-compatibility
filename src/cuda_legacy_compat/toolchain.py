@@ -314,20 +314,27 @@ def _say(message: str, quiet: bool) -> None:
 
 
 def _confirm(question: str, assume_yes: bool) -> bool:
+    """Ask on the terminal even when stdin is a pipe (`curl ... | sh`); without any terminal, require --yes."""
     if assume_yes:
         return True
+    if sys.stdin.isatty():
+        reader, writer = sys.stdin, sys.stdout
+        owned = False
+    else:
+        try:
+            # Separate handles: a terminal can't seek, so a single "r+" text handle fails to open.
+            reader, writer = open("/dev/tty", encoding="utf-8"), open("/dev/tty", "w", encoding="utf-8")
+        except OSError:
+            raise SetupError("setup needs a yes to download; run it in a terminal or pass --yes") from None
+        owned = True
     try:
-        stream = open("/dev/tty", "r+") if not sys.stdin.isatty() else None
-    except OSError:
-        stream = None
-    if stream is None and not sys.stdin.isatty():
-        raise SetupError("setup needs a yes to download; run it in a terminal or pass --yes")
-    out = stream or sys.stdout
-    out.write(f"{question} [Y/n] ")
-    out.flush()
-    answer = (stream.readline() if stream else input()).strip().lower()
-    if stream:
-        stream.close()
+        writer.write(f"{question} [Y/n] ")
+        writer.flush()
+        answer = reader.readline().strip().lower()
+    finally:
+        if owned:
+            reader.close()
+            writer.close()
     return answer in ("", "y", "yes")
 
 

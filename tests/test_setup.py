@@ -278,5 +278,39 @@ class RemoveParentsTests(IsolatedHome):
         self.assertFalse((home / ".local").exists())
         self.assertTrue(llvm.is_dir())
 
+@unittest.skipUnless(hasattr(os, "fork"), "needs a pseudo-terminal")
+class TerminalPromptTests(unittest.TestCase):
+    def _ask_in_pty(self, reply: bytes) -> bytes:
+        """Run _confirm in a child whose stdin is /dev/null but whose terminal is a pty, as in curl | sh."""
+        import pty
+        pid, fd = pty.fork()
+        if pid == 0:
+            os.dup2(os.open(os.devnull, os.O_RDONLY), 0)
+            try:
+                answer = toolchain._confirm("Download?", assume_yes=False)
+                os.write(1, b"ANSWER=" + (b"yes" if answer else b"no") + b"\n")
+            except toolchain.SetupError as exc:
+                os.write(1, b"ERROR=" + str(exc).encode() + b"\n")
+            os._exit(0)
+        output = b""
+        sent = False
+        while True:
+            try:
+                chunk = os.read(fd, 1024)
+            except OSError:
+                break
+            if not chunk:
+                break
+            output += chunk
+            if not sent and b"[Y/n]" in output:
+                os.write(fd, reply)
+                sent = True
+        os.waitpid(pid, 0)
+        return output
+
+    def test_asks_on_the_terminal_when_stdin_is_not_one(self) -> None:
+        self.assertIn(b"ANSWER=yes", self._ask_in_pty(b"y\n"))
+        self.assertIn(b"ANSWER=no", self._ask_in_pty(b"n\n"))
+
 if __name__ == "__main__":
     unittest.main()
