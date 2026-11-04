@@ -206,7 +206,12 @@ do_install() {
         return 0
     fi
     set +e
-    "$bin" setup --python "$py" "$@"
+    if [ "$YES" = 1 ]; then
+        "$bin" setup --python "$py" "$@"
+    else
+        # Piped from curl, this script's stdin is the download; setup asks on the terminal.
+        "$bin" setup --python "$py" "$@" </dev/tty
+    fi
     status=$?
     set -e
 
