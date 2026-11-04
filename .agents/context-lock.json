@@ -5,8 +5,8 @@
   "validityBasis": "aggregate-source-digest",
   "selectedPaths": [],
   "sourceSelection": {
-    "includedCount": 251,
-    "includedBytes": 2570013,
+    "includedCount": 254,
+    "includedBytes": 2602942,
     "excludedCounts": {
       "extension": 64,
       "generated-or-transient-file": 2
@@ -18,14 +18,14 @@
     "repositories": [
       {
         "path": ".",
-        "commit": "ed6c7219b0846f7d8360f56065065f45da8d1d7d",
-        "branch": "docs/record-placements",
+        "commit": "2a2183477c35866ff7c32775e8da11c4a04c814a",
+        "branch": "feat/guided-setup",
         "dirty": true,
         "remote": "https://github.com/zachshallbetter/cuda-compatibility.git"
       }
     ]
   },
-  "aggregateSourceDigest": "cb488ef3c7d5fa3a45b7e14b4c9582b4aba423dd338bf2aee8c6cb5d24392ad8",
+  "aggregateSourceDigest": "a6d489ccef8ce37f4cbf39a330153389d0273db48a481e10d2392b3fad538193",
   "sources": [
     {
       "path": ".agents/acp/README.md",
@@ -1194,8 +1194,8 @@
     },
     {
       "path": "src/cuda_legacy_compat/cli.py",
-      "bytes": 24163,
-      "sha256": "577211f8afa45904489dc318cc7e12322d5974c33c684ec65f1479ee17a51ab4"
+      "bytes": 25189,
+      "sha256": "59f7a79bcd075a681ce627736117c34c7974a054406cd6bbe282ccd06df0de80"
     },
     {
       "path": "src/cuda_legacy_compat/compat/cuda_runtime_version_facade.cpp",
@@ -1226,6 +1226,16 @@
       "path": "src/cuda_legacy_compat/profiles.py",
       "bytes": 7099,
       "sha256": "aab5fc65269040977fe42cb1ea97de8f821bf7d4941be125f40b5eb1df5587f7"
+    },
+    {
+      "path": "src/cuda_legacy_compat/settings.py",
+      "bytes": 1749,
+      "sha256": "d4a45a36edc81b6b23ae7e73240af69ce6c5df4274d50b68a2295130d4c1fe07"
+    },
+    {
+      "path": "src/cuda_legacy_compat/toolchain.py",
+      "bytes": 18056,
+      "sha256": "f06d80e370c134ee6883601892ccb51899d0b2d5331f6bfdc5adf4ec78005577"
     },
     {
       "path": "src/cuda_legacy_compat/torch_adapter.py",
@@ -1266,6 +1276,11 @@
       "path": "tests/test_profiles.py",
       "bytes": 3345,
       "sha256": "9a92fd997602430510315925d3037f3cd5cc39172c0671f6cbc6fbd4ade4bdfd"
+    },
+    {
+      "path": "tests/test_setup.py",
+      "bytes": 12098,
+      "sha256": "6f7fe856121a2e327ac517f112d9624df3d2f2462d4a661ccf84eb6e8cfb0d50"
     },
     {
       "path": "tests/test_site_checks.py",
