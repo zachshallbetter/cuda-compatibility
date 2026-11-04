@@ -434,6 +434,30 @@ _FOREACH = {
 }
 
 
+def _number(value) -> bool:
+    return isinstance(value, (int, float)) and not isinstance(value, bool)
+
+
+def _single_as_foreach(operation, args: tuple, kwargs: dict) -> tuple[bool, Any]:
+    """The optimizer's single-tensor steps (foreach=False) as one-tensor calls of the foreach kernels (#184)."""
+    name = str(operation)
+    if name in ("aten.mul_.Tensor", "aten.mul_.Scalar") and len(args) == 2 and _number(args[1]):
+        _foreach_kernel("_foreach_mul_.Scalar")([args[0]], args[1])
+    elif name in ("aten.div_.Tensor", "aten.div_.Scalar") and len(args) == 2 and _number(args[1]) and not kwargs:
+        _foreach_kernel("_foreach_div_.ScalarList")([args[0]], [args[1]])
+    elif name == "aten.lerp_.Scalar" and len(args) == 3 and _number(args[2]):
+        _foreach_kernel("_foreach_lerp_.Scalar")([args[0]], [args[1]], args[2])
+    elif name == "aten.addcmul_.default" and len(args) >= 3:
+        _foreach_kernel("_foreach_addcmul_.Scalar")([args[0]], [args[1]], [args[2]], kwargs.get("value", 1))
+    elif name == "aten.addcdiv_.default" and len(args) >= 3:
+        _foreach_kernel("_foreach_addcdiv_.ScalarList")([args[0]], [args[1]], [args[2]], [kwargs.get("value", 1)])
+    elif name == "aten.sqrt.default" and len(args) == 1 and not kwargs:
+        return True, _foreach_kernel("_foreach_sqrt")([args[0]])[0]
+    else:
+        return False, None
+    return True, args[0]
+
+
 class _Shape(ctypes.Structure):
     """compat_kernels.cu's CompatShape: up to six sizes and two operands' strides, passed by value."""
     _fields_ = [("size", ctypes.c_int64 * 6), ("a", ctypes.c_int64 * 6), ("b", ctypes.c_int64 * 6)]
@@ -1747,6 +1771,9 @@ class _MaxwellInferenceFallback(TorchDispatchMode):
                 except NotImplementedError as error:
                     unrouted.record(name, error)
                     raise error from exc
+            handled, result = _single_as_foreach(operation, args, kwargs)
+            if handled:
+                return result
             if _writes_only_self(schema):
                 try:
                     return _inplace_on_cpu(operation, name, args, kwargs)
