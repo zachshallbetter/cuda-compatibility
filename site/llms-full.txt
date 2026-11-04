@@ -443,20 +443,19 @@ cuda-legacy run path/to/app.py --your-option value
 The adapter is opt-in and affects only the child Python process. It sets LD_PRELOAD and a Python startup hook, builds temporary bridge and kernel files, and removes those files when the child exits. Use the launcher only with scripts you trust.
 
 ## Homebrew on Linux
-Release 0.1.0
+Release 0.2.0
 
-Homebrew on Linux can install the command line tool in its own environment instead of steps 1 and 2. The formula installs the tagged 0.1.0 release; add --HEAD to build the current main branch instead.
+Homebrew on Linux can install the command line tool in its own environment instead of steps 1 and 2. The formula installs the tagged 0.2.0 release; add --HEAD to build the current main branch instead.
 
 ```
 brew tap zachshallbetter/cuda-compatibility https://github.com/zachshallbetter/cuda-compatibility
 brew install cuda-legacy
-export CUDA_COMPAT_PYTHON=/path/to/your-env/bin/python
-cuda-legacy doctor --llvm-root /path/to/LLVM-23.1.4
+cuda-legacy setup --python /path/to/your-env/bin/python
 ```
 
 ### Point it at your PyTorch environment
 
-Homebrew installs cuda-legacy with its own Python, which does not contain PyTorch. Set CUDA_COMPAT_PYTHON, or pass --python to doctor and run, with the interpreter of the environment that holds the CUDA-enabled PyTorch wheel. The formula is Linux-only, and its install has not yet been run on the reference host.
+Homebrew installs cuda-legacy with its own Python, which does not contain PyTorch. Pass --python to setup once (it is saved for doctor and run), or set CUDA_COMPAT_PYTHON, with the interpreter of the environment that holds the CUDA-enabled PyTorch wheel. The formula is Linux-only, and its install has not yet been run on the reference host.
 
 ## Tested configuration
 

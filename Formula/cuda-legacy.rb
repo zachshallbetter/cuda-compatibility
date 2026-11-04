@@ -6,8 +6,8 @@ class CudaLegacy < Formula
 
   desc "Inspect and adapt newer CUDA workloads for older NVIDIA GPUs"
   homepage "https://cudacompat.com/"
-  url "https://github.com/zachshallbetter/cuda-compatibility/archive/refs/tags/v0.1.0.tar.gz"
-  sha256 "76928fb07b0244df14d2aa0cd84068d0e73c66930f008ba1da0e8f2d8b82d2aa"
+  url "https://github.com/zachshallbetter/cuda-compatibility/archive/refs/tags/v0.2.0.tar.gz"
+  sha256 "d4cc7295914349ba2dbe643db55061d3903cf8490339fc77fe20837d989fe66e"
   license any_of: ["MIT", "Apache-2.0"]
   head "https://github.com/zachshallbetter/cuda-compatibility.git", branch: "main"
 
@@ -21,15 +21,16 @@ class CudaLegacy < Formula
   def caveats
     <<~EOS
       cuda-legacy runs your PyTorch scripts with the interpreter of the environment
-      that holds the CUDA-enabled PyTorch wheel, not Homebrew's Python. Point it there:
-        export CUDA_COMPAT_PYTHON=/path/to/your-env/bin/python
-        cuda-legacy doctor --llvm-root /path/to/LLVM-23.1.4
-      or pass --python to doctor and run. Linux x86_64 with visible sm_52 GPUs only.
+      that holds the CUDA-enabled PyTorch wheel, not Homebrew's Python. Run setup once
+      and point it there; it finds or downloads LLVM 23.1.4 and saves everything:
+        cuda-legacy setup --python /path/to/your-env/bin/python
+      Then: cuda-legacy run app.py. Linux x86_64 with visible sm_52 GPUs only.
     EOS
   end
 
   test do
     assert_match "cuda-legacy", shell_output("#{bin}/cuda-legacy --help")
     assert_match "pytorch-2.14-cu130", shell_output("#{bin}/cuda-legacy profiles list")
+    assert_match "--remove", shell_output("#{bin}/cuda-legacy setup --help")
   end
 end
