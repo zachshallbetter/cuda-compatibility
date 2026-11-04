@@ -788,19 +788,46 @@ def _is_architecture_failure(error: Exception) -> bool:
     )
 
 
+def _factory_on_cpu(operation, schema, name: str, args: tuple, kwargs: dict) -> Any:
+    """Build a CUDA factory's result on the CPU and copy it to its device, or None when it is not a factory."""
+    device = kwargs.get("device")
+    if not isinstance(device, torch.device) or device.type != "cuda":
+        return None
+    if schema is not None and (schema.is_mutable or any(result.alias_info is not None for result in schema.returns)):
+        return None
+    cpu_result = operation(*args, **{**kwargs, "device": torch.device("cpu")})
+    outputs = _tensor_inputs(cpu_result)
+    if not outputs:
+        return None
+    if sum(tensor.numel() * tensor.element_size() for tensor in outputs) > _CPU_FALLBACK_MAX_BYTES:
+        raise NotImplementedError(f"Maxwell CPU fallback for {name} is limited to 64 MiB of outputs")
+    result = cpu_result.to(device) if isinstance(cpu_result, torch.Tensor) else type(cpu_result)(
+        item.to(device) if isinstance(item, torch.Tensor) else item for item in cpu_result)
+    _dispatch_state.last_path = f"cpu-fallback-{name}"
+    return result
+
+
 class _MaxwellInferenceFallback(TorchDispatchMode):
     def __torch_dispatch__(self, operation, types, args=(), kwargs=None):
         kwargs = kwargs or {}
         schema = getattr(operation, "_schema", None)
         name = schema.name if schema is not None else str(operation)
         if not _cuda_tensors((args, kwargs)):
-            # No CUDA tensor to copy to the CPU (a factory such as torch.ones(device="cuda")): no route.
+            # No CUDA tensor input: a factory such as torch.ones(device="cuda") is built on the CPU and copied over.
             try:
                 return operation(*args, **kwargs)
             except Exception as exc:
-                if _is_architecture_failure(exc):
+                if not _is_architecture_failure(exc):
+                    raise
+                try:
+                    result = _factory_on_cpu(operation, schema, name, args, kwargs)
+                except NotImplementedError as error:
+                    unrouted.record(name, error)
+                    raise error from exc
+                if result is None:
                     unrouted.record(name, exc)
-                raise
+                    raise
+                return result
         try:
             return operation(*args, **kwargs)
         except Exception as exc:

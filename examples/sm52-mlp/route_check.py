@@ -92,14 +92,9 @@ def adapted(device: torch.device) -> list[dict]:
         cases.append({"case": "mm 1x257 @ 257x1 (unsupported)", "route": _route(), "fails_closed": False})
     except NotImplementedError as error:
         cases.append({"case": "mm 1x257 @ 257x1 (unsupported)", "route": "rejected", "fails_closed": True, "error": str(error)})
-    # Constructors that fill memory on the GPU have no Maxwell image and no CUDA input to fall back from.
-    try:
-        torch.ones(2, 2, device=device)
-        torch.cuda.synchronize(device)
-        cases.append({"case": "torch.ones on the GPU (unsupported)", "route": _route(), "fails_closed": False})
-    except RuntimeError as error:
-        cases.append({"case": "torch.ones on the GPU (unsupported)", "route": "rejected", "fails_closed": True,
-                      "error": str(error).splitlines()[0]})
+    # Constructors that fill memory on the GPU have no Maxwell image; the adapter builds them on the CPU and copies.
+    ones = torch.ones(2, 2, device=device)
+    cases.append(_case("torch.ones on the GPU (CPU fallback)", ones, torch.ones(2, 2), _route()))
     return cases
 
 

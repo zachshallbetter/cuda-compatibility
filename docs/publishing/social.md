@@ -16,6 +16,8 @@ Evidence: `CLC-009-pytorch-fp32-mlp-sm52`, `GH-50-public-example-sm52-mlp`.
 
 ## Limitation short (about 30 seconds)
 
+> Superseded in 0.2.2 (#113): constructors such as `torch.ones(..., device="cuda")` now build on the CPU and copy over, so this short no longer shows a failure. Before recording, swap in a current limit, for example native matrix multiplication refusing a dimension above 256.
+
 1. **0–10 s.** Run `torch.ones(2, 2, device="cuda")` under the adapter. On screen: "no kernel image is available". Voice: "This still fails. Here's why."
 2. **10–22 s.** Diagram: the CPU fallback only engages when an operation has GPU inputs to copy back; a constructor has none. Voice: "Fallback needs something to copy. Creating memory on the card needs a real Maxwell kernel, and there isn't one yet."
 3. **22–30 s.** Card: "Every gap is a ticket. Send a reproduction report: cudacompat.com". **Next action:** file a reproduction report.
@@ -28,7 +30,7 @@ Evidence: `GH-50-gpu-constructor-no-fallback` in `.agents/records/negative-resul
 >
 > How: LLVM compiles kernels for the real chip at launch, PyTorch routes six operation families to them, and eleven more run on the CPU with a hard 64 MiB cap. Every result is compared with the CPU.
 >
-> What it is not: general CUDA 13 support. Creating tensors directly on the GPU still fails, convolution runs on the CPU, and there's no performance claim. The site lists each limit with the record behind it.
+> What it is not: general CUDA 13 support. Tensors created directly on the GPU are built on the CPU and copied, convolution runs on the CPU, and there's no performance claim. The site lists each limit with the record behind it.
 >
 > If you have a compute capability 5.2 card, the public example takes a few commands, and a pass/fail report helps more than a like: https://cudacompat.com/
 

@@ -39,7 +39,9 @@ CPU_FALLBACK = (
 
 NOTES = (
     "Everything else runs as the stock wheel does, and on sm_52 that usually means 'no kernel image is available'.",
-    "Creating a tensor directly on the GPU (torch.ones(..., device='cuda')) is not supported yet.",
+    "Creating a tensor directly on the GPU (torch.zeros, ones, full, rand, randn, eye, ... with device='cuda') "
+    "builds it on the CPU and copies it over, within the 64 MiB output limit. Random values come from the CPU "
+    "generator: torch.manual_seed keeps them reproducible, but they differ from a GPU that has kernels.",
     "First-order gradients and SGD are verified only for a small float32 linear -> ReLU -> sum workload.",
     "Mutating and alias-returning operators fail closed, except the float32 add_ path.",
 )

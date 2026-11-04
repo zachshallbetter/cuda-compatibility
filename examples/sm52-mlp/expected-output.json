@@ -71,10 +71,15 @@
       "error": "Maxwell float32 matrix multiplication is limited to 256 dimensions"
     },
     {
-      "case": "torch.ones on the GPU (unsupported)",
-      "route": "rejected",
-      "fails_closed": true,
-      "error": "CUDA error: no kernel image is available for execution on the device"
+      "case": "torch.ones on the GPU (CPU fallback)",
+      "route": "cpu-fallback-aten::ones",
+      "shape": [
+        2,
+        2
+      ],
+      "criterion": "identical",
+      "matches_cpu": true,
+      "max_abs_error": 0.0
     }
   ],
   "expected_outcome_observed": true
