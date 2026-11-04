@@ -1254,6 +1254,76 @@ def _nll_loss_forward(self: torch.Tensor, target: torch.Tensor, weight: torch.Te
     return output, total_weight
 
 
+def _pool_pairs(kernel_size, stride, padding, dilation) -> tuple[list[int], list[int], list[int], list[int]]:
+    """Max-pool arguments as (height, width) pairs; a case PyTorch rejects goes to the CPU path, which says why."""
+    def pair(value) -> list[int]:
+        items = [int(v) for v in value] if isinstance(value, (list, tuple)) else [int(value)]
+        if len(items) == 1:
+            items *= 2
+        if len(items) != 2:
+            raise NotImplementedError("Maxwell max pooling takes one or two values per argument")
+        return items
+    k = pair(kernel_size)
+    s = pair(stride) if stride else list(k)
+    p, d = pair(padding), pair(dilation)
+    if min(k) < 1 or min(s) < 1 or min(d) < 1 or min(p) < 0 or p[0] > k[0] // 2 or p[1] > k[1] // 2:
+        raise NotImplementedError("Maxwell max pooling leaves invalid arguments to the CPU path's own error")
+    return k, s, p, d
+
+
+def _pool_size(size: int, k: int, s: int, p: int, d: int, ceil_mode: bool) -> int:
+    """PyTorch's pooling_output_shape: a ceil-mode window must start inside the input or its left padding."""
+    out = (size + 2 * p - d * (k - 1) - 1 + (s - 1 if ceil_mode else 0)) // s + 1
+    if ceil_mode and (out - 1) * s >= size + p:
+        out -= 1
+    return out
+
+
+@_falls_back_to_cpu("max_pool2d_with_indices")
+def _max_pool2d_with_indices(self: torch.Tensor, kernel_size, stride=(), padding=0, dilation=1,
+                             ceil_mode: bool = False):
+    """CNNs' max pooling (#184), with the indices its backward uses, as the CPU kernel computes them."""
+    _f32(self, contiguous=True)
+    if self.dim() not in (3, 4) or self.numel() == 0:
+        raise NotImplementedError("Maxwell max pooling takes a non-empty contiguous (C, H, W) or (N, C, H, W) input")
+    k, s, p, d = _pool_pairs(kernel_size, stride, padding, dilation)
+    height, width = self.shape[-2:]
+    out_height, out_width = (_pool_size(height, k[0], s[0], p[0], d[0], ceil_mode),
+                             _pool_size(width, k[1], s[1], p[1], d[1], ceil_mode))
+    if out_height < 1 or out_width < 1:
+        raise NotImplementedError("Maxwell max pooling leaves an empty output to the CPU path's own error")
+    shape = (*self.shape[:-2], out_height, out_width)
+    output = torch.empty(shape, dtype=torch.float32, device=self.device)
+    indices = torch.empty(shape, dtype=torch.int64, device=self.device)
+    _launch("compat_max_pool2d_f32", _blocks(output.numel()), _ptr(self), _ptr(output), _ptr(indices),
+            ctypes.c_int64(self.numel() // (height * width)), ctypes.c_int64(height), ctypes.c_int64(width),
+            ctypes.c_int64(out_height), ctypes.c_int64(out_width),
+            *(ctypes.c_int(v) for v in (k[0], k[1], s[0], s[1], p[0], p[1], d[0], d[1])), device=self.device)
+    _dispatch_state.last_path = "llvm-sm52-max-pool2d-f32"
+    return output, indices
+
+
+@_falls_back_to_cpu("max_pool2d_with_indices_backward")
+def _max_pool2d_with_indices_backward(grad_output: torch.Tensor, self: torch.Tensor, kernel_size, stride, padding,
+                                      dilation, ceil_mode: bool, indices: torch.Tensor) -> torch.Tensor:
+    """Each output's gradient goes to the input position its index names (#184)."""
+    _f32(grad_output, self, contiguous=True)
+    if (self.dim() not in (3, 4) or self.numel() == 0 or indices.dtype != torch.int64 or not indices.is_cuda
+            or indices.device != self.device or not indices.is_contiguous() or indices.shape != grad_output.shape
+            or grad_output.shape[:-2] != self.shape[:-2]):
+        raise NotImplementedError("Maxwell max pooling backward needs the forward's contiguous int64 indices")
+    plane = self.shape[-2] * self.shape[-1]
+    grad_input = torch.empty_like(self)
+    _launch("compat_unary_f32", _blocks(grad_input.numel()), _ptr(grad_input), _ptr(grad_input),
+            ctypes.c_int64(grad_input.numel()), ctypes.c_int(2), ctypes.c_float(0.0), device=self.device)
+    if grad_output.numel():
+        _launch("compat_max_pool2d_backward_f32", _blocks(grad_output.numel()), _ptr(grad_output), _ptr(indices),
+                _ptr(grad_input), ctypes.c_int64(self.numel() // plane), ctypes.c_int64(plane),
+                ctypes.c_int64(grad_output.shape[-2] * grad_output.shape[-1]), device=self.device)
+    _dispatch_state.last_path = "llvm-sm52-max-pool2d-backward-f32"
+    return grad_input
+
+
 @_falls_back_to_cpu("nll_loss_backward")
 def _nll_loss_backward(grad_output: torch.Tensor, self: torch.Tensor, target: torch.Tensor,
                        weight: torch.Tensor | None, reduction: int, ignore_index: int,
@@ -2021,6 +2091,8 @@ def install() -> None:
     _library.impl("embedding_dense_backward", _embedding_dense_backward)
     _library.impl("nll_loss_forward", _nll_loss_forward)
     _library.impl("nll_loss_backward", _nll_loss_backward)
+    _library.impl("max_pool2d_with_indices", _max_pool2d_with_indices)
+    _library.impl("max_pool2d_with_indices_backward", _max_pool2d_with_indices_backward)
     _library.impl("native_layer_norm", _native_layer_norm)
     _library.impl("native_layer_norm_backward", _native_layer_norm_backward)
     _library.impl("gelu_backward", _gelu_backward)

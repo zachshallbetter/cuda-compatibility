@@ -477,3 +477,49 @@ extern "C" __global__ void compat_pointwise_f32(const float* x, const float* y, 
     out[i] = value;
   }
 }
+
+// ── Max pooling (#184) ──────────────────────────────────────────────────────────────────────────────────────
+// One thread per output element, as PyTorch's CPU kernel computes it: the window starts on the first row and column
+// inside the input (stepping by the dilation past the padding), the first maximum wins a tie, NaN wins any window, and
+// the index is the position in its (H, W) plane.
+extern "C" __global__ void compat_max_pool2d_f32(const float* input, float* output, int64_t* indices, int64_t planes,
+                                                 int64_t height, int64_t width, int64_t out_height, int64_t out_width,
+                                                 int kh, int kw, int sh, int sw, int ph, int pw, int dh, int dw) {
+  const int64_t count = planes * out_height * out_width;
+  for (int64_t i = blockIdx.x * static_cast<int64_t>(blockDim.x) + threadIdx.x; i < count;
+       i += static_cast<int64_t>(gridDim.x) * blockDim.x) {
+    const int64_t ow = i % out_width, oh = (i / out_width) % out_height, plane = i / (out_width * out_height);
+    int64_t hstart = oh * sh - ph, wstart = ow * sw - pw;
+    const int64_t hend = min(hstart + static_cast<int64_t>(kh - 1) * dh + 1, height);
+    const int64_t wend = min(wstart + static_cast<int64_t>(kw - 1) * dw + 1, width);
+    while (hstart < 0) hstart += dh;
+    while (wstart < 0) wstart += dw;
+    const float* x = input + plane * height * width;
+    int64_t best = hstart * width + wstart;
+    float value = -__int_as_float(0x7f800000);
+    for (int64_t h = hstart; h < hend; h += dh)
+      for (int64_t w = wstart; w < wend; w += dw) {
+        const float v = x[h * width + w];
+        if (v > value || isnan(v)) {
+          value = v;
+          best = h * width + w;
+        }
+      }
+    output[i] = value;
+    indices[i] = best;
+  }
+}
+
+// grad_input starts at zero; each output's gradient goes to the input position its index names (windows overlap, so
+// the sums use atomics).
+extern "C" __global__ void compat_max_pool2d_backward_f32(const float* grad_output, const int64_t* indices,
+                                                          float* grad_input, int64_t planes, int64_t plane_size,
+                                                          int64_t out_plane_size) {
+  const int64_t count = planes * out_plane_size;
+  for (int64_t i = blockIdx.x * static_cast<int64_t>(blockDim.x) + threadIdx.x; i < count;
+       i += static_cast<int64_t>(gridDim.x) * blockDim.x) {
+    const int64_t index = indices[i];
+    if (index >= 0 && index < plane_size)
+      atomicAdd(grad_input + (i / out_plane_size) * plane_size + index, grad_output[i]);
+  }
+}
