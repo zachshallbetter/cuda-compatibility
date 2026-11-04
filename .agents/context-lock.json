@@ -18,9 +18,9 @@
     "repositories": [
       {
         "path": ".",
-        "commit": "0ad589f8aed191d895ae39a25ca7c891fcc7621b",
+        "commit": "340cc030678cf0e8870d7b4b98f5db4557089060",
         "branch": "fix/add-scalar",
-        "dirty": true,
+        "dirty": false,
         "remote": "https://github.com/zachshallbetter/cuda-compatibility.git"
       }
     ]
