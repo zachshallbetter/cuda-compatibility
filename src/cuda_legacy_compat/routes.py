@@ -48,9 +48,10 @@ NOTES = (
     "Training through layer_norm, scaled_dot_product_attention and contiguous uses PyTorch's own "
     "decomposition, so Transformers, attention and LayerNorm models train; attention uses the math backend. "
     "Inference keeps the adapter's kernels for them.",
-    "In-place operators that update only their target (x += 1, mul_, zero_, fill_, x[i] = v, relu_, "
-    "nn.ReLU(inplace=True)) run on a CPU copy and are copied back, within the 64 MiB limit, when the target is "
-    "contiguous. Other mutating or alias-returning operators, and in-place updates of strided views, fail closed.",
+    "In-place operators (x += 1, mul_, zero_, fill_, x[i] = v, relu_, nn.ReLU(inplace=True), and the "
+    "GradScaler steps of torch.amp) run on a CPU copy and are copied back, within the 64 MiB limit; a strided "
+    "view such as x[:, 1:3] is updated through its contiguous base. Other mutating or alias-returning "
+    "operators fail closed.",
 )
 
 

@@ -548,7 +548,7 @@ Limits
 - Seven steps measured 2.360 ms median latency on GPU 2 and 7.296 ms on GPU 1, with 67,180,032 bytes peak allocated on each; timing includes CPU fallback and synchronization and is not representative performance.
 - One CUDA device per fallback operation.
 - Maximum 64 MiB of CUDA input transfers and 64 MiB of output per operation.
-- In-place operators that update only a contiguous target (x += 1, mul_, zero_, fill_, x[i] = v, relu_, nn.ReLU(inplace=True)) run on a CPU copy and are copied back. In-place updates of strided views and alias-returning operators still fail closed (#155). CLC-inplace-fallback-reference-host
+- In-place operators (x += 1, mul_, zero_, fill_, x[i] = v, relu_, nn.ReLU(inplace=True), and the GradScaler steps of torch.amp) run on a CPU copy and are copied back. A strided view such as x[:, 1:3] or x.t() is updated through its contiguous base (#155, #153). Other mutating and alias-returning operators still fail closed. CLC-inplace-fallback-reference-host, CLC-153-155-inplace-general-reference-host
 - Creating a tensor directly on the GPU (torch.zeros, ones, full, rand, randn, eye and similar with device="cuda") builds it on the CPU and copies it over. Random values come from the CPU generator: torch.manual_seed keeps them reproducible, but they differ from a GPU that has kernels. CLC-113-factory-fallback-reference-host
 
 The dispatcher may retry eligible out-of-place operations after recognized missing-image, architecture-mismatch, cuDNN no-engine, or missing CUDA-kernel errors. A fallback is rejected if it cannot preserve the operator’s semantics.

@@ -832,38 +832,78 @@ def _is_cuda(tensor: torch.Tensor) -> bool:
     return tensor.is_cuda
 
 
-def _writes_only_self(schema) -> bool:
-    """True for an in-place operator: it writes its first argument, nothing else, and returns it (or nothing,
-    for the list-of-tensors operators behind torch.optim's foreach paths)."""
+def _written_arguments(schema) -> list[int] | None:
+    """Positions of the tensor arguments an in-place operator writes, starting with its first, when it returns
+    only those (or nothing: torch.optim's foreach steps and the AMP scaler ops); None for anything else."""
     if schema is None or not schema.arguments:
-        return False
-    first = schema.arguments[0].alias_info
-    if first is None or not first.is_write:
-        return False
-    if any(argument.alias_info is not None and argument.alias_info.is_write for argument in schema.arguments[1:]):
-        return False
-    if not schema.returns:
-        return str(schema.arguments[0].type).startswith("List[Tensor]")
-    return all(result.alias_info is not None and result.alias_info.before_set == first.before_set
-               for result in schema.returns)
+        return None
+    written = [index for index, argument in enumerate(schema.arguments)
+               if argument.alias_info is not None and argument.alias_info.is_write]
+    if not written or written[0] != 0:
+        return None
+    if any(not str(schema.arguments[index].type).startswith(("Tensor", "List[Tensor]")) for index in written):
+        return None
+    sets = set().union(*(schema.arguments[index].alias_info.before_set for index in written))
+    if not all(result.alias_info is not None and result.alias_info.before_set <= sets for result in schema.returns):
+        return None
+    return written
 
 
-def _inplace_on_cpu(operation, name: str, args: tuple, kwargs: dict) -> Any:
-    """Run an in-place operator on CPU copies of its CUDA targets and copy the results back into them."""
-    targets = list(args[0]) if isinstance(args[0], (list, tuple)) else [args[0]]
+def _writes_only_self(schema) -> bool:
+    return _written_arguments(schema) is not None
+
+
+def _inplace_on_cpu(operation, name: str, args: tuple, kwargs: dict, schema=None) -> Any:
+    """Run an in-place operator on CPU copies of the CUDA tensors it writes and copy the results back.
+
+    A written tensor that is a strided view (x[:, 1:3]) is staged through its contiguous base: the base goes to
+    the CPU, the operator updates the same view of it there, and the whole base is copied back.
+    """
+    schema = schema if schema is not None else getattr(operation, "_schema", None)
+    positions = (_written_arguments(schema) if schema is not None else None) or [0]
+    names = [argument.name for argument in schema.arguments] if schema is not None else []
+
+    def value_at(index: int) -> Any:
+        return args[index] if index < len(args) else kwargs.get(names[index]) if index < len(names) else None
+
+    targets: list[torch.Tensor] = []
+    for index in positions:
+        value = value_at(index)
+        targets.extend(value if isinstance(value, (list, tuple)) else [value])
     if not targets or any(not isinstance(target, torch.Tensor) or not _is_cuda(target) for target in targets):
         raise NotImplementedError(f"Maxwell in-place fallback for {name} requires CUDA target tensors")
-    if any(target.layout != torch.strided or not target.is_contiguous() for target in targets):
-        raise NotImplementedError(f"Maxwell in-place fallback for {name} requires a contiguous target")
+
+    staged: dict[int, torch.Tensor] = {}
+    write_back: list[tuple[torch.Tensor, torch.Tensor]] = []
+    storages: set[int] = set()
+    staged_bytes = 0
+    for target in targets:
+        if id(target) in staged:
+            continue
+        home = target if target.is_contiguous() else target._base
+        if target.layout != torch.strided or home is None or not home.is_contiguous() or home.dtype != target.dtype:
+            raise NotImplementedError(
+                f"Maxwell in-place fallback for {name} requires a contiguous target or a view of a contiguous tensor")
+        if home.data_ptr() in storages:
+            raise NotImplementedError(f"Maxwell in-place fallback for {name} writes two views of one tensor")
+        storages.add(home.data_ptr())
+        cpu_home = _cuda_tensor_to_cpu(home)
+        staged[id(target)] = cpu_home if home is target else cpu_home.as_strided(
+            target.size(), target.stride(), target.storage_offset() - home.storage_offset())
+        write_back.append((home, cpu_home))
+        staged_bytes += _cuda_tensor_transfer_bytes(home)
     tensors = _tensor_inputs((args, kwargs))
     cuda_tensors = [tensor for tensor in tensors if _is_cuda(tensor)]
     if len({tensor.device for tensor in cuda_tensors}) != 1:
         raise NotImplementedError(f"Maxwell in-place fallback for {name} requires tensors from one CUDA device")
-    if sum(_cuda_tensor_transfer_bytes(tensor) for tensor in cuda_tensors) > _CPU_FALLBACK_MAX_BYTES:
+    read_bytes = sum(_cuda_tensor_transfer_bytes(tensor) for tensor in cuda_tensors if id(tensor) not in staged)
+    if staged_bytes + read_bytes > _CPU_FALLBACK_MAX_BYTES:
         raise NotImplementedError(f"Maxwell in-place fallback for {name} is limited to 64 MiB of CUDA inputs")
 
     def move_to_cpu(value: Any) -> Any:
         if isinstance(value, torch.Tensor):
+            if id(value) in staged:
+                return staged[id(value)]
             return _cuda_tensor_to_cpu(value) if _is_cuda(value) else value
         if isinstance(value, (tuple, list)):
             return type(value)(move_to_cpu(item) for item in value)
@@ -873,15 +913,19 @@ def _inplace_on_cpu(operation, name: str, args: tuple, kwargs: dict) -> Any:
 
     cpu_args, cpu_kwargs = move_to_cpu(args), move_to_cpu(kwargs)
     operation(*cpu_args, **cpu_kwargs)
-    updated = list(cpu_args[0]) if isinstance(args[0], (list, tuple)) else [cpu_args[0]]
-    if any(cpu.shape != target.shape or cpu.dtype != target.dtype for cpu, target in zip(updated, targets)):
+    if any(staged[id(target)].shape != target.shape or staged[id(target)].dtype != target.dtype for target in targets):
         # Operators such as resize_ or transpose_ change metadata, not values; those cannot be copied back.
         raise NotImplementedError(f"Maxwell in-place fallback for {name} only supports value updates")
     # A same-dtype copy from host memory into a contiguous CUDA tensor is a plain memory copy, no kernel.
-    for cpu, target in zip(updated, targets):
-        target.copy_(cpu)
+    for home, cpu_home in write_back:
+        home.copy_(cpu_home)
     _dispatch_state.last_path = f"cpu-fallback-inplace-{name}"
-    return None if isinstance(args[0], (list, tuple)) else args[0]
+    if schema is None:
+        return args[0]
+    # Each result aliases one written argument: return that argument, as the CUDA kernel would have.
+    by_set = {alias: index for index in positions for alias in schema.arguments[index].alias_info.before_set}
+    results = tuple(value_at(by_set[next(iter(result.alias_info.before_set))]) for result in schema.returns)
+    return None if not results else results[0] if len(results) == 1 else results
 
 
 def _factory_on_cpu(operation, schema, name: str, args: tuple, kwargs: dict) -> Any:
