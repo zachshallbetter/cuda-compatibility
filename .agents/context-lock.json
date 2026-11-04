@@ -6,7 +6,7 @@
   "selectedPaths": [],
   "sourceSelection": {
     "includedCount": 256,
-    "includedBytes": 2634899,
+    "includedBytes": 2634914,
     "excludedCounts": {
       "extension": 65,
       "generated-or-transient-file": 2
@@ -18,14 +18,14 @@
     "repositories": [
       {
         "path": ".",
-        "commit": "7af11bd75ec3a0753e2ebe914229b24efe1b71d9",
+        "commit": "f2e35507878f887d0871155f2f4022c6e040ff6c",
         "branch": "feat/install-script",
-        "dirty": false,
+        "dirty": true,
         "remote": "https://github.com/zachshallbetter/cuda-compatibility.git"
       }
     ]
   },
-  "aggregateSourceDigest": "4b1fbe2f074bb2ab954190da79d64578079e40136b8a861806a61f151f6cb7f2",
+  "aggregateSourceDigest": "bc85350165d6d2988d6b7d453cc1c89ff1d34014874a76ce88c675694b132c50",
   "sources": [
     {
       "path": ".agents/acp/README.md",
@@ -1129,8 +1129,8 @@
     },
     {
       "path": "site/install.sh",
-      "bytes": 12293,
-      "sha256": "1d0a22cb99b757e3dfa8465e816e4941b2f04d5ed0da73a14cc41add878a8363"
+      "bytes": 12308,
+      "sha256": "be0d101b7f04bda8ea79a00d32cf9208bcd696ab1b7b759208411393b368e09e"
     },
     {
       "path": "site/research/attribution-pilot.html",

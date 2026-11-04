@@ -179,8 +179,9 @@ sha256_of() {
 
 do_install() {
     say "Checking this machine"
-    [ "$(uname -s)" = Linux ] && [ "$(uname -m)" = x86_64 ] ||
+    if [ "$(uname -s)" != Linux ] || [ "$(uname -m)" != x86_64 ]; then
         stop "cuda-legacy runs on Linux x86_64 with an NVIDIA GPU; this is $(uname -s) $(uname -m)."
+    fi
     command -v nvidia-smi >/dev/null 2>&1 ||
         warn "nvidia-smi was not found. Install the NVIDIA driver before running workloads; setup checks it."
 
