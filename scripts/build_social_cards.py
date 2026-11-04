@@ -145,7 +145,7 @@ def card_html(page: dict) -> str:
     out = CARD.replace("WIREURL", (SITE / "assets/gm200-wireframe.json").as_uri())
     for key, value in (("FONTS", FONTS.replace("SITE/", SITE.as_uri() + "/")), ("MARKS", marks),
                        ("WIREFRAME_JS", WIREFRAME_JS), ("SHEET", page["chip"]), ("EYEBROW", escape(page["eyebrow"])),
-                       ("TITLE", title), ("SUMMARY", escape(page["excerpt"])), ("URL", escape(page["url"].removeprefix("https://"))),
+                       ("TITLE", title), ("SUMMARY", escape(page["excerpt"])), ("URL", escape(page["url"].removeprefix("https://").removesuffix("/"))),
                        ("TAG", "Independent. Not affiliated with NVIDIA." if page["kind"] == "home" else "Newer CUDA. Older GPUs.")):
         out = out.replace(key, value)
     return out
