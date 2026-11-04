@@ -147,6 +147,10 @@ def _record_stream(tensors: tuple[torch.Tensor, ...], stream: Any) -> None:
 
 def _add(self: torch.Tensor, other: torch.Tensor, *, alpha: int | float = 1) -> torch.Tensor:
     global _bridge
+    if not isinstance(other, torch.Tensor) or (other.dim() == 0 and not other.is_cuda):
+        # x + 1, 1 + x, x + 0.5, x + torch.tensor(1.0): a scalar operand has no Maxwell kernel here.
+        scalar = other.item() if isinstance(other, torch.Tensor) else other
+        return _cpu_fallback(torch.ops.aten.add.Tensor, "add")(self, scalar, alpha=alpha)
     if self.requires_grad or other.requires_grad:
         return _cpu_fallback(torch.ops.aten.add.Tensor, "add")(self, other, alpha=alpha)
     _validate_pair(self, other, "addition")
