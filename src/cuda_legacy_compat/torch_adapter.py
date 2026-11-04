@@ -116,20 +116,8 @@ def _load_bridge() -> tuple[ctypes.CDLL, bytes]:
         ctypes.c_size_t,
     ]
     bridge.cuda_compat_launch_layer_norm_f32.restype = ctypes.c_int
-    bridge.cuda_compat_launch_matrix_multiply_f32.argtypes = [
-        ctypes.c_char_p,
-        ctypes.c_uint64,
-        ctypes.c_uint64,
-        ctypes.c_uint64,
-        ctypes.c_uint64,
-        ctypes.c_uint64,
-        ctypes.c_uint64,
-        ctypes.c_uint64,
-        ctypes.c_uint64,
-        ctypes.c_uint64,
-        ctypes.c_uint64,
-        ctypes.c_size_t,
-    ]
+    bridge.cuda_compat_launch_matrix_multiply_f32.argtypes = (
+        [ctypes.c_char_p] + [ctypes.c_uint64] * 18 + [ctypes.c_float, ctypes.c_float, ctypes.c_size_t])
     bridge.cuda_compat_launch_matrix_multiply_f32.restype = ctypes.c_int
     bridge.cuda_compat_launch_relu_f32.argtypes = [
         ctypes.c_char_p,
@@ -372,62 +360,85 @@ def _add_inplace(
     return self
 
 
-@_falls_back_to_cpu("mm")
-def _mm(self: torch.Tensor, other: torch.Tensor) -> torch.Tensor:
-    if self.requires_grad or other.requires_grad:
-        return _cpu_fallback(torch.ops.aten.mm.default, "mm")(self, other)
-    _validate_pair(self, other, "matrix multiplication")
-    if self.dtype != torch.float32 or other.dtype != torch.float32:
-        raise NotImplementedError("Maxwell matrix multiplication supports float32 tensors only")
-    if self.dim() != 2 or other.dim() != 2:
-        raise NotImplementedError("Maxwell matrix multiplication requires two-dimensional tensors")
-    if self.shape[1] != other.shape[0]:
-        raise RuntimeError("matrix multiplication shapes do not align")
-    left_strides = self.stride()
-    right_strides = other.stride()
-    if any(stride < 0 for stride in (*left_strides, *right_strides)):
-        raise NotImplementedError("Maxwell matrix multiplication does not support negative strides")
-
-    rows, inner = self.shape
-    columns = other.shape[1]
-    if (
-        rows > 256
-        or columns > 256
-        or inner > 256
-        or rows * columns * inner > 16777216
-    ):
-        raise NotImplementedError("Maxwell float32 matrix multiplication is limited to 256 dimensions")
-
-    output = torch.empty((rows, columns), dtype=torch.float32, device=self.device)
-    if rows == 0 or columns == 0:
-        _dispatch_state.last_path = "llvm-sm52-mm-f32-empty"
-        return output
-
+def _gemm(left: torch.Tensor, right: torch.Tensor, output: torch.Tensor, bias: torch.Tensor | None = None,
+          alpha: float = 1.0, beta: float = 0.0, name: str = "matrix multiplication") -> torch.Tensor:
+    """output = alpha * left @ right + beta * bias on the Maxwell tiled kernel (#184), for 2D operands or a batch of
+    them (3D). Every operand goes by its strides, so transposed and broadcast views need no copy; a case the kernel
+    doesn't take raises NotImplementedError, which the wrapper hands to the CPU fallback."""
     global _bridge
+    tensors = [left, right] + ([bias] if bias is not None and beta != 0 else [])
+    if any(t.dtype != torch.float32 for t in tensors):
+        raise NotImplementedError(f"Maxwell {name} supports float32 tensors only")
+    if any(not t.is_cuda or t.device != output.device for t in tensors):
+        raise NotImplementedError(f"Maxwell {name} requires tensors on one CUDA device")
+    if any(stride < 0 for t in tensors for stride in t.stride()):
+        raise NotImplementedError(f"Maxwell {name} does not support negative strides")
+    batched = left.dim() == 3
+    batch = left.shape[0] if batched else 1
+    rows, inner = left.shape[-2:]
+    columns = right.shape[-1]
+    if (rows + 63) // 64 > 65535 or batch > 65535 or max(rows, columns, inner) > 2147483647:
+        raise NotImplementedError(f"Maxwell {name} is too large for one launch")
+    ls, rs = left.stride(), right.stride()
+    bias_pointer, bias_strides = 0, (0, 0, 0)
+    if bias is not None and beta != 0:
+        view = bias.expand(output.shape)
+        bs = view.stride()
+        bias_pointer, bias_strides = view.data_ptr(), ((bs[-2], bs[-1], bs[0] if batched else 0))
+    if output.numel() == 0:
+        _dispatch_state.last_path = "llvm-sm52-gemm-f32-empty"
+        return output
     if _bridge is None:
         _bridge, ptx_path = _load_bridge()
     else:
         ptx_path = os.fsencode(os.environ["CUDA_COMPAT_VECTOR_ADD_PTX"])
-    current_stream = torch.cuda.current_stream(self.device)
-    _record_stream((self, other), current_stream)
-    stream = current_stream.cuda_stream
+    current_stream = torch.cuda.current_stream(output.device)
+    _record_stream(tuple(tensors), current_stream)
     result = _bridge.cuda_compat_launch_matrix_multiply_f32(
-        ptx_path,
-        self.data_ptr(),
-        other.data_ptr(),
-        output.data_ptr(),
-        rows,
-        columns,
-        inner,
-        left_strides[0],
-        left_strides[1],
-        right_strides[0],
-        right_strides[1],
-        stream,
-    )
+        ptx_path, left.data_ptr(), right.data_ptr(), bias_pointer, output.data_ptr(), batch, rows, columns, inner,
+        ls[-2], ls[-1], rs[-2], rs[-1], bias_strides[0], bias_strides[1], ls[0] if batched else 0,
+        rs[0] if batched else 0, bias_strides[2], rows * columns if batched else 0, float(alpha), float(beta),
+        current_stream.cuda_stream)
     if result != 0:
-        raise RuntimeError(f"CUDA Driver API Maxwell matrix multiplication failed with CUresult={result}")
-    _dispatch_state.last_path = "llvm-sm52-mm-f32"
+        raise RuntimeError(f"CUDA Driver API Maxwell {name} failed with CUresult={result}")
+    _dispatch_state.last_path = "llvm-sm52-gemm-f32"
+    return output
+
+
+@_falls_back_to_cpu("mm")
+def _mm(self: torch.Tensor, other: torch.Tensor) -> torch.Tensor:
+    if self.dim() != 2 or other.dim() != 2:
+        raise NotImplementedError("Maxwell matrix multiplication requires two-dimensional tensors")
+    if self.shape[1] != other.shape[0]:
+        raise RuntimeError("matrix multiplication shapes do not align")
+    output = _gemm(self, other, torch.empty((self.shape[0], other.shape[1]), dtype=torch.float32, device=self.device))
+    if output.numel():
+        _dispatch_state.last_path = "llvm-sm52-mm-f32"
+    return output
+
+
+@_falls_back_to_cpu("addmm")
+def _addmm(input: torch.Tensor, mat1: torch.Tensor, mat2: torch.Tensor, *, beta: float = 1,
+           alpha: float = 1) -> torch.Tensor:
+    if mat1.dim() != 2 or mat2.dim() != 2 or mat1.shape[1] != mat2.shape[0]:
+        raise NotImplementedError("Maxwell addmm requires aligned two-dimensional matrices")
+    output = torch.empty((mat1.shape[0], mat2.shape[1]), dtype=torch.float32, device=mat1.device)
+    if beta != 0 and input.dim() > 2:
+        raise NotImplementedError("Maxwell addmm takes a bias that broadcasts to the output")
+    output = _gemm(mat1, mat2, output, input, float(alpha), float(beta), "addmm")
+    if output.numel():
+        _dispatch_state.last_path = "llvm-sm52-addmm-f32"
+    return output
+
+
+@_falls_back_to_cpu("bmm")
+def _bmm(self: torch.Tensor, other: torch.Tensor) -> torch.Tensor:
+    if self.dim() != 3 or other.dim() != 3 or self.shape[0] != other.shape[0] or self.shape[2] != other.shape[1]:
+        raise NotImplementedError("Maxwell bmm requires aligned three-dimensional batches")
+    output = torch.empty((self.shape[0], self.shape[1], other.shape[2]), dtype=torch.float32, device=self.device)
+    output = _gemm(self, other, output, name="batched matrix multiplication")
+    if output.numel():
+        _dispatch_state.last_path = "llvm-sm52-bmm-f32"
     return output
 
 
@@ -1303,9 +1314,9 @@ def install() -> None:
     _library.impl("embedding", _embedding)
     _library.impl("layer_norm", _inference_only(_layer_norm, "layer_norm"))
     _library.impl("contiguous", _inference_only(_contiguous, "contiguous"))
-    _library.impl("linear", _cpu_fallback(torch.ops.aten.linear.default, "linear"))
     _library.impl("mm", _mm)
-    _library.impl("bmm", _cpu_fallback(torch.ops.aten.bmm.default, "bmm"))
+    _library.impl("addmm", _addmm)
+    _library.impl("bmm", _bmm)
     _library.impl("_softmax", _cpu_fallback(torch.ops.aten._softmax.default, "softmax"))
     _library.impl(
         "scaled_dot_product_attention",

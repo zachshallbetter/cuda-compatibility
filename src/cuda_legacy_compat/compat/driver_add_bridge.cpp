@@ -386,16 +386,17 @@ extern "C" int cuda_compat_launch_embedding_f32(
 }
 
 extern "C" int cuda_compat_launch_matrix_multiply_f32(
-    const char* ptx_path, std::uint64_t left_pointer,
-    std::uint64_t right_pointer, std::uint64_t output_pointer,
-    std::uint64_t rows, std::uint64_t columns, std::uint64_t inner,
-    std::uint64_t left_stride0, std::uint64_t left_stride1,
-    std::uint64_t right_stride0, std::uint64_t right_stride1,
+    const char* ptx_path, std::uint64_t left_pointer, std::uint64_t right_pointer, std::uint64_t bias_pointer,
+    std::uint64_t output_pointer, std::uint64_t batch, std::uint64_t rows, std::uint64_t columns,
+    std::uint64_t inner, std::uint64_t left_stride0, std::uint64_t left_stride1, std::uint64_t right_stride0,
+    std::uint64_t right_stride1, std::uint64_t bias_stride0, std::uint64_t bias_stride1, std::uint64_t left_batch,
+    std::uint64_t right_batch, std::uint64_t bias_batch, std::uint64_t output_batch, float alpha, float beta,
     std::uintptr_t stream_pointer) {
-  if (ptx_path == nullptr || rows > 256 || columns > 256 || inner > 256 ||
-      rows * columns * inner > 16777216ULL)
+  // The grid holds 65535 tiles of 64 per dimension and a batch of 65535; the kernel indexes in 64 bits.
+  if (ptx_path == nullptr || rows > 2147483647ULL || columns > 2147483647ULL || inner > 2147483647ULL ||
+      (rows + 63) / 64 > 65535ULL || (columns + 63) / 64 > 2147483647ULL || batch > 65535ULL)
     return CUDA_ERROR_INVALID_VALUE;
-  if (rows == 0 || columns == 0) return CUDA_SUCCESS;
+  if (rows == 0 || columns == 0 || batch == 0) return CUDA_SUCCESS;
   if (output_pointer == 0 || (inner > 0 && (left_pointer == 0 || right_pointer == 0)))
     return CUDA_ERROR_INVALID_VALUE;
 
@@ -414,24 +415,23 @@ extern "C" int cuda_compat_launch_matrix_multiply_f32(
 
   CUdeviceptr left = static_cast<CUdeviceptr>(left_pointer);
   CUdeviceptr right = static_cast<CUdeviceptr>(right_pointer);
+  CUdeviceptr bias = static_cast<CUdeviceptr>(bias_pointer);
   CUdeviceptr output = static_cast<CUdeviceptr>(output_pointer);
   int kernel_rows = static_cast<int>(rows);
   int kernel_columns = static_cast<int>(columns);
   int kernel_inner = static_cast<int>(inner);
-  std::uint64_t kernel_left_stride0 = left_stride0;
-  std::uint64_t kernel_left_stride1 = left_stride1;
-  std::uint64_t kernel_right_stride0 = right_stride0;
-  std::uint64_t kernel_right_stride1 = right_stride1;
-  void* arguments[] = {&left, &right, &output, &kernel_rows, &kernel_columns,
-                       &kernel_inner, &kernel_left_stride0,
-                       &kernel_left_stride1, &kernel_right_stride0,
-                       &kernel_right_stride1};
-  constexpr unsigned int threads = 256;
-  const unsigned int blocks = static_cast<unsigned int>(
-      (rows * columns + threads - 1) / threads);
+  std::uint64_t strides[10] = {left_stride0, left_stride1, right_stride0, right_stride1, bias_stride0,
+                               bias_stride1, left_batch, right_batch, bias_batch, output_batch};
+  float kernel_alpha = alpha;
+  float kernel_beta = beta;
+  void* arguments[] = {&left, &right, &bias, &output, &kernel_rows, &kernel_columns, &kernel_inner,
+                       &strides[0], &strides[1], &strides[2], &strides[3], &strides[4], &strides[5],
+                       &strides[6], &strides[7], &strides[8], &strides[9], &kernel_alpha, &kernel_beta};
+  const unsigned int grid_x = static_cast<unsigned int>((columns + 63) / 64);
+  const unsigned int grid_y = static_cast<unsigned int>((rows + 63) / 64);
   auto stream = reinterpret_cast<CUstream>(stream_pointer);
-  return cuLaunchKernel(matrix_multiply_f32, blocks, 1, 1, threads, 1,
-                        1, 0, stream, arguments, nullptr);
+  return cuLaunchKernel(matrix_multiply_f32, grid_x, grid_y, static_cast<unsigned int>(batch), 16, 16, 1, 0,
+                        stream, arguments, nullptr);
 }
 
 extern "C" int cuda_compat_launch_relu_f32(

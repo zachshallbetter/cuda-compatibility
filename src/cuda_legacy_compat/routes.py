@@ -27,14 +27,18 @@ NATIVE = (
      "Contiguous float32 input normalized over the last dimension, float32 weight and bias, up to 1,048,576 "
      "values. Other cases use the CPU fallback; training uses PyTorch's decomposition."),
     (("mm",), "Matrix multiplication",
-     "2D float32 with nonnegative strides; each dimension at most 256 and at most 16,777,216 multiply-accumulates. "
-     "Other dtypes and larger inputs use the CPU fallback."),
+     "2D float32 of any size with nonnegative strides (transposed views included), on a tiled kernel; training "
+     "too. Other dtypes use the CPU fallback."),
+    (("addmm",), "Matrix multiplication with bias",
+     "As mm, with alpha and a bias of any broadcastable shape; linear layers run through it."),
+    (("bmm",), "Batched matrix multiplication",
+     "3D float32 batches (up to 65,535) of any size with nonnegative strides; attention runs through it."),
     (("relu",), "ReLU", "Contiguous float32 tensors up to 1,048,576 values. Other cases, and training, use the CPU fallback."),
 )
 
 # (aten registration, operation)
 CPU_FALLBACK = (
-    ("linear", "linear"), ("bmm", "batched matrix multiplication"), ("_softmax", "softmax"),
+    ("_softmax", "softmax"),
     ("scaled_dot_product_attention", "scaled dot-product attention"), ("gelu", "GELU"),
     ("mul.Tensor", "multiplication"), ("div.Tensor", "division"), ("sum.dim_IntList", "sum over dimensions"),
     ("clamp_min", "clamp_min"), ("cat", "concatenation"), ("contiguous", "contiguous copy"),

@@ -22,7 +22,7 @@ GM200 reference card, compute capability 5.2. The only hardware tested so far. E
 
 - **Reference cards** 3
 
-- **Native operation families** 6
+- **Native operation families** 8
 
 - **Claims of universal support** 0
 
@@ -120,7 +120,7 @@ Sheet 01 / 10
 ### Runs on the GPU
 Native sm_52 kernel
 
-8 registered cases, 6 operation families
+10 registered cases, 8 operation families
 
 - Tensor addition Contiguous float32 (up to 1,048,576 values) and int32 tensors (up to 2,147,483,647); same shape and device, alpha=1.
 - Float16 addition Same-shape contiguous float16 tensors, alpha=1, up to 1,048,576 values; edge values checked exactly.
@@ -128,7 +128,9 @@ Native sm_52 kernel
 - Range creation CUDA int64 arange, up to 1,048,576 values.
 - Embedding Inference with float32 weights and int64 indices; 1D or 2D indices, up to 1,048,576 output values.
 - Layer normalization Inference on contiguous float32 input over the last dimension with float32 weight and bias; up to 1,048,576 values.
-- Matrix multiplication 2D float32 matrices with nonnegative strides; each dimension up to 256, at most 16,777,216 multiply-accumulate steps.
+- Matrix multiplication 2D float32 of any size with nonnegative strides, transposed views included, on a tiled kernel; used in training too.
+- Matrix multiplication with bias As above, with alpha and a broadcast bias; linear layers run through it.
+- Batched matrix multiplication 3D float32 batches of any size; attention runs through it.
 - ReLU Contiguous float32 tensors, up to 1,048,576 values.
 
 Native forward kernels are not differentiable. Grad-enabled calls on these operations use differentiable CPU transfers instead.
@@ -138,7 +140,6 @@ Bounded autograd
 
 Operation / CPU implementation
 
-- Linear algebra linear, bmm
 - Attention and activations softmax, scaled_dot_product_attention, GELU
 - Arithmetic add, multiply, divide
 - Reductions sum, clamp_min
@@ -513,7 +514,7 @@ By Zach Shallbetter · Sheet 04 of 10 · Updated 4 November 2026
 ## Native GPU implementations
 sm_52 kernel
 
-These 8 registered cases cover 6 operation families (addition, range creation, embedding, layer normalization, matrix multiplication and ReLU). They run through LLVM-generated PTX targeting the real Maxwell device and the CUDA Driver API bridge; cases outside these limits take the CPU fallback below or fail explicitly.
+These 10 registered cases cover 8 operation families (addition, range creation, embedding, layer normalization, matrix multiplication, matrix multiplication with bias, batched matrix multiplication and ReLU). They run through LLVM-generated PTX targeting the real Maxwell device and the CUDA Driver API bridge; cases outside these limits take the CPU fallback below or fail explicitly.
 
 | No. | Operation | Supported case |
 | --- | --- | --- |
@@ -523,17 +524,18 @@ These 8 registered cases cover 6 operation families (addition, range creation, e
 | 04 | Range creation | CUDA int64 arange, up to 1,048,576 values. Other cases use the CPU fallback. |
 | 05 | Embedding | Contiguous float32 weight, int64 CUDA indices in 1D or 2D, and up to 1,048,576 output values. Other cases, and training, use the CPU fallback. |
 | 06 | Layer normalization | Contiguous float32 input normalized over the last dimension with contiguous float32 weight and bias; up to 1,048,576 values. Other cases use the CPU fallback; training uses PyTorch's decomposition. |
-| 07 | Matrix multiplication | 2D float32 matrices with nonnegative strides; each dimension at most 256 and at most 16,777,216 multiply-accumulate steps. Other dtypes and larger inputs use the CPU fallback. |
-| 08 | ReLU | Contiguous float32 tensors up to 1,048,576 values. Other cases, and training, use the CPU fallback. |
+| 07 | Matrix multiplication | 2D float32 of any size with nonnegative strides, transposed views included, on a tiled kernel; training uses it too (#184). Other dtypes use the CPU fallback. |
+| 08 | Matrix multiplication with bias | As above, with alpha and a bias of any broadcastable shape. Linear layers run through it. |
+| 09 | Batched matrix multiplication | 3D float32 batches (up to 65,535) of any size with nonnegative strides. Attention runs through it. |
+| 10 | ReLU | Contiguous float32 tensors up to 1,048,576 values. Other cases, and training, use the CPU fallback. |
 
 Native forward kernels do not record autograd formulas. For grad-enabled inputs, eligible operations use the differentiable CPU transfer path; unsupported backward operators still fail explicitly.
 
 ## Registered CPU fallback operations
 Bounded autograd
 
-These 11 registered fallback routes, plus the CPU path that addition takes outside its native limits, use PyTorch’s CPU implementation and copy results back to the original CUDA device:
+These 9 registered fallback routes, plus the CPU path that addition takes outside its native limits, use PyTorch’s CPU implementation and copy results back to the original CUDA device:
 
-- linear and bmm (batched matrix multiplication)
 - softmax and scaled_dot_product_attention
 - gelu
 - mul and div, with addition outside its native limits
