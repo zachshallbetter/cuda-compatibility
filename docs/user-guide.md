@@ -17,7 +17,7 @@ The installer checks the release archive's SHA-256 before installing it and neve
 | `--dry-run` | Print each step without changing anything |
 | `--python PATH` | Use this environment's Python instead of the one the installer finds |
 | `--yes` | Don't ask before downloading PyTorch (when no environment has it) or LLVM |
-| `--uninstall` | Remove what setup created, then uninstall the package |
+| `--uninstall` | Remove what setup created, then uninstall the package; a PyTorch environment the installer created is deleted only if you say yes at the terminal |
 | `--allow-root` | Run as root outside a container, on a disposable machine; never accepted with `sudo` |
 
 Exit code 0 means ready. Exit 1 means the package is installed but setup lists what still needs attention. Exit 2 means it stopped; the message says why. To upgrade, run the same command again: it replaces the package and keeps the saved setup.

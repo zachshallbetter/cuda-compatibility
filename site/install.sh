@@ -35,6 +35,7 @@ PACKAGE=cuda-legacy-compat
 # The PyTorch build the adapter is qualified on, and where the installer puts it when you have none (#202).
 TORCH_VERSION=2.14.0+cu130
 TORCH_INDEX=https://download.pytorch.org/whl/cu130
+ENV_MARKER=.cuda-legacy-created
 TORCH_HINT="python3 -m venv ~/torch-cu130 && ~/torch-cu130/bin/pip install torch==$TORCH_VERSION --index-url $TORCH_INDEX"
 
 say() { printf '==> %s\n' "$*"; }
@@ -220,6 +221,8 @@ create_torch_env() {
             "Rerunning the same command resumes into the same environment."
     py=$env/bin/python
     CREATED_ENV=$env
+    # --uninstall offers to delete only an environment that carries this marker (#253).
+    [ "$DRY_RUN" = 1 ] || printf 'Created by the cuda-legacy installer; --uninstall offers to delete it.\n' > "$env/$ENV_MARKER"
     if [ "$DRY_RUN" = 1 ]; then
         note "Then cuda-legacy $VERSION installs into $env and setup runs there."
         say "Dry run: nothing was changed"
@@ -356,9 +359,40 @@ do_uninstall() {
     if [ -x "$bin" ]; then
         step "$bin" setup --remove || warn "setup --remove failed; continuing with the package."
     fi
+    prefix=$("$py" -c 'import sys; print(sys.prefix)')
     say "Uninstalling $PACKAGE"
     step "$py" -m pip uninstall --yes --quiet "$PACKAGE"
-    say "Removed. Drivers, the system CUDA install and PyTorch were not touched."
+    # pip leaves the profile data files' directories behind, empty.
+    [ "$DRY_RUN" = 1 ] || rmdir "$prefix/share/cuda-legacy-compat/profiles" "$prefix/share/cuda-legacy-compat" 2>/dev/null || true
+    if [ -f "$prefix/$ENV_MARKER" ] && remove_created_env "$prefix"; then
+        say "Removed, with the PyTorch environment this installer created. Drivers and the system CUDA install were not touched."
+    elif [ -f "$prefix/$ENV_MARKER" ]; then
+        say "Removed. Kept $prefix, the PyTorch environment this installer created."
+        note "Delete it too, if nothing else uses it: rm -rf $prefix"
+    else
+        say "Removed. Drivers, the system CUDA install and PyTorch were not touched."
+    fi
+}
+
+# The environment the installer created (#253): its size, and on a yes typed at the terminal, delete it. Never by
+# --yes alone, and never a path that could be more than that environment.
+remove_created_env() {
+    env=$1
+    case $env in
+        /*) ;;
+        *) return 1 ;;
+    esac
+    [ "$env" != / ] && [ "$env" != "$HOME" ] && [ -x "$env/bin/python" ] || return 1
+    size=$(du -sh "$env" 2>/dev/null | cut -f 1)
+    note "This installer created the PyTorch environment $env (${size:-its size unknown})."
+    (: </dev/tty) 2>/dev/null || return 1
+    printf '    Delete it too? [y/N] '
+    read -r answer </dev/tty || answer=
+    case $answer in
+        y | Y | yes | Yes | YES) ;;
+        *) return 1 ;;
+    esac
+    step rm -rf "$env"
 }
 
 main() {

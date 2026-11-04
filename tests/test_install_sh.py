@@ -266,10 +266,27 @@ class InstallScriptTests(unittest.TestCase):
         self.assertIn("SHA-256 verified", installed.stdout)
         self.assertEqual(installed.returncode, 0, installed.stdout + installed.stderr)
         self.assertTrue((torch_env / "bin" / "cuda-legacy").is_file())
+        # As if the installer had created this environment (#253): without a terminal, uninstall keeps it and says how
+        # to delete it, and removes the empty data directories pip leaves.
+        (torch_env / ".cuda-legacy-created").write_text("Created by the cuda-legacy installer\n")
         removed = self.run_script("--uninstall", "--python", str(python))
         self.assertEqual(removed.returncode, 0, removed.stdout + removed.stderr)
         self.assertFalse((torch_env / "bin" / "cuda-legacy").exists())
+        self.assertFalse((torch_env / "share" / "cuda-legacy-compat").exists())
+        self.assertTrue(torch_env.is_dir())
+        self.assertIn(f"This installer created the PyTorch environment {torch_env}", removed.stdout)
+        self.assertIn(f"Kept {torch_env}", removed.stdout)
+        self.assertIn(f"rm -rf {torch_env}", removed.stdout)
         self.assertTrue(self.home_is_empty(), list(self.home.rglob("*")))
+
+    def test_uninstall_never_offers_to_delete_an_environment_it_did_not_create(self) -> None:
+        script = SCRIPT.read_text(encoding="utf-8")
+        body = script[script.index("remove_created_env() {"):]
+        body = body[:body.index("\n}\n")]
+        self.assertIn('[ "$env" != / ] && [ "$env" != "$HOME" ]', body)
+        self.assertIn("(: </dev/tty)", body)          # asks on the terminal; --yes alone never deletes it
+        self.assertNotIn("$YES", body)
+        self.assertIn('[ -f "$prefix/$ENV_MARKER" ] && remove_created_env', script)
 
 
 if __name__ == "__main__":
