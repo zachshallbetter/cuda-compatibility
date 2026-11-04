@@ -18,7 +18,7 @@
     "repositories": [
       {
         "path": ".",
-        "commit": "fdf9b6bb8b4fa8bbb278b3813d332735cd8e4631",
+        "commit": "4fd437b45eff36d0462778f7b92d1bf1a406bcb3",
         "branch": "feat/real-size-models",
         "dirty": true,
         "remote": "https://github.com/zachshallbetter/cuda-compatibility.git"
