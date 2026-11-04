@@ -79,7 +79,7 @@ Every canonical page meets all of these. **Check** is what enforces it: `make ch
 
 ### Share card
 
-A 1200×630 PNG per page, ink on paper. It shows the page's eyebrow, share title, excerpt, chip and URL, all taken from the registry; the title shrinks until the text clears the footer rule. `scripts/build_social_cards.py` renders every card, so **never edit a card by hand**: change the page, then run `make cards`. Rendering is deterministic, so cards for unchanged pages stay byte-identical.
+A 1200×630 PNG per page, ink on paper. It shows the page's eyebrow, share title, excerpt, chip and URL, all taken from the registry. The URL sits under the brand row and the text ends by y = 490, because X lays the page title over the bottom-left of the image; the GM200 drawing is fitted whole inside the right-hand box, never cropped by the edge; the title shrinks until the text clears the footer rule. `scripts/build_social_cards.py` renders every card, so **never edit a card by hand**: change the page, then run `make cards`. Rendering is deterministic, so cards for unchanged pages stay byte-identical.
 
 ## 4. Site files
 
@@ -160,7 +160,7 @@ After a change ships:
 These are known and not yet done. Close each one by doing it and recording evidence (§7).
 
 1. **Screen-reader session (6.7).** Not yet run. The accessibility tree and focus pass were checked, but announcements were never heard.
-2. **X card layout.** X lays the page title over the bottom-left of the share image, covering the card's URL line (checked 2026-11-03 with a real post). Facebook (Batch Invalidator: all 18 pages, no issues) and LinkedIn (all 18, no warnings) are done. Facebook's only note is the optional `fb:app_id`, which needs a Meta app.
+2. **X card layout.** Fixed 2026-11-04: X lays the page title over the bottom-left of the share image, so the cards now keep that area empty (URL under the brand row, drawing fitted whole). X caches card images by URL for about a week, so posts made before then may still show the old card. Facebook (Batch Invalidator: all 18 pages, no issues) and LinkedIn (all 18, no warnings) are done. Facebook's only note is the optional `fb:app_id`, which needs a Meta app.
 3. **Indexing requests.** Google's daily quota ran out after four of the eight papers (2026-11-03). Request indexing for `runtime-version-facade`, `implementation-gap-audit-2026-11`, `attribution-pilot` and `cuda-12-9-to-13-0-changes` in Search Console. The resubmitted sitemap already lists all 18 pages.
 4. **Full contrast re-measure.** The 1,943-node pass predates the dark-on-light change. Colours were judged per section since then.
 5. **The generator branch.** `feat/generated-site` holds an unpushed site generator from before CLC-035. Either port today's page contract into it or retire it. Until then, pages are edited by hand under this protocol.
