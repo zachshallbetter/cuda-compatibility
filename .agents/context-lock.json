@@ -18,9 +18,9 @@
     "repositories": [
       {
         "path": ".",
-        "commit": "f60825efabcea8c5369bda640cfdf348bfbd2789",
+        "commit": "7af11bd75ec3a0753e2ebe914229b24efe1b71d9",
         "branch": "feat/install-script",
-        "dirty": true,
+        "dirty": false,
         "remote": "https://github.com/zachshallbetter/cuda-compatibility.git"
       }
     ]
