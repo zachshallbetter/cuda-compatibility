@@ -26,10 +26,10 @@
 #
 # Everything runs inside main(), which the last line calls, so a partial download runs nothing.
 
-VERSION=0.2.3
+VERSION=0.2.4
 ARCHIVE_URL="https://github.com/zachshallbetter/cuda-compatibility/archive/refs/tags/v$VERSION.tar.gz"
 # SHA-256 of ARCHIVE_URL, written by the release. Empty means no release is pinned yet.
-ARCHIVE_SHA256=1ce3420eab1dfbd9e20d2010eb734a4030f46b8b4e69b25115af210394c44943
+ARCHIVE_SHA256=e1ba07739d3dfeefd01852897b1904d0804f06afb8833776fe54ed0cb21b0486
 PACKAGE=cuda-legacy-compat
 TORCH_HINT="python3 -m venv ~/torch-cu130 && ~/torch-cu130/bin/pip install torch --index-url https://download.pytorch.org/whl/cu130"
 
