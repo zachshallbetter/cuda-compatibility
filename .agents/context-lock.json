@@ -5,8 +5,8 @@
   "validityBasis": "aggregate-source-digest",
   "selectedPaths": [],
   "sourceSelection": {
-    "includedCount": 292,
-    "includedBytes": 2942461,
+    "includedCount": 293,
+    "includedBytes": 2943723,
     "excludedCounts": {
       "extension": 65,
       "generated-or-transient-file": 2
@@ -18,14 +18,14 @@
     "repositories": [
       {
         "path": ".",
-        "commit": "bf1ab9a876556569c2fdb493e886a21d5426b1cc",
+        "commit": "878ec9df9da028c3cc2c78ed01a479e3bad77357",
         "branch": "perf/fused-adam",
         "dirty": true,
         "remote": "https://github.com/zachshallbetter/cuda-compatibility.git"
       }
     ]
   },
-  "aggregateSourceDigest": "6f31b29fda0f3f044623c88cb31e4987863455d66cc2a73071145b7e00be1312",
+  "aggregateSourceDigest": "8f3369087918676a2326189a687787a2e8d47ad5b4d2a05a8321d0d2a2278320",
   "sources": [
     {
       "path": ".agents/acp/README.md",
@@ -1396,6 +1396,11 @@
       "path": "tests/test_jupyter.py",
       "bytes": 3832,
       "sha256": "47b1230fd4162ed206d37e3ef7a42b9173a70e3dbcc310f77796b5bb76b17307"
+    },
+    {
+      "path": "tests/test_kernel_source.py",
+      "bytes": 1262,
+      "sha256": "51fe679c8219eb6f92e87b44937336fc827dc9e6fa1be86e37777b0eaf0b7b95"
     },
     {
       "path": "tests/test_launch.py",
