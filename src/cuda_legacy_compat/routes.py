@@ -9,8 +9,8 @@ import textwrap
 from typing import Any
 
 CPU_FALLBACK_LIMIT = ("at most 64 MiB of CUDA inputs and 64 MiB of output per operation, one CUDA device per "
-                      "operation; optimizer foreach steps over it run in pieces under it, and an embedding moves only "
-                      "the rows it looks up")
+                      "operation; optimizer foreach steps over it run in pieces under it, an embedding moves only the "
+                      "rows it looks up, and a linear layer over it is split by output features for inference")
 
 # (aten registrations, operation, supported case)
 NATIVE = (

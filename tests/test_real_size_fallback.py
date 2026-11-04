@@ -118,6 +118,31 @@ class RealSizeFallbackTests(unittest.TestCase):
         with self.assertRaisesRegex(NotImplementedError, "looked-up rows"):
             self.adapter._embedding_rows_on_cpu(torch.zeros(100, 4), torch.arange(10))
 
+    def test_a_large_output_layer_is_split_by_output_features(self) -> None:
+        torch = self.torch
+        torch.manual_seed(0)
+        x, weight, bias = torch.randn(2, 3), torch.randn(40, 3), torch.randn(40)   # a 640-byte weight under a 400-byte limit
+        moved = []
+        to_cpu = self.adapter._cuda_tensor_to_cpu
+
+        def counting(tensor):
+            moved.append(tensor.numel())
+            return to_cpu(tensor)
+        with torch.no_grad(), mock.patch.object(self.adapter, "_cuda_tensor_to_cpu", counting), \
+                mock.patch.object(self.adapter, "_cuda_tensors", lambda value: self.adapter._tensor_inputs(value)), \
+                mock.patch.object(self.adapter, "_CPU_FALLBACK_MAX_BYTES", 400):
+            out = self.adapter._linear(x, weight, bias)
+        self.assertTrue(torch.allclose(out, torch.nn.functional.linear(x, weight, bias)))
+        self.assertLess(max(moved), weight.numel())   # never the whole weight at once
+        self.assertEqual(self.adapter.last_path(), "cpu-fallback-linear-pieces")
+
+    def test_training_through_a_large_output_layer_refuses_plainly(self) -> None:
+        torch = self.torch
+        weight = torch.randn(40, 3, requires_grad=True)
+        with mock.patch.object(self.adapter, "_cuda_tensors", lambda value: self.adapter._tensor_inputs(value)), \
+                self.assertRaisesRegex(NotImplementedError, "#178"):
+            self.adapter._linear(torch.randn(2, 3), weight)
+
     def test_native_add_over_its_size_limit_falls_back(self) -> None:
         seen = []
 
