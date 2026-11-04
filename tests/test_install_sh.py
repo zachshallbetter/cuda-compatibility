@@ -87,12 +87,14 @@ class InstallScriptTests(unittest.TestCase):
     def test_pinned_release_is_the_package_version(self) -> None:
         version = re.search(r'^version = "(.+)"$', (ROOT / "pyproject.toml").read_text(encoding="utf-8"), re.M).group(1)
         pinned, sha = _script_value("VERSION"), _script_value("ARCHIVE_SHA256")
+        as_tuple = lambda v: tuple(int(part) for part in v.split("."))
         if sha:
             self.assertRegex(sha, r"^[0-9a-f]{64}$")
-            self.assertEqual(pinned, version)
+            # A tag's archive cannot hold its own hash, so the tagged commit still pins the previous
+            # release; the re-pin that follows the tag brings the two back level.
+            self.assertLessEqual(as_tuple(pinned), as_tuple(version))
         else:
             # Until the release is cut, the script names the version that release will carry.
-            as_tuple = lambda v: tuple(int(part) for part in v.split("."))
             self.assertGreaterEqual(as_tuple(pinned), as_tuple(version))
 
     def test_a_partial_download_runs_nothing(self) -> None:
