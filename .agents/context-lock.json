@@ -6,7 +6,7 @@
   "selectedPaths": [],
   "sourceSelection": {
     "includedCount": 284,
-    "includedBytes": 2877615,
+    "includedBytes": 2877828,
     "excludedCounts": {
       "extension": 65,
       "generated-or-transient-file": 2
@@ -18,14 +18,14 @@
     "repositories": [
       {
         "path": ".",
-        "commit": "945f0fe1b8e71fdd25389ba9a0038de48bb7452d",
-        "branch": "chore/repin-0.2.13b",
+        "commit": "0aa7311ce983915ef768b470401d15d960005d30",
+        "branch": "fix/readme-204",
         "dirty": true,
         "remote": "https://github.com/zachshallbetter/cuda-compatibility.git"
       }
     ]
   },
-  "aggregateSourceDigest": "34af1cbf28815fe1dd24c4136e1261cf2ab3e90b421585be78e8c7b08c29cb95",
+  "aggregateSourceDigest": "b4ad8ae872866fdb032f68c59b4a4ea55fd4d7b585635e5d8c892ceac8d93d51",
   "sources": [
     {
       "path": ".agents/acp/README.md",
@@ -704,8 +704,8 @@
     },
     {
       "path": "README.md",
-      "bytes": 13200,
-      "sha256": "0809f8ccd3d06acb2c751a8af8dc3b3629740fae412b79f2951f3bd24052ff24"
+      "bytes": 13413,
+      "sha256": "63c36445c86811cb3cad503619c8ad21ae8719945c38b34272fb5b20c11525d4"
     },
     {
       "path": "SECURITY.md",
