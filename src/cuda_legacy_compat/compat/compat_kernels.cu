@@ -471,7 +471,8 @@ extern "C" __global__ void compat_pointwise_f32(const float* x, const float* y, 
       case 3: value = __fsqrt_rn(a); break;
       case 4: value = __fdiv_rn(a, s); break;
       case 5: value = __fadd_rn(a, s); break;
-      default: value = __fadd_rn(a, __fdiv_rn(__fmul_rn(s, y[i]), z[i])); break;
+      case 6: value = __fadd_rn(a, __fdiv_rn(__fmul_rn(s, y[i]), z[i])); break;
+      default: value = y[i] > s ? a : 0.0f; break;  // threshold_backward: x = grad, y = input
     }
     out[i] = value;
   }

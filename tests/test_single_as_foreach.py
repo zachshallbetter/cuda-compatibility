@@ -36,6 +36,13 @@ class SingleAsForeachTests(unittest.TestCase):
             handled, result = A._single_as_foreach(aten.sqrt.default, (x,), {})
             self.assertTrue(handled)
             self.assertEqual(calls[-1][0], "_foreach_sqrt")
+        seen = []
+        with mock.patch.object(A, "_foreach_ready", lambda *lists: True), \
+                mock.patch.object(A, "_pointwise", lambda op, *a, scalar=0.0, out=None: seen.append((op, scalar))):
+            handled, result = A._single_as_foreach(aten.threshold_backward.default, (x, a, 0.0), {})
+        self.assertTrue(handled)
+        self.assertEqual(seen, [(A._THRESHOLD_BACKWARD, 0.0)])
+        self.assertEqual(A._single_as_foreach(aten.threshold_backward.default, (x, torch.ones(3), 0.0), {}), (False, None))
         for operation, args in ((aten.mul_.Tensor, (x, a)), (aten.relu_.default, (x,))):
             self.assertEqual(A._single_as_foreach(operation, args, {}), (False, None))
 

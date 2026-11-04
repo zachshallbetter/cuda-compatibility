@@ -348,7 +348,7 @@ def _foreach_add_list(self: list[torch.Tensor], other: list[torch.Tensor], *, al
 
 
 # compat_pointwise_f32's operations: the steps Adam, AdamW and momentum SGD take through their foreach updates.
-_MUL, _LERP, _ADDCMUL, _SQRT, _DIV, _ADD_SCALAR, _ADDCDIV = range(7)
+_MUL, _LERP, _ADDCMUL, _SQRT, _DIV, _ADD_SCALAR, _ADDCDIV, _THRESHOLD_BACKWARD = range(8)
 
 
 def _pointwise(op: int, x: torch.Tensor, y: torch.Tensor | None = None, z: torch.Tensor | None = None,
@@ -453,6 +453,14 @@ def _single_as_foreach(operation, args: tuple, kwargs: dict) -> tuple[bool, Any]
         _foreach_kernel("_foreach_addcdiv_.ScalarList")([args[0]], [args[1]], [args[2]], [kwargs.get("value", 1)])
     elif name == "aten.sqrt.default" and len(args) == 1 and not kwargs:
         return True, _foreach_kernel("_foreach_sqrt")([args[0]])[0]
+    elif name == "aten.threshold_backward.default" and len(args) == 3 and _number(args[2]):
+        grad, inputs = args[0], args[1]
+        if grad.shape != inputs.shape or not _foreach_ready([grad], [inputs]):
+            return False, None
+        out = torch.empty_like(grad)
+        _pointwise(_THRESHOLD_BACKWARD, grad, inputs, scalar=float(args[2]), out=out)
+        _dispatch_state.last_path = "llvm-sm52-threshold-backward-f32"
+        return True, out
     else:
         return False, None
     return True, args[0]
