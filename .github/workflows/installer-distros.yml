@@ -1,0 +1,43 @@
+name: Installer across distributions
+
+"on":
+  pull_request:
+    paths:
+      - site/install.sh
+      - scripts/distro_install_check.sh
+      - .github/workflows/installer-distros.yml
+  schedule:
+    - cron: "17 14 * * 1"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: installer-distros-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  install:
+    name: Install on ${{ matrix.image }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    container: ${{ matrix.image }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - image: debian:12
+            deps: apt-get update -qq && apt-get install -y -qq python3 python3-venv curl ca-certificates tar gzip zstd xz-utils g++ && useradd -m tester
+          - image: ubuntu:24.04
+            deps: apt-get update -qq && apt-get install -y -qq python3 python3-venv curl ca-certificates tar gzip zstd xz-utils g++ && useradd -m tester
+          - image: fedora:41
+            deps: dnf install -y -q python3 curl tar gzip zstd xz gcc-c++ findutils util-linux shadow-utils && useradd -m tester
+    steps:
+      - name: Install the distribution's packages
+        run: ${{ matrix.deps }}
+      - name: Check out candidate
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
+      - name: Install, use and remove cuda-legacy
+        # The installer refuses root, so run it as an ordinary user.
+        run: runuser -u tester -- sh scripts/distro_install_check.sh python3
