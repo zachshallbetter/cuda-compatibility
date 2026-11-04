@@ -18,14 +18,14 @@
     "repositories": [
       {
         "path": ".",
-        "commit": "f0a027d49e6eb487531ce0a78b01a9ca95fdc5aa",
-        "branch": "docs/remove-after-020",
+        "commit": "535794438c0173ce477b27b14f60b00853162ffd",
+        "branch": "chore/bump-0.2.2",
         "dirty": true,
         "remote": "https://github.com/zachshallbetter/cuda-compatibility.git"
       }
     ]
   },
-  "aggregateSourceDigest": "d43cc26ae6b850388e16452a44db7191891626618ccedce73baed15cfa415598",
+  "aggregateSourceDigest": "b20ee63a9fd45a28f9bc030ebef506a574fa5a585d1e78f54fc9375c27a19214",
   "sources": [
     {
       "path": ".agents/acp/README.md",
@@ -970,7 +970,7 @@
     {
       "path": "pyproject.toml",
       "bytes": 747,
-      "sha256": "384cb0090864079104dd23bfa411dbb9a337ea36afa5d7802ad1b242c2bff167"
+      "sha256": "ba24c255e8714a028554d46e632eae9795480d4ddcc403dbbfc81ec02cff1938"
     },
     {
       "path": "schemas/vendor/dpp-0.3.0/SOURCE.json",
@@ -1200,7 +1200,7 @@
     {
       "path": "src/cuda_legacy_compat/__init__.py",
       "bytes": 91,
-      "sha256": "bdf4a4addcf0fc335ba574294b603a053b4a8e0a826d74b518e4ba11d414df30"
+      "sha256": "46c25f1a78c180924b9145b1c340ce719e51b15d6b058dd4af54e82019aed954"
     },
     {
       "path": "src/cuda_legacy_compat/cli.py",
