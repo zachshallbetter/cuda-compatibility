@@ -1,7 +1,7 @@
 PYTHON ?= python3
 PROJECT_ROOT := $(abspath $(dir $(lastword $(MAKEFILE_LIST))))
 
-.PHONY: check test context site cards live-audit
+.PHONY: check test context site cards live-audit smoke
 
 context:
 	$(PYTHON) $(PROJECT_ROOT)/.agents/bootstrap/scripts/gen-context.py
@@ -28,3 +28,7 @@ cards:
 # After a merge has deployed: the public site must serve this checkout exactly.
 live-audit:
 	$(PYTHON) $(PROJECT_ROOT)/scripts/site_live_audit.py
+
+# Install into a throwaway venv and drive the first-run path (no GPU needed).
+smoke:
+	sh $(PROJECT_ROOT)/scripts/smoke_install.sh

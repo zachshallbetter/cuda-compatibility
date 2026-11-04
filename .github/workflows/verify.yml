@@ -28,4 +28,6 @@ jobs:
         run: shellcheck -s sh site/install.sh
       - name: Run test suite
         run: make test
+      - name: Smoke-test the installed command
+        run: make smoke
 
