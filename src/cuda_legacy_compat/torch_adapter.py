@@ -308,9 +308,8 @@ def _add_inplace(
     if not isinstance(other, torch.Tensor):
         return _inplace_on_cpu(torch.ops.aten.add_.Tensor, "add_", (self, other), {"alpha": alpha})
     if torch.is_grad_enabled() and (self.requires_grad or other.requires_grad):
-        raise NotImplementedError(
-            "Maxwell in-place addition does not implement autograd; optimizer updates require no_grad"
-        )
+        # Autograd sits above this kernel and needs only the values, which the CPU path provides.
+        return _inplace_on_cpu(torch.ops.aten.add_.Tensor, "add_", (self, other), {"alpha": alpha})
     if (
         not self.is_cuda
         or not other.is_cuda
@@ -963,6 +962,61 @@ def _inplace_on_cpu(operation, name: str, args: tuple, kwargs: dict, schema=None
     return None if not results else results[0] if len(results) == 1 else results
 
 
+def _lstm_cell(input_gates, hidden_gates, cx, input_bias=None, hidden_bias=None):
+    """aten::_thnn_fused_lstm_cell on the CPU: gates in i, f, g, o order; workspace is the activated gates."""
+    gates = input_gates + hidden_gates
+    if input_bias is not None:
+        gates = gates + input_bias + hidden_bias
+    i, f, g, o = gates.chunk(4, 1)
+    i, f, g, o = i.sigmoid(), f.sigmoid(), g.tanh(), o.sigmoid()
+    cy = f * cx + i * g
+    return o * cy.tanh(), cy, torch.cat((i, f, g, o), 1)
+
+
+def _lstm_cell_backward(grad_hy, grad_cy, cx, cy, workspace, has_bias):
+    """aten::_thnn_fused_lstm_cell_backward_impl on the CPU: (grad_gates, grad_cx, grad_bias)."""
+    i, f, g, o = workspace.chunk(4, 1)
+    grad_hy = torch.zeros_like(cy) if grad_hy is None else grad_hy
+    grad_cy = torch.zeros_like(cy) if grad_cy is None else grad_cy
+    tanh_cy = cy.tanh()
+    grad_c = grad_hy * o * (1 - tanh_cy * tanh_cy) + grad_cy
+    grad_gates = torch.cat((grad_c * g * i * (1 - i), grad_c * cx * f * (1 - f),
+                            grad_c * i * (1 - g * g), grad_hy * tanh_cy * o * (1 - o)), 1)
+    return grad_gates, grad_c * f, grad_gates.sum(0) if has_bias else None
+
+
+def _gru_cell(input_gates, hidden_gates, hx, input_bias=None, hidden_bias=None):
+    """aten::_thnn_fused_gru_cell on the CPU: gates in r, z, n order; workspace is r, z, n, hx, hn."""
+    if input_bias is not None:
+        input_gates, hidden_gates = input_gates + input_bias, hidden_gates + hidden_bias
+    ir, iz, in_ = input_gates.chunk(3, 1)
+    hr, hz, hn = hidden_gates.chunk(3, 1)
+    r, z = (ir + hr).sigmoid(), (iz + hz).sigmoid()
+    n = (in_ + r * hn).tanh()
+    return n + z * (hx - n), torch.cat((r, z, n, hx, hn), 1)
+
+
+def _gru_cell_backward(grad_hy, workspace, has_bias):
+    """aten::_thnn_fused_gru_cell_backward on the CPU: (grad_input_gates, grad_hidden_gates, grad_hx, biases)."""
+    r, z, n, hx, hn = workspace.chunk(5, 1)
+    grad_z = grad_hy * (hx - n) * z * (1 - z)
+    grad_n = grad_hy * (1 - z) * (1 - n * n)
+    grad_r = grad_n * hn * r * (1 - r)
+    grad_input = torch.cat((grad_r, grad_z, grad_n), 1)
+    grad_hidden = torch.cat((grad_r, grad_z, grad_n * r), 1)
+    biases = (grad_input.sum(0), grad_hidden.sum(0)) if has_bias else (None, None)
+    return (grad_input, grad_hidden, grad_hy * z) + biases
+
+
+# Operators with a CUDA kernel and no CPU one: the CPU fallback runs these instead.
+_CPU_ONLY_HERE = {
+    "aten::_thnn_fused_lstm_cell": _lstm_cell,
+    "aten::_thnn_fused_lstm_cell_backward_impl": _lstm_cell_backward,
+    "aten::_thnn_fused_gru_cell": _gru_cell,
+    "aten::_thnn_fused_gru_cell_backward": _gru_cell_backward,
+}
+
+
 def _factory_on_cpu(operation, schema, name: str, args: tuple, kwargs: dict) -> Any:
     """Build a CUDA factory's result on the CPU and copy it to its device, or None when it is not a factory."""
     device = kwargs.get("device")
@@ -1023,7 +1077,7 @@ class _MaxwellInferenceFallback(TorchDispatchMode):
                 )
                 unrouted.record(name, error)
                 raise error from exc
-            return _cpu_fallback(operation, name)(*args, **kwargs)
+            return _cpu_fallback(_CPU_ONLY_HERE.get(name, operation), name)(*args, **kwargs)
 
 
 def install() -> None:

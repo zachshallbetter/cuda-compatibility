@@ -44,7 +44,8 @@ NOTES = (
     "builds it on the CPU and copies it over, within the 64 MiB output limit. Random values come from the CPU "
     "generator: torch.manual_seed keeps them reproducible, but they differ from a GPU that has kernels.",
     "Training is verified against the CPU for small Linear/GELU MLPs with SGD, momentum SGD, Adam and AdamW "
-    "(their default foreach updates included) and for a Conv2d/BatchNorm2d/MaxPool CNN with momentum SGD. "
+    "(their default foreach updates included), for a Conv2d/BatchNorm2d/MaxPool CNN with momentum SGD, and for "
+    "LSTM, GRU and RNN layers (the fused CUDA cells run on the CPU). "
     "cuDNN is switched off under the adapter: it has no Maxwell support in the CUDA 13 wheels.",
     "Training through layer_norm, scaled_dot_product_attention and contiguous uses PyTorch's own "
     "decomposition, so Transformers, attention and LayerNorm models train; attention uses the math backend. "
