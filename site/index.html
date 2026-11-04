@@ -108,7 +108,7 @@
 <div style="display:flex;flex-direction:column;gap:10px;min-width:0">
 <div class="cmd"><span class="sheet">1 · clone</span><code>git clone https://github.com/zachshallbetter/cuda-compatibility.git</code><button type="button" class="copy" data-copy="clone" hidden aria-label="Copy clone command">Copy</button></div>
 <div class="cmd"><span class="sheet">2 · install</span><code>cd cuda-compatibility &amp;&amp; python -m pip install .</code><button type="button" class="copy" data-copy="install" hidden aria-label="Copy install command">Copy</button></div>
-<div class="cmd"><span class="sheet">3 · check</span><code>cuda-legacy doctor --llvm-root /path/to/LLVM-23.1.4</code><button type="button" class="copy" data-copy="check" hidden aria-label="Copy doctor command">Copy</button></div>
+<div class="cmd"><span class="sheet">3 · set up</span><code>cuda-legacy setup</code><button type="button" class="copy" data-copy="check" hidden aria-label="Copy setup command">Copy</button></div>
 </div>
 </div>
 </section>
@@ -345,20 +345,15 @@ python -m pip install .</code></pre>
 <div class="step">
 <span class="num">2</span>
 <div style="display:flex;flex-direction:column;gap:12px">
-<h3 style="font-size:24px">Check the host and target</h3>
-<pre><code>cuda-legacy inspect
-cuda-legacy doctor
-cuda-legacy profiles show pytorch-2.14-cu130</code></pre>
+<h3 style="font-size:24px">Set up once</h3>
+<pre><code>cuda-legacy setup      # finds or downloads LLVM 23.1.4, saves it, runs doctor</code></pre>
 </div>
 </div>
 <div class="step">
 <span class="num">3</span>
 <div style="display:flex;flex-direction:column;gap:12px">
 <h3 style="font-size:24px">Launch one trusted script</h3>
-<pre><code>cuda-legacy run \
-  --llvm-root /path/to/LLVM-23.1.4 \
-  --cuda-root /usr/local/cuda-12.4 \
-  -- app.py</code></pre>
+<pre><code>cuda-legacy run app.py</code></pre>
 </div>
 </div>
 <p class="mute" style="margin:0;font-size:15px">Other versions and cards may work but have not been validated.</p>

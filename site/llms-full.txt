@@ -36,7 +36,7 @@ Full install sheet Releases Download zip
 
 2 · install cd cuda-compatibility && python -m pip install .
 
-3 · check cuda-legacy doctor --llvm-root /path/to/LLVM-23.1.4
+3 · set up cuda-legacy setup
 
 - **GPU** GM200 Maxwell, 3 cards
 
@@ -257,12 +257,10 @@ python -m pip install .
 
 2
 
-### Check the host and target
+### Set up once
 
 ```
-cuda-legacy inspect
-cuda-legacy doctor
-cuda-legacy profiles show pytorch-2.14-cu130
+cuda-legacy setup      # finds or downloads LLVM 23.1.4, saves it, runs doctor
 ```
 
 3
@@ -270,10 +268,7 @@ cuda-legacy profiles show pytorch-2.14-cu130
 ### Launch one trusted script
 
 ```
-cuda-legacy run \
---llvm-root /path/to/LLVM-23.1.4 \
---cuda-root /usr/local/cuda-12.4 \
--- app.py
+cuda-legacy run app.py
 ```
 
 Other versions and cards may work but have not been validated.
@@ -427,25 +422,20 @@ No CUDA Compatibility package is currently published on PyPI. Install from the G
 
 3
 
-### Check the machine
+### Set up once
 
 ```
-cuda-legacy inspect
-cuda-legacy profiles show pytorch-2.14-cu130
-cuda-legacy doctor --llvm-root /path/to/LLVM-23.1.4
+cuda-legacy setup
 ```
 
-doctor checks prerequisites; “ready” is not a workload certification. Pass --cuda-root when development headers are not under /usr/local/cuda-12.4.
+setup finds the environment that holds PyTorch and the CUDA 12.4 headers, then uses your LLVM 23.1.4 or, after asking, downloads the official llvm-project archive (1.2 GB, SHA-256 checked) and keeps only the compiler (about 370 MB). It saves the result and runs doctor, which lists anything still missing with the exact next step. “Ready” is not a workload certification. --dry-run shows the plan without changing anything; cuda-legacy setup --remove deletes exactly what setup created.
 
 4
 
 ### Launch a script
 
 ```
-cuda-legacy run \
---llvm-root /path/to/LLVM-23.1.4 \
---cuda-root /usr/local/cuda-12.4 \
--- path/to/app.py --your-option value
+cuda-legacy run path/to/app.py --your-option value
 ```
 
 ### Trusted scripts only
@@ -683,21 +673,22 @@ By Zach Shallbetter · Sheet 06 of 10 · Updated 3 November 2026
 | cuda-legacy inspect [--json] | Report visible GPU and compiler inventory as JSON. |
 | cuda-legacy profiles list [--json] | List bundled versioned compatibility profiles. |
 | cuda-legacy profiles show PROFILE [--json] | Explain a profile’s source and requirements. |
-| cuda-legacy doctor [--llvm-root PATH] [--cuda-root PATH] [--python PATH] [--json] | Check prerequisites for the experimental launcher. |
+| cuda-legacy setup [--yes] [--dry-run] [--json] [--python PATH] [--cuda-root PATH] [--llvm-root PATH] | Find or download what the launcher needs (LLVM 23.1.4 is SHA-256 checked), save it, and run doctor. Run it once. |
+| cuda-legacy setup --remove | Delete exactly what setup created: its LLVM copy and the saved setup. |
+| cuda-legacy doctor [--llvm-root PATH] [--cuda-root PATH] [--python PATH] [--json] | Check prerequisites for the experimental launcher; each missing item names its next step. |
 | cuda-legacy audit PROFILE [--json] | Compare available machine facts against a target profile. |
-| cuda-legacy run [options] -- SCRIPT [args...] | Start a Python script with the opt-in adapter. |
+| cuda-legacy run [options] SCRIPT [args...] | Start a Python script with the opt-in adapter. |
 
 ## Launch options
 
 ```
-cuda-legacy run \
---llvm-root /path/to/LLVM-23.1.4 \
---cuda-root /usr/local/cuda-12.4 \
---python /path/to/your-env/bin/python \
--- path/to/app.py --application-option value
+cuda-legacy run path/to/app.py --application-option value
+
+# override the saved setup for one run
+cuda-legacy run --python /path/to/other-env/bin/python -- path/to/app.py
 ```
 
-You can set CUDA_COMPAT_LLVM_ROOT, CUDA_COMPAT_CUDA_ROOT and CUDA_COMPAT_PYTHON instead of passing the corresponding options. --python selects the interpreter that runs the script and that doctor inspects for PyTorch; it defaults to the interpreter running cuda-legacy, and a missing or non-executable path stops the launch before anything is built. The script and its arguments go after the -- separator.
+After cuda-legacy setup, run and doctor read the saved setup in ~/.config/cuda-legacy/config.json. A flag wins over an environment variable, which wins over the saved setup. Set CUDA_COMPAT_VERBOSE=1 to see PyTorch's own sm_52 warnings, which the adapter otherwise replaces with one line. You can set CUDA_COMPAT_LLVM_ROOT, CUDA_COMPAT_CUDA_ROOT and CUDA_COMPAT_PYTHON instead of passing the corresponding options. --python selects the interpreter that runs the script and that doctor inspects for PyTorch; it defaults to the interpreter running cuda-legacy, and a missing or non-executable path stops the launch before anything is built. The script and its arguments go after the -- separator.
 
 ## Exit codes
 

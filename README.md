@@ -54,20 +54,20 @@ cuda-legacy --version
 cuda-legacy inspect
 cuda-legacy profiles list
 cuda-legacy profiles show pytorch-2.14-cu130
-cuda-legacy doctor --llvm-root /path/to/LLVM-23.1.4 --json
+cuda-legacy setup
+cuda-legacy doctor --json
 cuda-legacy audit profiles/pytorch-2.14-cu130.json
 cuda-legacy help run
 ```
 
 `inspect` prints local GPU/compiler inventory as JSON. `profiles` lists or explains the version-pinned targets. `doctor` checks the prerequisites for the current experimental launcher; `ready` means those prerequisites were found, not that a workload is supported. `audit` compares inventory with a target profile. Its `compatible` result covers only the profile's recorded toolkit and compute-capability checks, not operator, library, driver, or workload execution. Audit exits 0 for compatible, 1 for incompatible, 2 for an invalid profile, and 3 when compatibility is unknown. `doctor` exits 0 when all checked launcher prerequisites are present and 1 otherwise.
 
-The experimental `run` command starts one Python script with the opt-in PyTorch adapter. Set `CUDA_COMPAT_LLVM_ROOT` or pass `--llvm-root`; pass `--cuda-root` if the CUDA 12.4 development files are elsewhere:
+`setup` finds the Python environment that holds PyTorch and the CUDA 12.4 headers, uses an LLVM 23.1.4 you already have or downloads the official llvm-project archive (1.2 GB, SHA-256 checked) and keeps only the compiler (about 370 MB in `~/.local/share/cuda-legacy`), then saves the result to `~/.config/cuda-legacy/config.json` and runs `doctor`. It asks before downloading (`--yes` skips the question, `--dry-run` shows the plan). It never installs drivers, changes the system CUDA install or edits the PyTorch environment. `cuda-legacy setup --remove` deletes exactly what setup created. Flags and the `CUDA_COMPAT_LLVM_ROOT`, `CUDA_COMPAT_CUDA_ROOT` and `CUDA_COMPAT_PYTHON` variables still override the saved setup.
+
+The experimental `run` command starts one Python script with the opt-in PyTorch adapter:
 
 ```sh
-cuda-legacy run \
-  --llvm-root /path/to/LLVM-23.1.4 \
-  --cuda-root /usr/local/cuda-12.4 \
-  -- app.py --your-application-argument
+cuda-legacy run app.py --your-application-argument
 ```
 
 The launcher compiles selected kernels to real `sm_52` PTX, builds a driver bridge and runtime-version facade in a temporary directory, then enables the adapter only in the child process. It removes its generated build directory when the script exits. The facade reports CUDA Runtime 13.0 for that process while retaining actual GPU identity and compute capability. The adapter includes selected native PyTorch kernels and CPU fallbacks capped at 64 MiB of inputs and outputs per operation. First-order gradients and SGD are experimentally verified only for a small float32 linear→ReLU→sum workload; this is not general training, PyTorch, or CUDA 13 support. Because the launcher uses `LD_PRELOAD` and Python startup customization, run only scripts you trust.

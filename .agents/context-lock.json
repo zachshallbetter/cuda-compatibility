@@ -6,7 +6,7 @@
   "selectedPaths": [],
   "sourceSelection": {
     "includedCount": 254,
-    "includedBytes": 2602942,
+    "includedBytes": 2606009,
     "excludedCounts": {
       "extension": 64,
       "generated-or-transient-file": 2
@@ -18,14 +18,14 @@
     "repositories": [
       {
         "path": ".",
-        "commit": "2a2183477c35866ff7c32775e8da11c4a04c814a",
+        "commit": "8dad66978e3220880118f6022605ceab2dc539a6",
         "branch": "feat/guided-setup",
         "dirty": true,
         "remote": "https://github.com/zachshallbetter/cuda-compatibility.git"
       }
     ]
   },
-  "aggregateSourceDigest": "a6d489ccef8ce37f4cbf39a330153389d0273db48a481e10d2392b3fad538193",
+  "aggregateSourceDigest": "fd34fe788f9b77c8cef604273b90a83cd0ec9a1a4b4b1a7f6c87da6802de2598",
   "sources": [
     {
       "path": ".agents/acp/README.md",
@@ -699,8 +699,8 @@
     },
     {
       "path": "README.md",
-      "bytes": 10943,
-      "sha256": "e8fcf5f713a82881acfdd4b9e7e9de23dacb84f826f70e70245c36f301c2d38a"
+      "bytes": 11450,
+      "sha256": "8cac3bd82adbb899422bfba91c5460d9ababb4a9ce7d12e07e036547d5754824"
     },
     {
       "path": "SECURITY.md",
@@ -710,7 +710,7 @@
     {
       "path": "content/pages.json",
       "bytes": 10808,
-      "sha256": "b3dd8cf580fd73862142f3fae563d3f99687a4d8bf422b865baef39c0b0afdee"
+      "sha256": "404a8a45768b4dff7281ad7cba4a2b354502ab95b8ed5c490d60171d6b02a727"
     },
     {
       "path": "docs/DPP_IMPLEMENTATION.md",
@@ -874,8 +874,8 @@
     },
     {
       "path": "docs/user-guide.md",
-      "bytes": 10328,
-      "sha256": "ea86f68dffc7bab8a1f10c18a7f01fa0ca302944550d366b270a2b831baf7771"
+      "bytes": 10859,
+      "sha256": "77fd48b53858d620d4ee3e87e70ecfffb33b2f1e5573170c9eb36ded8e8308ad"
     },
     {
       "path": "examples/dpp/availability-2026-11-03.json",
@@ -884,8 +884,8 @@
     },
     {
       "path": "examples/sm52-mlp/README.md",
-      "bytes": 5169,
-      "sha256": "895b102d74e06bc6781211a877934d481cc1ca3d6be87eb7af0316d6b960b8dc"
+      "bytes": 5078,
+      "sha256": "ffaac600f94ce2ffa6b8e655af84518634d92bc20b02861e055e3d37fc607db8"
     },
     {
       "path": "examples/sm52-mlp/expected-output.json",
@@ -970,7 +970,7 @@
     {
       "path": "pyproject.toml",
       "bytes": 747,
-      "sha256": "1d17eb0fa09884edc315d85f72de74490b616e3069407fd8430cc9e00d196fba"
+      "sha256": "cb3a28762bb1b30f7fe12a77cc92c6b9ccf20a8303b73a8e395dc9151666b9ec"
     },
     {
       "path": "schemas/vendor/dpp-0.3.0/SOURCE.json",
@@ -1070,47 +1070,47 @@
     {
       "path": "site/docs/architecture.html",
       "bytes": 23796,
-      "sha256": "715027c53f0ddd22239fe7b222b4b95d6d26cc9c939d2ac10144fb55333523e2"
+      "sha256": "3453ae8316b182b40d8ad1e8e43233c021c23555977e8c3ec995add9b9086b3d"
     },
     {
       "path": "site/docs/cli.html",
-      "bytes": 20503,
-      "sha256": "690617442422d782519a895a6ee73feccee77f693766452513bfa3f0e7a02b63"
+      "bytes": 21309,
+      "sha256": "a4892c8346841c61c8f1bb9536af27847cc7bc3cf511c0194d78bbe5a4d2da47"
     },
     {
       "path": "site/docs/compatibility.html",
       "bytes": 26203,
-      "sha256": "664da2bf1e85cbd09bdf75c645618254f1acd33543636b9f998ad4d46bbea5a5"
+      "sha256": "105eb21e8826124c566745c040a70a918fe8eceab98059cf2ba5be549ec47c16"
     },
     {
       "path": "site/docs/discovery.html",
       "bytes": 25208,
-      "sha256": "0d487d78b56a06925efe1ef935cc4c432ede28d94b90fde26fdddac908e17be3"
+      "sha256": "0b12e9b99896ce90f0fbe4193f1d6d418843902c753ba9c2aa12bad87bac8a56"
     },
     {
       "path": "site/docs/getting-started.html",
-      "bytes": 22315,
-      "sha256": "7d792bbedfed66273b26b5e45a293d5600496503460c510870a39bf7212b967e"
+      "bytes": 22481,
+      "sha256": "221b600bdd83749b05547867fd468692f4544ada3b9b970afbc0b13da4d2fbc9"
     },
     {
       "path": "site/docs/index.html",
       "bytes": 20720,
-      "sha256": "b63dba55aae443a31a4eef75fd14e098e300355c7de3305e3cf5655619442223"
+      "sha256": "6f2ad7f7769b65d368b2eec56b61e363363bb23b71ba1433c1b11e8b9fe90340"
     },
     {
       "path": "site/docs/privacy.html",
       "bytes": 26696,
-      "sha256": "107455076c030e4a945ab57f32f35da83c603f06aff8159e69b0fe24c1d9b508"
+      "sha256": "8046def96f19c592d256cf9b88de51a7b8a4ff8f751d886deac26cbf3c77fe0f"
     },
     {
       "path": "site/docs/research.html",
       "bytes": 37163,
-      "sha256": "33dd999564f0c1c8db0f5ad4faf7a43255c7fae70b9223ee2ad7fd92075759fd"
+      "sha256": "da2a5b941abc3dd6230a9c4fb0b2cd2a6a8b6a22696304f8f603b95944a1c903"
     },
     {
       "path": "site/gpu-catalog.html",
       "bytes": 28555,
-      "sha256": "a8c89125e420d3aab2ef04f891e0812e75275ff5326a1eb7cab0edcfdf1c54f1"
+      "sha256": "d2a967562953dfdbe3e0b0993e3cb6c6106bd83e6004ecdb375420759058db45"
     },
     {
       "path": "site/home.css",
@@ -1124,8 +1124,8 @@
     },
     {
       "path": "site/index.html",
-      "bytes": 54047,
-      "sha256": "836dd09e0f9501ae656c61a69050eb5eeb68b4d00b79e902cacb374878ebf24a"
+      "bytes": 53913,
+      "sha256": "b3eff5e2e81bbdd074b852f5688d50d5eb07a7240ec725c53a49ec22b15a9e5c"
     },
     {
       "path": "site/research/attribution-pilot.html",
@@ -1190,7 +1190,7 @@
     {
       "path": "src/cuda_legacy_compat/__init__.py",
       "bytes": 91,
-      "sha256": "d766bd3c7f66a4b06c34255a075f0ab47a0da3f86d3f3411f10b5bbcc4dcfccc"
+      "sha256": "7c0567ad5fa0b4232611e32e94c80208faa4fe4ce4cbb1ed0a679680146de7f2"
     },
     {
       "path": "src/cuda_legacy_compat/cli.py",
@@ -1209,8 +1209,8 @@
     },
     {
       "path": "src/cuda_legacy_compat/compat/sitecustomize.py",
-      "bytes": 396,
-      "sha256": "1242665ec13b76937eef73412af7d81d679b0f015f90374b094f5c025fb55422"
+      "bytes": 1166,
+      "sha256": "d8ce93c41bd1b4dee0ac1fb4b67b9b45e4d8058358da96f445946c0626a138d3"
     },
     {
       "path": "src/cuda_legacy_compat/inventory.py",
@@ -1234,8 +1234,8 @@
     },
     {
       "path": "src/cuda_legacy_compat/toolchain.py",
-      "bytes": 18056,
-      "sha256": "f06d80e370c134ee6883601892ccb51899d0b2d5331f6bfdc5adf4ec78005577"
+      "bytes": 18568,
+      "sha256": "60b02008964797a80e8934b172f560f509302ebee786f783c59c2a0f9a7b0cb1"
     },
     {
       "path": "src/cuda_legacy_compat/torch_adapter.py",

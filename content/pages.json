@@ -1,5 +1,5 @@
 {
-  "modified": "2026-11-03T15:15:00-08:00",
+  "modified": "2026-11-03T17:40:00-08:00",
   "pages": [
     {
       "path": "",
@@ -29,7 +29,7 @@
       "chip": "SHEET 03 / 10",
       "title": "Install CUDA Compatibility for an older NVIDIA GPU",
       "share_title": "Install CUDA Compatibility for an older NVIDIA GPU",
-      "excerpt": "Install the launcher on Linux x86_64 beside a CUDA 13 PyTorch wheel, check prerequisites with cuda-legacy doctor, then run one trusted script on Maxwell."
+      "excerpt": "Install the launcher beside a CUDA 13 PyTorch wheel on Linux, let cuda-legacy setup fetch and check LLVM for you, then run one trusted script on Maxwell."
     },
     {
       "path": "docs/compatibility.html",

@@ -37,15 +37,15 @@ No timing is measured or claimed.
 Use Linux x86_64 with only `sm_52` GPUs visible. Install your own NVIDIA driver, CUDA 12.4 headers and LLVM 23.1.4; this project ships none of them.
 
 ```sh
-git clone --branch v0.1.0 https://github.com/zachshallbetter/cuda-compatibility
+git clone --branch v0.2.0 https://github.com/zachshallbetter/cuda-compatibility
 python3.10 -m venv venv
 venv/bin/python -m pip install torch==2.14.0 --index-url https://download.pytorch.org/whl/cu130
 venv/bin/python -m pip install ./cuda-compatibility
 curl -LO https://raw.githubusercontent.com/zachshallbetter/cuda-compatibility/main/examples/sm52-mlp/route_check.py
 export CUDA_VISIBLE_DEVICES=0      # one sm_52 card with at least ~700 MiB free
-venv/bin/cuda-legacy doctor --llvm-root /path/to/LLVM-23.1.4-Linux-X64 --cuda-root /usr/local/cuda-12.4
+venv/bin/cuda-legacy setup          # finds or downloads LLVM 23.1.4, saves it, runs doctor
 venv/bin/python route_check.py     # stock wheel
-venv/bin/cuda-legacy run --llvm-root /path/to/LLVM-23.1.4-Linux-X64 --cuda-root /usr/local/cuda-12.4 -- route_check.py
+venv/bin/cuda-legacy run route_check.py
 ```
 
 Expected results:
