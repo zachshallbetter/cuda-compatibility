@@ -10,7 +10,7 @@ On Linux x86_64, one command installs the release into the environment that hold
 curl -fsSL https://cudacompat.com/install.sh | sh
 ```
 
-The installer checks the release archive's SHA-256 before installing it and never uses sudo. It doesn't change drivers, the system CUDA install or the system Python. Read [install.sh](https://cudacompat.com/install.sh) first and compare it with [its checksum](https://cudacompat.com/install.sh.sha256). Options go after `sh -s --`:
+The installer checks the release archive's SHA-256 before installing it and never uses sudo. Run it as your own user. Inside a container (Docker or Podman) running as root is fine; on another disposable machine where root is the only user, add `--allow-root`. It refuses `sudo`, because pip would leave root-owned files in your environment and home. It doesn't change drivers, the system CUDA install or the system Python. Read [install.sh](https://cudacompat.com/install.sh) first and compare it with [its checksum](https://cudacompat.com/install.sh.sha256). Options go after `sh -s --`:
 
 | Option | Effect |
 |---|---|
@@ -18,6 +18,7 @@ The installer checks the release archive's SHA-256 before installing it and neve
 | `--python PATH` | Use this environment's Python instead of the one the installer finds |
 | `--yes` | Don't ask before setup downloads LLVM |
 | `--uninstall` | Remove what setup created, then uninstall the package |
+| `--allow-root` | Run as root outside a container, on a disposable machine; never accepted with `sudo` |
 
 Exit code 0 means ready. Exit 1 means the package is installed but setup lists what still needs attention. Exit 2 means it stopped; the message says why. To upgrade, run the same command again: it replaces the package and keeps the saved setup.
 
