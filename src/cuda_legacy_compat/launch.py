@@ -102,17 +102,35 @@ def build_adapter(llvm_root: Path, cuda_root: Path, output_dir: Path) -> tuple[P
 
 
 def launch(
-    script: Path,
+    script: Path | None,
     script_args: Sequence[str],
     *,
     llvm_root: Path,
     cuda_root: Path,
     environ: Mapping[str, str] | None = None,
     python: str | None = None,
+    module: str | None = None,
+    code: str | None = None,
+    interactive: bool = False,
 ) -> int:
-    script = script.resolve()
-    if not script.is_file():
-        raise LaunchError(f"Python script not found: {script}")
+    """Run the interpreter with the adapter enabled, as `python [-i] SCRIPT|-m MODULE|-c CODE ARGS` would (#214);
+    with none of the three and `interactive`, an interactive prompt."""
+    if sum(item is not None for item in (script, module, code)) > 1:
+        raise LaunchError("give one of a script, -m MODULE or -c CODE")
+    if script is not None:
+        script = script.resolve()
+        if not script.is_file():
+            raise LaunchError(f"Python script not found: {script}")
+        program = [str(script)]
+    elif module is not None:
+        program = ["-m", module]
+    elif code is not None:
+        program = ["-c", code]
+    elif interactive:
+        program = []
+    else:
+        raise LaunchError("name a script, -m MODULE, -c CODE, or -i for an interactive prompt")
+    program = (["-i"] if interactive else []) + program + list(script_args)
     interpreter = sys.executable if python is None else shutil.which(python)
     if not interpreter or not os.access(interpreter, os.X_OK):
         raise LaunchError(f"Python interpreter not found or not executable: {python}")
@@ -132,7 +150,7 @@ def launch(
         env["PYTHONPATH"] = ":".join(filter(None, [str(_RESOURCE_DIR), env.get("PYTHONPATH", "")]))
         try:
             return subprocess.run(
-                [interpreter, str(script), *script_args], env=env, check=False
+                [interpreter, *program], env=env, check=False
             ).returncode
         except OSError as exc:
             raise LaunchError(f"could not start Python: {exc}") from exc

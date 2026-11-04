@@ -512,12 +512,24 @@ def _build_parser(
     ops_parser.add_argument("--json", action="store_true", help="print machine-readable JSON")
 
     run_parser = commands.add_parser(
-        "run", help="run a Python script through the opt-in PyTorch Maxwell adapter",
-        usage=f"{prog} run [--python PATH] [--llvm-root DIR] [--cuda-root DIR] SCRIPT [ARGS ...]",
-        description="Run SCRIPT with the selected interpreter and the adapter enabled for that process only. "
-        "Arguments after SCRIPT go to the script; a -- before them is optional.",
+        "run", help="run a Python script, module or code through the opt-in PyTorch Maxwell adapter",
+        usage=f"{prog} run [--python PATH] [--llvm-root DIR] [--cuda-root DIR] [-i] "
+              "(SCRIPT | -m MODULE | -c CODE) [ARGS ...]",
+        description="Run SCRIPT, -m MODULE or -c CODE with the selected interpreter and the adapter enabled for that "
+        "process only, as python would; -i alone opens an interactive prompt. Arguments after SCRIPT, MODULE or CODE "
+        "go to the program; a -- before them is optional.",
+        epilog=f"Examples:\n  {prog} run train.py --epochs 3\n  {prog} run -m mypackage.train\n"
+               f"  {prog} run -m pytest tests/\n  {prog} run -c \"import torch; print(torch.ones(2).cuda() * 2)\"\n"
+               f"  {prog} run -i",
+        formatter_class=argparse.RawDescriptionHelpFormatter,
     )
     _add_location_flags(run_parser)
+    run_parser.add_argument("-i", dest="interactive", action="store_true",
+                            help="stay in an interactive prompt (alone: open one)")
+    run_parser.add_argument("-m", dest="module", metavar="MODULE", nargs=argparse.REMAINDER,
+                            help="run a library module as a script, like python -m")
+    run_parser.add_argument("-c", dest="code", metavar="CODE", nargs=argparse.REMAINDER,
+                            help="run a string of Python code, like python -c")
     run_parser.add_argument("script", metavar="SCRIPT", nargs="?", help="the Python script to run")
     run_parser.add_argument(
         "script_args", metavar="ARGS", nargs=argparse.REMAINDER, help="arguments passed to the script",
@@ -636,10 +648,23 @@ def main(argv: Sequence[str] | None = None) -> int:
             _print_doctor(report)
         return 0 if report["status"] == "ready" else 1
     if args.command == "run":
-        if not args.script:
+        module = code = None
+        script_args = args.script_args[1:] if args.script_args[:1] == ["--"] else args.script_args
+        for flag, given in (("-m", args.module), ("-c", args.code)):
+            if given is not None:
+                if not given or args.script:
+                    command_parsers["run"].print_usage(sys.stderr)
+                    print(f"{_program_name()} run: {flag} needs a value and replaces SCRIPT", file=sys.stderr)
+                    return 2
+                if flag == "-m":
+                    module = given[0]
+                else:
+                    code = given[0]
+                script_args = given[1:]
+        if not (args.script or module or code is not None or args.interactive):
             command_parsers["run"].print_usage(sys.stderr)
-            print(f"{_program_name()} run: name the script to run, for example: {_program_name()} run app.py",
-                  file=sys.stderr)
+            print(f"{_program_name()} run: name the script to run, for example: {_program_name()} run app.py "
+                  "(or -m MODULE, -c CODE, or -i for an interactive prompt)", file=sys.stderr)
             return 2
         _saved_setup_warning()
         llvm_root, cuda_root, python = _locations(args)
@@ -650,14 +675,16 @@ def main(argv: Sequence[str] | None = None) -> int:
                 file=sys.stderr,
             )
             return 2
-        script_args = args.script_args[1:] if args.script_args[:1] == ["--"] else args.script_args
         try:
             return launch(
-                Path(args.script),
+                Path(args.script) if args.script else None,
                 script_args,
                 llvm_root=Path(llvm_root),
                 cuda_root=Path(cuda_root),
                 python=python,
+                module=module,
+                code=code,
+                interactive=args.interactive,
             )
         except LaunchError as exc:
             print(f"launch error: {exc}", file=sys.stderr)

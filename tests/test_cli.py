@@ -3,7 +3,7 @@ from __future__ import annotations
 import json
 import tempfile
 import unittest
-from contextlib import redirect_stdout
+from contextlib import redirect_stderr, redirect_stdout
 from io import StringIO
 from pathlib import Path
 from unittest.mock import patch
@@ -139,6 +139,33 @@ class CliOutputTests(unittest.TestCase):
         self.assertEqual(args[1], ["--mode", "fast"])
         self.assertEqual(kwargs["llvm_root"], Path("/opt/llvm"))
         self.assertEqual(kwargs["cuda_root"], Path("/opt/cuda"))
+
+    def test_run_takes_module_code_and_interactive_like_python(self) -> None:
+        cases = [
+            (["run", "-m", "pytest", "-x", "tests/"], dict(script=None, args=["-x", "tests/"], module="pytest")),
+            (["run", "-c", "import torch", "a"], dict(script=None, args=["a"], code="import torch")),
+            (["run", "-i"], dict(script=None, args=[], interactive=True)),
+            (["run", "-i", "-m", "mypkg.train"], dict(script=None, args=[], module="mypkg.train", interactive=True)),
+            # After a script, -m belongs to the script, as with python.
+            (["run", "app.py", "-m", "x"], dict(script=Path("app.py"), args=["-m", "x"], module=None)),
+        ]
+        for argv, expected in cases:
+            with self.subTest(argv=argv), patch.object(cli, "launch", return_value=0) as run, \
+                    patch.object(cli, "_locations", return_value=("/opt/llvm", "/opt/cuda", None)):
+                self.assertEqual(cli.main(argv), 0)
+                args, kwargs = run.call_args
+                self.assertEqual(args[0], expected["script"])
+                self.assertEqual(args[1], expected["args"])
+                for key in ("module", "code", "interactive"):
+                    if key in expected:
+                        self.assertEqual(kwargs[key], expected[key])
+
+    def test_run_needs_a_program_and_a_value_for_m_and_c(self) -> None:
+        for argv in (["run"], ["run", "-m"], ["run", "-c"]):
+            with self.subTest(argv=argv), patch.object(cli, "launch") as run, redirect_stderr(StringIO()) as err:
+                self.assertEqual(cli.main(argv), 2)
+                run.assert_not_called()
+            self.assertIn("run", err.getvalue())
 
     def test_compatible_profile_returns_zero(self) -> None:
         output = StringIO()

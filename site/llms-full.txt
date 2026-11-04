@@ -707,12 +707,16 @@ By Zach Shallbetter · Sheet 06 of 10 · Updated 3 November 2026
 | cuda-legacy doctor [--llvm-root PATH] [--cuda-root PATH] [--python PATH] [--json] | Check prerequisites for the experimental launcher; each missing item names its next step. |
 | cuda-legacy ops [--json] | List what the adapter runs natively on sm_52, what it runs through the CPU fallback, and each limit. |
 | cuda-legacy audit PROFILE [--json] | Compare available machine facts against a target profile. |
-| cuda-legacy run [options] SCRIPT [args...] | Start a Python script with the opt-in adapter. |
+| cuda-legacy run [options] [-i] (SCRIPT \| -m MODULE \| -c CODE) [args...] | Start a Python script, module or code with the opt-in adapter, as python would; -i alone opens an interactive prompt. |
 
 ## Launch options
 
 ```
 cuda-legacy run path/to/app.py --application-option value
+cuda-legacy run -m mypackage.train      # a module, like python -m
+cuda-legacy run -m pytest tests/
+cuda-legacy run -c "import torch; print(torch.ones(2).cuda() * 2)"
+cuda-legacy run -i                      # an interactive prompt
 
 # override the saved setup for one run
 cuda-legacy run --python /path/to/other-env/bin/python -- path/to/app.py

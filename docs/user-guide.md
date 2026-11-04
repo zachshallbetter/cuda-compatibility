@@ -87,15 +87,19 @@ The JSON forms are available as `inspect --json`, `profiles list --json`, `profi
 
 ## 3. Run a Python application
 
-After `setup`, pass the application and its arguments:
+After `setup`, pass the application and its arguments. `run` takes a script, `-m MODULE`, `-c CODE` or `-i` as `python` does, so modules, test runners and an interactive prompt work too:
 
 ```sh
 cuda-legacy run path/to/app.py --application-option value
+cuda-legacy run -m mypackage.train      # a module, like python -m
+cuda-legacy run -m pytest tests/
+cuda-legacy run -c "import torch; print(torch.ones(2).cuda() * 2)"
+cuda-legacy run -i                      # an interactive prompt
 ```
 
 Under the adapter, PyTorch's own warning that `sm_52` is unsupported is replaced by one line saying the adapter is active; set `CUDA_COMPAT_VERBOSE=1` to see PyTorch's warnings.
 
-The command compiles selected kernels for the real `sm_52` target, builds a driver bridge and a CUDA Runtime version-query facade in a temporary directory, then starts the script as a child Python process. Temporary build files are removed when it exits. The facade changes the runtime-version response in that child process; the GPU name, compute capability, and driver remain genuine. The parent shell, other applications, installed PyTorch wheel, NVIDIA driver, and CUDA toolkit are not modified.
+The command compiles selected kernels for the real `sm_52` target, builds a driver bridge and a CUDA Runtime version-query facade in a temporary directory, then starts the program as a child Python process. Temporary build files are removed when it exits. The facade changes the runtime-version response in that child process; the GPU name, compute capability, and driver remain genuine. The parent shell, other applications, installed PyTorch wheel, NVIDIA driver, and CUDA toolkit are not modified.
 
 The launcher inherits the parent environment and adds `LD_PRELOAD` and Python startup configuration for the child. Use it only with scripts you trust. The current adapter also requires all visible GPUs to report compute capability 5.2.
 

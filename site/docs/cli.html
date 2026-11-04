@@ -106,7 +106,7 @@ td.cmd code{font-size:13px;background:none;padding:0;font-weight:500}
 <tr><td class="cmd"><code>cuda-legacy doctor [--llvm-root PATH] [--cuda-root PATH] [--python PATH] [--json]</code></td><td>Check prerequisites for the experimental launcher; each missing item names its next step.</td></tr>
 <tr><td class="cmd"><code>cuda-legacy ops [--json]</code></td><td>List what the adapter runs natively on sm_52, what it runs through the CPU fallback, and each limit.</td></tr>
 <tr><td class="cmd"><code>cuda-legacy audit PROFILE [--json]</code></td><td>Compare available machine facts against a target profile.</td></tr>
-<tr><td class="cmd" style="border-bottom-width:3px"><code>cuda-legacy run [options] SCRIPT [args...]</code></td><td style="border-bottom-width:3px">Start a Python script with the opt-in adapter.</td></tr>
+<tr><td class="cmd" style="border-bottom-width:3px"><code>cuda-legacy run [options] [-i] (SCRIPT | -m MODULE | -c CODE) [args...]</code></td><td style="border-bottom-width:3px">Start a Python script, module or code with the opt-in adapter, as <code>python</code> would; <code>-i</code> alone opens an interactive prompt.</td></tr>
 </tbody>
 </table>
 </div>
@@ -115,6 +115,10 @@ td.cmd code{font-size:13px;background:none;padding:0;font-weight:500}
 <div id="launch" style="display:flex;flex-direction:column;gap:20px">
 <div class="sec"><span class="cut" aria-hidden="true">B</span><h2 class="h2">Launch options</h2><span class="plane" aria-hidden="true"></span></div>
 <pre><code>cuda-legacy run path/to/app.py --application-option value
+cuda-legacy run -m mypackage.train      # a module, like python -m
+cuda-legacy run -m pytest tests/
+cuda-legacy run -c "import torch; print(torch.ones(2).cuda() * 2)"
+cuda-legacy run -i                      # an interactive prompt
 
 # override the saved setup for one run
 cuda-legacy run --python /path/to/other-env/bin/python -- path/to/app.py</code></pre>

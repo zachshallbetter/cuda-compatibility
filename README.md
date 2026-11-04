@@ -80,13 +80,16 @@ cuda-legacy help run
 
 `setup` finds the Python environment that holds PyTorch and the CUDA 12.4 headers (without them, it fetches them after asking from NVIDIA's own CUDA 12.4 wheels on PyPI (83 MB, SHA-256 checked, under NVIDIA's license) and keeps about 47 MB of headers), uses an LLVM 23.1.4 you already have or downloads the official llvm-project archive (1.2 GB, SHA-256 checked) and keeps only the compiler (about 370 MB in `~/.local/share/cuda-legacy`), then saves the result to `~/.config/cuda-legacy/config.json` and runs `doctor`. It asks before downloading (`--yes` skips the question, `--dry-run` shows the plan). It never installs drivers, changes the system CUDA install or edits the PyTorch environment. `cuda-legacy setup --remove` deletes exactly what setup created. Flags and the `CUDA_COMPAT_LLVM_ROOT`, `CUDA_COMPAT_CUDA_ROOT` and `CUDA_COMPAT_PYTHON` variables still override the saved setup.
 
-The experimental `run` command starts one Python script with the opt-in PyTorch adapter:
+The experimental `run` command starts one Python process with the opt-in PyTorch adapter. It takes a script, `-m MODULE`, `-c CODE` or `-i` as `python` does:
 
 ```sh
 cuda-legacy run app.py --your-application-argument
+cuda-legacy run -m mypackage.train
+cuda-legacy run -m pytest tests/
+cuda-legacy run -i                      # an interactive prompt
 ```
 
-The launcher compiles selected kernels to real `sm_52` PTX, builds a driver bridge and runtime-version facade in a temporary directory, then enables the adapter only in the child process. It removes its generated build directory when the script exits. The facade reports CUDA Runtime 13.0 for that process while retaining actual GPU identity and compute capability. The adapter includes selected native PyTorch kernels and CPU fallbacks capped at 64 MiB of inputs and outputs per operation. First-order gradients and SGD are experimentally verified only for a small float32 linear→ReLU→sum workload; this is not general training, PyTorch, or CUDA 13 support. Because the launcher uses `LD_PRELOAD` and Python startup customization, run only scripts you trust.
+The launcher compiles selected kernels to real `sm_52` PTX, builds a driver bridge and runtime-version facade in a temporary directory, then enables the adapter only in the child process. It removes its generated build directory when the process exits. The facade reports CUDA Runtime 13.0 for that process while retaining actual GPU identity and compute capability. The adapter includes selected native PyTorch kernels and CPU fallbacks capped at 64 MiB of inputs and outputs per operation. Training matches the CPU for the workloads on the [compatibility sheet](https://cudacompat.com/docs/compatibility.html) (a 16-model sweep, and BERT-base and GPT-2-small at real size, with SGD, Adam and AdamW); this is not general PyTorch or CUDA 13 support. Because the launcher uses `LD_PRELOAD` and Python startup customization, run only scripts you trust.
 
 From a source checkout, a profile can be named by path (`profiles/pytorch-2.14-cu130.json`); an installed package also accepts the profile filename or ID (`pytorch-2.14-cu130`).
 
