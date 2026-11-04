@@ -50,7 +50,7 @@ class NativeFallbackTests(unittest.TestCase):
         self.assertEqual(self.adapter._falls_back_to_cpu("mm")(lambda a, b: "native")(1, 2), "native")
 
     def test_every_native_kernel_is_wrapped(self) -> None:
-        for kernel in ("_mm", "_relu", "_arange", "_embedding", "_layer_norm"):
+        for kernel in ("_add", "_mm", "_relu", "_arange", "_embedding", "_layer_norm"):
             self.assertTrue(hasattr(getattr(self.adapter, kernel), "__wrapped__"), kernel)
 
 
