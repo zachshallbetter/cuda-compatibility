@@ -9,7 +9,7 @@ export PIP_DISABLE_PIP_VERSION_CHECK=1
 python3 -m venv "$work/venv"
 "$work/venv/bin/python" -m pip install -q "$root"
 bin="$work/venv/bin/cuda-legacy"
-export HOME="$work/home" XDG_CONFIG_HOME= XDG_DATA_HOME=
+export HOME="$work/home" XDG_CONFIG_HOME='' XDG_DATA_HOME=''
 unset CUDA_COMPAT_LLVM_ROOT CUDA_COMPAT_CUDA_ROOT CUDA_COMPAT_PYTHON 2>/dev/null || true
 mkdir -p "$HOME"
 fail() { echo "smoke: $1" >&2; exit 1; }
@@ -34,11 +34,14 @@ set +e
 "$bin" doctor > "$work/doctor.txt" 2>&1; code=$?
 set -e
 [ "$code" -eq 1 ] || fail "doctor without setup should exit 1 (got $code)"
-grep -q 'Run `cuda-legacy setup`' "$work/doctor.txt" || fail "doctor should point at cuda-legacy setup"
+# shellcheck disable=SC2016 # the backticks are literal output, not a command
+grep -qF 'Run `cuda-legacy setup`' "$work/doctor.txt" || fail "doctor should point at cuda-legacy setup"
 set +e
 echo 'print(1)' > "$work/app.py"
 "$bin" run "$work/app.py" > "$work/run.txt" 2>&1; code=$?
 set -e
-[ "$code" -eq 2 ] && grep -q "cuda-legacy setup" "$work/run.txt" || fail "run without setup should exit 2 and name setup"
+if [ "$code" -ne 2 ] || ! grep -q "cuda-legacy setup" "$work/run.txt"; then
+  fail "run without setup should exit 2 and name setup"
+fi
 "$bin" setup --remove | grep -q "Nothing to remove" || fail "remove with nothing saved should say so"
 echo "OK install smoke: bare command, dry-run plan, doctor and run guidance, remove"
