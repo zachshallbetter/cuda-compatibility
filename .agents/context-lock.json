@@ -6,7 +6,7 @@
   "selectedPaths": [],
   "sourceSelection": {
     "includedCount": 284,
-    "includedBytes": 2885199,
+    "includedBytes": 2885493,
     "excludedCounts": {
       "extension": 65,
       "generated-or-transient-file": 2
@@ -18,14 +18,14 @@
     "repositories": [
       {
         "path": ".",
-        "commit": "bc03ec9f941122fc91058396737ec5d5b2f3b16b",
-        "branch": "chore/release-0.2.14",
+        "commit": "5a5544a65022f8b17266bd381cc94ee48a00aec2",
+        "branch": "chore/repin-0.2.14",
         "dirty": true,
         "remote": "https://github.com/zachshallbetter/cuda-compatibility.git"
       }
     ]
   },
-  "aggregateSourceDigest": "885c90a372661f70f82227a1946c82d0ad4daf2af13a2397caacf72e3cdb5cfc",
+  "aggregateSourceDigest": "7c6aa670483a3d282a9aa1a09b93240815fcaf2bef29476c8f5fdb34e652881e",
   "sources": [
     {
       "path": ".agents/acp/README.md",
@@ -705,7 +705,7 @@
     {
       "path": "README.md",
       "bytes": 13701,
-      "sha256": "fc082a6b6ef7aa3801cf1ac833692c2363d03c255d362d895bc6aac1ef6ca98d"
+      "sha256": "36f5447841f9a536d698be7fde2890a578f42cf679cc012ab6140c3b3875750b"
     },
     {
       "path": "SECURITY.md",
@@ -734,8 +734,8 @@
     },
     {
       "path": "docs/WORK_ITEMS.md",
-      "bytes": 122847,
-      "sha256": "613055c3b4f3b3fa712bcebf8a837b07a04a77e9b24c9b02866aceaf2492609d"
+      "bytes": 123141,
+      "sha256": "70e1b26f4b665992a69aeeb3ce2383fac0c266aa7c2d60b89e0ec7aed68e02be"
     },
     {
       "path": "docs/architecture.md",
@@ -890,7 +890,7 @@
     {
       "path": "examples/sm52-mlp/README.md",
       "bytes": 5014,
-      "sha256": "3c2cdc90e3ae472192f717deb9d7b86d4e0127cf6bd334c0c1a64d588b6fe11c"
+      "sha256": "9877b1c752085336b377323a57254580af2d6a23d984195ea4983da480266517"
     },
     {
       "path": "examples/sm52-mlp/expected-output.json",
@@ -1105,7 +1105,7 @@
     {
       "path": "site/articles/pytorch-cuda-13-on-maxwell.html",
       "bytes": 20627,
-      "sha256": "101c1a1351f9a1c6e1461da2b2d7c6c0f69e3e4b9f0d0f09fa565b2d22729471"
+      "sha256": "3d14f11dd8f9410765dbb9ab25170ebbad1554169ea792dfbc4156ca2b950e07"
     },
     {
       "path": "site/assets/fonts/OFL-Archivo.txt",
@@ -1130,47 +1130,47 @@
     {
       "path": "site/docs/architecture.html",
       "bytes": 24014,
-      "sha256": "7f449d78762447733a589e08186074c59ae8f29c5ca5dfe003df9a51ed52c8cd"
+      "sha256": "0452e43bfc6fd324ff7eaa85e3219987635406c1ba81e4c1bf16e332e32bf85a"
     },
     {
       "path": "site/docs/cli.html",
       "bytes": 22385,
-      "sha256": "9201ef9da7d561998826682fc7d311cc0b64d010d341342e718a7127aaa11839"
+      "sha256": "11101532772e3aeaae28cfed2f3e5be78a100cf0a5e45fa3a7ec9bff6eeee756"
     },
     {
       "path": "site/docs/compatibility.html",
       "bytes": 34256,
-      "sha256": "7345b567da8fb7e35bc49e6be99805e3b45d915feb5a790563b49cc529abeb9a"
+      "sha256": "65afa0c66fb6521be2fbd453c5d9a7705ecde4e84f2f570d9049a656019c7d09"
     },
     {
       "path": "site/docs/discovery.html",
       "bytes": 25348,
-      "sha256": "ff32c538b5961bf3c6f9a38c34ae60254214d6733b9e8ded2e1b1f38893ce7d1"
+      "sha256": "030b29603b29c4c215dfbfe555f3690fcbe4c59416f10516f7212cf877a7965e"
     },
     {
       "path": "site/docs/getting-started.html",
       "bytes": 24803,
-      "sha256": "10f90035fc2b79e4fe12d55e265458da34fdc740f6a99b8a307ad5eab827384a"
+      "sha256": "ce61a89935ab28ea2d4fd33c72fe35c001f0f193a5ade5c279f972462a84b988"
     },
     {
       "path": "site/docs/index.html",
       "bytes": 20850,
-      "sha256": "9f97297b78fcd09343b553962ec11c15245b11d8c3348e6e52019832ca503a83"
+      "sha256": "e8258d948890cd1649c31582d725febeb10c6b230589d6fd4bf7005b1306281f"
     },
     {
       "path": "site/docs/privacy.html",
       "bytes": 26847,
-      "sha256": "590b514e48f15ba7c79b883b124ee4f12833ffc8f9346ea1a98695b77ce3bf70"
+      "sha256": "90c8f175f3db6c4ac0c8b9e60f7e6b015491467987b90b2f841be12f0572341d"
     },
     {
       "path": "site/docs/research.html",
       "bytes": 37371,
-      "sha256": "b649e2dd81ad275a12413c4759c735b3761ee995ae0b267606a17e1a78209079"
+      "sha256": "9925255fbca17af77c512d5d2f39aabdd31e5cc180a7bf40783a807e8660c18a"
     },
     {
       "path": "site/gpu-catalog.html",
       "bytes": 28750,
-      "sha256": "8db1cb0f0ec9c2f57789aa2b1e495da89f543abce1504a8a83ce1814e2fd05de"
+      "sha256": "752398af21c1877c20fcc25d8a172daf7fd24780eb8ddba295185c70c9653b2f"
     },
     {
       "path": "site/home.css",
@@ -1185,52 +1185,52 @@
     {
       "path": "site/index.html",
       "bytes": 55171,
-      "sha256": "0c11ee5d009244e7bc2a8e8c36ca0efbdaab9cf66b532a09fdba76d96f387db5"
+      "sha256": "c903b69ce4f273f39c6da3fed4f2a18725540ca6cb0d979a682c8b2d068be6a4"
     },
     {
       "path": "site/install.sh",
       "bytes": 17084,
-      "sha256": "5ee5e3cb3de9847a76b60c0a05fea7aac320de12a53a7000e48896cfc5ed9c2b"
+      "sha256": "a8178adfa69e6c0a86cba20bde76a21ddb94841b1f52b2445a03f56bdfd298dc"
     },
     {
       "path": "site/research/attribution-pilot.html",
       "bytes": 27532,
-      "sha256": "0de3817d0446767062d657737e45bfc8081dc7648295de6760f5a7abb297d89b"
+      "sha256": "a4161a90796e6258a3bdf5a3007d133b17a5468e79624243ace4d1c12d517403"
     },
     {
       "path": "site/research/cuda-12-9-to-13-0-changes.html",
       "bytes": 27519,
-      "sha256": "bf3bebf38c9dc2043c56282efa589d294cadd0279522a563b62dd893966e5fe4"
+      "sha256": "baf2378c5659cde2fb5592acd6efb37fb036676c7bd9dafbef01be41936f5f7a"
     },
     {
       "path": "site/research/implementation-gap-audit-2026-11.html",
       "bytes": 31491,
-      "sha256": "b4e4b81759b8e02afaa221618575f50f32dd687dbeb7174027005059c2ec6a01"
+      "sha256": "87ba7822f85265832d8c6ecf0b77392527b55d1b38ed98adf56107eb663549b2"
     },
     {
       "path": "site/research/llvm-nvptx.html",
       "bytes": 20145,
-      "sha256": "3ed74e8bc162431fc0a9e99add008410b0519f32ed668fe8b9c30edbd20e9b38"
+      "sha256": "410a2a2709baed3fac144e0e465dc9022747a9fd542c1744c345a927bbdb680a"
     },
     {
       "path": "site/research/maxwell-baseline.html",
       "bytes": 21281,
-      "sha256": "4829e91d069b5afab88d5e2eb7ebe4cdcd9b59d6898b670633ff15b0248a2f05"
+      "sha256": "3dbedd377f06bb18deb89196b67739d8bc3af37558d3a6816ac13305f5981fe2"
     },
     {
       "path": "site/research/pytorch-cu130-maxwell.html",
       "bytes": 35282,
-      "sha256": "b457145926c2cca9091888c48f8bffa1e48b01283ae900b45e093f6705012af3"
+      "sha256": "de5f3bec8466e3ca839429871641961d35580d81eb35c23a5e9213f3eac749d7"
     },
     {
       "path": "site/research/research-program.html",
       "bytes": 25373,
-      "sha256": "8f1d355a060cd749f394e5e73c303a54eebab465f6fd44988f8be6ea0f53d7a9"
+      "sha256": "363267e0412b0faa1e2fd74d0b24bd8f03cb34e5c2c66061d30068c2ebc12441"
     },
     {
       "path": "site/research/runtime-version-facade.html",
       "bytes": 20526,
-      "sha256": "cbd32b535edf59f2686f2031cc2e580d0d1e9e0eac1f295a35ca18ace0af9da1"
+      "sha256": "ed6be79bc157a1c63ce94b157668b57e273e3e660fd180c8b4fa8df95625495a"
     },
     {
       "path": "site/robots.txt",
