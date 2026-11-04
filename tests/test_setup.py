@@ -253,5 +253,30 @@ class FirstStepsTests(IsolatedHome):
             cli.main([])
         self.assertIn("run app.py", out.getvalue())
 
+class RemoveParentsTests(IsolatedHome):
+    def test_remove_also_clears_empty_parents_setup_created_but_keeps_existing_ones(self) -> None:
+        home = self.tmp / "home"
+        (home / ".config").mkdir(parents=True)          # existed before setup: must survive
+        (home / ".config" / "other-app.conf").write_text("x")
+        os.environ.pop("XDG_CONFIG_HOME"); os.environ.pop("XDG_DATA_HOME")
+        llvm = self.tmp / "llvm"
+        (llvm / "bin").mkdir(parents=True)
+        (llvm / "bin" / "clang++").write_text(FAKE_CLANG)
+        (llvm / "bin" / "clang++").chmod(0o755)
+        cuda = self.tmp / "cuda"
+        (cuda / "include").mkdir(parents=True)
+        for header in ("cuda.h", "cuda_runtime.h"):
+            (cuda / "include" / header).write_text("")
+        with mock.patch.dict(os.environ, {"HOME": str(home)}), \
+                mock.patch.object(toolchain, "find_python", return_value=toolchain.Found("/env/bin/python", "fixture")):
+            toolchain.run_setup(python=None, cuda_root=str(cuda), llvm_root=str(llvm), assume_yes=True,
+                                dry_run=False, quiet=True)
+            self.assertTrue((home / ".config" / "cuda-legacy" / "config.json").is_file())
+            toolchain.remove(quiet=True)
+        self.assertTrue((home / ".config" / "other-app.conf").is_file())
+        self.assertFalse((home / ".config" / "cuda-legacy").exists())
+        self.assertFalse((home / ".local").exists())
+        self.assertTrue(llvm.is_dir())
+
 if __name__ == "__main__":
     unittest.main()

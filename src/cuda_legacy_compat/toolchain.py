@@ -350,6 +350,10 @@ def run_setup(*, python: str | None, cuda_root: str | None, llvm_root: str | Non
     """Find or fetch everything, save it, and return what was decided."""
     steps = plan(python, cuda_root, llvm_root)
     result: dict[str, Any] = {"plan": steps.as_json(), "saved": None, "created": []}
+    # Parent directories that don't exist yet are ours to remove later (only if they are empty again).
+    created_dirs = sorted(set(settings.load().get("created_dirs", [])) | {
+        str(directory) for directory in _parents_setup_may_create() if not directory.exists()
+    })
     _say("CUDA Compatibility setup", quiet)
     for label, found in (("PyTorch environment", steps.python), ("CUDA headers", steps.cuda), ("LLVM", steps.llvm)):
         _say(f"  {label + ':':<21}{found.detail}", quiet)
@@ -384,6 +388,7 @@ def run_setup(*, python: str | None, cuda_root: str | None, llvm_root: str | Non
         "python": steps.python.value, "cuda_root": steps.cuda.value, "llvm_root": steps.llvm.value,
         "llvm_managed": steps.llvm.value == str(managed_llvm_dir()),
         "package_version": __version__, "saved_at": time.strftime("%Y-%m-%dT%H:%M:%S%z"),
+        "created_dirs": created_dirs,
     }
     path = settings.save({key: value for key, value in saved.items() if value is not None or key == "llvm_managed"})
     result["saved"] = str(path)
@@ -391,9 +396,16 @@ def run_setup(*, python: str | None, cuda_root: str | None, llvm_root: str | Non
     return result
 
 
+def _parents_setup_may_create() -> list[Path]:
+    """The data and config directories and their parents, deepest first."""
+    data, config = settings.data_dir(), settings.config_dir()
+    return [data, data.parent, data.parent.parent, config, config.parent]
+
+
 def remove(*, quiet: bool = False) -> list[str]:
     """Delete what setup created: the managed LLVM (only if it carries our marker) and the saved setup."""
     removed = []
+    created_dirs = [Path(item) for item in settings.load().get("created_dirs", [])]
     target = managed_llvm_dir()
     if (target / MANAGED_MARKER).is_file():
         shutil.rmtree(target)
@@ -405,7 +417,9 @@ def remove(*, quiet: bool = False) -> list[str]:
     if path.is_file():
         path.unlink()
         removed.append(str(path))
-    for directory in (settings.data_dir(), settings.config_dir()):
+    # Our own directories, then any parents setup created; rmdir only succeeds when they are empty.
+    for directory in (settings.data_dir(), settings.config_dir(),
+                      *sorted(created_dirs, key=lambda item: len(item.parts), reverse=True)):
         try:
             directory.rmdir()
         except OSError:
