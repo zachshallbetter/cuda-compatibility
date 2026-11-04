@@ -466,6 +466,67 @@ def _single_as_foreach(operation, args: tuple, kwargs: dict) -> tuple[bool, Any]
     return True, args[0]
 
 
+def _batch_norm_on_gpu(name: str, args: tuple, kwargs: dict) -> tuple[bool, Any]:
+    """native_batch_norm and its backward from the native sum, elementwise and sqrt kernels (#184), for contiguous
+    float32 NCHW-style input. Any step without a Maxwell kernel raises here, and the caller keeps the CPU route."""
+    def per_channel(t):  # (C,) -> broadcastable (1, C, 1, ...)
+        return t.reshape([1, -1] + [1] * (inputs.dim() - 2))
+
+    def invsqrt(t):
+        root = torch.empty_like(t)
+        _pointwise(_SQRT, t.contiguous(), out=root)
+        return torch.ones_like(root) / root
+
+    if name == "aten.native_batch_norm.default":
+        inputs, weight, bias, running_mean, running_var, training, momentum, eps = args[:8]
+    else:
+        grad, inputs, weight, running_mean, running_var, save_mean, save_invstd, training, eps, mask = args[:10]
+    if (inputs.dtype != torch.float32 or not inputs.is_contiguous() or inputs.dim() < 2
+            or any(t is not None and (t.dtype != torch.float32 or not t.is_contiguous())
+                   for t in (weight, running_mean, running_var))):
+        return False, None
+    dims = [0] + list(range(2, inputs.dim()))
+    count = inputs.numel() // inputs.shape[1]
+    if name == "aten.native_batch_norm.default":
+        if training:
+            mean = inputs.sum(dims) / count
+            centered = inputs - per_channel(mean)
+            var = (centered * centered).sum(dims) / count
+            invstd = invsqrt(var + eps)
+        else:
+            mean, invstd = running_mean, invsqrt(running_var + eps)
+            centered = inputs - per_channel(mean)
+        out = centered * per_channel(invstd)
+        if weight is not None:
+            out = out * per_channel(weight)
+        if bias is not None:
+            out = out + per_channel(bias)
+        if training and running_mean is not None:
+            # Last, so a step that fails above leaves the statistics for the CPU route to update once.
+            new_mean = running_mean * (1 - momentum) + mean * momentum
+            new_var = running_var * (1 - momentum) + var * (momentum * count / max(count - 1, 1))
+            running_mean.copy_(new_mean)
+            running_var.copy_(new_var)
+        if not training:
+            mean, invstd = torch.empty(0, device=inputs.device), torch.empty(0, device=inputs.device)
+        return True, (out, mean, invstd)
+    if grad.dtype != torch.float32 or not grad.is_contiguous():
+        return False, None
+    if training:
+        mean, invstd = save_mean, save_invstd
+    else:
+        mean, invstd = running_mean, invsqrt(running_var + eps)
+    xhat = (inputs - per_channel(mean)) * per_channel(invstd)
+    grad_bias = grad.sum(dims)
+    grad_weight = (grad * xhat).sum(dims)
+    scale = per_channel(invstd) if weight is None else per_channel(invstd * weight)
+    if training:
+        grad_input = scale * (grad - per_channel(grad_bias / count) - xhat * per_channel(grad_weight / count))
+    else:
+        grad_input = grad * scale
+    return True, (grad_input if mask[0] else None, grad_weight if mask[1] else None, grad_bias if mask[2] else None)
+
+
 class _Shape(ctypes.Structure):
     """compat_kernels.cu's CompatShape: up to six sizes and two operands' strides, passed by value."""
     _fields_ = [("size", ctypes.c_int64 * 6), ("a", ctypes.c_int64 * 6), ("b", ctypes.c_int64 * 6)]
@@ -1782,6 +1843,16 @@ class _MaxwellInferenceFallback(TorchDispatchMode):
             handled, result = _single_as_foreach(operation, args, kwargs)
             if handled:
                 return result
+            if str(operation) in ("aten.native_batch_norm.default", "aten.native_batch_norm_backward.default"):
+                try:
+                    handled, result = _batch_norm_on_gpu(str(operation), args, kwargs)
+                except Exception as error:  # a step with no Maxwell kernel: keep the CPU route below
+                    if not (isinstance(error, NotImplementedError) or _is_architecture_failure(error)):
+                        raise
+                    handled = False
+                if handled:
+                    _dispatch_state.last_path = "llvm-sm52-batch-norm-f32"
+                    return result
             if _writes_only_self(schema):
                 try:
                     return _inplace_on_cpu(operation, name, args, kwargs)
