@@ -5,8 +5,8 @@
   "validityBasis": "aggregate-source-digest",
   "selectedPaths": [],
   "sourceSelection": {
-    "includedCount": 263,
-    "includedBytes": 2675631,
+    "includedCount": 265,
+    "includedBytes": 2679540,
     "excludedCounts": {
       "extension": 65,
       "generated-or-transient-file": 2
@@ -18,14 +18,14 @@
     "repositories": [
       {
         "path": ".",
-        "commit": "f76bdd034bf09c6a3bc82d8630ab5497b83dc6a0",
-        "branch": "chore/bump-0.2.2",
+        "commit": "9daaf37b842b5c0e89a199618722765d90a11cb3",
+        "branch": "ci/installer-distros",
         "dirty": false,
         "remote": "https://github.com/zachshallbetter/cuda-compatibility.git"
       }
     ]
   },
-  "aggregateSourceDigest": "b20ee63a9fd45a28f9bc030ebef506a574fa5a585d1e78f54fc9375c27a19214",
+  "aggregateSourceDigest": "57eb2c53374fb97dd871332f656bd26e3ca562ec90c8b8cf062bfe8200dd0aa8",
   "sources": [
     {
       "path": ".agents/acp/README.md",
@@ -688,6 +688,11 @@
       "sha256": "d5418aff52918a121ca7ac5565583314a9e4becaf9c0bbf82f0d109ad43ba2ca"
     },
     {
+      "path": ".github/workflows/installer-distros.yml",
+      "bytes": 1359,
+      "sha256": "369898eac0312fe10d97edb86000509d808828cd8690677b4606a69995dd52a6"
+    },
+    {
       "path": ".github/workflows/verify.yml",
       "bytes": 783,
       "sha256": "7b19a023da95ce64f9b25b298b2c6b6034f1d6f7faae95835a3508292e19d89e"
@@ -1001,6 +1006,11 @@
       "path": "scripts/build_social_cards.py",
       "bytes": 9936,
       "sha256": "0e23cf1e3e9aad129f6969fdf2ef7015d0f40485137e98c38408518d62e0f152"
+    },
+    {
+      "path": "scripts/distro_install_check.sh",
+      "bytes": 2550,
+      "sha256": "3097a8838514682e04d5efca74b3e9763d35682cd0c3347b3ca1d71b1fe0f126"
     },
     {
       "path": "scripts/dpp_measurement.py",
