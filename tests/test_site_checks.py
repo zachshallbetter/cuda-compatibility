@@ -96,7 +96,8 @@ class SiteDiscoveryChecksTests(unittest.TestCase):
         self.assertIn("mm", native)
         self.assertIn("bmm", native)   # the tiled kernel (#184)
         self.assertIn("_softmax", native)
-        self.assertIn("cat", fallback)
+        self.assertIn("cat", native)   # the strided copy into slices (#243)
+        self.assertNotIn("cat", fallback)
         self.assertIn("contiguous", native)   # the strided copy kernel (#184 B)
         self.assertNotIn("contiguous", fallback)
 

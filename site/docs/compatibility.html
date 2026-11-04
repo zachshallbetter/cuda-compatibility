@@ -101,7 +101,7 @@ td.n{font-family:"Martian Mono",monospace;font-size:12px;color:var(--mute);width
 <div style="display:flex;flex-direction:column;gap:56px">
 <div id="native" style="display:flex;flex-direction:column;gap:20px">
 <div class="sec"><span class="cut" aria-hidden="true">A</span><h2 class="h2">Native GPU implementations</h2><span class="plane" aria-hidden="true"></span><span class="state ok"><i class="sw full" aria-hidden="true" style="border-color:var(--on-ok);background:var(--on-ok)"></i>sm_52 kernel</span></div>
-<p class="soft" style="margin:0;font-size:16px;max-width:72ch">These 21 registered cases cover 46 native operators: addition (in place too), the foreach and fused steps of Adam, AdamW and SGD, subtraction, multiplication and division with broadcasting, range creation, embedding, layer normalization (inference and training), negative log likelihood, copies of strided views, matrix multiplication with and without bias, batched matrix multiplication, ReLU, GELU, softmax, safe softmax and log-softmax, sum and mean over dimensions, fill and max pooling, with the gradients of each. They run through LLVM-generated PTX targeting the real Maxwell device and the CUDA Driver API bridge; other dtypes and layouts take the CPU fallback below.</p>
+<p class="soft" style="margin:0;font-size:16px;max-width:72ch">These 23 registered cases cover 48 native operators: addition (in place too), the foreach and fused steps of Adam, AdamW and SGD, subtraction, multiplication and division with broadcasting, range creation, embedding, layer normalization (inference and training), negative log likelihood, copies of strided views, matrix multiplication with and without bias, batched matrix multiplication, ReLU, GELU, softmax, safe softmax and log-softmax, sum and mean over dimensions, fill and max pooling, with the gradients of each. They run through LLVM-generated PTX targeting the real Maxwell device and the CUDA Driver API bridge; other dtypes and layouts take the CPU fallback below.</p>
 <div class="scroll" role="region" aria-label="Native GPU implementations (scrolls sideways)" tabindex="0" style="overflow-x:auto">
 <table aria-label="Native GPU implementations">
 <thead><tr><th scope="col" style="width:32px">No.</th><th scope="col">Operation</th><th scope="col">Supported case</th></tr></thead>
@@ -126,7 +126,9 @@ td.n{font-family:"Martian Mono",monospace;font-size:12px;color:var(--mute);width
 <tr><td class="n">18</td><td class="op">Copies of strided views</td><td><code>clone</code> and <code>contiguous</code> of any 1-, 2-, 4- or 8-byte dtype, up to six dimensions: transposes, slices and broadcasts stay on the GPU, and so does the float32 gradient of <code>x[:, i]</code> and <code>unbind</code>.</td></tr>
 <tr><td class="n">19</td><td class="op">Optimizer steps</td><td>The default <code>foreach</code> updates of Adam, AdamW and momentum or weight-decay SGD over contiguous float32 parameters on one device, and Adam or AdamW with <code>fused=True</code> in one launch per parameter. Other tensors (float16, another device) form their own group, which runs on the CPU; <code>amsgrad</code>, RMSprop and Adagrad’s other steps use the CPU route.</td></tr>
 <tr><td class="n">20</td><td class="op">Max pooling</td><td>2-D float32, a contiguous (C, H, W) or (N, C, H, W) input, any kernel, stride, padding, dilation and ceil mode: values and indices as the CPU computes them, NaN included, and the gradient (<a href="https://github.com/zachshallbetter/cuda-compatibility/issues/184">#184</a>).</td></tr>
-<tr><td class="n" style="border-bottom-width:3px">21</td><td class="op" style="border-bottom-width:3px">Recurrent cells</td><td style="border-bottom-width:3px">The fused LSTM and GRU cells that <code>nn.LSTM</code> and <code>nn.GRU</code> run each timestep, and their gradients: float32, contiguous 2-D gates, with or without biases (<a href="https://github.com/zachshallbetter/cuda-compatibility/issues/243">#243</a>). Other cases run on the CPU.</td></tr>
+<tr><td class="n">21</td><td class="op">Recurrent cells</td><td>The fused LSTM and GRU cells that <code>nn.LSTM</code> and <code>nn.GRU</code> run each timestep, and their gradients: float32, contiguous 2-D gates, with or without biases (<a href="https://github.com/zachshallbetter/cuda-compatibility/issues/243">#243</a>). Other cases run on the CPU.</td></tr>
+<tr><td class="n">22</td><td class="op">Concatenation</td><td>Any dtype of 1, 2, 4 or 8 bytes, inputs of one dtype, device and rank: each input copied into its slice of the output, so <code>nn.LSTM</code> stacks its timesteps on the GPU (<a href="https://github.com/zachshallbetter/cuda-compatibility/issues/243">#243</a>). Other cases use the CPU fallback.</td></tr>
+<tr><td class="n" style="border-bottom-width:3px">23</td><td class="op" style="border-bottom-width:3px">Power by a number</td><td style="border-bottom-width:3px">float32 squared (as <code>x * x</code>, which is what the CPU computes) and to the power 1, its gradient&rsquo;s term. Other exponents use the CPU fallback.</td></tr>
 </tbody>
 </table>
 </div>
@@ -135,12 +137,11 @@ td.n{font-family:"Martian Mono",monospace;font-size:12px;color:var(--mute);width
 
 <div id="fallback" style="display:flex;flex-direction:column;gap:20px">
 <div class="sec"><span class="cut" aria-hidden="true">B</span><h2 class="h2">Registered CPU fallback operations</h2><span class="plane" aria-hidden="true"></span><span class="state exp"><i class="sw half" aria-hidden="true"></i>Bounded autograd</span></div>
-<p class="soft" style="margin:0;font-size:16px;max-width:72ch">These 3 registered fallback routes, plus the CPU path that addition takes outside its native limits, use PyTorch’s CPU implementation and copy results back to the original CUDA device:</p>
+<p class="soft" style="margin:0;font-size:16px;max-width:72ch">These 2 registered fallback routes, plus the CPU path that addition takes outside its native limits, use PyTorch’s CPU implementation and copy results back to the original CUDA device:</p>
 <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(360px,100%),1fr));gap:48px;align-items:start">
 <ul class="list">
 <li><code>scaled_dot_product_attention</code> (training decomposes it into native matrix multiplication and softmax)</li>
 <li><code>clamp_min</code></li>
-<li><code>cat</code> (concatenation)</li>
 </ul>
 <div style="display:flex;flex-direction:column;gap:16px">
 <div class="dim"><span>Limits</span></div>

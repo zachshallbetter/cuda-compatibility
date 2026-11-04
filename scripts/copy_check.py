@@ -57,6 +57,24 @@ sum((t * w3 * k) for k, t in enumerate(sc.unbind(1))).sum().backward()
 sum((t * w3.cuda() * k) for k, t in enumerate(sg.unbind(1))).sum().backward()
 check("gradient through unbind", sg.grad, sc.grad, "")
 
+# Concatenation and squaring on the GPU (#243).
+for dtype in (torch.float32, torch.int64, torch.bool):
+    parts = [(torch.randn(2, k, 5) * 4).to(dtype) for k in (3, 1, 4)]
+    check(f"cat of {dtype} along dim 1", torch.cat([t.cuda() for t in parts], 1), torch.cat(parts, 1), "llvm-sm52-cat", 1e-30)
+seq = [torch.randn(8, 1, 16) for _ in range(5)]
+check("cat along dim -2 with a legacy empty input",
+      torch.cat([torch.empty(0).cuda()] + [t.cuda() for t in seq], -2), torch.cat([torch.empty(0)] + seq, -2),
+      "llvm-sm52-cat", 1e-30)
+check("cat of a transposed view", torch.cat([seq[0].cuda().transpose(0, 2), seq[1].cuda().transpose(0, 2)], 0),
+      torch.cat([seq[0].transpose(0, 2), seq[1].transpose(0, 2)], 0), "llvm-sm52-cat", 1e-30)
+check("cat of mixed dtypes (the CPU route)", torch.cat([seq[0].cuda(), seq[1].cuda().double()], 0),
+      torch.cat([seq[0], seq[1].double()], 0), "", 1e-12)
+sq = torch.randn(6, 7)
+check("x ** 2 as x * x", sq.cuda() ** 2, sq ** 2, "llvm-sm52-binary-f32", 1e-30)
+sc, sg = sq.clone().requires_grad_(), sq.clone().cuda().requires_grad_()
+(sc ** 2).sum().backward(); (sg ** 2).sum().backward()
+check("gradient of x ** 2", sg.grad, sc.grad, "", 1e-30)
+
 # In-place add at any size, broadcast, a number; SGD's foreach step.
 x, y = torch.randn(3_000_000), torch.randn(3_000_000)
 xg = x.cuda()

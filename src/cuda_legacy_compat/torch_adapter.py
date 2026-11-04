@@ -1506,6 +1506,50 @@ def _strided_copy(source: torch.Tensor, output: torch.Tensor) -> torch.Tensor:
     return output
 
 
+def _cat(tensors, dim: int = 0) -> torch.Tensor:
+    """Concatenation on the GPU (#243): each input copied into its slice of the output by the strided copy, for any
+    1- to 8-byte dtype. nn.LSTM stacks its timesteps with it, and as a CPU route it was the copy that kept a step from
+    CUDA graph capture. Mixed dtypes, devices or ranks, and anything else, take the CPU route as before."""
+    try:
+        parts = [t for t in tensors if not (t.dim() == 1 and t.numel() == 0)]   # PyTorch skips legacy empty inputs
+        if not parts or parts[0].dim() == 0:
+            raise NotImplementedError("Maxwell concatenation needs at least one tensor of rank 1 or more")
+        first = parts[0]
+        axis = dim % first.dim()
+        if any(t.dtype != first.dtype or t.device != first.device or not t.is_cuda or t.dim() != first.dim()
+               or any(a != b for i, (a, b) in enumerate(zip(t.shape, first.shape)) if i != axis) for t in parts):
+            raise NotImplementedError("Maxwell concatenation takes one dtype, one CUDA device and matching shapes")
+        shape = list(first.shape)
+        shape[axis] = sum(t.shape[axis] for t in parts)
+        output = torch.empty(shape, dtype=first.dtype, device=first.device)
+        offset = 0
+        for t in parts:
+            if t.shape[axis]:
+                _strided_copy(t, output.narrow(axis, offset, t.shape[axis]))
+                offset += t.shape[axis]
+    except NotImplementedError:
+        return _cpu_fallback(torch.ops.aten.cat.default, "cat")(tensors, dim)
+    _dispatch_state.last_path = "llvm-sm52-cat"
+    return output
+
+
+@_falls_back_to_cpu("pow.Tensor_Scalar")
+def _pow_scalar(self: torch.Tensor, exponent) -> torch.Tensor:
+    """x ** 2 (a squared error) as x * x, which is what PyTorch's CPU computes for it, and x ** 1 (its gradient's
+    term) as a copy (#243). Other exponents take the CPU route."""
+    value = _scalar(exponent)
+    if value == 2.0:
+        output = _binary(self, self, 2)
+        _dispatch_state.last_path = "llvm-sm52-binary-f32"
+        return output
+    if value == 1.0:
+        _f32(self)
+        output = _strided_copy(self, torch.empty(self.shape, dtype=torch.float32, device=self.device))
+        _dispatch_state.last_path = "llvm-sm52-strided-copy"
+        return output
+    raise NotImplementedError("Maxwell pow takes the exponents 2 and 1")
+
+
 @_falls_back_to_cpu("clone")
 def _clone(self: torch.Tensor, *, memory_format=None) -> torch.Tensor:
     output = torch.empty_like(self, memory_format=memory_format or torch.preserve_format)
@@ -1916,6 +1960,9 @@ def _lstm_cell_native(input_gates, hidden_gates, cx, input_bias=None, hidden_bia
 
 def _lstm_cell_backward_native(grad_hy, grad_cy, cx, cy, workspace, has_bias):
     try:
+        # The output's gradient for one timestep is a strided slice: a GPU copy, not the CPU route (#243).
+        grad_hy, grad_cy = (g if g is None or g.is_contiguous() or not g.is_cuda else g.contiguous()
+                            for g in (grad_hy, grad_cy))
         rows, hidden = _cell_shapes(workspace, cx, 4)
         _f32(grad_hy, grad_cy, cy, contiguous=True)
         if cy.shape != cx.shape or any(g is not None and g.shape != cx.shape for g in (grad_hy, grad_cy)):
@@ -1955,6 +2002,8 @@ def _gru_cell_native(input_gates, hidden_gates, hx, input_bias=None, hidden_bias
 
 def _gru_cell_backward_native(grad_hy, workspace, has_bias):
     try:
+        if grad_hy.is_cuda and not grad_hy.is_contiguous():
+            grad_hy = grad_hy.contiguous()
         _f32(grad_hy, workspace, contiguous=True)
         if grad_hy.dim() != 2 or workspace.shape != (grad_hy.shape[0], 5 * grad_hy.shape[1]):
             raise NotImplementedError("Maxwell GRU cell backward needs a (rows, 5 * hidden) workspace")
@@ -2286,7 +2335,8 @@ def install() -> None:
     _library.impl("sum.dim_IntList", _sum)
     _library.impl("mean.dim", _mean)
     _library.impl("clamp_min", _cpu_fallback(torch.ops.aten.clamp_min.default, "clamp_min"))
-    _library.impl("cat", _cpu_fallback(torch.ops.aten.cat.default, "cat"))
+    _library.impl("cat", _cat)
+    _library.impl("pow.Tensor_Scalar", _pow_scalar)
     _library.impl("relu", _relu)
     torch.backends.mha.set_fastpath_enabled(False)
     # cuDNN in the CUDA 13 wheels has no Maxwell support and fails with CUDNN_STATUS_EXECUTION_FAILED_CUDART;

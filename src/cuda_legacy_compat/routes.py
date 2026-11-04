@@ -56,6 +56,12 @@ NATIVE = (
       "_thnn_fused_gru_cell_backward"), "Recurrent cells",
      "The fused LSTM and GRU cells nn.LSTM and nn.GRU run each timestep, and their gradients: float32, contiguous "
      "2-D gates, with or without biases. Other cases run on the CPU."),
+    (("cat",), "Concatenation",
+     "Any dtype of 1, 2, 4 or 8 bytes, inputs of one dtype, device and rank (legacy empty inputs skipped): each "
+     "input copied into its slice of the output. Other cases use the CPU fallback."),
+    (("pow.Tensor_Scalar",), "Power by a number",
+     "float32 squared (as x * x, which is what the CPU computes) and to the power 1 (its gradient's term). Other "
+     "exponents use the CPU fallback."),
     (("clone", "contiguous", "select_backward"), "Copies of strided views",
      "Any dtype of 1, 2, 4 or 8 bytes, up to six dimensions (transposes, slices, broadcasts). Training through "
      "contiguous uses PyTorch's decomposition onto clone; the gradient of x[:, i] and unbind (float32) too."),
@@ -72,7 +78,7 @@ NATIVE = (
 # (aten registration, operation)
 CPU_FALLBACK = (
     ("scaled_dot_product_attention", "scaled dot-product attention"),
-    ("clamp_min", "clamp_min"), ("cat", "concatenation"),
+    ("clamp_min", "clamp_min"),
 )
 
 NOTES = (

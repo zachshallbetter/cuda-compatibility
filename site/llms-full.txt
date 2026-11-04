@@ -22,7 +22,7 @@ GM200 reference card, compute capability 5.2. The only hardware tested so far. E
 
 - **Reference cards** 3
 
-- **Native operators** 46
+- **Native operators** 48
 
 - **Claims of universal support** 0
 
@@ -517,7 +517,7 @@ By Zach Shallbetter · Sheet 04 of 10 · Updated 4 November 2026
 ## Native GPU implementations
 sm_52 kernel
 
-These 21 registered cases cover 46 native operators: addition (in place too), the foreach and fused steps of Adam, AdamW and SGD, subtraction, multiplication and division with broadcasting, range creation, embedding, layer normalization (inference and training), negative log likelihood, copies of strided views, matrix multiplication with and without bias, batched matrix multiplication, ReLU, GELU, softmax, safe softmax and log-softmax, sum and mean over dimensions, fill and max pooling, with the gradients of each. They run through LLVM-generated PTX targeting the real Maxwell device and the CUDA Driver API bridge; other dtypes and layouts take the CPU fallback below.
+These 23 registered cases cover 48 native operators: addition (in place too), the foreach and fused steps of Adam, AdamW and SGD, subtraction, multiplication and division with broadcasting, range creation, embedding, layer normalization (inference and training), negative log likelihood, copies of strided views, matrix multiplication with and without bias, batched matrix multiplication, ReLU, GELU, softmax, safe softmax and log-softmax, sum and mean over dimensions, fill and max pooling, with the gradients of each. They run through LLVM-generated PTX targeting the real Maxwell device and the CUDA Driver API bridge; other dtypes and layouts take the CPU fallback below.
 
 | No. | Operation | Supported case |
 | --- | --- | --- |
@@ -542,17 +542,18 @@ These 21 registered cases cover 46 native operators: addition (in place too), th
 | 19 | Optimizer steps | The default foreach updates of Adam, AdamW and momentum or weight-decay SGD over contiguous float32 parameters on one device, and Adam or AdamW with fused=True in one launch per parameter. Other tensors (float16, another device) form their own group, which runs on the CPU; amsgrad, RMSprop and Adagrad’s other steps use the CPU route. |
 | 20 | Max pooling | 2-D float32, a contiguous (C, H, W) or (N, C, H, W) input, any kernel, stride, padding, dilation and ceil mode: values and indices as the CPU computes them, NaN included, and the gradient (#184). |
 | 21 | Recurrent cells | The fused LSTM and GRU cells that nn.LSTM and nn.GRU run each timestep, and their gradients: float32, contiguous 2-D gates, with or without biases (#243). Other cases run on the CPU. |
+| 22 | Concatenation | Any dtype of 1, 2, 4 or 8 bytes, inputs of one dtype, device and rank: each input copied into its slice of the output, so nn.LSTM stacks its timesteps on the GPU (#243). Other cases use the CPU fallback. |
+| 23 | Power by a number | float32 squared (as x * x, which is what the CPU computes) and to the power 1, its gradient’s term. Other exponents use the CPU fallback. |
 
 Autograd runs above these kernels: training reaches them through PyTorch’s own backward formulas, and layer_norm, scaled_dot_product_attention and contiguous decompose first. Unsupported backward operators still fail explicitly.
 
 ## Registered CPU fallback operations
 Bounded autograd
 
-These 3 registered fallback routes, plus the CPU path that addition takes outside its native limits, use PyTorch’s CPU implementation and copy results back to the original CUDA device:
+These 2 registered fallback routes, plus the CPU path that addition takes outside its native limits, use PyTorch’s CPU implementation and copy results back to the original CUDA device:
 
 - scaled_dot_product_attention (training decomposes it into native matrix multiplication and softmax)
 - clamp_min
-- cat (concatenation)
 
 Limits
 
