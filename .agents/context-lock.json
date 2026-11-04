@@ -18,14 +18,14 @@
     "repositories": [
       {
         "path": ".",
-        "commit": "a73b4b82edeedd80ca71e2be16fd471723c4f1a7",
+        "commit": "097d348ef98fc86793ad72e7ccb01ba77bf4c4e1",
         "branch": "feat/fallback-in-pieces",
-        "dirty": true,
+        "dirty": false,
         "remote": "https://github.com/zachshallbetter/cuda-compatibility.git"
       }
     ]
   },
-  "aggregateSourceDigest": "a1473eee965daab7c1d50d8360083b6b02b0500e8ba48a51db3cd279364c83db",
+  "aggregateSourceDigest": "e83ce88207a2fe7ec9b8b96f803774f667bcd76ed79dd14c5d20ce8bf46c7413",
   "sources": [
     {
       "path": ".agents/acp/README.md",
@@ -975,7 +975,7 @@
     {
       "path": "pyproject.toml",
       "bytes": 747,
-      "sha256": "72d4b2470de12875a2aaa71327eb3d629a2f7c751b284d8cb826c0c1900c1d06"
+      "sha256": "b1fa26853e7394d5f26977185851f179d45d310756c29f8b51a42153769427f6"
     },
     {
       "path": "schemas/vendor/dpp-0.3.0/SOURCE.json",
@@ -1225,7 +1225,7 @@
     {
       "path": "src/cuda_legacy_compat/__init__.py",
       "bytes": 91,
-      "sha256": "8dc081235ecb45248b3acec94f8c00b9b35db523bd204a4e9d17b61710e3fd74"
+      "sha256": "df0640575d92ddb4f8320a1d46da2a854b6f4d837bb6e417e5e8344b30a02798"
     },
     {
       "path": "src/cuda_legacy_compat/cli.py",
