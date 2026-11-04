@@ -194,7 +194,7 @@ do_install() {
     fi
 
     say "Installing into $py"
-    step "$py" -m pip install --disable-pip-version-check --no-input --quiet --upgrade "$archive" ||
+    step "$py" -m pip install --no-input --quiet --upgrade "$archive" ||
         stop "pip could not install $PACKAGE into $py." "pip's message is above. Nothing else was changed."
 
     bin=$(scripts_dir "$py")/cuda-legacy
@@ -242,12 +242,17 @@ do_uninstall() {
         step "$bin" setup --remove || warn "setup --remove failed; continuing with the package."
     fi
     say "Uninstalling $PACKAGE"
-    step "$py" -m pip uninstall --disable-pip-version-check --yes --quiet "$PACKAGE"
+    step "$py" -m pip uninstall --yes --quiet "$PACKAGE"
     say "Removed. Drivers, the system CUDA install and PyTorch were not touched."
 }
 
 main() {
     set -eu
+    # pip's build environment is a child process, so these reach it where flags would not:
+    # the install leaves no cache or version-check file behind.
+    PIP_NO_CACHE_DIR=1
+    PIP_DISABLE_PIP_VERSION_CHECK=1
+    export PIP_NO_CACHE_DIR PIP_DISABLE_PIP_VERSION_CHECK
     PYTHON=
     YES=0
     DRY_RUN=0
