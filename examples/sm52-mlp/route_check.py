@@ -40,7 +40,8 @@ def _environment(device: torch.device) -> dict:
     }
 
 
-def _case(name: str, gpu: torch.Tensor, cpu: torch.Tensor, route: str, bound: torch.Tensor | None = None) -> dict:
+def _case(name: str, gpu: torch.Tensor, cpu: torch.Tensor, route: str, bound: torch.Tensor | None = None,
+          criterion: str = "float32 dot-product bound 2*n*u*(|A|@|B|)") -> dict:
     """Compare one GPU result with the CPU result of the same operation on the same inputs.
 
     With no bound the results must be identical. A bound is an elementwise absolute error limit.
@@ -51,7 +52,7 @@ def _case(name: str, gpu: torch.Tensor, cpu: torch.Tensor, route: str, bound: to
         "case": name,
         "route": route,
         "shape": list(error.shape),
-        "criterion": "identical" if bound is None else "float32 dot-product bound 2*n*u*(|A|@|B|)",
+        "criterion": "identical" if bound is None else criterion,
         "matches_cpu": bool((error <= limit).all()),
         "max_abs_error": float(error.max()) if error.numel() else 0.0,
     }
@@ -84,14 +85,18 @@ def adapted(device: torch.device) -> list[dict]:
     case, output = _mm_case("mm 8x32 @ 32x8", activated, w2)
     cases.append(case)
     probabilities = torch.softmax(output, dim=1)
-    cases.append(_case("softmax 8x8 (CPU fallback)", probabilities, torch.softmax(output.cpu(), dim=1), _route()))
+    reference = torch.softmax(output.cpu(), dim=1)
+    # Standard float32 bound for softmax over n entries, (n + 2) * u relative; fixed before measurement.
+    softmax_bound = (reference.shape[1] + 2) * UNIT_ROUNDOFF * reference.abs()
+    cases.append(_case("softmax 8x8", probabilities, reference, _route(), softmax_bound,
+                       "float32 softmax bound (n+2)*u*|softmax|"))
 
-    # Past the native kernel's 256-dimension limit, matrix multiplication uses the CPU fallback.
-    case, _ = _mm_case("mm 1x257 @ 257x1 (CPU fallback)", torch.ones(1, 257).to(device), torch.ones(257, 1).to(device))
+    # A shape past the old 256-dimension limit of the native kernel.
+    case, _ = _mm_case("mm 1x257 @ 257x1", torch.ones(1, 257).to(device), torch.ones(257, 1).to(device))
     cases.append(case)
-    # Constructors that fill memory on the GPU have no Maxwell image; the adapter builds them on the CPU and copies.
+    # A constructor that fills memory on the GPU.
     ones = torch.ones(2, 2, device=device)
-    cases.append(_case("torch.ones on the GPU (CPU fallback)", ones, torch.ones(2, 2), _route()))
+    cases.append(_case("torch.ones on the GPU", ones, torch.ones(2, 2), _route()))
     return cases
 
 

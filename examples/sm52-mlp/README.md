@@ -9,12 +9,12 @@ This example takes one supported workload from the [claim register](../../docs/D
 | Operation | Expected route | Comparison with CPU |
 |---|---|---|
 | `mm` 8×16 @ 16×32 | `llvm-sm52-mm-f32` (native Maxwell kernel) | Within the float32 dot-product bound `2·n·u·(|A|@|B|)`, `u = 2⁻²⁴` |
-| `add` bias 8×32 | `llvm-sm52-f32-add` (native) | Identical |
+| `add` bias 8×32 | `llvm-sm52-binary-f32` (native) | Identical |
 | `relu` 8×32 | `llvm-sm52-relu-f32` (native) | Identical |
 | `mm` 8×32 @ 32×8 | `llvm-sm52-mm-f32` (native) | Within the same bound |
-| `softmax` 8×8 | `cpu-fallback-softmax` (copied to the CPU, capped at 64 MiB) | Identical |
-| `mm` 1×257 @ 257×1 | `cpu-fallback-mm` (past the native 256-dimension limit, copied to the CPU) | Within the same bound |
-| `torch.ones(..., device="cuda")` | `cpu-fallback-aten::ones` (built on the CPU and copied, capped at 64 MiB) | Identical |
+| `softmax` 8×8 | `llvm-sm52-softmax-f32` (native) | Within the float32 softmax bound `(n+2)·u·|softmax|` |
+| `mm` 1×257 @ 257×1 | `llvm-sm52-mm-f32` (native tiled kernel; past the old 256-dimension limit) | Within the same bound |
+| `torch.ones(..., device="cuda")` | `llvm-sm52-fill-f32` (native) | Identical |
 
 The matmul bound is the standard forward error bound for an `n`-term float32 dot product, doubled because the CPU reference is also rounded. It was set before the passing run and not fitted to the data. An earlier run compared the whole chained network with fixed `rtol=1e-5, atol=1e-6`; one element of the second matmul differed by 7.63×10⁻⁶ and failed. That is a float32 summation-order difference, kept as a negative result in `.agents/records/negative-results.jsonl`.
 

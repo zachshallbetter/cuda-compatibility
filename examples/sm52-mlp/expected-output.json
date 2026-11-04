@@ -22,7 +22,7 @@
     },
     {
       "case": "add bias 8x32",
-      "route": "llvm-sm52-f32-add",
+      "route": "llvm-sm52-binary-f32",
       "shape": [
         8,
         32
@@ -54,19 +54,19 @@
       "max_abs_error": 7.62939453125e-06
     },
     {
-      "case": "softmax 8x8 (CPU fallback)",
-      "route": "cpu-fallback-softmax",
+      "case": "softmax 8x8",
+      "route": "llvm-sm52-softmax-f32",
       "shape": [
         8,
         8
       ],
-      "criterion": "identical",
+      "criterion": "float32 softmax bound (n+2)*u*|softmax|",
       "matches_cpu": true,
-      "max_abs_error": 0.0
+      "max_abs_error": 2.9802322387695312e-08
     },
     {
-      "case": "mm 1x257 @ 257x1 (CPU fallback)",
-      "route": "cpu-fallback-mm",
+      "case": "mm 1x257 @ 257x1",
+      "route": "llvm-sm52-mm-f32",
       "shape": [
         1,
         1
@@ -76,8 +76,8 @@
       "max_abs_error": 0.0
     },
     {
-      "case": "torch.ones on the GPU (CPU fallback)",
-      "route": "cpu-fallback-aten::ones",
+      "case": "torch.ones on the GPU",
+      "route": "llvm-sm52-fill-f32",
       "shape": [
         2,
         2

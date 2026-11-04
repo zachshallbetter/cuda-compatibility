@@ -6,7 +6,7 @@
   "selectedPaths": [],
   "sourceSelection": {
     "includedCount": 278,
-    "includedBytes": 2815483,
+    "includedBytes": 2815652,
     "excludedCounts": {
       "extension": 65,
       "generated-or-transient-file": 2
@@ -18,14 +18,14 @@
     "repositories": [
       {
         "path": ".",
-        "commit": "5a309577a1a4824063dc62368101ea0f2be3a192",
-        "branch": "feat/native-elementwise",
+        "commit": "684bc05d95a987f2b04ca6bf00e17bfed1597c50",
+        "branch": "fix/example-native-routes",
         "dirty": true,
         "remote": "https://github.com/zachshallbetter/cuda-compatibility.git"
       }
     ]
   },
-  "aggregateSourceDigest": "a264f03419a61aedc5b617b103d74f48ba7a27680404e9f2eefc7563c24ec385",
+  "aggregateSourceDigest": "a1105e1216fe061eb2709076c67f71f4a435ffdf27097ce4fbe5d9d6684933d7",
   "sources": [
     {
       "path": ".agents/acp/README.md",
@@ -889,18 +889,18 @@
     },
     {
       "path": "examples/sm52-mlp/README.md",
-      "bytes": 5037,
-      "sha256": "a2ced7f873dc16ddb2956557c4dcecae7223d8821c85104c5814b4797eb0f0e2"
+      "bytes": 5013,
+      "sha256": "01661195c701b87587bd9b7c4b7908c7ac5893c56a2d941459bd78f6a596cc9e"
     },
     {
       "path": "examples/sm52-mlp/expected-output.json",
-      "bytes": 1970,
-      "sha256": "b489414140fb85f111432e9e3b8c930584f9ce733d5e11eeb479299a026201a9"
+      "bytes": 1974,
+      "sha256": "e8937f3b832c8551201ea27ef28d3a76c4ba863ee98b501ea3e6e0c8e9b419e5"
     },
     {
       "path": "examples/sm52-mlp/route_check.py",
-      "bytes": 5167,
-      "sha256": "74a0a5fe1199864a7a3eed6274a7da35f000e7126b8970dced4bcccd1e9128c8"
+      "bytes": 5356,
+      "sha256": "ef87beed8df42cc9dc9566ab44f2222d63787fea503ae68560ae407287d8927d"
     },
     {
       "path": "experiments/llvm-nvptx/run_vector_add.sh",
