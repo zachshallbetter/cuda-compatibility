@@ -50,9 +50,8 @@ class LauncherPreflightTests(unittest.TestCase):
             artifacts = (root / "a.ptx", root / "bridge.so", root / "facade.so")
             artifacts[0].write_text("ptx")
             with patch.object(launch_module, "build_adapter", return_value=artifacts), patch.object(
-                launch_module.subprocess, "run"
+                launch_module, "_run_forwarding_signals", return_value=0
             ) as run:
-                run.return_value.returncode = 0
                 launch_module.launch(
                     script, ["--x"], llvm_root=root / "llvm", cuda_root=root / "cuda",
                     python=sys.executable,
@@ -74,8 +73,7 @@ class LauncherPreflightTests(unittest.TestCase):
             ]
             for kwargs, args, expected in cases:
                 with self.subTest(kwargs=kwargs), patch.object(launch_module, "build_adapter", return_value=artifacts), \
-                        patch.object(launch_module.subprocess, "run") as run:
-                    run.return_value.returncode = 0
+                        patch.object(launch_module, "_run_forwarding_signals", return_value=0) as run:
                     script_arg = kwargs.pop("script")
                     launch_module.launch(script_arg, args, llvm_root=root / "llvm", cuda_root=root / "cuda",
                                          python=sys.executable, **kwargs)

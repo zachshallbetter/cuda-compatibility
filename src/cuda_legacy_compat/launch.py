@@ -6,6 +6,7 @@ import os
 import platform
 import re
 import shutil
+import signal
 import subprocess
 import sys
 import tempfile
@@ -149,8 +150,24 @@ def launch(
         env["LD_PRELOAD"] = ":".join(filter(None, [str(facade), env.get("LD_PRELOAD", "")]))
         env["PYTHONPATH"] = ":".join(filter(None, [str(_RESOURCE_DIR), env.get("PYTHONPATH", "")]))
         try:
-            return subprocess.run(
-                [interpreter, *program], env=env, check=False
-            ).returncode
+            return _run_forwarding_signals([interpreter, *program], env)
         except OSError as exc:
             raise LaunchError(f"could not start Python: {exc}") from exc
+
+
+def _run_forwarding_signals(argv: list[str], env: Mapping[str, str]) -> int:
+    """Run the program and stay out of its way: Ctrl-C (and Jupyter's interrupt) reach it from the process group,
+    so the launcher ignores its own copy; SIGTERM and SIGHUP sent to the launcher are passed on. A program that
+    dies from signal N returns 128+N, as a shell reports it."""
+    child = subprocess.Popen(argv, env=env)
+    forwarded = (signal.SIGTERM, signal.SIGHUP)
+    previous = {signal.SIGINT: signal.signal(signal.SIGINT, lambda *_: None)}
+    for number in forwarded:
+        previous[number] = signal.signal(number, lambda number, _frame: child.send_signal(number))
+    try:
+        code = child.wait()
+    finally:
+        for number, handler in previous.items():
+            signal.signal(number, handler)
+    return 128 - code if code < 0 else code
+

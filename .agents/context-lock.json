@@ -5,8 +5,8 @@
   "validityBasis": "aggregate-source-digest",
   "selectedPaths": [],
   "sourceSelection": {
-    "includedCount": 284,
-    "includedBytes": 2885493,
+    "includedCount": 285,
+    "includedBytes": 2888751,
     "excludedCounts": {
       "extension": 65,
       "generated-or-transient-file": 2
@@ -18,14 +18,14 @@
     "repositories": [
       {
         "path": ".",
-        "commit": "5a5544a65022f8b17266bd381cc94ee48a00aec2",
-        "branch": "chore/repin-0.2.14",
+        "commit": "e4c663f3a41664f92d1cfebb9723f4180f72f56d",
+        "branch": "fix/run-signals",
         "dirty": true,
         "remote": "https://github.com/zachshallbetter/cuda-compatibility.git"
       }
     ]
   },
-  "aggregateSourceDigest": "7c6aa670483a3d282a9aa1a09b93240815fcaf2bef29476c8f5fdb34e652881e",
+  "aggregateSourceDigest": "424a858c96915a78c9ede0700dbf8cda110f88da67fc153d2fb5712a09f4c3f2",
   "sources": [
     {
       "path": ".agents/acp/README.md",
@@ -1284,8 +1284,8 @@
     },
     {
       "path": "src/cuda_legacy_compat/launch.py",
-      "bytes": 6905,
-      "sha256": "4dcac1c23b94f01358775344a1a3753ce061b8c5b47cfb5b1040a045952a115e"
+      "bytes": 7724,
+      "sha256": "d9158a1307743c8e2e1d38dff6be869e30c79717c2f1f754bad2d89dab384d88"
     },
     {
       "path": "src/cuda_legacy_compat/profiles.py",
@@ -1369,8 +1369,8 @@
     },
     {
       "path": "tests/test_launch.py",
-      "bytes": 4868,
-      "sha256": "f3f91ec7c4ec680fb23cd004ee4963e3d486b8142f196c28fa9a9e51e52e6766"
+      "bytes": 4818,
+      "sha256": "858551b373398ae3cbcd61e93d67a2b387aff95b12f70dcee9cb66575fffb1b4"
     },
     {
       "path": "tests/test_native_fallback.py",
@@ -1401,6 +1401,11 @@
       "path": "tests/test_routes.py",
       "bytes": 3026,
       "sha256": "7cae02ac9147d5343f01eac6487fcfa16c0d4521946cd48843d2d25a1857974f"
+    },
+    {
+      "path": "tests/test_run_signals.py",
+      "bytes": 2489,
+      "sha256": "ba9f922fcd187b5f663febc60bb25d9ebd29e2e8c01ecd4e6572357247aa05f4"
     },
     {
       "path": "tests/test_setup.py",
