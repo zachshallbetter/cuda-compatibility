@@ -397,7 +397,7 @@ def _program_name() -> str:
     invoked = Path(sys.argv[0]).name
     if invoked in {"cuda-legacy-compat", "cuda-legacy"}:
         return invoked
-    return "cuda-legacy-compat"
+    return "cuda-legacy"
 
 
 def _add_location_flags(command: argparse.ArgumentParser) -> None:
@@ -525,8 +525,23 @@ def _build_parser(
     return parser, command_parsers
 
 
+def _first_steps(prog: str) -> str:
+    """What a bare `cuda-legacy` shows: where this machine stands and the one next command."""
+    saved = settings.load()
+    if not saved:
+        state, step = "Not set up yet on this machine.", f"{prog} setup      # finds or fetches what run needs"
+    else:
+        state, step = f"Set up (saved in {settings.config_path()}).", f"{prog} run app.py"
+    return (f"CUDA Compatibility {__version__}: run selected PyTorch CUDA 13 operations on sm_52 GPUs.\n"
+            f"{state}\n\nNext:\n  {step}\n\nMore:\n  {prog} doctor     # check prerequisites\n"
+            f"  {prog} --help     # every command\n  https://cudacompat.com/docs/getting-started.html\n")
+
+
 def main(argv: Sequence[str] | None = None) -> int:
     parser, command_parsers = _build_parser(_program_name())
+    if not (sys.argv[1:] if argv is None else list(argv)):
+        print(_first_steps(_program_name()), end="")
+        return 0
     args = parser.parse_args(argv)
 
     if args.command == "help":

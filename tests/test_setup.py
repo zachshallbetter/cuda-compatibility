@@ -240,5 +240,18 @@ class SavedSetupTests(IsolatedHome):
         self.assertEqual(launched.call_args.args[1], ["--epochs", "1"])
 
 
+class FirstStepsTests(IsolatedHome):
+    def test_bare_command_points_to_setup_then_run(self) -> None:
+        out = io.StringIO()
+        with redirect_stdout(out):
+            self.assertEqual(cli.main([]), 0)
+        self.assertIn("Not set up yet", out.getvalue())
+        self.assertIn("setup", out.getvalue())
+        settings.save({"llvm_root": "/x"})
+        out = io.StringIO()
+        with redirect_stdout(out):
+            cli.main([])
+        self.assertIn("run app.py", out.getvalue())
+
 if __name__ == "__main__":
     unittest.main()

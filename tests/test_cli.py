@@ -100,7 +100,7 @@ class CliOutputTests(unittest.TestCase):
         with redirect_stdout(output), self.assertRaises(SystemExit) as raised:
             cli.main(["--version"])
         self.assertEqual(raised.exception.code, 0)
-        self.assertEqual(output.getvalue().strip(), f"cuda-legacy-compat {cli.__version__}")
+        self.assertEqual(output.getvalue().strip(), f"cuda-legacy {cli.__version__}")
 
     def test_short_command_uses_its_name_in_version_and_help(self) -> None:
         output = StringIO()

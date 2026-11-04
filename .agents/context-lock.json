@@ -6,7 +6,7 @@
   "selectedPaths": [],
   "sourceSelection": {
     "includedCount": 254,
-    "includedBytes": 2607848,
+    "includedBytes": 2609169,
     "excludedCounts": {
       "extension": 64,
       "generated-or-transient-file": 2
@@ -18,14 +18,14 @@
     "repositories": [
       {
         "path": ".",
-        "commit": "9fe793d3ace45c208d44e9eca431df10e20409a9",
-        "branch": "chore/release-0.2.0",
+        "commit": "6474ed59d36d9634a891c6cf33e4b0e85fec0f40",
+        "branch": "feat/first-run-help",
         "dirty": true,
         "remote": "https://github.com/zachshallbetter/cuda-compatibility.git"
       }
     ]
   },
-  "aggregateSourceDigest": "ae1881165558537f60e73fb385d301d8ab00446bd71f767d4f4a245e14e3c509",
+  "aggregateSourceDigest": "fd56085fb1700b43576e43c4d572457fb690c00a5b5aec01455f1385520d9df9",
   "sources": [
     {
       "path": ".agents/acp/README.md",
@@ -1194,8 +1194,8 @@
     },
     {
       "path": "src/cuda_legacy_compat/cli.py",
-      "bytes": 25189,
-      "sha256": "59f7a79bcd075a681ce627736117c34c7974a054406cd6bbe282ccd06df0de80"
+      "bytes": 26011,
+      "sha256": "4ffaa33c2452c4c8a2a354a3108027b601f99136276540ece3d761dcdcd6269f"
     },
     {
       "path": "src/cuda_legacy_compat/compat/cuda_runtime_version_facade.cpp",
@@ -1279,8 +1279,8 @@
     },
     {
       "path": "tests/test_setup.py",
-      "bytes": 12098,
-      "sha256": "6f7fe856121a2e327ac517f112d9624df3d2f2462d4a661ccf84eb6e8cfb0d50"
+      "bytes": 12597,
+      "sha256": "336f29cd17f852a7fc6b6d41995acf42e925791106b888facc4f7935d16d2368"
     },
     {
       "path": "tests/test_site_checks.py",
