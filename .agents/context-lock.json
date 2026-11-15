@@ -6,7 +6,7 @@
   "selectedPaths": [],
   "sourceSelection": {
     "includedCount": 297,
-    "includedBytes": 3024980,
+    "includedBytes": 3025942,
     "excludedCounts": {
       "extension": 65,
       "generated-or-transient-file": 2
@@ -18,14 +18,14 @@
     "repositories": [
       {
         "path": ".",
-        "commit": "e2c3afd61df21e9026720c0ad138d0b0a747c100",
+        "commit": "785b9246ed67155194ea6efe06ce144e1a44f8ec",
         "branch": "chore/acp-client-0.8.0",
         "dirty": true,
         "remote": "https://github.com/zachshallbetter/cuda-compatibility.git"
       }
     ]
   },
-  "aggregateSourceDigest": "cd47d8c774612d90651ff8562e0591dd16212f3448084aff2fab5eb1b33fcff1",
+  "aggregateSourceDigest": "80c57e46e95a2822efccdadc39338619ecab9e5c93c6040ee2e32e78e13363c6",
   "sources": [
     {
       "path": ".agents/acp/README.md",
@@ -119,8 +119,8 @@
     },
     {
       "path": ".agents/bootstrap/docs/EXECUTION_PIPELINE.md",
-      "bytes": 2107,
-      "sha256": "11a177eb3da816e9e4aca579cbf195f92d7f5b8c7ac9d679b4c9c9153e8e8310"
+      "bytes": 2584,
+      "sha256": "cc903c80dcf826775adbf9bbe03a974614e4eb27ef9de20f6676fb3454f648a1"
     },
     {
       "path": ".agents/bootstrap/docs/EXECUTION_PROVIDER_CONTRACT.md",
@@ -149,8 +149,8 @@
     },
     {
       "path": ".agents/bootstrap/docs/MULTI_AGENT_COORDINATION.md",
-      "bytes": 17507,
-      "sha256": "838a64b417664ebad5ab3c78855aeb1adc6882d553c38afacdcaa0dbb9d8493d"
+      "bytes": 17992,
+      "sha256": "070b096230c622cc8764ffaec5ac0a17aac83f9da4d7d1ae299bf5a97e1f61fa"
     },
     {
       "path": ".agents/bootstrap/docs/NEGATIVE_KNOWLEDGE.md",
