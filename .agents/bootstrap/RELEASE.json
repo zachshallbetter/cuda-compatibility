@@ -1,10 +1,10 @@
 {
   "format": 1,
   "bootstrap": "formal-project-bootstrap",
-  "version": "0.8.0",
+  "version": "0.8.1",
   "files": {
     ".agents/acp/README.md": "fbd6672e1e93943aa52025f0ea929bf5d7ebb0c4c5d2a75b6822777e0a263c85",
-    ".agents/acp/VERSION": "a66780da23103beaf12432b418508966b31a2a3a787f9468a5b6cdaa8667c1ef",
+    ".agents/acp/VERSION": "aaf6721dc37c40b4233accfc081f25776ff3bd1d2a4b9d5cea760d1c2cf86665",
     ".agents/acp/acp": "dd330c1b8c6573b7ef070c54f1da26bf42e5f99efb4c2d49c74c52972050c663",
     ".agents/acp/env.example": "4109e1c76fa0c83345a3944361e18155d0283e3e98399e4cf6f1aee56c13783c",
     ".agents/acp/lib/acp-check.py": "d6dd6d35ba2f89a7ec7dc24a887e33836e2da22e0337dace8a8b67a74eeb42f8",
@@ -16,7 +16,7 @@
     ".agents/acp/schemas/acp-decision.schema.json": "ae69f7474c6f4cf0d3b9c5f15b19387e88dc9963750118a132f769806d1cdca7",
     ".agents/acp/schemas/acp-endpoint-registry.schema.json": "a391fd2748e5e41baa78dfc5f8f0bbcd6114989af631cad4edb3b7872ba5f009",
     ".agents/bootstrap/NEW_AGENT_PROMPT.md": "3cd69ed7287963b09043046a4b8c25401852b7b5f3b09dbc07379e1593b7887f",
-    ".agents/bootstrap/VERSION": "a66780da23103beaf12432b418508966b31a2a3a787f9468a5b6cdaa8667c1ef",
+    ".agents/bootstrap/VERSION": "aaf6721dc37c40b4233accfc081f25776ff3bd1d2a4b9d5cea760d1c2cf86665",
     ".agents/bootstrap/bootstrap": "df368e109be3ae099a5327a3456e672d818ef7dcc20f764190b901a58b64e46d",
     ".agents/bootstrap/docs/AGENT_CAPABILITIES.md": "9dd7e5efd745a85880c8b428ab41d25c994c033e7f5d1376a6defd343cbfdb68",
     ".agents/bootstrap/docs/ALIGNMENT.md": "9e241f47e102b9feeb3b8e6bff3c95a146d69384f196eefc2327b363a96bf7a0",
