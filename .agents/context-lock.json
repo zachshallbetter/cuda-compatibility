@@ -1,12 +1,12 @@
 {
   "format": "2",
-  "generatorVersion": "0.7.4",
+  "generatorVersion": "0.8.1",
   "root": ".",
   "validityBasis": "aggregate-source-digest",
   "selectedPaths": [],
   "sourceSelection": {
-    "includedCount": 294,
-    "includedBytes": 2954281,
+    "includedCount": 297,
+    "includedBytes": 3025942,
     "excludedCounts": {
       "extension": 65,
       "generated-or-transient-file": 2
@@ -18,39 +18,39 @@
     "repositories": [
       {
         "path": ".",
-        "commit": "eba8137cfea05346b3d40fecc75ea05588c67901",
-        "branch": "docs/handoff-2026-11-08",
+        "commit": "3c432e773e0868f8e0519fced374a4a9707d0f66",
+        "branch": "chore/acp-client-0.8.0",
         "dirty": true,
         "remote": "https://github.com/zachshallbetter/cuda-compatibility.git"
       }
     ]
   },
-  "aggregateSourceDigest": "5a67a7ebea8e3933e17f27d7c75cb5c7a61c7be529bf25af2a2e163d62a3c73f",
+  "aggregateSourceDigest": "a4fd8ed653fae16ce4bc34c73657e2834eaeeec181104fb58e7f2a92a872baac",
   "sources": [
     {
       "path": ".agents/acp/README.md",
-      "bytes": 33024,
-      "sha256": "2278c556b501c6b75c0b2ffcb51618af44fdc777b2c44dd70910d872a0384432"
+      "bytes": 39271,
+      "sha256": "fbd6672e1e93943aa52025f0ea929bf5d7ebb0c4c5d2a75b6822777e0a263c85"
     },
     {
       "path": ".agents/acp/lib/acp-check.py",
-      "bytes": 20674,
-      "sha256": "07fc5d88fd208d5db5a4a8457192806ce15fdf3d75ad0895c57ed0f4145a9cf1"
+      "bytes": 20745,
+      "sha256": "d6dd6d35ba2f89a7ec7dc24a887e33836e2da22e0337dace8a8b67a74eeb42f8"
     },
     {
       "path": ".agents/acp/lib/acp.py",
-      "bytes": 63515,
-      "sha256": "3ec112bc12ac682e75f8b918da70622a80bf30ac95b86ebf97e9a00c157aca76"
+      "bytes": 70026,
+      "sha256": "24932a2cb246bd99f9664a70976cae2554e2da3559fc3650660ada7d40c99af7"
     },
     {
       "path": ".agents/acp/lib/acp_commands.py",
-      "bytes": 37660,
-      "sha256": "b203a79cacddcac4caac948bcc9950a8323585e0356f15e748c87b84f4499739"
+      "bytes": 58331,
+      "sha256": "e2867bfe7d3fdf840d3980514e810e1d8c47bb10c810d5e6241bf8847894fdad"
     },
     {
       "path": ".agents/acp/lib/acp_endpoint_registry.py",
-      "bytes": 12450,
-      "sha256": "bf1dcd4727ed4b9863c838df67b41d4909a7ceaa46378e4606cdd98f3e1bbb01"
+      "bytes": 12718,
+      "sha256": "a368e3906d2062d9088fa59211c08949c2c201cec9d766428b97d43545e36725"
     },
     {
       "path": ".agents/acp/lib/acp_override.py",
@@ -79,8 +79,8 @@
     },
     {
       "path": ".agents/bootstrap/RELEASE.json",
-      "bytes": 15368,
-      "sha256": "da848b8a66ad41b7af9403bda9b561e70ff8658ff5253884ab4463f99e6b7787"
+      "bytes": 15751,
+      "sha256": "e7d2ac73ddf3dc4505e2dbe19213115839c08deee00d5327bc8f1be2927d7d79"
     },
     {
       "path": ".agents/bootstrap/docs/AGENT_CAPABILITIES.md",
@@ -119,8 +119,8 @@
     },
     {
       "path": ".agents/bootstrap/docs/EXECUTION_PIPELINE.md",
-      "bytes": 2339,
-      "sha256": "9ed67f8df7153f857dcdf6ce21a2e727d6fc0f5e795cb08885d629e1ba0833d9"
+      "bytes": 2584,
+      "sha256": "cc903c80dcf826775adbf9bbe03a974614e4eb27ef9de20f6676fb3454f648a1"
     },
     {
       "path": ".agents/bootstrap/docs/EXECUTION_PROVIDER_CONTRACT.md",
@@ -149,8 +149,8 @@
     },
     {
       "path": ".agents/bootstrap/docs/MULTI_AGENT_COORDINATION.md",
-      "bytes": 2563,
-      "sha256": "ca13be96e86072a2093a694620ec20610f1737ba5d0d4662363dd6740a9c9768"
+      "bytes": 17992,
+      "sha256": "070b096230c622cc8764ffaec5ac0a17aac83f9da4d7d1ae299bf5a97e1f61fa"
     },
     {
       "path": ".agents/bootstrap/docs/NEGATIVE_KNOWLEDGE.md",
@@ -174,8 +174,8 @@
     },
     {
       "path": ".agents/bootstrap/docs/SKILLS_INDEX.md",
-      "bytes": 1049,
-      "sha256": "fff86a343840e9a401ffc2bc6c5ddaed9d9e4cb570efd07af50790b3d70f887c"
+      "bytes": 1132,
+      "sha256": "242261e59c71c9923cfbfc0199a8d5a6c9125ab6a754c5c5a1235d1f2e262662"
     },
     {
       "path": ".agents/bootstrap/docs/UPGRADING.md",
@@ -184,8 +184,8 @@
     },
     {
       "path": ".agents/bootstrap/docs/WORK_GRAPH.md",
-      "bytes": 2864,
-      "sha256": "f702cbdff484c8b5279d145ed7505f744a7f3820d67d0f6f4fce9ee881dd4fbb"
+      "bytes": 3482,
+      "sha256": "93c485ec7b79e1fc249ffc99fddb3534cbc5da60a4ad5c331c20113e064d6f8b"
     },
     {
       "path": ".agents/bootstrap/profiles/commercialization/PROFILE.yaml",
@@ -210,7 +210,7 @@
     {
       "path": ".agents/bootstrap/profiles/eqp/adapter.json",
       "bytes": 1752,
-      "sha256": "4e2e5fd6de327ec04bff9601312b791bbc8801bd4c03769c3d13dc55bd3b8e92"
+      "sha256": "c3c829ee8c89c46418072c38b103541e671650889aa5f5de2816d081042a8432"
     },
     {
       "path": ".agents/bootstrap/profiles/esp-rcp/README.md",
@@ -220,22 +220,22 @@
     {
       "path": ".agents/bootstrap/profiles/esp-rcp/adapter.json",
       "bytes": 1967,
-      "sha256": "59b4c9596771988a3b806a4457d594faa2f5af1db274cf67fb36306768fd0f67"
+      "sha256": "00f0027121958dc7300d72344918850720b0e0c68d10b5b8a85720d7fbd97069"
     },
     {
       "path": ".agents/bootstrap/profiles/icp/adapter.json",
       "bytes": 1804,
-      "sha256": "0a163f83b6ecfd433313d178d4e522bd3230604de5fff2f189f8b22cd7065970"
+      "sha256": "37fac9e1e7943b57737cb0bf45741edbbe6b0a3070aa75e05994f523a30dcd8d"
     },
     {
       "path": ".agents/bootstrap/profiles/iepe/adapter.json",
       "bytes": 1885,
-      "sha256": "7502e58d9695319feeebd0aa20ebf12679e93c923f4c35446362740b3b7d6848"
+      "sha256": "4e68b7843d20921fd402df592f0ae16d47ce1b9197b053662ddbe3c0721757e6"
     },
     {
       "path": ".agents/bootstrap/profiles/ses-sps/adapter.json",
       "bytes": 1766,
-      "sha256": "a2142607a27cb320f49df32da07a8adb10fef53672192aa04dab28685a90ac10"
+      "sha256": "9bb479935cbda57edc485b7edc79bfa2c9c891956740abfd22635133c2351e12"
     },
     {
       "path": ".agents/bootstrap/schemas/agent-message.schema.json",
@@ -296,6 +296,11 @@
       "path": ".agents/bootstrap/scripts/bootstrap_cli.py",
       "bytes": 17197,
       "sha256": "6701b7a30d6f29b22126ce49db4090a70b8cf6c02b2f3193db383721d028d037"
+    },
+    {
+      "path": ".agents/bootstrap/scripts/check-build-budget.py",
+      "bytes": 5479,
+      "sha256": "41f2cea50ef615e0e8f2e683390731ed402cfac3d12b8a495badbf73b6bfd83f"
     },
     {
       "path": ".agents/bootstrap/scripts/check-protocol-integrity.py",
@@ -409,8 +414,8 @@
     },
     {
       "path": ".agents/bootstrap/templates/rules/ci.md",
-      "bytes": 1211,
-      "sha256": "a5c4e8793fb83e578fc6532118b87476dac2f4477cb6e36f2e5e90ebfefd3b5d"
+      "bytes": 3051,
+      "sha256": "20d70156fcd71cdc612503b587d4248d1d481547c1f3732029f08efba0bc1551"
     },
     {
       "path": ".agents/bootstrap/templates/rules/codestyle.md",
@@ -470,7 +475,7 @@
     {
       "path": ".agents/project/installation.json",
       "bytes": 447,
-      "sha256": "2323699e1b4a6be327ac3da333af92dadf10d992953453550b602138c55e77b3"
+      "sha256": "476e857a1e103169183327b5c6e34eb7794cb76f1a73b36c80038c00d3c141fa"
     },
     {
       "path": ".agents/project/intent.md",
@@ -484,8 +489,8 @@
     },
     {
       "path": ".agents/project/rules/ci.md",
-      "bytes": 1211,
-      "sha256": "a5c4e8793fb83e578fc6532118b87476dac2f4477cb6e36f2e5e90ebfefd3b5d"
+      "bytes": 3051,
+      "sha256": "20d70156fcd71cdc612503b587d4248d1d481547c1f3732029f08efba0bc1551"
     },
     {
       "path": ".agents/project/rules/codestyle.md",
@@ -529,8 +534,18 @@
     },
     {
       "path": ".agents/skills/coordinate-workers/SKILL.md",
-      "bytes": 1524,
-      "sha256": "9b59dd9fe8a7fe704dc330a098a4db2eaf180c090f955e4ac1d53957196f5c60"
+      "bytes": 4717,
+      "sha256": "e786ad429f5886e6fbecdae127515b4278c76524aec303b558fa69b64a66450d"
+    },
+    {
+      "path": ".agents/skills/coordinate-workers/references/lanes.md",
+      "bytes": 3878,
+      "sha256": "96d82c07b2d8e95ed16b6c50bce1a38e04d42a763206b414110c7248c3b4f541"
+    },
+    {
+      "path": ".agents/skills/coordinate-workers/scripts/lane-watch.py",
+      "bytes": 4905,
+      "sha256": "c8313c6a4557c56151bb2794631b769b51594dc7218f3629d3a2769313fc6594"
     },
     {
       "path": ".agents/skills/github-projects/SKILL.md",
