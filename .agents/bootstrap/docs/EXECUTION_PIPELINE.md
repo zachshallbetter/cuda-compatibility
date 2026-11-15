@@ -2,23 +2,24 @@
 
 ## Coordinator loop
 
-```mermaid
-flowchart LR
-    A[Preflight] --> B[Reconcile]
-    B --> C[Compute Ready frontier]
-    C --> D[Select and validate]
-    D --> E[Claim and isolate]
-    E --> F[Compile context]
-    F --> G[Execute]
-    G --> H[Candidate]
-    H --> I[Evaluate]
-    I --> J{Qualification required?}
-    J -->|Yes| K[Qualify]
-    J -->|No| L[Apply authorized state]
-    K --> L
-    L --> M[Record]
-    M --> N[Release claim]
-    N --> B
+```text
+PREFLIGHT
+→ RECONCILE
+→ COMPUTE READY FRONTIER
+→ SELECT
+→ VALIDATE
+→ CLAIM
+→ ISOLATE
+→ COMPILE CONTEXT
+→ EXECUTE
+→ CANDIDATE
+→ EVALUATE
+→ QUALIFY WHEN REQUIRED
+→ APPLY AUTHORIZED STATE
+→ RECORD
+→ RELEASE
+→ RECONCILE
+→ NEXT
 ```
 
 ## Local blocker semantics
@@ -44,13 +45,7 @@ Does this invalidate project-wide authority/safety?
 
 Do not turn a local blocker into a conversational project halt.
 
-```mermaid
-flowchart TD
-    Worker[Worker disposition] --> Check{Does blocker invalidate project authority or safety?}
-    Check -->|Yes| Stop[Global stop and human decision]
-    Check -->|No| Recompute[Update work graph and recompute Ready frontier]
-    Recompute --> Continue[Continue unrelated Ready work]
-```
+In a lane setup, a lane reports a blocker in its state file; the coordinator's monitor surfaces it, and the coordinator recomputes the frontier and rebalances. A lane with no Ready work is reported `blocked` or `idle`; it is not a project halt.
 
 ## Retry
 
