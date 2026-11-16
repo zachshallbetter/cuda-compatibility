@@ -1,6 +1,6 @@
 {
   "format": "2",
-  "generatorVersion": "0.8.1",
+  "generatorVersion": "0.8.2",
   "root": ".",
   "validityBasis": "aggregate-source-digest",
   "selectedPaths": [],
@@ -18,14 +18,14 @@
     "repositories": [
       {
         "path": ".",
-        "commit": "3c432e773e0868f8e0519fced374a4a9707d0f66",
-        "branch": "chore/acp-client-0.8.0",
+        "commit": "fc0fc66ee3167aaf91d40fafa3c301520c1838da",
+        "branch": "main",
         "dirty": true,
         "remote": "https://github.com/zachshallbetter/cuda-compatibility.git"
       }
     ]
   },
-  "aggregateSourceDigest": "a4fd8ed653fae16ce4bc34c73657e2834eaeeec181104fb58e7f2a92a872baac",
+  "aggregateSourceDigest": "6fcb2c13cbfbe2847007dac7f412bb2aa71d4e28c1569bd7715d46a00ca3a574",
   "sources": [
     {
       "path": ".agents/acp/README.md",
@@ -80,7 +80,7 @@
     {
       "path": ".agents/bootstrap/RELEASE.json",
       "bytes": 15751,
-      "sha256": "e7d2ac73ddf3dc4505e2dbe19213115839c08deee00d5327bc8f1be2927d7d79"
+      "sha256": "78753ee7ac115fc61dd05b8f722be1b2cd00e1121c03e6cb1af47204fd2049b4"
     },
     {
       "path": ".agents/bootstrap/docs/AGENT_CAPABILITIES.md",
@@ -475,7 +475,7 @@
     {
       "path": ".agents/project/installation.json",
       "bytes": 447,
-      "sha256": "476e857a1e103169183327b5c6e34eb7794cb76f1a73b36c80038c00d3c141fa"
+      "sha256": "9d2fc632096cda9ecb4877d43693abb1ec6ade3eed082262e1b54455e224ca25"
     },
     {
       "path": ".agents/project/intent.md",
