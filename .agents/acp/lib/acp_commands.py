@@ -463,6 +463,15 @@ def print_notes(decision: dict, refused: bool) -> None:
         print(f"  {note}", file=stream)
 
 
+def stage_ref_for(stage: str | None, sha: str) -> str:
+    """Where a protected push publishes its commit first, so ACP can verify it on GitHub.
+
+    By default a ref outside refs/heads/ and refs/tags/: Vercel, Railway and GitHub Actions build
+    branches and tags only, so the temporary copy starts no build. Pushed under refs/heads/acp/ it
+    started a preview build of every protected push. --stage names a branch to keep instead."""
+    return f"refs/heads/{stage}" if stage else f"refs/acp/{sha[:12]}"
+
+
 def authorize_and_push(action: str, ref: str, old: str, new: str, summary: str,
                        priority: tuple[str, ...] = ()) -> bool:
     for step in (["report", "--event", "PROTECTED_EFFECT_PENDING", "--checkpoint", "PRE_PUSH", "--action", action,
@@ -525,7 +534,7 @@ def cmd_push(args, cfg) -> int:
         print(f"{target} is already at {sha[:7]}")
         return 0
     if args.dry_run:
-        steps = ([f"publish {sha[:7]} to refs/heads/{args.stage or 'acp/' + sha[:12]} (git.remote.update)"]
+        steps = ([f"publish {sha[:7]} to {stage_ref_for(args.stage, sha)} (git.remote.update)"]
                  if protected else [])
         steps.append(f"update {target_ref} {old[:7]} → {sha[:7]} "
                      f"({'git.protected_ref.update' if protected else 'git.remote.update'})")
@@ -538,8 +547,8 @@ def cmd_push(args, cfg) -> int:
         return 3
     summary = args.summary or f"acp push {sha[:7]} to {target}"
     if protected:
-        stage = args.stage or f"acp/{sha[:12]}"
-        stage_ref = f"refs/heads/{stage}"
+        stage_ref = stage_ref_for(args.stage, sha)
+        stage = args.stage or stage_ref
         if not authorize_and_push("git.remote.update", stage_ref, remote_sha(stage_ref) or ZERO, sha, summary, priority):
             return 4
         if not authorize_and_push("git.protected_ref.update", target_ref, old, sha, summary, priority):
@@ -1061,7 +1070,8 @@ def register(sub) -> None:
     p = sub.add_parser("push", help="publish a commit through ACP: hook, then one exact approval per step")
     p.add_argument("rev", nargs="?", default="HEAD")
     p.add_argument("--to", help="branch to update (default: the current branch)")
-    p.add_argument("--stage", help="branch to publish the commit on first (default: a temporary acp/<sha>)")
+    p.add_argument("--stage", help="branch to publish the commit on first and keep (default: a temporary "
+                                    "refs/acp/<sha>, which no provider builds)")
     p.add_argument("--protected", action="store_true", help="treat the target as a protected ref")
     p.add_argument("--summary", help="why, recorded with the decisions")
     p.add_argument("--no-verify", action="store_true", help="skip the pre-push hook (it is otherwise run first)")

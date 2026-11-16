@@ -1,12 +1,12 @@
 {
   "format": "2",
-  "generatorVersion": "0.8.2",
+  "generatorVersion": "0.8.3",
   "root": ".",
   "validityBasis": "aggregate-source-digest",
   "selectedPaths": [],
   "sourceSelection": {
     "includedCount": 297,
-    "includedBytes": 3025942,
+    "includedBytes": 3026711,
     "excludedCounts": {
       "extension": 65,
       "generated-or-transient-file": 2
@@ -18,19 +18,19 @@
     "repositories": [
       {
         "path": ".",
-        "commit": "fc0fc66ee3167aaf91d40fafa3c301520c1838da",
+        "commit": "4fbedf646fbc1a22805ba876ccd1fae016c0dcd9",
         "branch": "main",
         "dirty": true,
         "remote": "https://github.com/zachshallbetter/cuda-compatibility.git"
       }
     ]
   },
-  "aggregateSourceDigest": "6fcb2c13cbfbe2847007dac7f412bb2aa71d4e28c1569bd7715d46a00ca3a574",
+  "aggregateSourceDigest": "5e8d9e77eb4729c0aa041e4451ac2fddd3c6d277e8a0dbba277612d3d027db11",
   "sources": [
     {
       "path": ".agents/acp/README.md",
-      "bytes": 39271,
-      "sha256": "fbd6672e1e93943aa52025f0ea929bf5d7ebb0c4c5d2a75b6822777e0a263c85"
+      "bytes": 39461,
+      "sha256": "386f4992bf196cfe6b199a967ea9a0d9748488ac574bc937b97bbfd8d3be5da7"
     },
     {
       "path": ".agents/acp/lib/acp-check.py",
@@ -44,8 +44,8 @@
     },
     {
       "path": ".agents/acp/lib/acp_commands.py",
-      "bytes": 58331,
-      "sha256": "e2867bfe7d3fdf840d3980514e810e1d8c47bb10c810d5e6241bf8847894fdad"
+      "bytes": 58910,
+      "sha256": "05437ae8eb1be746e8e9c39f8c307f31d04281ceb33199e211b45f962bcf179e"
     },
     {
       "path": ".agents/acp/lib/acp_endpoint_registry.py",
@@ -80,7 +80,7 @@
     {
       "path": ".agents/bootstrap/RELEASE.json",
       "bytes": 15751,
-      "sha256": "78753ee7ac115fc61dd05b8f722be1b2cd00e1121c03e6cb1af47204fd2049b4"
+      "sha256": "c1e167ac2d1da942c5105c394d200dc1e043ba91e78fe719067e84de3e1e0aae"
     },
     {
       "path": ".agents/bootstrap/docs/AGENT_CAPABILITIES.md",
@@ -475,7 +475,7 @@
     {
       "path": ".agents/project/installation.json",
       "bytes": 447,
-      "sha256": "9d2fc632096cda9ecb4877d43693abb1ec6ade3eed082262e1b54455e224ca25"
+      "sha256": "289f28359ef2b53bc0e418b48b750b07b4a06093df86460537f9b7a1ba9d1888"
     },
     {
       "path": ".agents/project/intent.md",
