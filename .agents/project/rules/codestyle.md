@@ -1,101 +1,58 @@
 ---
-description: Code style, compiler lint requirements, formatting rules, unsafe code boundaries, and concurrency safety
+description: Code style, lint and formatting requirements, safety boundaries, and concurrency safety
 globs: ["**/*"]
 ---
 
 # Code Style & Engineering Standards
 
-> This repository has no Rust, Swift or WebAssembly code (its code is Python, with C++/CUDA sources under `src/cuda_legacy_compat/compat/`). Apply this document only if such a crate is added; for Python the toolchain is `pyproject.toml` and the gates are `make check` and `make test`.
-
-This document defines the authoritative coding conventions, compiler lint requirements, formatting rules, and safety boundaries across projects operating under the Formal Project Bootstrap doctrine.
+This document defines the coding conventions and safety boundaries for projects operating under the Formal Project Bootstrap doctrine. The principles apply to every stack; the commands are the project's own.
 
 ---
 
-## 1. Toolchain & Workspace Standards
+## 1. Toolchain
 
-- **Rust Edition**: Modern stable Rust (Edition 2021 or 2024 as specified in workspace package).
-- **Monorepo Crate Inheritance**:
-  New crates inherit workspace package properties and lints:
-  ```toml
-  [package]
-  edition.workspace = true
-  license.workspace = true
-  rust-version.workspace = true
+Fill this table when the project's stack is chosen, and keep it current. CI and pre-commit run exactly these commands.
 
-  [lints]
-  workspace = true
-  ```
+| Purpose | Command |
+|---|---|
+| Formatter | none configured (Python, C++, CUDA) |
+| Linter | none configured for Python, C++ and CUDA (`[tool.ruff] line-length = 100` in `pyproject.toml` is a setting only; no gate runs ruff); `shellcheck -s sh site/install.sh` for the installer |
+| Type checker | none configured |
+| Test runner | `make test` (`python3 -m unittest discover -s tests` with `PYTHONPATH=src`) |
+| Project checks | `make check` (bootstrap validation, protocol integrity, `scripts/site_checks.py`, `scripts/build_site_meta.py --check`) |
 
----
-
-## 2. Formatting Standards (`rustfmt.toml`)
-
-All Rust code must adhere to the ecosystem formatting configuration:
-
-```toml
-max_width = 150
-use_small_heuristics = "Max"
-```
-
-- **Imports**: Group imports cleanly: standard library (`std::`), external crates, internal workspace crates, and local module items (`super::`, `self::`).
-- **Trailing Commas**: Prefer trailing commas in multiline struct definitions, enum variants, and function arguments to minimize git diff churn.
+Use the project's own linter, type checker and test runner. Do not add a second toolchain for the same purpose.
 
 ---
 
-## 3. Strict Quality Lints & Never-Crash Policy
+## 2. Formatting
 
-Every crate root (`src/lib.rs` or `src/main.rs`) must explicitly enforce the Never-Crash compiler lints:
+- One formatter, run by the project's tooling and checked in CI; formatting is never argued in review.
+- **Imports**: group them consistently: standard library, third-party, internal modules, local items.
+- **Trailing commas / diff churn**: prefer the formatter setting that keeps diffs to the lines that changed.
 
-```rust
-#![deny(
-    clippy::unwrap_used,
-    clippy::expect_used,
-    clippy::panic,
-    clippy::unimplemented,
-    clippy::todo,
-    clippy::unreachable
-)]
-```
+---
 
-### Compiler Warning Zero-Tolerance
-In CI and pre-commit checks, compiler warnings are treated as build errors:
-```bash
-cargo clippy --workspace --all-targets -- -D warnings
-```
+## 3. Lint Policy
 
-### Test Scope Exceptions
-Unit and integration tests are allowed to use indexing and unwrapping for brevity, configured in `clippy.toml`:
-```toml
-allow-unwrap-in-tests = true
-allow-expect-in-tests = true
-allow-panic-in-tests = true
-allow-indexing-slicing-in-tests = true
-```
+- Warnings are treated as errors in CI and pre-commit.
+- Enable the linter's strictest ruleset the project can pass, and record each suppression with a reason beside it.
+- Production code must not crash on bad input: no unchecked assertions, forced unwraps, uncaught exceptions or `panic`-style calls on paths reachable from foreign input. Tests may use them for brevity.
 
 ---
 
 ## 4. Unsafe Code Boundary
 
-- **Unsafe Code Forbidden**:
-  Across shared libraries and high-level applications, unsafe code is strictly forbidden by default:
-  ```rust
-  #![forbid(unsafe_code)]
-  ```
-- **Isolated Hardware / Low-Level FFI Exceptions**:
-  Where physical hardware interaction, memory mapping, or native platform APIs require unsafe code, it must be:
-  1. Isolated in a dedicated low-level foundation crate.
-  2. Gated behind crate-wide `#![deny(unsafe_code)]` with per-block unsafe scopes.
-  3. Documented with explicit `// SAFETY:` rationale explaining pointer provenance, thread affinity, and lifetime guarantees.
-  4. Unit-tested against edge conditions and boundary violations.
+- Memory-unsafe or type-system-escaping constructs (unsafe blocks, FFI, native addons, `any` casts, unchecked casts) are forbidden by default.
+- Where hardware, memory mapping or native platform APIs require them, they must be:
+  1. Isolated in one low-level module.
+  2. Scoped to the smallest block that needs them.
+  3. Documented with the invariant that makes them sound (pointer provenance, thread affinity, lifetime).
+  4. Tested against edge conditions and boundary violations.
 
 ---
 
 ## 5. Concurrency & Resource Safety
 
-- **Graceful Lock Poisoning Handling**:
-  Never panic when acquiring mutexes or rwlocks. Recover from poisoned locks gracefully:
-  ```rust
-  let mut guard = mutex.lock().unwrap_or_else(PoisonError::into_inner);
-  ```
-- **Bounded Resource Allocations**:
-  Real-time or latency-sensitive paths must never block indefinitely or allocate unbounded memory sized by foreign input.
+- Never crash while acquiring a lock; recover from a poisoned or failed lock where the language has that failure.
+- Real-time or latency-sensitive paths must never block indefinitely or allocate unbounded memory sized by foreign input.
