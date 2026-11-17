@@ -6,7 +6,7 @@
   "selectedPaths": [],
   "sourceSelection": {
     "includedCount": 297,
-    "includedBytes": 3028052,
+    "includedBytes": 3028166,
     "excludedCounts": {
       "extension": 65,
       "generated-or-transient-file": 2
@@ -18,14 +18,14 @@
     "repositories": [
       {
         "path": ".",
-        "commit": "be54fc83a5d3e9c9c39555dfa9d89ec621ffbf98",
-        "branch": "chore/bootstrap-0.8.4",
+        "commit": "871a9b7d760143609522190d524b838079385e55",
+        "branch": "ci/installer-distros-no-schedule",
         "dirty": true,
         "remote": "https://github.com/zachshallbetter/cuda-compatibility.git"
       }
     ]
   },
-  "aggregateSourceDigest": "89add74c6ef936ff2357a68c24f0c0ede58884529549804dc488e2e35fdbc812",
+  "aggregateSourceDigest": "00a011c1877f3b271cdd521471dbe88558465a38e8da61acf1f8f61adbd0f69d",
   "sources": [
     {
       "path": ".agents/acp/README.md",
@@ -704,8 +704,8 @@
     },
     {
       "path": ".github/workflows/installer-distros.yml",
-      "bytes": 2555,
-      "sha256": "44ded4ec4c1ae9c660e811d54eee284dc053012d0ccd26d8c209f485ee0c3275"
+      "bytes": 2669,
+      "sha256": "2069a7cbfa25046a5254b5bc75a51fc2be7b70cf2562870eab26867ffc145258"
     },
     {
       "path": ".github/workflows/verify.yml",
