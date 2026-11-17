@@ -44,7 +44,7 @@ model: sonnet
 2. Read inbox.jsonl; take the top Ready ticket in your lane that nothing blocks; set it In progress.
 3. Work in ~/Projects/_worktrees/<repo>/<name>; one ticket, one branch, one PR, with tests.
 4. Bump the version and changelog last, after rebasing.
-5. Open the PR, set In review, enable auto-merge.
+5. Open the PR and set In review. Enable auto-merge only under a recorded owner delegation; otherwise the coordinator merges after checks.
 6. An open decision blocks you: write or extend its memo and take other Ready work.
 
 ## Always

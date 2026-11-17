@@ -84,19 +84,6 @@ claim release/acquisition order
 
 The receiving worker does not mutate until the old claim is released or the coordinator has transferred it.
 
-```mermaid
-sequenceDiagram
-    participant Old as Current worker
-    participant Coord as Coordinator/provider
-    participant New as Receiving worker
-    Old->>Coord: Preserve candidate and report handoff state
-    Coord->>Coord: Verify and transfer/release claim
-    Coord-->>New: Assign work item, scope, revision, and context digest
-    New->>Coord: Re-read live claim and source state
-    Coord-->>New: Confirm current ownership
-    New->>New: Resume only after confirmation
-```
-
 ## Shared-state writes
 
 Coordinator or provider-native atomic mechanisms serialize:
@@ -238,7 +225,7 @@ These budgets are shared and finite.
 
 ```text
 no polling loops on the service
-enable auto-merge, then move on, instead of waiting for checks
+under a recorded delegation, enable auto-merge and move on; otherwise wait with one background check
 when waiting is unavoidable: at most one check every two minutes, REST over GraphQL
 update the board on status transitions only
 on a rate-limit error: stop service calls for several minutes, work locally, do not retry in a tight loop
@@ -278,7 +265,7 @@ during a run: read each service's usage after the first hour and at every coordi
 
 A commit-message token is a weak trigger: a commit that describes the feature contains the token and builds. Prefer turning branches off in configuration (`"git": {"deploymentEnabled": {"main": true, "**": false}}` in the `vercel.json` of the project's root directory) and building a preview from a `preview/*` branch. A Vercel project builds on push only through its GitHub integration; a local `.vercel` link alone means deploys from the CLI. `check-build-budget.py` reports a project's workflows, Vercel configuration and Rust test layout against these rules.
 
-**Enforcement.** Briefs and rules did not prevent either incident above; agents were told to keep builds local both times. The rules therefore hold at the harness, below every session and subagent on the machine (`harness/` in the bootstrap repository): a push or CLI deploy that would start a hosted build is refused, a heavy build outside the register is refused, and a subagent without a light model, or beyond the per-session cap, is refused. Refusal, not a prompt, because a permission mode that approves prompts approves them unseen. Each guard has one explicit, logged override for the owner's approval. A refusal is reported to the coordinator with the work committed locally; it is never worked around.
+**Enforcement.** Briefs and rules did not prevent either incident above; agents were told to keep builds local both times. The rules therefore hold at the harness, below every session and subagent on the machine (`harness/` in the bootstrap repository): a push or CLI deploy that would start a hosted build is refused, a heavy build outside the register is refused, and a subagent without a light model, or beyond the per-session cap, is refused. Refusal, not a prompt, because a permission mode that approves prompts approves them unseen. ACP decides pushes, deploys, manual CI, production merges and heavy subagents, and its refusal names the remedy; heavy builds always have the register. Only the secrets guard keeps an owner approval, and the hold stops everything. A refusal is reported to the coordinator with the work committed locally; it is never worked around.
 
 ### Peer coordinators and other projects
 

@@ -71,7 +71,7 @@ the path must be that Git worktree's root. It reads that repository's profile
 and ignored `.env.local`, and reports its actual branch and commit:
 
 ```bash
-python3 /path/to/formal-project-bootstrap/scripts/acp.py \
+python3 /path/to/formal-project-bootstrap/.agents/acp/acp \
   --project-root "$PWD" authorize --action production.deploy --environment production
 ```
 
@@ -359,7 +359,7 @@ cd ../my-project
 cat .agents/records/local/acp-policy-proposal.json
 
 # 4. after the policy is active on the bound deployment, in the project
-.agents/acp/acp status --record
+.agents/acp/acp status
 
 # 5. last: confirm the whole setup, and fix each gap it names
 .agents/acp/acp doctor

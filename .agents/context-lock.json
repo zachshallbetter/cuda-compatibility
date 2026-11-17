@@ -1,12 +1,12 @@
 {
   "format": "2",
-  "generatorVersion": "0.8.3",
+  "generatorVersion": "0.8.4",
   "root": ".",
   "validityBasis": "aggregate-source-digest",
   "selectedPaths": [],
   "sourceSelection": {
     "includedCount": 297,
-    "includedBytes": 3028037,
+    "includedBytes": 3028052,
     "excludedCounts": {
       "extension": 65,
       "generated-or-transient-file": 2
@@ -18,19 +18,19 @@
     "repositories": [
       {
         "path": ".",
-        "commit": "172e68fff44d8bca0a8e32f23ec912c38e6355cb",
-        "branch": "docs/review",
+        "commit": "be54fc83a5d3e9c9c39555dfa9d89ec621ffbf98",
+        "branch": "chore/bootstrap-0.8.4",
         "dirty": true,
         "remote": "https://github.com/zachshallbetter/cuda-compatibility.git"
       }
     ]
   },
-  "aggregateSourceDigest": "11b4a1b1898823203c7acf5aaf22bdf34d4e1814a9c5b2dd19cecf624f1eee31",
+  "aggregateSourceDigest": "89add74c6ef936ff2357a68c24f0c0ede58884529549804dc488e2e35fdbc812",
   "sources": [
     {
       "path": ".agents/acp/README.md",
-      "bytes": 39461,
-      "sha256": "386f4992bf196cfe6b199a967ea9a0d9748488ac574bc937b97bbfd8d3be5da7"
+      "bytes": 39453,
+      "sha256": "bde23ca1377741ed6b68454eb52f5ede6c1c8fadb5438b2f32f196e13982b01f"
     },
     {
       "path": ".agents/acp/lib/acp-check.py",
@@ -80,7 +80,7 @@
     {
       "path": ".agents/bootstrap/RELEASE.json",
       "bytes": 15751,
-      "sha256": "c1e167ac2d1da942c5105c394d200dc1e043ba91e78fe719067e84de3e1e0aae"
+      "sha256": "c6c1fbc574c1d9bc774ff039636f546d57dc7d216722ebf72cb5768610ffb717"
     },
     {
       "path": ".agents/bootstrap/docs/AGENT_CAPABILITIES.md",
@@ -149,8 +149,8 @@
     },
     {
       "path": ".agents/bootstrap/docs/MULTI_AGENT_COORDINATION.md",
-      "bytes": 17992,
-      "sha256": "070b096230c622cc8764ffaec5ac0a17aac83f9da4d7d1ae299bf5a97e1f61fa"
+      "bytes": 17705,
+      "sha256": "bb9abedb56ca373f6b205e749ecbc853bde47c4a5b3137a2e8e0a7980911b467"
     },
     {
       "path": ".agents/bootstrap/docs/NEGATIVE_KNOWLEDGE.md",
@@ -475,7 +475,7 @@
     {
       "path": ".agents/project/installation.json",
       "bytes": 447,
-      "sha256": "289f28359ef2b53bc0e418b48b750b07b4a06093df86460537f9b7a1ba9d1888"
+      "sha256": "687ffdf4ae637b1024555b6bb09926203ccbfca91e3fbf2551598f78efb3c3ee"
     },
     {
       "path": ".agents/project/intent.md",
@@ -534,13 +534,13 @@
     },
     {
       "path": ".agents/skills/coordinate-workers/SKILL.md",
-      "bytes": 4717,
-      "sha256": "e786ad429f5886e6fbecdae127515b4278c76524aec303b558fa69b64a66450d"
+      "bytes": 4945,
+      "sha256": "9a72b099994fc1eed1d284551d1e2baf5b29b08cf401d3025a71d947a97757f3"
     },
     {
       "path": ".agents/skills/coordinate-workers/references/lanes.md",
-      "bytes": 3878,
-      "sha256": "96d82c07b2d8e95ed16b6c50bce1a38e04d42a763206b414110c7248c3b4f541"
+      "bytes": 3967,
+      "sha256": "27da0d58e94a148105a460547b7164217d4d0e955a15b03ef504d5434f567b6f"
     },
     {
       "path": ".agents/skills/coordinate-workers/scripts/lane-watch.py",
@@ -554,8 +554,8 @@
     },
     {
       "path": ".agents/skills/github-projects/assets/roles/resolver.md",
-      "bytes": 1524,
-      "sha256": "5997cbcc50c7825f46e686b0f60c3d0d91ef38076c348132d33d9ebadda0c21f"
+      "bytes": 1515,
+      "sha256": "e6e991e21f7b7104fffa169eebc2134401cc5aeae4e4a45f5d51d58d78e017c9"
     },
     {
       "path": ".agents/skills/github-projects/assets/roles/triager.md",
@@ -619,8 +619,8 @@
     },
     {
       "path": ".agents/skills/github-projects/scripts/coordinator.sh",
-      "bytes": 11844,
-      "sha256": "9cb6815731dad06f33156d629456a695e171cae7503bc7ff528968b3b370c3b6"
+      "bytes": 11846,
+      "sha256": "96359e07be61bddb1230ae9b33efa0ec55a48acd6ed6ecc339ea339406c3c571"
     },
     {
       "path": ".agents/skills/github-projects/scripts/lib.sh",
