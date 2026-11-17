@@ -1,12 +1,12 @@
 {
   "format": "2",
-  "generatorVersion": "0.8.4",
+  "generatorVersion": "0.8.5",
   "root": ".",
   "validityBasis": "aggregate-source-digest",
   "selectedPaths": [],
   "sourceSelection": {
     "includedCount": 297,
-    "includedBytes": 3028166,
+    "includedBytes": 3033285,
     "excludedCounts": {
       "extension": 65,
       "generated-or-transient-file": 2
@@ -18,19 +18,19 @@
     "repositories": [
       {
         "path": ".",
-        "commit": "871a9b7d760143609522190d524b838079385e55",
-        "branch": "ci/installer-distros-no-schedule",
+        "commit": "c06127f8217233023d57f11d67db034307900fc4",
+        "branch": "chore/bootstrap-0.8.5",
         "dirty": true,
         "remote": "https://github.com/zachshallbetter/cuda-compatibility.git"
       }
     ]
   },
-  "aggregateSourceDigest": "00a011c1877f3b271cdd521471dbe88558465a38e8da61acf1f8f61adbd0f69d",
+  "aggregateSourceDigest": "367b75ad6450fe2b544ca932a417c1131dee6f1a633112ec5b26e755c4fb5c22",
   "sources": [
     {
       "path": ".agents/acp/README.md",
-      "bytes": 39453,
-      "sha256": "bde23ca1377741ed6b68454eb52f5ede6c1c8fadb5438b2f32f196e13982b01f"
+      "bytes": 40446,
+      "sha256": "b8486063690f8772e323b5e1d02c1a065343fb24b75537c964d4ac18ee5f0b9e"
     },
     {
       "path": ".agents/acp/lib/acp-check.py",
@@ -39,13 +39,13 @@
     },
     {
       "path": ".agents/acp/lib/acp.py",
-      "bytes": 70026,
-      "sha256": "24932a2cb246bd99f9664a70976cae2554e2da3559fc3650660ada7d40c99af7"
+      "bytes": 70474,
+      "sha256": "c646d7eff1f235a97252c6df8042a6bd56aae918ca4c2001eefc7d71af1f9ead"
     },
     {
       "path": ".agents/acp/lib/acp_commands.py",
-      "bytes": 58910,
-      "sha256": "05437ae8eb1be746e8e9c39f8c307f31d04281ceb33199e211b45f962bcf179e"
+      "bytes": 63716,
+      "sha256": "73699da6a5b943f73dbe7d578de471f6606cc1e56ae69e3726f4a2c549ff1140"
     },
     {
       "path": ".agents/acp/lib/acp_endpoint_registry.py",
@@ -80,7 +80,7 @@
     {
       "path": ".agents/bootstrap/RELEASE.json",
       "bytes": 15751,
-      "sha256": "c6c1fbc574c1d9bc774ff039636f546d57dc7d216722ebf72cb5768610ffb717"
+      "sha256": "d04f2d01a978e4083d54603afd46d700324952d6d7837c217797bd016106b268"
     },
     {
       "path": ".agents/bootstrap/docs/AGENT_CAPABILITIES.md",
@@ -154,8 +154,8 @@
     },
     {
       "path": ".agents/bootstrap/docs/NEGATIVE_KNOWLEDGE.md",
-      "bytes": 2195,
-      "sha256": "2576b80f7bb0bacb21646722e4a9cb03885eedb7a57cc95b63dd65cc7479b469"
+      "bytes": 2253,
+      "sha256": "80db872620c3d5ce46871e25f4e2c54de3e995b61ec8712d577d3ff14d4943b9"
     },
     {
       "path": ".agents/bootstrap/docs/PROTOCOL_ADAPTERS.md",
@@ -414,13 +414,13 @@
     },
     {
       "path": ".agents/bootstrap/templates/rules/ci.md",
-      "bytes": 3051,
-      "sha256": "20d70156fcd71cdc612503b587d4248d1d481547c1f3732029f08efba0bc1551"
+      "bytes": 3319,
+      "sha256": "6f619eaef9045a1186d613bc5266b7d3d57fc92f10a23cd1fccc79a209aab5e2"
     },
     {
       "path": ".agents/bootstrap/templates/rules/codestyle.md",
-      "bytes": 3139,
-      "sha256": "62923830e444431d07e29e990168c4dba13026ed0ef6c530ed783daf500d720e"
+      "bytes": 2414,
+      "sha256": "7f2f363641a05ea6542145352b9f565be08a86a36373a49b5aa52ead0913c237"
     },
     {
       "path": ".agents/bootstrap/templates/rules/governance.md",
@@ -439,13 +439,13 @@
     },
     {
       "path": ".agents/bootstrap/templates/rules/types.md",
-      "bytes": 3209,
-      "sha256": "15ebec204bb08ff126397aa0b5fdd5f941f88143efb07ebfd187a9e8405203d5"
+      "bytes": 2466,
+      "sha256": "2217db9a95034a41870cf0b39e9b809faad1a950a51a8aa265faf895b94214c1"
     },
     {
       "path": ".agents/bootstrap/templates/rules/workflow.md",
-      "bytes": 7678,
-      "sha256": "ea83934293589cdcee7e720e83b6b2d14814636c5bb264ba948bec8f9f6dafc7"
+      "bytes": 7692,
+      "sha256": "8dfb382a2ee7f71a6401bde3b929cf4823f2693b2b9ba3b0f86259f1a4bdcee9"
     },
     {
       "path": ".agents/project/bindings.yaml",
@@ -475,7 +475,7 @@
     {
       "path": ".agents/project/installation.json",
       "bytes": 447,
-      "sha256": "687ffdf4ae637b1024555b6bb09926203ccbfca91e3fbf2551598f78efb3c3ee"
+      "sha256": "92ebd8935f170ac6c46b437bc8cc4e7d53bd372f8f5b20c2172be01cf3210719"
     },
     {
       "path": ".agents/project/intent.md",
