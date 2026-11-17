@@ -18,9 +18,9 @@
     "repositories": [
       {
         "path": ".",
-        "commit": "c06127f8217233023d57f11d67db034307900fc4",
+        "commit": "2eb123e2b1a96a670b8b2462b90fae47ad8a5bf8",
         "branch": "chore/bootstrap-0.8.5",
-        "dirty": true,
+        "dirty": false,
         "remote": "https://github.com/zachshallbetter/cuda-compatibility.git"
       }
     ]
