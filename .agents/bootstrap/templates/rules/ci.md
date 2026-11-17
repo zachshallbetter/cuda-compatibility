@@ -8,14 +8,15 @@
 
 ## 2. Standard Repository Gates
 
-Before proposing or merging changes, execute the authoritative verification suite:
+Before proposing or merging changes, run the bootstrap gates this project has, then the project's own lint, type-check and test commands (listed in `codestyle.md`):
 
 ```bash
 python3 .agents/bootstrap/scripts/validate-bootstrap.py --check-context
-python3 .agents/bootstrap/scripts/validate-formal-files.py
 python3 .agents/bootstrap/scripts/check-protocol-integrity.py
-python3 .agents/bootstrap/scripts/check-negative-results.py
+python3 .agents/bootstrap/scripts/check-build-budget.py
 ```
+
+`validate-formal-files.py`, `check-negative-results.py` and `check-all.py` belong to the bootstrap repository and are not installed into projects. A project that wants a negative-results or schema gate adds its own to its test command.
 
 ## 3. Ephemeral Worktree Isolation
 
@@ -32,9 +33,9 @@ Hosted previews, deployments and CI run on paid machines; every push, rebase for
 - **Pushes**: a branch is pushed when it is ready, not after each commit; fixes are batched into one push.
 - Run `python3 .agents/bootstrap/scripts/check-build-budget.py` after changing workflows or Vercel configuration; it fails on push-any-branch triggers and jobs without timeouts.
 
-## 5. Local Builds (Rust, Swift, WebAssembly)
+## 5. Local Builds
 
-- Every compile and test runs through the machine register: `reg build --label <lane/ticket> -- <command>`; combine steps into one `reg build -- sh -c "a && b"`. Dev servers run with `reg serve` from a built binary, never from a shared target folder or `cargo run`.
-- Test only the packages a change touches (`cargo test -p <crate>`); the full suite runs in the local gate.
-- One integration-test program per package: modules under `tests/<name>/` instead of many files in `tests/`, since each file links its own program against every dependency.
-- Expensive targets (wasm, release) build only when their sources changed.
+- Every compile and test runs through the machine register: `reg build --label <lane/ticket> -- <command>`; combine steps into one `reg build -- sh -c "a && b"`. Dev servers run with `reg serve` from a built artifact, never from a shared build folder or the toolchain's run-from-source command.
+- Test only the packages a change touches (the test runner's package, directory or file filter); the full suite runs in the local gate.
+- Where each test file links or builds as its own program, group integration tests into one program per package rather than many files.
+- Expensive targets (release, cross-compiled, bundled) build only when their sources changed.

@@ -629,7 +629,8 @@ def cmd_authorize(args, cfg) -> int:
         print(f"{args.action} cannot be authorized in environment {environment}.", file=sys.stderr)
         return 2
     context = {k: v for k, v in (("ref", args.ref), ("old_sha", args.old_sha),
-                                 ("new_sha", args.new_sha)) if v}
+                                 ("new_sha", args.new_sha), ("trigger", args.trigger),
+                                 ("reason", args.reason)) if v}
     if args.action == "database.migrate":
         if not args.context_json or not args.work_item or not args.ref or not args.new_sha:
             print("database.migrate requires --context-json with source_database and target_database, --work-item, --ref, and --new-sha",
@@ -1179,6 +1180,10 @@ def main() -> int:
     p.add_argument("--old-sha")
     p.add_argument("--new-sha")
     p.add_argument("--force", action="store_true")
+    p.add_argument("--trigger", choices=("push", "cli_deploy", "railway_up", "merge", "promote",
+                                         "workflow_dispatch", "rerun"),
+                   help="what starts the build, for hosted_build, production_merge and manual_ci")
+    p.add_argument("--reason", help="one sentence, 8 to 512 characters, for a metered action")
     p.add_argument("--recovery-authorization-id")
     p.add_argument("--owner-override-id", help="use an active shared remote owner override grant")
     p.add_argument("--work-item", help="recorded with the decision")

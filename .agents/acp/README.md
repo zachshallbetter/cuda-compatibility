@@ -18,6 +18,7 @@ Everything ACP needs in a project lives in `.agents/acp/`, and one command runs 
 .agents/acp/acp status    # one line per check: OK / WARN / FAIL, each with its fix
 .agents/acp/acp doctor    # adoption check: PASS / WARN / FAIL per check, each gap with its exact fix
 .agents/acp/acp push      # publish a commit: your pre-push hook, then one exact approval per step
+.agents/acp/acp deploy railway   # deploy the merged default branch once ACP finds its CI green
 ```
 
 - **`status`** checks, in order: Python, layout, profile, auto-deploy, compiled context, endpoints, gateway readiness, credential (and where it came from), client version against the latest release, policy and containment, the ACP GitHub App for the owner, pinned-file integrity, and the board. Every WARN and FAIL prints its exact fix. Use `--json` for machines, `--offline` for local checks only, and `--strict` to exit 1 on warnings.
@@ -196,6 +197,18 @@ When a hosting integration deploys a branch on every push, updating that ref is 
 ```
 
 Then `acp.py authorize --action git.protected_ref.update --ref refs/heads/main` also requests `production.deploy` for the same old and new SHA. It prints both decisions, `deploy_decision` beside the ref decision, and exits non-zero unless both are `ALLOW`. Where the owner has decided that the merge is the deploy decision, add `"decision": "merge"` and the client asks once. An undeclared repository with `vercel.json`, `.vercel/project.json` or `netlify.toml` gets a warning when `main` or `master` is updated, never a refusal.
+
+### Deploying from the command line
+
+A production deploy from the CLI (`railway up`, `vercel deploy --prod`) ships one commit, so ACP checks
+that commit: merged into the production branch (`NOT_ON_PRODUCTION_BRANCH` otherwise), its check runs
+passed (`CI_FAILED`), and still running ones answered `REVERIFY_REQUIRED` `CI_PENDING` with `retry_after`.
+`acp deploy railway|vercel [REV]` does this end to end: it asks for `hosted_build` of `REV` (default:
+origin's default branch), waits through `CI_PENDING` for up to `--wait-minutes` (30), then deploys a clean
+checkout of exactly that commit (`railway up <checkout> --path-as-root --ci`, with `--service` and
+`--environment` passed through, or `vercel deploy <checkout> --prod`), so uncommitted files never ship.
+The push guard refuses a raw `railway up` or `vercel --prod` from a working tree with uncommitted changes
+and points to `acp deploy`.
 
 ## Decisions and the required disposition
 

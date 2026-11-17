@@ -14,6 +14,7 @@ import re
 import shutil
 import subprocess
 import sys
+import tempfile
 import time
 from datetime import datetime, timezone
 from pathlib import Path
@@ -565,6 +566,83 @@ def cmd_push(args, cfg) -> int:
     return 0
 
 
+# ------------------------------------------------------------------ deploy
+
+DEPLOY_TRIGGER = {"railway": "railway_up", "vercel": "cli_deploy"}
+
+
+def deploy_command(provider: str, checkout: Path, args) -> list[str]:
+    """The provider CLI call that deploys exactly the files of `checkout`, from the linked project root."""
+    if provider == "railway":
+        command = ["railway", "up", str(checkout), "--path-as-root", "--ci"]
+        command += ["--service", args.service] if args.service else []
+        return command + (["--environment", args.environment] if args.environment else [])
+    return ["vercel", "deploy", str(checkout), "--prod", "--yes"]
+
+
+def cmd_deploy(args, cfg) -> int:
+    """Deploy one merged commit to production once ACP allows it: merged, CI green, within budget.
+
+    ACP checks the commit; this waits while its CI runs, then deploys a clean checkout of that
+    commit, so what ships is exactly what ACP checked, never uncommitted files."""
+    git("fetch", "-q", "origin")
+    default = (git("symbolic-ref", "--quiet", "refs/remotes/origin/HEAD").stdout.strip().rsplit("/", 1)[-1]
+               or "main")
+    rev = args.rev or f"origin/{default}"
+    sha = git("rev-parse", "--verify", "--quiet", f"{rev}^{{commit}}").stdout.strip()
+    if not sha:
+        print(f"no such revision: {rev}", file=sys.stderr)
+        return 2
+    trigger, ref = DEPLOY_TRIGGER[args.provider], f"refs/heads/{default}"
+    summary = args.summary or f"acp deploy {args.provider} {sha[:12]} from {default}"
+    if args.dry_run:
+        print(f"would: ask ACP for hosted_build ({trigger}) of {sha[:12]} on {default}, waiting up to "
+              f"{args.wait_minutes} minutes for its CI; then run "
+              + " ".join(deploy_command(args.provider, Path("<clean checkout>"), args)))
+        return 0
+    deadline = time.monotonic() + args.wait_minutes * 60
+    while True:
+        code, decision, err = run_acp("authorize", "--action", "hosted_build", "--trigger", trigger, "--ref", ref,
+                                      "--new-sha", sha, "--reason", summary, "--summary", summary,
+                                      "--provenance", "interactive_user")
+        print(f"  hosted_build {args.provider} {sha[:12]}: {decision.get('decision')} {decision.get('reason')} "
+              f"{decision.get('request_id')}")
+        if code == 0:
+            print_notes(decision, False)
+            break
+        wait = decision.get("retry_after")
+        remaining = deadline - time.monotonic()
+        if decision.get("reason") == "CI_PENDING" and type(wait) is int and remaining > 0:
+            print(f"  {decision.get('detail')} Asking again in {min(wait, int(remaining)) or 1}s.")
+            time.sleep(max(1, min(wait, remaining)))
+            continue
+        print_notes(decision, True)
+        for line in err.strip().splitlines()[-3:]:
+            print(f"  {line}", file=sys.stderr)
+        remedy = (decision.get("gateway_decision") or {}).get("remedy") or decision.get("remedy")
+        if remedy:
+            print(f"  remedy: {remedy}", file=sys.stderr)
+        return 4
+    scratch = Path(tempfile.mkdtemp(prefix=f"acp-deploy-{sha[:12]}-"))
+    checkout = scratch / "src"
+    try:
+        added = git("worktree", "add", "--detach", "-q", str(checkout), sha)
+        if added.returncode != 0:
+            print(f"  could not check out {sha[:12]}: {added.stderr.strip()[:300]}", file=sys.stderr)
+            return 5
+        if args.provider == "vercel" and (root() / ".vercel").is_dir():
+            shutil.copytree(root() / ".vercel", checkout / ".vercel")    # the project link
+        deployed = subprocess.run(deploy_command(args.provider, checkout, args), cwd=str(root()))
+        if deployed.returncode != 0:
+            print(f"  {args.provider} deploy of {sha[:12]} failed (exit {deployed.returncode})", file=sys.stderr)
+            return 5
+        print(f"  deployed {sha[:12]} to {args.provider}")
+        return 0
+    finally:
+        shutil.rmtree(scratch, ignore_errors=True)
+        git("worktree", "prune")
+
+
 # ------------------------------------------------------------------ record
 
 def cmd_record(args, cfg) -> int:
@@ -1080,6 +1158,16 @@ def register(sub) -> None:
     p.add_argument("--priority-reason", help="why, 8 to 512 characters; required with --priority")
     p.add_argument("--dry-run", action="store_true")
     p.set_defaults(fn=cmd_push)
+
+    p = sub.add_parser("deploy", help="deploy a merged commit to production once ACP finds its CI green")
+    p.add_argument("provider", choices=sorted(DEPLOY_TRIGGER))
+    p.add_argument("rev", nargs="?", help="commit to deploy (default: origin's default branch)")
+    p.add_argument("--service", help="Railway service (default: the linked one)")
+    p.add_argument("--environment", help="Railway environment (default: the linked one)")
+    p.add_argument("--summary", help="why, 8 to 512 characters, recorded with the decision")
+    p.add_argument("--wait-minutes", type=int, default=30, help="how long to wait for CI to finish (default 30)")
+    p.add_argument("--dry-run", action="store_true")
+    p.set_defaults(fn=cmd_deploy)
 
     p = sub.add_parser("record", help="list this machine's ACP decisions, or copy chosen ones into the evidence ledger")
     p.add_argument("request_id", nargs="*")
