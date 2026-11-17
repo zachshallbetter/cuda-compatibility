@@ -6,8 +6,12 @@ name: Installer across distributions
       - site/install.sh
       - scripts/distro_install_check.sh
       - .github/workflows/installer-distros.yml
-  schedule:
-    - cron: "17 14 * * 1"
+  push:
+    branches: [main]
+    paths:
+      - site/install.sh
+      - scripts/distro_install_check.sh
+      - .github/workflows/installer-distros.yml
   workflow_dispatch:
 
 permissions:
