@@ -5,6 +5,8 @@ globs: ["**/*"]
 
 # Type System Architecture & Domain Invariants
 
+> This repository has no Rust, Swift or WebAssembly code (its code is Python, with C++/CUDA sources under `src/cuda_legacy_compat/compat/`). Apply this document only if such a crate is added; for Python the toolchain is `pyproject.toml` and the gates are `make check` and `make test`.
+
 This document defines the core type invariants, numerical representations, and error handling contracts across projects operating under the Formal Project Bootstrap doctrine.
 
 ---

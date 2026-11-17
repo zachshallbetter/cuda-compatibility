@@ -7,12 +7,12 @@ Always enforce the strict Four-Tier Claim Taxonomy:
 $$\text{Documented} \neq \text{Implemented} \neq \text{Tested} \neq \text{Empirically Validated}$$
 
 - **Never Conflate Maturity**: A feature documented in an RFC or spec is documented, not implemented. A function with passing unit tests is tested, not empirically validated. A benchmark written alongside its implementation is a fixture, not an empirical proof. Always state the weaker claim when in doubt.
-- **Permanent Retention of Negative Results**: Abandoned hypotheses, discredited metrics, and disproven architectural directions must be recorded permanently in research logs (`docs/NEGATIVE_RESULTS.md`). Never prune disproven paths: preserving the record prevents re-proposing abandoned intuitions.
+- **Permanent Retention of Negative Results**: Abandoned hypotheses, discredited metrics, and disproven architectural directions must be recorded permanently in research logs (`.agents/records/negative-results.jsonl`). Never prune disproven paths: preserving the record prevents re-proposing abandoned intuitions.
 - **Prospective Pre-Registration**: Define success criteria, baselines, and quantitative invalidation triggers before running experiments or benchmarks.
 
 ## 2. Hierarchy of Authority
 
-When documentation, code, generated artifacts, or AI outputs conflict, resolve in strict canonical order per `AUTHORITY.md`:
+When documentation, code, generated artifacts, or AI outputs conflict, resolve in strict canonical order per `.agents/bootstrap/docs/AUTHORITY_MODEL.md`:
 
 $$\text{Architecture & Doctrine} \to \text{Ontology & Glossary} \to \text{Formal Specification} \to \text{Substrate Code} \to \text{Generated Artifacts}$$
 
@@ -36,7 +36,7 @@ Code, generated artifacts, or model outputs never silently alter theory or forma
 ## 6. Agent-First Publishing Architecture
 
 - Maintain programmatically generated `llms.txt` manifests and `llms-full.txt` single-file context corpora for zero-search agent context resolution.
-- Downstream Invariant: Generated `llms.txt` and `llms-full.txt` files are downstream projections: never edit them manually. Refresh via [`.agents/bootstrap/scripts/gen-context.py`](../../.agents/bootstrap/scripts/gen-context.py).
+- Downstream Invariant: Generated `llms.txt` and `llms-full.txt` files are downstream projections: never edit them manually. Refresh via [`.agents/bootstrap/scripts/gen-context.py`](../../bootstrap/scripts/gen-context.py).
 
 ## 7. Engineering Voice and Attribution
 
