@@ -95,7 +95,7 @@ A 1200×630 PNG per page, ink on paper. It shows the page's eyebrow, share title
 | `manifest.webmanifest` | id, name, lang, paper colours, PNG icons with `purpose` | `make check` (icons) |
 | `404.html` | `noindex`, outside the sitemap, served for unknown paths | `make check`; live audit |
 | IndexNow key (`03dd…ee.txt`) | One key at the root | `scripts/indexnow.py` |
-| `vercel.json` | Security headers, plain-text and Atom content types, font caching | live audit |
+| `site/vercel.json` | Security headers, plain-text and Atom content types, font caching | live audit |
 | `SECURITY.md`, `CITATION.cff` (repository root) | Kept in step with the release version | manual |
 
 ## 5. Change procedure
@@ -105,7 +105,7 @@ A 1200×630 PNG per page, ink on paper. It shows the page's eyebrow, share title
 3. **Regenerate and gate.** Run `make cards` if a title, summary, sheet number or card design changed. Then run `make site`, which writes the registry into the pages, renders the papers, regenerates `llms-full.txt` and the context lock and then runs `make check` and `make test`. Both must pass. On a machine with Google Chrome, also run `make phone-width`: every page must fit a 390 px screen in light and dark, with no literal Markdown link. Update a test only when its fixture no longer matches the page's real shape; never weaken a check to pass.
 4. **Render** as in §6.4. Look before you claim.
 5. **Commit** as the project owner, with no AI attribution anywhere. Open a PR whose description lists what changed and what was not verified.
-6. **Merge** only when the PR is `CLEAN` with all three checks green (Verify site and project, Vercel, Vercel Preview Comments). Use `gh pr merge N --squash --delete-branch --match-head-commit <head>`. **A merge to `main` deploys production**, usually within about 40 seconds.
+6. **Merge** only when the PR is `CLEAN` with its check green (Verify site and project; `Installer across distributions` also runs when the installer files change). Use `gh pr merge N --squash --delete-branch --match-head-commit <head>`. **A merge to `main` deploys production**, usually within about 40 seconds.
 7. **Verify live.** Run `make live-audit`. It must print `OK live site matches the checkout`. If a page hasn't landed, wait and run it again; don't claim a deploy that hasn't been seen.
 8. **Notify.** `.github/workflows/indexnow.yml` sends the changed pages to IndexNow on its own once they are live. Confirm the run's `IndexNow responded 200` line. Nothing is sent when only CSS or JavaScript changed.
 9. **Preview** (§6.6) when a title, description or share card changed.
@@ -122,14 +122,14 @@ Update all of these in the same change:
 - `CARDS` in `scripts/build_social_cards.py`, then `make cards`
 - the surface register in `DPP_IMPLEMENTATION.md`
 
-For a removed or renamed URL, add a redirect in `vercel.json`. The retired `zachshallbetter.github.io/cuda-compatibility` pages redirect from the `pages-redirect` branch; never delete it.
+For a removed or renamed URL, add a redirect in `site/vercel.json`. The retired `zachshallbetter.github.io/cuda-compatibility` pages redirect from the `pages-redirect` branch; never delete it.
 
 ## 6. Verification matrix
 
 | # | Pass | How | When |
 |---|---|---|---|
 | 6.1 | Static checks and tests | `make site` | Every change |
-| 6.2 | CI | the three PR checks | Every PR |
+| 6.2 | CI | the PR check "Verify site and project" (`.github/workflows/verify.yml`); Vercel builds only `main`, so a PR has no preview deployment | Every PR |
 | 6.3 | Live audit | `make live-audit` after the merge | Every deploy |
 | 6.4 | Rendering | A local server (a temporary `.claude/launch.json` entry, reverted afterwards) and the browser at 375 and 1280 px. A copy with scripts stripped and `<noscript>` unwrapped shows the no-JS view. Print with headless Chrome `--print-to-pdf` and read the PDF | Every visible change |
 | 6.5 | Accessibility | The browser's accessibility tree (`read_page`) for landmark order and names. A script that focuses every control and checks for a visible focus style. Heading levels. Duplicate link names. A rendered contrast pass when colours change | Every structural or colour change |

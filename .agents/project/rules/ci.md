@@ -12,9 +12,10 @@ Before proposing or merging changes, execute the authoritative verification suit
 
 ```bash
 python3 .agents/bootstrap/scripts/validate-bootstrap.py --check-context
-python3 .agents/bootstrap/scripts/validate-formal-files.py
 python3 .agents/bootstrap/scripts/check-protocol-integrity.py
-python3 .agents/bootstrap/scripts/check-negative-results.py
+python3 scripts/site_checks.py
+python3 scripts/build_site_meta.py --check
+make test
 ```
 
 ## 3. Ephemeral Worktree Isolation
@@ -33,6 +34,8 @@ Hosted previews, deployments and CI run on paid machines; every push, rebase for
 - Run `python3 .agents/bootstrap/scripts/check-build-budget.py` after changing workflows or Vercel configuration; it fails on push-any-branch triggers and jobs without timeouts.
 
 ## 5. Local Builds (Rust, Swift, WebAssembly)
+
+> This repository has no Rust, Swift or WebAssembly code (its code is Python, with C++/CUDA sources under `src/cuda_legacy_compat/compat/`). Apply this section only if such a crate is added; for Python the toolchain is `pyproject.toml` and the gates are `make check` and `make test`.
 
 - Every compile and test runs through the machine register: `reg build --label <lane/ticket> -- <command>`; combine steps into one `reg build -- sh -c "a && b"`. Dev servers run with `reg serve` from a built binary, never from a shared target folder or `cargo run`.
 - Test only the packages a change touches (`cargo test -p <crate>`); the full suite runs in the local gate.

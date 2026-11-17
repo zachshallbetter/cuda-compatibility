@@ -6,7 +6,7 @@
   "selectedPaths": [],
   "sourceSelection": {
     "includedCount": 297,
-    "includedBytes": 3026711,
+    "includedBytes": 3028037,
     "excludedCounts": {
       "extension": 65,
       "generated-or-transient-file": 2
@@ -18,14 +18,14 @@
     "repositories": [
       {
         "path": ".",
-        "commit": "4fbedf646fbc1a22805ba876ccd1fae016c0dcd9",
-        "branch": "main",
+        "commit": "172e68fff44d8bca0a8e32f23ec912c38e6355cb",
+        "branch": "docs/review",
         "dirty": true,
         "remote": "https://github.com/zachshallbetter/cuda-compatibility.git"
       }
     ]
   },
-  "aggregateSourceDigest": "5e8d9e77eb4729c0aa041e4451ac2fddd3c6d277e8a0dbba277612d3d027db11",
+  "aggregateSourceDigest": "11b4a1b1898823203c7acf5aaf22bdf34d4e1814a9c5b2dd19cecf624f1eee31",
   "sources": [
     {
       "path": ".agents/acp/README.md",
@@ -489,13 +489,13 @@
     },
     {
       "path": ".agents/project/rules/ci.md",
-      "bytes": 3051,
-      "sha256": "20d70156fcd71cdc612503b587d4248d1d481547c1f3732029f08efba0bc1551"
+      "bytes": 3301,
+      "sha256": "ef7b22484d9eafa70d0d0bcb6c57b562e2395af3d9e40f1ddd9c14f9f8a44ddf"
     },
     {
       "path": ".agents/project/rules/codestyle.md",
-      "bytes": 3139,
-      "sha256": "62923830e444431d07e29e990168c4dba13026ed0ef6c530ed783daf500d720e"
+      "bytes": 3425,
+      "sha256": "8ec18ad579d36929fbb894838d0277ded94e6ee476e78b915ccd372cb7b3ff0e"
     },
     {
       "path": ".agents/project/rules/governance.md",
@@ -509,13 +509,13 @@
     },
     {
       "path": ".agents/project/rules/standards.md",
-      "bytes": 5737,
-      "sha256": "e6e0b19126c94158bdce7dd1c8043c35532c38fa9337257f8eed0ea49decfbf1"
+      "bytes": 5772,
+      "sha256": "89aac03e2d3b30b5e50a056aa3bbfd2fe9910bfc85d0b66d9d6488ba728b6471"
     },
     {
       "path": ".agents/project/rules/types.md",
-      "bytes": 3209,
-      "sha256": "15ebec204bb08ff126397aa0b5fdd5f941f88143efb07ebfd187a9e8405203d5"
+      "bytes": 3495,
+      "sha256": "b6fd3094fba954eb44e6ee84020f2133666cd2a33791e350f1629a331c5d4f80"
     },
     {
       "path": ".agents/project/rules/workflow.md",
@@ -704,23 +704,23 @@
     },
     {
       "path": ".github/workflows/installer-distros.yml",
-      "bytes": 2533,
-      "sha256": "48af7cd318e022c14a2db9c1747455ee7bd839f6c7bc39547c27d454bca270bc"
+      "bytes": 2555,
+      "sha256": "44ded4ec4c1ae9c660e811d54eee284dc053012d0ccd26d8c209f485ee0c3275"
     },
     {
       "path": ".github/workflows/verify.yml",
-      "bytes": 783,
-      "sha256": "7b19a023da95ce64f9b25b298b2c6b6034f1d6f7faae95835a3508292e19d89e"
+      "bytes": 806,
+      "sha256": "22de2c26f94f5b07bfede60094417ae83b7be3184d80b450150f76de9bd1e6a8"
     },
     {
       "path": "AGENTS.md",
-      "bytes": 13248,
-      "sha256": "e2d20f6ce477b3652c510d2cc6e0cf9cd4697082b9e49d981a0bf2997aadd078"
+      "bytes": 13304,
+      "sha256": "4c4918facb6c95e7be951f9889586da1efbd9684034dbf9291f6c43fa0b71c15"
     },
     {
       "path": "README.md",
-      "bytes": 13885,
-      "sha256": "b149c68c989771d12c5a147562effca4a4c6fe54ead068d8cbd2acd6c82ae123"
+      "bytes": 14028,
+      "sha256": "135ea4b90a22a53237a4671989bb866a2d990a11d72d7b075b8b54eb8fc740ef"
     },
     {
       "path": "SECURITY.md",
@@ -744,8 +744,8 @@
     },
     {
       "path": "docs/SITE_PROTOCOL.md",
-      "bytes": 16352,
-      "sha256": "388edc107f56290f509756045d9c5a15f8eb377ee9c6919ce76c9a37cf6b7f95"
+      "bytes": 16512,
+      "sha256": "5d788718aee8c37c16f9a4adb5570d813770feed1130dfe89b5d3afb20232487"
     },
     {
       "path": "docs/WORK_ITEMS.md",
@@ -1274,8 +1274,8 @@
     },
     {
       "path": "site/vercel.json",
-      "bytes": 1654,
-      "sha256": "3db914b2797bb785a77cc733e4d0d1660ddd0892b0b95c28b5c8bbff9d09dcbd"
+      "bytes": 1719,
+      "sha256": "e20a5a386cd74ba6acce83fc8339c3b2ef606172231cdccba8521bba270cb96a"
     },
     {
       "path": "src/cuda_legacy_compat/__init__.py",
