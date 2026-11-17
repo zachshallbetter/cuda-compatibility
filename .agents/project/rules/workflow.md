@@ -26,7 +26,7 @@ Every commit, branch, pull request, issue comment, and code review must reflect 
 
 ### Rule 1.3: Natural Language Over Synthetic Identifiers
 - Strictly forbid inventing private, synthetic tracking codes.
-- Use standard, discoverable tooling and domain terminology (`cargo test`, worktree isolation, dirty snapshotting).
+- Use standard, discoverable tooling and domain terminology (`make test`, worktree isolation, dirty snapshotting).
 
 ### Rule 1.4: Natural Engineering Voice (Avoid Predictable Rhetoric)
 - Avoid repetitive contrast formulas such as opening paragraphs with *"However, this introduces..."*, *"While X is correct, Y remains..."*, *"The concern is not X, but Y"*, or *"This is not X; it is Y"*.
@@ -36,7 +36,7 @@ Every commit, branch, pull request, issue comment, and code review must reflect 
 ### Rule 1.5: Vocabulary Discipline & Action Over Abstraction
 - Favor direct verbs over abstract noun phrases:
   - Say *"test it"* instead of *"establish a qualification mechanism"*.
-  - Say *"decide which crate owns it"* instead of *"resolve the ownership boundary"*.
+  - Say *"decide which module owns it"* instead of *"resolve the ownership boundary"*.
   - Say *"keep existing behavior working"* instead of *"preserve behavioral compatibility"*.
   - Say *"agree on what the API should do"* instead of *"reconcile the implementation contract"*.
 - Avoid dense clustering of formal buzzwords (`boundary`, `contract`, `invariant`, `qualification`, `provenance`, `surface`, `canonical`). Use simpler everyday terms (`separation`, `API`, `rule`, `testing`, `source`, `standard`).
@@ -78,7 +78,7 @@ To maintain pristine, professional issue threads and commit history, follow this
 
 ### Rule 2.2: Single Cohesive Commit Per PR
 - By default, every feature or bugfix pull request branch must contain **exactly one cohesive, squashed commit** before opening the PR or requesting review.
-- Multi-commit branches are permitted **only** for large multi-crate architectural extractions where every individual commit compiles independently, passes all quality gates, and represents an isolated logical milestone.
+- Multi-commit branches are permitted **only** for large multi-module architectural extractions where every individual commit compiles independently, passes all quality gates, and represents an isolated logical milestone.
 
 ### Rule 2.3: Issue Reference Placement
 - Issue reference tags (`closes #<issue>` or `fixes #<issue>`) belong strictly in two places:
@@ -101,7 +101,7 @@ To maintain pristine, professional issue threads and commit history, follow this
 Every pull request must be structured for immediate, low-friction review by maintainers:
 
 ### Rule 3.1: Commit Title & Body Architecture
-- **Title**: Imperative mood, under 72 characters, prefixed by crate/module scope where appropriate (e.g. `core: Fix buffer overflow in packet parser`).
+- **Title**: Imperative mood, under 72 characters, prefixed by module scope where appropriate (e.g. `cli: Fix buffer overflow in packet parser`).
 - **Body**: Three clean, concise sections:
   1. **Problem**: What defect or gap exists, why it matters, and who is affected.
   2. **Solution**: What architectural or code change was made, how it solves the problem, and non-obvious trade-offs.

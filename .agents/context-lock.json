@@ -6,7 +6,7 @@
   "selectedPaths": [],
   "sourceSelection": {
     "includedCount": 297,
-    "includedBytes": 3033285,
+    "includedBytes": 3031930,
     "excludedCounts": {
       "extension": 65,
       "generated-or-transient-file": 2
@@ -18,14 +18,14 @@
     "repositories": [
       {
         "path": ".",
-        "commit": "2eb123e2b1a96a670b8b2462b90fae47ad8a5bf8",
-        "branch": "chore/bootstrap-0.8.5",
-        "dirty": false,
+        "commit": "a69f94bf2abea7080b8159b5668c80711b9cb0b4",
+        "branch": "docs/rules-for-stack",
+        "dirty": true,
         "remote": "https://github.com/zachshallbetter/cuda-compatibility.git"
       }
     ]
   },
-  "aggregateSourceDigest": "367b75ad6450fe2b544ca932a417c1131dee6f1a633112ec5b26e755c4fb5c22",
+  "aggregateSourceDigest": "22b6c0531829c4935963859d521d562273873cdd7e0451adb93a5abd0018e1bd",
   "sources": [
     {
       "path": ".agents/acp/README.md",
@@ -489,13 +489,13 @@
     },
     {
       "path": ".agents/project/rules/ci.md",
-      "bytes": 3301,
-      "sha256": "ef7b22484d9eafa70d0d0bcb6c57b562e2395af3d9e40f1ddd9c14f9f8a44ddf"
+      "bytes": 3692,
+      "sha256": "ac67173c6a9387a766203574734e76fe631e9c2afe232d1d4838b59f3a305006"
     },
     {
       "path": ".agents/project/rules/codestyle.md",
-      "bytes": 3425,
-      "sha256": "8ec18ad579d36929fbb894838d0277ded94e6ee476e78b915ccd372cb7b3ff0e"
+      "bytes": 2714,
+      "sha256": "ce8de28fd24efb167036f9a9a8b0add17052ef4d0589f26f791541330c63ecb6"
     },
     {
       "path": ".agents/project/rules/governance.md",
@@ -514,13 +514,13 @@
     },
     {
       "path": ".agents/project/rules/types.md",
-      "bytes": 3495,
-      "sha256": "b6fd3094fba954eb44e6ee84020f2133666cd2a33791e350f1629a331c5d4f80"
+      "bytes": 2466,
+      "sha256": "2217db9a95034a41870cf0b39e9b809faad1a950a51a8aa265faf895b94214c1"
     },
     {
       "path": ".agents/project/rules/workflow.md",
-      "bytes": 7628,
-      "sha256": "9501faa117508987020e741e479662af04e986f0714aa52b889c3f648e5b3c69"
+      "bytes": 7622,
+      "sha256": "3520bbd6ab8a76d2a4fc0d334a6fbb6b566701cc67d423dfd3622c0c2aa525ab"
     },
     {
       "path": ".agents/skills/authorize-protected-effect/SKILL.md",
