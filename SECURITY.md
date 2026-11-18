@@ -8,6 +8,8 @@ Report privately through [GitHub security advisories](https://github.com/zachsha
 
 Include the version (`cuda-legacy --version`), the command you ran, the GPU and driver, and what an attacker could do.
 
+This is a solo-maintained project: responses are best-effort with no SLA.
+
 ## Scope
 
 - The `cuda-legacy` launcher, its runtime facade, native kernels, and CPU fallback routes.

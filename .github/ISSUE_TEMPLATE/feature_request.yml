@@ -1,0 +1,20 @@
+name: Feature request
+description: Propose a new route, profile or capability.
+labels: [enhancement]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: The behavior you want
+      description: What workload or GPU do you want supported? What is the use case?
+    validations:
+      required: true
+  - type: textarea
+    id: idea
+    attributes:
+      label: How you imagine it
+      description: A CLI option, a profile, an operator route, or a change to an existing one.
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
