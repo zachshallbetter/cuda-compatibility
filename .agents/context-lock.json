@@ -5,8 +5,8 @@
   "validityBasis": "aggregate-source-digest",
   "selectedPaths": [],
   "sourceSelection": {
-    "includedCount": 297,
-    "includedBytes": 3031930,
+    "includedCount": 305,
+    "includedBytes": 3038284,
     "excludedCounts": {
       "extension": 65,
       "generated-or-transient-file": 2
@@ -18,14 +18,14 @@
     "repositories": [
       {
         "path": ".",
-        "commit": "a69f94bf2abea7080b8159b5668c80711b9cb0b4",
-        "branch": "docs/rules-for-stack",
+        "commit": "8c0c9d402d44d9a5ccfb0ebf7d1ef93fd43f7dec",
+        "branch": "docs/public-governance",
         "dirty": true,
         "remote": "https://github.com/zachshallbetter/cuda-compatibility.git"
       }
     ]
   },
-  "aggregateSourceDigest": "22b6c0531829c4935963859d521d562273873cdd7e0451adb93a5abd0018e1bd",
+  "aggregateSourceDigest": "052f3bffa0a22e8d5d1db10b83f72bd0b141c557fc9ed30234e3878608cdf2e6",
   "sources": [
     {
       "path": ".agents/acp/README.md",
@@ -693,9 +693,29 @@
       "sha256": "daa4c70bc8011c38b079c8c5a3773361c45b1dad268758d878beba4f4941a7a1"
     },
     {
+      "path": ".github/ISSUE_TEMPLATE/bug_report.yml",
+      "bytes": 1336,
+      "sha256": "96d5c30bd08143be1430c2264622590b42f1b3d76166377b5c10dfd18f942cfa"
+    },
+    {
+      "path": ".github/ISSUE_TEMPLATE/config.yml",
+      "bytes": 240,
+      "sha256": "1f5234d26de49d59158bef02a2b8d2cf3a77179dc96a4adba0ecdc383ea7326c"
+    },
+    {
+      "path": ".github/ISSUE_TEMPLATE/feature_request.yml",
+      "bytes": 584,
+      "sha256": "573f185249241805040dfe75f746c83b95aa6360d54ba16688d110b74fc6692b"
+    },
+    {
       "path": ".github/ISSUE_TEMPLATE/reproduction-report.yml",
       "bytes": 2044,
       "sha256": "642de9b2d50df8a1b44b2de5ec0f4d5213c8d3e483dc68dac6344d322f80ac65"
+    },
+    {
+      "path": ".github/pull_request_template.md",
+      "bytes": 446,
+      "sha256": "910f362c0891c89cd34929f787dbc16ed155485e21e89e7c2cc07bc6eb9a15c7"
     },
     {
       "path": ".github/workflows/indexnow.yml",
@@ -718,14 +738,34 @@
       "sha256": "4c4918facb6c95e7be951f9889586da1efbd9684034dbf9291f6c43fa0b71c15"
     },
     {
+      "path": "CHANGELOG.md",
+      "bytes": 120,
+      "sha256": "b5c0b3134d58119e2240481794e58f3a46e1c37cbf1bb40068c1b91bf67a4b13"
+    },
+    {
+      "path": "CODE_OF_CONDUCT.md",
+      "bytes": 1376,
+      "sha256": "c492147f1c5825dd3870ff5be1b8221440e144fd417b1a5a7d1e6fedd4003cae"
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "bytes": 1618,
+      "sha256": "e522186db754d21db721d103365bcb96f029fd4d130c46bdca0003eb437d36c4"
+    },
+    {
       "path": "README.md",
       "bytes": 14028,
       "sha256": "135ea4b90a22a53237a4671989bb866a2d990a11d72d7b075b8b54eb8fc740ef"
     },
     {
       "path": "SECURITY.md",
-      "bytes": 854,
-      "sha256": "6f78a9d3794af25f59a238f6ec60c6f5f5292d4ba1cf937531c63dba512fe63c"
+      "bytes": 929,
+      "sha256": "d0fe6204ae2c0caa31c627e2339583009fd9852d4815c6ce4deaee97fa4daac6"
+    },
+    {
+      "path": "SUPPORT.md",
+      "bytes": 559,
+      "sha256": "fbb692e6dbaec0201a3fcc0030e00acce7d71a84d42abcd14d3363a5748bdfe0"
     },
     {
       "path": "content/pages.json",
